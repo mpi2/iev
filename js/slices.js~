@@ -1,4 +1,4 @@
-goog.require('X.renderer2D');
+//goog.require('X.renderer2D');
 
 window.onload = function() {
 

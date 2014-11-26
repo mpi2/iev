@@ -73,7 +73,7 @@ window.onload = function() {
   volume.labelmap.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/seg.nii';
 
   // .. and use a color table to map the label map values to colors
-  volume.labelmap.colortable.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/genericanatomy.txt';
+  volume.labelmap.colortable.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/new_anatomy.txt';
   
   // add the volume in the main renderer
   // we choose the sliceX here, since this should work also on
