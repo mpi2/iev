@@ -8,7 +8,7 @@
 
 .slice{
 	background-color: #000; 
-	height: 95%; 
+	height: 45%; 
 	float: left;
 	width: 33%;
 }
@@ -44,5 +44,5 @@
 }
 
 .specimen_view{
-	height: 100%;
+	height: 50%;
 }
