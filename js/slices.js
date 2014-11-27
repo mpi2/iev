@@ -14,8 +14,10 @@ function Slices(id, container) {
 	this.Zcontainer = 'Z_' + this.id ;
 	
 	
-	this.onScroll = function(orientation){
-		console.log(orientation);
+	this.onScroll = function(){
+		$('#' + this.x_slider_id).slider('value', this.volume.indexX);
+		$('#' + this.y_slider_id).slider('value', this.volume.indexY);
+		$('#' + this.z_slider_id).slider('value', this.volume.indexZ);
 	};
 	
 	
@@ -59,26 +61,34 @@ function Slices(id, container) {
 		this.sliceX = new X.renderer2D();
 		this.sliceX.container = this.x_xtk_container.get(0);
 		this.sliceX.orientation = 'X';
-		// this.sliceX.onScroll = function(){
-			// console.log('just scrolled');
-		// };
+		this.sliceX.onScroll = function(){
+			this.onScroll();
+		}.bind(this);
+		
 		this.sliceX.init();
 
 		this.sliceY = new X.renderer2D();
 		this.sliceY.container = this.y_xtk_container.get(0);
 		this.sliceY.orientation = 'Y';
+		this.sliceY.onScroll = function(){
+			this.onScroll();
+		}.bind(this);
 		this.sliceY.init();
 
-		sliceZ = new X.renderer2D();
-		sliceZ.container = this.z_xtk_container.get(0);
-		sliceZ.orientation = 'Z';
-		sliceZ.init();
+		this.sliceZ = new X.renderer2D();
+		this.sliceZ.container = this.z_xtk_container.get(0);
+		this.sliceZ.orientation = 'Z';
+		this.sliceZ.onScroll = function(){
+			this.onScroll();
+		}.bind(this);
+		this.sliceZ.init();
 
 		//
 		// THE VOLUME DATA
 		//
 		// create a X.volume
 		this.volume = new X.volume();
+		
 
 		//volume.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/260814.nii';
 		this.volume.file = 'chrome-extension://' + chromeAppID + '/260814.nii';
@@ -105,11 +115,12 @@ function Slices(id, container) {
 		//console.log(this.sliceY.add);
 		this.sliceY.add(this.volume);
 		this.sliceY.render();
-		sliceZ.add(this.volume);
-		sliceZ.render();
+		this.sliceZ.add(this.volume);
+		this.sliceZ.render();
 
 		var dims = this.volume.dimensions;
 
+		// It appears that dimensoins are in yxz order. At least with nii loading
 		this.volume.indexX = Math.floor((dims[0] - 1) / 2);
 		this.volume.indexY = Math.floor((dims[1] - 1) / 2);
 		this.volume.indexZ = Math.floor((dims[2] - 1) / 2);
@@ -122,6 +133,8 @@ function Slices(id, container) {
 		var z_slider_id = this.x_slider_id;
 		var volume = this.volume;
 
+
+		// make the sliders
 		$("#" + this.x_slider_id).slider({
 			"disabled" : false,
 			range : "min",
@@ -141,7 +154,7 @@ function Slices(id, container) {
 			"disabled" : false,
 			range : "min",
 			min : 0,
-			max : dims[0] - 1,
+			max : dims[1] - 1,
 			value : this.volume.indexY,
 			slide : function(event, ui) {
 				if (!this.volume) {
@@ -156,7 +169,7 @@ function Slices(id, container) {
 			"disabled" : false,
 			range : "min",
 			min : 0,
-			max : dims[0] - 1,
+			max : dims[2] - 1,
 			value : this.volume.indexZ,
 			slide : function(event, ui) {
 				if (!this.volume) {
@@ -167,19 +180,4 @@ function Slices(id, container) {
 		});
 
 	}.bind(this); 
-
-	
-
-	// Style the checkboxes for viewing/hiding stuff with jQuery-UI
-
-	// $(function() {
-		// $("#labelmap").button();
-	// });
-// 
-	// $(function() {
-		// $("#split_views_toggle").button();
-	// });
-
-
-
 }
