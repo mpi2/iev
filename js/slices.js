@@ -1,11 +1,14 @@
 goog.require('X.renderer2D');
 
-//chromeAppID = 'hhehodfmcgpecmneccjekjlkmejgakml'; //Home
-chromeAppID = 'fecbmnhapaahlfhcnnnllddbajkmajib'; //Work
+chromeAppID = 'hhehodfmcgpecmneccjekjlkmejgakml'; //Home
+//chromeAppID = 'fecbmnhapaahlfhcnnnllddbajkmajib'; //Work
 
 
-function Slices(id, container) {
+function Slices(id, container, finished_cb, sliceChange) {
+	//:param finished_callback function what to call when fisinshed rendering
 
+	this.sliceChange = sliceChange;
+	this.finished_callback = finished_cb;
 	this.id = id;
 	this.view_container = container;
 	
@@ -14,10 +17,23 @@ function Slices(id, container) {
 	this.Zcontainer = 'Z_' + this.id ;
 	
 	
-	this.onScroll = function(){
+	this.setSlices = function(idxX, idxY, idxZ){
+		// called from main
+		console.log('setting slice');
+		this.volume.indexX = idxX;
+		this.volume.indexY = idxY;
+		this.volume.indexZ = idxZ;
+	};
+	
+	this.setVisibleOrientations = function(){
+		
+	};
+	
+	this.onWheelScroll = function(){
 		$('#' + this.x_slider_id).slider('value', this.volume.indexX);
 		$('#' + this.y_slider_id).slider('value', this.volume.indexY);
 		$('#' + this.z_slider_id).slider('value', this.volume.indexZ);
+		this.sliceChange();
 	};
 	
 	
@@ -61,8 +77,15 @@ function Slices(id, container) {
 		this.sliceX = new X.renderer2D();
 		this.sliceX.container = this.x_xtk_container.get(0);
 		this.sliceX.orientation = 'X';
-		this.sliceX.onScroll = function(){
+		this.sliceX.onWheelScroll = function(){
 			this.onScroll();
+		// Lets try and monkey-patch the renderer's camera zoom event'
+		var old_onZoom = this.sliceX._camera.onZoom_;
+		this.newZoom = function(){
+			//call the original function
+			old_onZoom();
+			console.log('zooming');
+		};
 		}.bind(this);
 		
 		this.sliceX.init();
@@ -70,7 +93,7 @@ function Slices(id, container) {
 		this.sliceY = new X.renderer2D();
 		this.sliceY.container = this.y_xtk_container.get(0);
 		this.sliceY.orientation = 'Y';
-		this.sliceY.onScroll = function(){
+		this.sliceY.onWheelScroll = function(){
 			this.onScroll();
 		}.bind(this);
 		this.sliceY.init();
@@ -78,7 +101,7 @@ function Slices(id, container) {
 		this.sliceZ = new X.renderer2D();
 		this.sliceZ.container = this.z_xtk_container.get(0);
 		this.sliceZ.orientation = 'Z';
-		this.sliceZ.onScroll = function(){
+		this.sliceZ.onWheelScroll = function(){
 			this.onScroll();
 		}.bind(this);
 		this.sliceZ.init();
@@ -99,11 +122,22 @@ function Slices(id, container) {
 		//volume.labelmap.colortable.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/genericanatomy.txt';
 		this.volume.labelmap.colortable.file = 'chrome-extension://' + chromeAppID + '/genericanatomy.txt';
 
-		this.sliceX.add(this. volume);
+		this.sliceX.add(this.volume);
+		
+		// We need to catch events that might change the slice, then pass taht to main
+		// Navigation, slider shift, wheel scrolling and zoom
+		// Naviagtion has a problem that it fires even when not moving the cross-hairs
+		
+		this.sliceX.onResize_ = function(){
+			console.log('computing end');
+		};
+		
 		
 		this.sliceX.render();
 				
 		this.sliceX.onShowtime = this.xtk_showtime;
+		
+		console.log(this.sliceX);
 
 	};
 	
@@ -112,7 +146,6 @@ function Slices(id, container) {
 		//
 		// the onShowtime method gets executed after all files were fully loaded and
 		// just before the first rendering attempt
-		//console.log(this.sliceY.add);
 		this.sliceY.add(this.volume);
 		this.sliceY.render();
 		this.sliceZ.add(this.volume);
@@ -125,13 +158,11 @@ function Slices(id, container) {
 		this.volume.indexY = Math.floor((dims[1] - 1) / 2);
 		this.volume.indexZ = Math.floor((dims[2] - 1) / 2);
 		// Setup the sliders within 'onShowtime' as we need the volume dimensions for the ranges
-		// //////// X slider ////////
 
-		// It doesn't seem possible to pass to this.x.. into the jQuery selector so make local references
 		var x_slider_id = this.x_slider_id;
 		var y_slider_id = this.x_slider_id;
 		var z_slider_id = this.x_slider_id;
-		var volume = this.volume;
+		
 
 
 		// make the sliders
@@ -146,6 +177,7 @@ function Slices(id, container) {
 					return;
 				}
 				this.volume.indexX = ui.value;
+				this.sliceChange(this);
 			}.bind(this)
 		});
 		
@@ -161,6 +193,7 @@ function Slices(id, container) {
 					return;
 				}
 				this.volume.indexY = ui.value;
+				this.sliceChange(this);
 			}.bind(this)
 		});
 
@@ -176,8 +209,14 @@ function Slices(id, container) {
 					return;
 				}
 				this.volume.indexZ = ui.value;
+				this.sliceChange(this);
 			}.bind(this)
 		});
+		this.finished_callback();
 
 	}.bind(this); 
+	
+	this.destroy = function(){
+		// Delete the html 
+	};
 }

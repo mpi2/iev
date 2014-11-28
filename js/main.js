@@ -1,68 +1,78 @@
 //The initail script that creates the views
 
+
+//TODO: sync zooming
+//  
+
+
+
 $(document).ready(function() {
 	var main = new Main();
 });
 
-
 function Main() {
+	
+	this.viewsLinked = false;
+	this.load_queue = 2; // How manu views to load
+	this.views = [];
+	
+	this.sliceChange = function(scrolled){
+		if (!this.viewsLinked) return;
+		for(var i = 0; i < this.views.length; i++){
+			if(scrolled.id == this.views[i].id) {
+				continue;
+			}else{
+				this.views[i].setSlices(scrolled.volume.indexX, scrolled.volume.indexY, scrolled.volume.indexZ);
+			}
+			}
+	}.bind(this);
+	
 
-	var s1 = new Slices('s1', 'viewer');
-	s1.createHTML();
-	s1.setup_renderers();
-	s1.xtk_showtime();
+	this.loadViewers = function(){
+		
+		if (this.load_queue < 1){
+			return;
+		}
+		this.load_queue--;
+		var view = new Slices('s' + this.load_queue, 'viewer', this.loadViewers, this.sliceChange);
+		view.createHTML();
+		view.setup_renderers();
+		this.views.push(view);
+		
+	}.bind(this);
 	
-	var s2 = new Slices('s2', 'viewer');
-	s2.createHTML();
-	s2.setup_renderers();
-	s2.xtk_showtime();
+	
+	this.loadViewers();
+	
+	
 
-	var s3 = new Slices('s3', 'viewer');
-	s3.createHTML();
-	s3.setup_renderers();
-	s3.xtk_showtime();
-	
-	var s4 = new Slices('s4', 'viewer');
-	s4.createHTML();
-	s4.setup_renderers();
-	s4.xtk_showtime();
-	
-	var s5 = new Slices('s5', 'viewer');
-	s5.createHTML();
-	s5.setup_renderers();
-	s5.xtk_showtime();
-	
-	var s6 = new Slices('s6', 'viewer');
-	s6.createHTML();
-	s6.setup_renderers();
-	s6.xtk_showtime();
-
-	var s7 = new Slices('s7', 'viewer');
-	s7.createHTML();
-	s7.setup_renderers();
-	s7.xtk_showtime();
-	
-	var s8 = new Slices('s8', 'viewer');
-	s8.createHTML();
-	s8.setup_renderers();
-	s8.xtk_showtime();
-	
-	this.viewers = [s1, s2, s3, s4, s5, s5, s6, s7, s8];
 
 	//This needs work. There is no longer a global reference to 'volume';
-	
-	this.show_label_map = function(){
+
+	this.show_label_map = function() {
 		// Do not implement until merging with James' code
 	};
-	
-	
-	this.setVisibleOrientations = function(to_view){
+
+	this.setVisibleOrientations = function(to_view) {
 		this.viewers.forEach(function(viewer) {
 			console.log(to_view);
-    	viewer.set_visible_orientations(to_view);
-  });
-    
+			viewer.set_visible_orientations(to_view);
+		});
+
 	};
+	
+	
+	this.setUpLinkViews = function(){
+		//Link the views so that sliding/scrolling/zooming affect all
+		// other views. Maybe on slider release, to speed things up 
+			
+		$('#link_views_toggle').change(function(e) {
+			this.viewsLinked = e.currentTarget.checked;
+		}.bind(this));
+	};
+	
+
+
 	
 
 	this.buttons = function() {
@@ -87,28 +97,33 @@ function Main() {
 					total_visible++;
 				}
 			}
+
 			var slice_view_width = String(100 / total_visible);
 
 			// Set the visiblitiy and widths
+			var ortho_views_to_view = [];
 			for (var i = 0; i < slice_list.length; i++) {
-				var ortho_views_to_view = [];
+
 				if ($('#' + slice_list[i]).is(':checked')) {
 					ortho_views_to_view.push(slice_list[i]);
 					//$('#' + slice_list[i].charAt(0)).show();
 					//$('#' + slice_list[i].charAt(0)).width(slice_view_width + '%');
-				//} else {
+					//} else {
 					//$('#' + slice_list[i].charAt(0)).hide();
 				}
 				// This is needed for XTK to resize the canvas
-				window.dispatchEvent(new Event('resize'));
-				this.setVisibleOrientations(ortho_views_to_view);
-			}
 
-		});
+				//window.dispatchEvent(new Event('resize'));
+
+			}
+			console.log(ortho_views_to_view);
+			//this.setVisibleOrientations(ortho_views_to_view);  //TODO: not working
+
+		}).bind(this);
 	};
 	this.buttons();
-
-}
+	this.setUpLinkViews();
+}// Main
 
 // Style the control buttons
 
@@ -118,8 +133,8 @@ $(function() {
 
 $(function() {
 	$("#link_views_toggle").button();
-}); 
-
-$('body').bind('beforeunload',function(){
-   console.log('bye');
 });
+
+$('body').bind('beforeunload', function() {
+	console.log('bye');
+}); 
