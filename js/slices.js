@@ -1,7 +1,8 @@
 goog.require('X.renderer2D');
 
-chromeAppID = 'hhehodfmcgpecmneccjekjlkmejgakml'; //Home
+//chromeAppID = 'hhehodfmcgpecmneccjekjlkmejgakml'; //Home
 //chromeAppID = 'fecbmnhapaahlfhcnnnllddbajkmajib'; //Work
+chromeAppID = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes';
 
 
 function Slices(id, container, finished_cb, sliceChange) {

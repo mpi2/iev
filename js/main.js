@@ -1,9 +1,12 @@
+goog.require('X.labelmap');
+
+
 //The initail script that creates the views
 
 
 //TODO: sync zooming
 //  
-
+chromeAppID = 'fecbmnhapaahlfhcnnnllddbajkmajib'; //Work
 
 
 $(document).ready(function() {
@@ -13,8 +16,13 @@ $(document).ready(function() {
 function Main() {
 	
 	this.viewsLinked = false;
-	this.load_queue = 2; // How manu views to load
+	this.load_queue = 3; // How manu views to load
 	this.views = [];
+	
+	// Load in the labelmap
+	// this.labelmap = new X.labelmap();
+	// this.labelmap.file = 'chrome-extension://' + chromeAppID + '/seg.nii';
+	// this.labelmap.colortable.file = 'chrome-extension://' + chromeAppID + '/genericanatomy.txt';
 	
 	this.sliceChange = function(scrolled){
 		if (!this.viewsLinked) return;
@@ -34,7 +42,7 @@ function Main() {
 			return;
 		}
 		this.load_queue--;
-		var view = new Slices('s' + this.load_queue, 'viewer', this.loadViewers, this.sliceChange);
+		var view = new Slices('s' + this.load_queue, 'viewer', this.loadViewers, this.sliceChange, this.labelmap);
 		view.createHTML();
 		view.setup_renderers();
 		this.views.push(view);
@@ -73,18 +81,89 @@ function Main() {
 	
 
 
+	this.setupZoomSlider = function() {
+		$("#zoom_slider").slider({
+			"disabled" : false,
+			range : "min",
+			min : 100,
+			max : 1000,
+			value : 400,
+			slide : function(event, ui) {
+				
+			}.bind(this)
+		});
+	};
+	
+	
+	this.colorLists = function(){
+
+			var noElements = volume.labelmap._colorTable.count_;
+			var colormap = volume.labelmap._colorTable.map_;
+			var found = false;
+			var tstatList = []; var organList = [];
+
+			// Loop through color table
+			for (var t = 0; t < noElements; t++) {
+				var labelID = colormap[t][0];
+				var color = colormap[t].slice(1,5);
+				color[0] *= 255; color[1] *= 255; color[2] *= 255; color[3] *= 255;
+			
+				if (labelID.lastIndexOf("tstat", 0) === 0) {
+					tstatList.push(color);
+				} else {
+					organList.push(color);
+				}
+			}
+			
+			fullList = organList.concat(tstatList);
+			return { all: fullList, tstats: tstatList, organs: organList };
+
+		};  
 	
 
-	this.buttons = function() {
-		// Setup the buttons on the top of the page
 
-		$('#labelmap').change(function() {
-			if ($(this).is(':checked')) {
-				volume.labelmap._opacity = 0.0;
+	this.buttons = function() {
+		// 
+// Check boxes for viewing/hiding stuff		
+//
+////new code
+	//Labelmap
+	$('#labelmap').change(function() {
+		volume.labelmap._opacity = 0.5;
+		if ($(this).is(':checked')) {
+			if ($('#tstatistic').is(':checked')) {
+				volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
 			} else {
-				volume.labelmap._opacity = 1.0;
+				volume.labelmap._showOnlyColor = this.colorLists.tstats;
 			}
-		}).bind(this);
+		} else {	
+			if ($('#tstatistic').is(':checked')) {
+				volume.labelmap._showOnlyColor =  this.colorLists.organs;
+			} else {
+				volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
+			}
+		}
+	});
+
+	//T-statistic
+	$('#tstatistic').change(function() {
+		volume.labelmap._opacity = 0.5;
+		if ($(this).is(':checked')) {
+			if ($('#labelmap').is(':checked')) {
+				volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
+			} else {
+				volume.labelmap._showOnlyColor = colorLists.organs;
+			}
+		} else {	
+			if ($('#labelmap').is(':checked')) {
+				volume.labelmap._showOnlyColor =  colorLists.tstats;
+			} else {
+				volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
+			}
+		}
+	}); 
+
+///////////////////// New code 
 
 		// Hide/show slice views from the checkboxes
 		slice_list = ['X_check', 'Y_check', 'Z_check'];
@@ -123,6 +202,7 @@ function Main() {
 	};
 	this.buttons();
 	this.setUpLinkViews();
+	this.setupZoomSlider();
 }// Main
 
 // Style the control buttons
@@ -138,3 +218,5 @@ $(function() {
 $('body').bind('beforeunload', function() {
 	console.log('bye');
 }); 
+
+
