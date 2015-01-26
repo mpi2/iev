@@ -1,8 +1,27 @@
 <html>
 	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+		
+		<link href="css/main.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="js/slices.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+		<!-- <script type="text/javascript" src="x/js/xtk_edge.js"></script> -->
 		<body>
-			<div><a href='slices.html'>View volume slices</a></div>
-			<div><a href='render.html'>View rendered volume</a></div>
+			<div>
+				<input type="checkbox" class='main_button' id="EM1">
+				<label for="EM1">Exiting mutant 1</label>
+				<input type="checkbox" class='main_button' id="EM2">
+				<label for="EM2">Exiting mutant 2</label>
 		</body>
 	</head>
 </html>
+
+<script>
+$(function() {
+	$(".main_button").button();
+});
+
+	
+</script>
