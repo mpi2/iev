@@ -1,44 +1,41 @@
 goog.require('X.labelmap');
 
-
 //The initail script that creates the views
 
-
 //TODO: sync zooming
-//  
-chromeAppID = 'fecbmnhapaahlfhcnnnllddbajkmajib'; //Work
-
+//
+chromeAppID = 'oeblccjojhbilkabifkljjgjoncmeaoj';
+//Work
+//chromeAppID = 'hhehodfmcgpecmneccjekjlkmejgakml'; //Home
+//chromeAppID = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes';
 
 $(document).ready(function() {
 	var main = new Main();
 });
 
 function Main() {
-	
+
 	this.viewsLinked = false;
-	this.load_queue = 3; // How manu views to load
+	this.load_queue = 2;
 	this.views = [];
-	
-	// Load in the labelmap
-	// this.labelmap = new X.labelmap();
-	// this.labelmap.file = 'chrome-extension://' + chromeAppID + '/seg.nii';
-	// this.labelmap.colortable.file = 'chrome-extension://' + chromeAppID + '/genericanatomy.txt';
-	
-	this.sliceChange = function(scrolled){
-		if (!this.viewsLinked) return;
-		for(var i = 0; i < this.views.length; i++){
-			if(scrolled.id == this.views[i].id) {
+
+	this.sliceChange = function(scrolled) {
+		if (!this.viewsLinked)
+			return;
+		// on scrolling, scroll the other views as well
+		for (var i = 0; i < this.views.length; i++) {
+			if (scrolled.id == this.views[i].id) {
 				continue;
-			}else{
+			} else {
 				this.views[i].setSlices(scrolled.volume.indexX, scrolled.volume.indexY, scrolled.volume.indexZ);
 			}
-			}
+		}
 	}.bind(this);
 	
 
-	this.loadViewers = function(){
-		
-		if (this.load_queue < 1){
+	this.loadViewers = function() {
+
+		if (this.load_queue < 1) {
 			return;
 		}
 		this.load_queue--;
@@ -46,20 +43,12 @@ function Main() {
 		view.createHTML();
 		view.setup_renderers();
 		this.views.push(view);
-		
+
 	}.bind(this);
 	
-	
+
 	this.loadViewers();
-	
-	
 
-
-	//This needs work. There is no longer a global reference to 'volume';
-
-	this.show_label_map = function() {
-		// Do not implement until merging with James' code
-	};
 
 	this.setVisibleOrientations = function(to_view) {
 		this.viewers.forEach(function(viewer) {
@@ -68,18 +57,15 @@ function Main() {
 		});
 
 	};
-	
-	
-	this.setUpLinkViews = function(){
+
+	this.setUpLinkViews = function() {
 		//Link the views so that sliding/scrolling/zooming affect all
-		// other views. Maybe on slider release, to speed things up 
-			
-		$('#link_views_toggle').change(function(e) {
+		
+
+		$('#link_views_toggle').change( function(e) {
 			this.viewsLinked = e.currentTarget.checked;
 		}.bind(this));
 	};
-	
-
 
 	this.setupZoomSlider = function() {
 		$("#zoom_slider").slider({
@@ -89,81 +75,54 @@ function Main() {
 			max : 1000,
 			value : 400,
 			slide : function(event, ui) {
-				
+
 			}.bind(this)
 		});
 	};
-	
-	
-	this.colorLists = function(){
-
-			var noElements = volume.labelmap._colorTable.count_;
-			var colormap = volume.labelmap._colorTable.map_;
-			var found = false;
-			var tstatList = []; var organList = [];
-
-			// Loop through color table
-			for (var t = 0; t < noElements; t++) {
-				var labelID = colormap[t][0];
-				var color = colormap[t].slice(1,5);
-				color[0] *= 255; color[1] *= 255; color[2] *= 255; color[3] *= 255;
-			
-				if (labelID.lastIndexOf("tstat", 0) === 0) {
-					tstatList.push(color);
-				} else {
-					organList.push(color);
-				}
-			}
-			
-			fullList = organList.concat(tstatList);
-			return { all: fullList, tstats: tstatList, organs: organList };
-
-		};  
-	
 
 
 	this.buttons = function() {
-		// 
-// Check boxes for viewing/hiding stuff		
-//
-////new code
-	//Labelmap
-	$('#labelmap').change(function() {
-		volume.labelmap._opacity = 0.5;
-		if ($(this).is(':checked')) {
-			if ($('#tstatistic').is(':checked')) {
-				volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
+		//
+		// Check boxes for viewing/hiding stuff
+		//
+		////new code
+		//Labelmap
+		$('#labelmap').change(function() {
+			volume.labelmap._opacity = 0.5;
+			if ($(this).is(':checked')) {
+				if ($('#tstatistic').is(':checked')) {
+					volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
+				} else {
+					volume.labelmap._showOnlyColor = this.colorLists.tstats;
+				}
 			} else {
-				volume.labelmap._showOnlyColor = this.colorLists.tstats;
+				if ($('#tstatistic').is(':checked')) {
+					volume.labelmap._showOnlyColor = this.colorLists.organs;
+				} else {
+					volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
+				}
 			}
-		} else {	
-			if ($('#tstatistic').is(':checked')) {
-				volume.labelmap._showOnlyColor =  this.colorLists.organs;
-			} else {
-				volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
-			}
-		}
-	});
+		});
 
-	//T-statistic
-	$('#tstatistic').change(function() {
-		volume.labelmap._opacity = 0.5;
-		if ($(this).is(':checked')) {
-			if ($('#labelmap').is(':checked')) {
-				volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
+		//T-statistic
+		$('#tstatistic').change(function() {
+			volume.labelmap._opacity = 0.5;
+			if ($(this).is(':checked')) {
+				if ($('#labelmap').is(':checked')) {
+					volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
+				} else {
+					volume.labelmap._showOnlyColor = colorLists.organs;
+				}
 			} else {
-				volume.labelmap._showOnlyColor = colorLists.organs;
+				if ($('#labelmap').is(':checked')) {
+					volume.labelmap._showOnlyColor = colorLists.tstats;
+				} else {
+					volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
+				}
 			}
-		} else {	
-			if ($('#labelmap').is(':checked')) {
-				volume.labelmap._showOnlyColor =  colorLists.tstats;
-			} else {
-				volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
-			}
-		}
-	}); 
+		});
 
-///////////////////// New code 
+		///////////////////// New code
 
 		// Hide/show slice views from the checkboxes
 		slice_list = ['X_check', 'Y_check', 'Z_check'];
@@ -217,6 +176,5 @@ $(function() {
 
 $('body').bind('beforeunload', function() {
 	console.log('bye');
-}); 
-
+});
 

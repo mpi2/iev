@@ -1,8 +1,6 @@
 goog.require('X.renderer2D');
 
-//chromeAppID = 'hhehodfmcgpecmneccjekjlkmejgakml'; //Home
-//chromeAppID = 'fecbmnhapaahlfhcnnnllddbajkmajib'; //Work
-chromeAppID = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes';
+
 
 
 function Slices(id, container, finished_cb, sliceChange) {
@@ -115,13 +113,7 @@ function Slices(id, container, finished_cb, sliceChange) {
 		
 
 		//volume.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/260814.nii';
-		this.volume.file = 'chrome-extension://' + chromeAppID + '/260814.nii';
-
-		//volume.labelmap.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/volumes/seg.nii';
-		this.volume.labelmap.file = 'chrome-extension://' + chromeAppID + '/seg.nii';
-
-		//volume.labelmap.colortable.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/genericanatomy.txt';
-		this.volume.labelmap.colortable.file = 'chrome-extension://' + chromeAppID + '/genericanatomy.txt';
+		this.volume.file = 'chrome-extension://' + chromeAppID + '/260814.nrrd';
 
 		this.sliceX.add(this.volume);
 		
