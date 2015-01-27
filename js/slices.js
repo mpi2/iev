@@ -24,9 +24,6 @@ function Slices(id, container, finished_cb, sliceChange) {
 		this.volume.indexZ = idxZ;
 	};
 	
-	this.setVisibleOrientations = function(){
-		
-	};
 	
 	this.onWheelScroll = function(){
 		$('#' + this.x_slider_id).slider('value', this.volume.indexX);
@@ -40,9 +37,9 @@ function Slices(id, container, finished_cb, sliceChange) {
 		// Create the html for this specimen orthogonal views. 
 		var viewsContainer = $("#" + this.view_container);
 		
-		var x_outer = $("<div class='X slice'>");
-		var y_outer = $("<div class='Y slice'>");
-		var z_outer = $("<div class='Z slice'>");
+		this.x_outer = $("<div class='X slice'>");
+		this.y_outer = $("<div class='Y slice'>");
+		this.z_outer = $("<div class='Z slice'>");
 		
 		this.x_slider_id = 'slider_x_' + this.id;
 		this.y_slider_id = 'slider_y_' + this.id;
@@ -58,14 +55,14 @@ function Slices(id, container, finished_cb, sliceChange) {
 		
 		var specimen_view  = $("<div id='" + this.id + "' class='specimen_view'></div>");
 		
-		x_outer.append([this.x_xtk_container, this.x_slider]);
-		specimen_view.append(x_outer);
+		this.x_outer.append([this.x_xtk_container, this.x_slider]);
+		specimen_view.append(this.x_outer);
 		
-		y_outer.append([this.y_xtk_container, this.y_slider]);
-		specimen_view.append(y_outer);
+		this.y_outer.append([this.y_xtk_container, this.y_slider]);
+		specimen_view.append(this.y_outer);
 		
-		z_outer.append([this.z_xtk_container, this.z_slider]);
-		specimen_view.append(z_outer);
+		this.z_outer.append([this.z_xtk_container, this.z_slider]);
+		specimen_view.append(this.z_outer);
 	
 		viewsContainer.append(specimen_view);	
 	};
@@ -130,7 +127,6 @@ function Slices(id, container, finished_cb, sliceChange) {
 				
 		this.sliceX.onShowtime = this.xtk_showtime;
 		
-		console.log(this.sliceX);
 
 	};
 	
@@ -208,6 +204,37 @@ function Slices(id, container, finished_cb, sliceChange) {
 		this.finished_callback();
 
 	}.bind(this); 
+	
+	
+	
+	this.setOrthogonalViews = function(viewList){
+		//ViewList: Hash
+		//var slice_view_width = String(100 / total_visible);
+		//Calcualte new with of each orthogonal view
+		
+		
+		if (viewList['X']){
+			this.x_xtk_container.show();
+		}else{
+			this.x_xtk_container.hide();
+		} 
+		
+		if (viewList['Y']){
+			this.y_xtk_container.show();
+		}else{
+			this.y_xtk_container.hide();
+		} 
+		
+		if (viewList['Z']){
+			this.z_xtk_container.show();
+		}else{
+			this.z_xtk_container.hide();
+		} 
+		
+		
+	}.bind(this);
+	
+	
 	
 	this.destroy = function(){
 		// Delete the html 

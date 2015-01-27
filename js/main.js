@@ -49,15 +49,6 @@ function Main() {
 
 	this.loadViewers();
 
-
-	this.setVisibleOrientations = function(to_view) {
-		this.viewers.forEach(function(viewer) {
-			console.log(to_view);
-			viewer.set_visible_orientations(to_view);
-		});
-
-	};
-
 	this.setUpLinkViews = function() {
 		//Link the views so that sliding/scrolling/zooming affect all
 		
@@ -68,7 +59,7 @@ function Main() {
 	};
 
 	this.setupZoomSlider = function() {
-		$("#zoom_slider").slider({
+		$("#level_slider").slider({
 			"disabled" : false,
 			range : "min",
 			min : 100,
@@ -80,86 +71,35 @@ function Main() {
 		});
 	};
 
-
-	this.buttons = function() {
-		//
-		// Check boxes for viewing/hiding stuff
-		//
-		////new code
-		//Labelmap
-		$('#labelmap').change(function() {
-			volume.labelmap._opacity = 0.5;
-			if ($(this).is(':checked')) {
-				if ($('#tstatistic').is(':checked')) {
-					volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
-				} else {
-					volume.labelmap._showOnlyColor = this.colorLists.tstats;
-				}
-			} else {
-				if ($('#tstatistic').is(':checked')) {
-					volume.labelmap._showOnlyColor = this.colorLists.organs;
-				} else {
-					volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
-				}
-			}
-		});
-
-		//T-statistic
-		$('#tstatistic').change(function() {
-			volume.labelmap._opacity = 0.5;
-			if ($(this).is(':checked')) {
-				if ($('#labelmap').is(':checked')) {
-					volume.labelmap._showOnlyColor = volume.labelmap._opacity = 0.0;
-				} else {
-					volume.labelmap._showOnlyColor = colorLists.organs;
-				}
-			} else {
-				if ($('#labelmap').is(':checked')) {
-					volume.labelmap._showOnlyColor = colorLists.tstats;
-				} else {
-					volume.labelmap._showOnlyColor = [-255, -255, -255, -255];
-				}
-			}
-		});
-
-		///////////////////// New code
-
-		// Hide/show slice views from the checkboxes
-		slice_list = ['X_check', 'Y_check', 'Z_check'];
-
-		$('.toggle_slice').change(function() {
-			var total_visible = 0;
-			//Count the number of checked boxes
-			for (var i = 0; i < slice_list.length; i++) {
-				if ($('#' + slice_list[i]).is(':checked')) {
-					total_visible++;
-				}
-			}
-
-			var slice_view_width = String(100 / total_visible);
-
-			// Set the visiblitiy and widths
-			var ortho_views_to_view = [];
-			for (var i = 0; i < slice_list.length; i++) {
-
-				if ($('#' + slice_list[i]).is(':checked')) {
-					ortho_views_to_view.push(slice_list[i]);
-					//$('#' + slice_list[i].charAt(0)).show();
-					//$('#' + slice_list[i].charAt(0)).width(slice_view_width + '%');
-					//} else {
-					//$('#' + slice_list[i].charAt(0)).hide();
-				}
-				// This is needed for XTK to resize the canvas
-
-				//window.dispatchEvent(new Event('resize'));
-
-			}
-			console.log(ortho_views_to_view);
-			//this.setVisibleOrientations(ortho_views_to_view);  //TODO: not working
-
-		}).bind(this);
+	this.ortho = function(){
+		console.log(ths);	
 	};
-	this.buttons();
+	
+	
+	
+	// Hide/show slice views from the checkboxes
+	
+	$('.toggle_slice').change(function() {
+		var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
+		var total_visible = 0;
+		var toView = {}
+		
+		//Count the number of checked boxes so we can work out a new width
+		for (var i = 0; i < slice_list.length; i++) {
+			if ($('#' + slice_list[i]).is(':checked')) {
+				toView[slice_list[i].charAt(0)] = true;
+			}
+			else{
+				toView[slice_list[i].charAt(0)] = false;
+			}
+		}
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].setOrthogonalViews(toView);
+		}
+
+	}.bind(this));
+	
+	
 	this.setUpLinkViews();
 	this.setupZoomSlider();
 }// Main
