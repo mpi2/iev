@@ -6,16 +6,13 @@
   /*overflow: hidden !important;*/  
 }
 
-.slice{
+.sliceView{
 	background-color: #000; 
 	height: 500px;
 	float: left;
-	width: 33%;
+	
 }
 
-.sliceView{
-	height: 95%;
-}
 
 
 #sliceX{
@@ -27,7 +24,7 @@
 	border-top: 2px solid red;
 }
 
-#sliceX{
+#sliceZ{
 	border-top: 2px solid green
 }
 

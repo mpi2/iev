@@ -11,9 +11,16 @@ function Slices(id, container, finished_cb, sliceChange) {
 	this.id = id;
 	this.view_container = container;
 	
-	this.Xcontainer = 'X_' + this.id ;
-	this.Ycontainer = 'Y_' + this.id ;
-	this.Zcontainer = 'Z_' + this.id ;
+	var Xcontainer = 'X_' + this.id ;
+	var Ycontainer = 'Y_' + this.id ;
+	var Zcontainer = 'Z_' + this.id ;
+	
+	var x_xtk;
+	var y_xtk;
+	var z_xtk;
+	var x_slider;
+	var y_slider;
+	var z_slider;
 	
 	
 	this.setSlices = function(idxX, idxY, idxZ){
@@ -31,38 +38,40 @@ function Slices(id, container, finished_cb, sliceChange) {
 		$('#' + this.z_slider_id).slider('value', this.volume.indexZ);
 		this.sliceChange();
 	};
+
+	
+	this.setDisplayOrientation = function(){
+		// h or v : horizontal/vertiacl
+		// This mght not be needed. Maybe just some css tweeks
+		return	
+	};
 	
 	
 	this.createHTML = function(){
 		// Create the html for this specimen orthogonal views. 
-		var viewsContainer = $("#" + this.view_container);
 		
-		this.x_outer = $("<div class='X slice'>");
-		this.y_outer = $("<div class='Y slice'>");
-		this.z_outer = $("<div class='Z slice'>");
+		var viewsContainer = $("#" + this.view_container);
 		
 		this.x_slider_id = 'slider_x_' + this.id;
 		this.y_slider_id = 'slider_y_' + this.id;
 		this.z_slider_id = 'slider_z_' + this.id;
 		
-		this.x_slider = $("<div id='" + this.x_slider_id + "' class ='sliderX slider'></div>");
-		this.y_slider = $("<div id='" + this.y_slider_id + "' class ='sliderY slider'></div>");
-		this.z_slider = $("<div id='" + this.z_slider_id + "' class ='sliderZ slider'></div>");
+		x_slider = $("<div id='" + this.x_slider_id + "' class ='sliderX slider'></div>");
+		y_slider = $("<div id='" + this.y_slider_id + "' class ='sliderY slider'></div>");
+		z_slider = $("<div id='" + this.z_slider_id + "' class ='sliderZ slider'></div>");
 		
-		this.x_xtk_container = $("<div id='X" + this.Xcontainer +  "' class='sliceX sliceView'></div>");
-		this.y_xtk_container = $("<div id='Y" + this.Ycontainer +  "' class='sliceX sliceView'></div>");
-		this.z_xtk_container = $("<div id='Z" + this.Zcontainer +  "' class='sliceX sliceView'></div>");
+		x_xtk = $("<div id='X" + Xcontainer +  "' class='sliceX sliceView'></div>");
+		x_xtk.append(x_slider);
+		y_xtk = $("<div id='Y" + Ycontainer +  "' class='sliceY sliceView'></div>");
+		y_xtk.append(y_slider);
+		z_xtk = $("<div id='Z" + Zcontainer +  "' class='sliceZ sliceView'></div>");
+		z_xtk.append(z_slider);
 		
 		var specimen_view  = $("<div id='" + this.id + "' class='specimen_view'></div>");
 		
-		this.x_outer.append([this.x_xtk_container, this.x_slider]);
-		specimen_view.append(this.x_outer);
-		
-		this.y_outer.append([this.y_xtk_container, this.y_slider]);
-		specimen_view.append(this.y_outer);
-		
-		this.z_outer.append([this.z_xtk_container, this.z_slider]);
-		specimen_view.append(this.z_outer);
+		specimen_view.append([x_xtk, this.x_slider]);
+		specimen_view.append([y_xtk, this.y_slider]);
+		specimen_view.append([z_xtk, this.z_slider]);
 	
 		viewsContainer.append(specimen_view);	
 	};
@@ -71,7 +80,7 @@ function Slices(id, container, finished_cb, sliceChange) {
 	this.setup_renderers = function(container) {
 
 		this.sliceX = new X.renderer2D();
-		this.sliceX.container = this.x_xtk_container.get(0);
+		this.sliceX.container = x_xtk.get(0);
 		this.sliceX.orientation = 'X';
 		this.sliceX.onWheelScroll = function(){
 			this.onScroll();
@@ -87,7 +96,7 @@ function Slices(id, container, finished_cb, sliceChange) {
 		this.sliceX.init();
 
 		this.sliceY = new X.renderer2D();
-		this.sliceY.container = this.y_xtk_container.get(0);
+		this.sliceY.container = y_xtk.get(0);
 		this.sliceY.orientation = 'Y';
 		this.sliceY.onWheelScroll = function(){
 			this.onScroll();
@@ -95,7 +104,7 @@ function Slices(id, container, finished_cb, sliceChange) {
 		this.sliceY.init();
 
 		this.sliceZ = new X.renderer2D();
-		this.sliceZ.container = this.z_xtk_container.get(0);
+		this.sliceZ.container = z_xtk.get(0);
 		this.sliceZ.orientation = 'Z';
 		this.sliceZ.onWheelScroll = function(){
 			this.onScroll();
@@ -207,28 +216,34 @@ function Slices(id, container, finished_cb, sliceChange) {
 	
 	
 	
-	this.setOrthogonalViews = function(viewList){
+	this.setOrthogonalViews = function(viewList, count){
 		//ViewList: Hash
 		//var slice_view_width = String(100 / total_visible);
 		//Calcualte new with of each orthogonal view
 		
+		var slice_view_width = String(100 / count);
 		
 		if (viewList['X']){
-			this.x_xtk_container.show();
+			x_xtk.show();
+			// this.y_outer.width(slice_view_width + '%');
+			// this.z_outer.width(slice_view_width + '%');
+			
 		}else{
-			this.x_xtk_container.hide();
+			x_xtk.hide();
 		} 
 		
 		if (viewList['Y']){
-			this.y_xtk_container.show();
+			y_xtk.show();
+			//this.y_outer.width(slice_view_width + '%');
 		}else{
-			this.y_xtk_container.hide();
+			y_xtk.hide();
 		} 
 		
 		if (viewList['Z']){
-			this.z_xtk_container.show();
+			z_xtk.show();
+			//this.z_outer.width(slice_view_width + '%');
 		}else{
-			this.z_xtk_container.hide();
+			z_xtk.hide();
 		} 
 		
 		

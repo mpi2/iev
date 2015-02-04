@@ -16,7 +16,7 @@ $(document).ready(function() {
 function Main() {
 
 	this.viewsLinked = false;
-	this.load_queue = 2;
+	this.number_to_load = 2;
 	this.views = [];
 
 	this.sliceChange = function(scrolled) {
@@ -35,11 +35,11 @@ function Main() {
 
 	this.loadViewers = function() {
 
-		if (this.load_queue < 1) {
+		if (this.number_to_load < 1) {
 			return;
 		}
-		this.load_queue--;
-		var view = new Slices('s' + this.load_queue, 'viewer', this.loadViewers, this.sliceChange, this.labelmap);
+		this.number_to_load--;
+		var view = new Slices('s' + this.number_to_load, 'viewer', this.loadViewers, this.sliceChange);
 		view.createHTML();
 		view.setup_renderers();
 		this.views.push(view);
@@ -83,18 +83,20 @@ function Main() {
 		var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
 		var total_visible = 0;
 		var toView = {}
+		var count = 0;
 		
 		//Count the number of checked boxes so we can work out a new width
 		for (var i = 0; i < slice_list.length; i++) {
 			if ($('#' + slice_list[i]).is(':checked')) {
 				toView[slice_list[i].charAt(0)] = true;
+				count++;
 			}
 			else{
 				toView[slice_list[i].charAt(0)] = false;
 			}
 		}
 		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].setOrthogonalViews(toView);
+			this.views[i].setOrthogonalViews(toView, count);
 		}
 
 	}.bind(this));
@@ -105,10 +107,6 @@ function Main() {
 }// Main
 
 // Style the control buttons
-
-$(function() {
-	$("#labelmap").button();
-});
 
 $(function() {
 	$("#link_views_toggle").button();

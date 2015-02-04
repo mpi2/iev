@@ -1,3 +1,6 @@
 volumes/
 chrome/
 *~
+*.nrrd
+*.tif*
+*.bmp
