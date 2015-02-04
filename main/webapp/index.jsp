@@ -34,7 +34,35 @@ limitations under the License.
         <script type="text/javascript" src="js/main.js"></script>
         <script type="text/javascript" src="js/viewer.js"></script>
 
-        <div id='viewer'></div>
+        <div id='wrap'>
+            <div id='top_bar'>
+                <div id='bottom_row'>
+                    <input type="checkbox" id="X_check" class='toggle_slice' checked>
+                    <label for="check">Sagittal</label>
+                    <input type="checkbox" id="Y_check" class='toggle_slice' checked>
+                    <label for="check">Coronal</label>
+                    <input type="checkbox" id="Z_check" class='toggle_slice' checked>
+                    <label for="check">Axial</label>
+                </div>
+            </div>
+               <div id='pane'>
+
+                    <div id='controls'>
+                        <input type="checkbox" id="invert_colours"><label id="invert_text" for="invert_colours">Invert colours</label>
+                        <div id="zooming">
+                            <a id ="zoomIn" href="#">+</a>
+                            <a id ="zoomOut" href="#">-</a>
+                        </div>
+                        <a id ="reset" href="#">Reset</a>
+                        <div id="windowLevel"></div>
+                    </div>
+
+                </div>
+            <div id="viewer">
+                
+            </div>
+
+        </div>
   
         <script>
             window.addEventListener('load', function() {

@@ -1,5 +1,5 @@
 goog.require('X.renderer2D');
-
+goog.require('X.interactor2D');
 
 
 
@@ -11,7 +11,8 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 	this.id = id;
 	this.view_container = container;
         this.volPath = volPath + '.nrrd';
-        console.log('vpo ' + this.volPath);
+        console.log('volume path ' + volPath);
+        
 	
 	var Xcontainer = 'X_' + this.id ;
 	var Ycontainer = 'Y_' + this.id ;
@@ -23,21 +24,21 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 	var x_slider;
 	var y_slider;
 	var z_slider;
+        var volume;
 	
 	
 	this.setSlices = function(idxX, idxY, idxZ){
 		// called from main
-		console.log('setting slice');
-		this.volume.indexX = idxX;
-		this.volume.indexY = idxY;
-		this.volume.indexZ = idxZ;
+		volume.indexX = idxX;
+		volume.indexY = idxY;
+		volume.indexZ = idxZ;
 	};
 	
 	
 	this.onWheelScroll = function(){
-		$('#' + this.x_slider_id).slider('value', this.volume.indexX);
-		$('#' + this.y_slider_id).slider('value', this.volume.indexY);
-		$('#' + this.z_slider_id).slider('value', this.volume.indexZ);
+		$('#' + this.x_slider_id).slider('value', volume.indexX);
+		$('#' + this.y_slider_id).slider('value', volume.indexY);
+		$('#' + this.z_slider_id).slider('value', volume.indexZ);
 		this.sliceChange();
 	};
 
@@ -51,7 +52,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 	
 	this.createHTML = function(){
 		// Create the html for this specimen orthogonal views. 
-		console.log('create html');
+		
 		var viewsContainer = $("#" + this.view_container);
 		
 		this.x_slider_id = 'slider_x_' + this.id;
@@ -77,7 +78,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 	
 		viewsContainer.append(specimen_view);	
 	};
-	
+//	
 	
 	this.setup_renderers = function(container) {
 
@@ -117,13 +118,13 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 		// THE VOLUME DATA
 		//
 		// create a X.volume
-		this.volume = new X.volume();
+		volume = new X.volume();
 		
 
 		//volume.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/260814.nii';
-		this.volume.file = this.volPath;
+		volume.file = this.volPath;
 
-		this.sliceX.add(this.volume);
+		this.sliceX.add(volume);
 		
 		// We need to catch events that might change the slice, then pass taht to main
 		// Navigation, slider shift, wheel scrolling and zoom
@@ -140,23 +141,53 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 		
 
 	};
+        
+        
+        this.invertColour = function(checked){
+    
+            if (!volume) return;
+            console.log(this);
+
+	    if (checked) {
+            volume.maxColor = [0, 0, 0];
+	        volume.minColor = [1, 1, 1];
+	        $(".sliceView").css("background-color", "#FFFFFF");
+
+            volume.indexX++;
+	        volume.indexY++;
+	        volume.indexZ++;
+
+	    } else {
+         
+            volume.maxColor = [1, 1, 1];
+	        volume.minColor = [0, 0, 0];
+	        $(".sliceView").css("background-color", "#000000");
+
+                // Bodge to get the colours to update
+	        volume.indexX--;
+	        volume.indexY--;
+	        volume.indexZ--;
+
+	    }
+        };
+        
 	
 
 	this.xtk_showtime = function() {
 		//
 		// the onShowtime method gets executed after all files were fully loaded and
 		// just before the first rendering attempt
-		this.sliceY.add(this.volume);
+		this.sliceY.add(volume);
 		this.sliceY.render();
-		this.sliceZ.add(this.volume);
+		this.sliceZ.add(volume);
 		this.sliceZ.render();
 
-		var dims = this.volume.dimensions;
+		var dims = volume.dimensions;
 
 		// It appears that dimensoins are in yxz order. At least with nii loading
-		this.volume.indexX = Math.floor((dims[0] - 1) / 2);
-		this.volume.indexY = Math.floor((dims[1] - 1) / 2);
-		this.volume.indexZ = Math.floor((dims[2] - 1) / 2);
+		volume.indexX = Math.floor((dims[0] - 1) / 2);
+		volume.indexY = Math.floor((dims[1] - 1) / 2);
+		volume.indexZ = Math.floor((dims[2] - 1) / 2);
 		// Setup the sliders within 'onShowtime' as we need the volume dimensions for the ranges
 
 		var x_slider_id = this.x_slider_id;
@@ -171,12 +202,12 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 			range : "min",
 			min : 0,
 			max : dims[0] - 1,
-			value : this.volume.indexX,
+			value : volume.indexX,
 			slide : function(event, ui) {
-				if (!this.volume) {
+				if (!volume) {
 					return;
 				}
-				this.volume.indexX = ui.value;
+				volume.indexX = ui.value;
 				this.sliceChange(this);
 			}.bind(this)
 		});
@@ -187,12 +218,12 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 			range : "min",
 			min : 0,
 			max : dims[1] - 1,
-			value : this.volume.indexY,
+			value : volume.indexY,
 			slide : function(event, ui) {
-				if (!this.volume) {
+				if (!volume) {
 					return;
 				}
-				this.volume.indexY = ui.value;
+				volume.indexY = ui.value;
 				this.sliceChange(this);
 			}.bind(this)
 		});
@@ -203,12 +234,12 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 			range : "min",
 			min : 0,
 			max : dims[2] - 1,
-			value : this.volume.indexZ,
+			value : volume.indexZ,
 			slide : function(event, ui) {
-				if (!this.volume) {
+				if (!volume) {
 					return;
 				}
-				this.volume.indexZ = ui.value;
+				volume.indexZ = ui.value;
 				this.sliceChange(this);
 			}.bind(this)
 		});

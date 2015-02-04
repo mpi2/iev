@@ -1,31 +1,54 @@
 <html>
-    <head>
-        <title>Embryo viewer main window</title>
-    </head>
-    <body>
-        <div id='wrapp'>
-            <div id='top_bar'>
-                <div id='left_top_buttons'>
-                    <input type="checkbox" id="link_views_toggle">
-                    <label for="link_views_toggle">link views</label>
+	<head>
 
+		<!-- <script type="text/javascript" src="x/js/xtk_edge.js"></script> -->
 
-                </div>
-                <div id='top_right_buttons'>
-                    <input type="checkbox" id="X_check" class='toggle_slice' checked>
-                    <label for="check">S</label>
-                    <input type="checkbox" id="Y_check" class='toggle_slice' checked>
-                    <label for="check">C</label>
-                    <input type="checkbox" id="Z_check" class='toggle_slice' checked>
-                    <label for="check">A</label>
-                </div>
+		<body>
+			<div id='wrap'>
+				<div id='top_bar'>
+					<div id='bottom_row'>
+						<input type="checkbox" id="X_check" class='toggle_slice' checked>
+						<label for="check">Sagittal</label>
+						<input type="checkbox" id="Y_check" class='toggle_slice' checked>
+						<label for="check">Coronal</label>
+						<input type="checkbox" id="Z_check" class='toggle_slice' checked>
+						<label for="check">Axial</label>
+					</div>
+				</div>
+				
+				<div id="viewer">
 
-                <div id="levels_slider"></div>
-            </div> <!-- Top bar -->
+                    <div id='pane'>
 
-            <div id="viewer"></div>
+                        <div id='controls'>
+                            <input type="checkbox" id="invert_colours"><label id="invert_text" for="invert_colours">Invert colours</label>
+                            <div id="zooming">
+                                <a id ="zoomIn" href="#">+</a>
+                                <a id ="zoomOut" href="#">-</a>
+                            </div>
+                            <a id ="reset" href="#">Reset</a>
+                            <div id="windowLevel"></div>
+                        </div>
 
-        </div><!-- wrap -->
-    </body>
+                    </div>
 
+					<div id='top_slices' class='specimen_view'>
+						<div id='X' class="slice">
+							<div id="sliceX" class='sliceView'></div>
+							<div id="sliderX" class="slider"></div>
+						</div>
+						<div id='Y' class="slice">
+							<div id="sliceY" class='sliceView'></div>
+							<div id="sliderY" class="slider"></div>
+						</div>
+						<div id='Z' class="slice">
+							<div id="sliceZ" class='sliceView'></div>
+							<div id="sliderZ" class="slider"></div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</body>
+	</head>
 </html>

@@ -11,15 +11,24 @@
         dcc = {};
 
     var viewsLinked = false;
-    var number_to_load = 1;
+    var number_to_load = 2;
     var views = [];
+    var container; // Div to put the viewers
+    var volpath;
 
-    dcc.EmbryoViewer = function(volPath, container) {
-        console.log(container);
-        loadViewers(volPath, container);
+    dcc.EmbryoViewer = function (v, div) {
+        //console.log(container);
+        //url = 'http://localhost:8084/embryo-viewer/viewer.html';
+//        window.location.href = url;
+        //window.location.assign(url);
+        loadViewers(volpath, container);
         setUpLinkViews();
         setupZoomSlider();
         attachEvents();
+        container = div;
+        volpath= v;
+        console.log('test volpath ' + volpath);
+        console.log('test v', + v);
     }
 
 
@@ -37,15 +46,14 @@
         }
     }
 
-    function loadViewers(volPath, container) {
+    function loadViewers() {
 
         if (number_to_load < 1) {
             return;
         }
         number_to_load--;
-        //console.log('fish');
-        var view = new Slices(volPath, 's' + number_to_load, container, loadViewers, sliceChange);
-        //console.log('chips');
+       
+        var view = new Slices('260814', 's' + number_to_load, 'viewer', loadViewers, sliceChange);
         view.createHTML();
         view.setup_renderers();
         views.push(view);
@@ -97,6 +105,15 @@
 
         });
 
+
+        // Invert the color map 
+
+        $('#invert_colours').change(function () {
+            for (var i = 0; i < views.length; i++) {
+                views[i].invertColour($(this).is(':checked'));
+            }
+        });
+
     }
 
     // Style the control buttons
@@ -108,5 +125,16 @@
     $('body').bind('beforeunload', function () {
         console.log('bye');
     });
+    
+    $(function() {
+	$("#invert_colours").button();
+    $(function() {
+        $("#zoomIn").button();
+        $("#zoomOut").button();
+        $("#reset").button();
+    
+        });
+
+});
 
 })();

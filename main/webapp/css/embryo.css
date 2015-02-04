@@ -1,45 +1,101 @@
-#viewer{ 
-  background-color:#000;
+#viewer {
+  position: relative;
   margin: 0;
   padding: 0;
-  height: 100%;
-  /*overflow: hidden !important;*/  
-}
-
-.sliceView{
-	background-color: #000; 
-	height: 500px;
-	float: left;
-	
-}
-
-
-
-#sliceX{
-	border-top: 2px solid yellow;
-}
-
-
-#sliceY{
-	border-top: 2px solid red;
-}
-
-#sliceZ{
-	border-top: 2px solid green
-}
-
-#top_left_buttons{
-	float: left;
-}
-
-#top_right_buttons{
-
-}
-
-#wrapp{
-	height: 100%;
+  overflow: hidden !important;
 }
 
 .specimen_view{
-	
+            height: 75%;
+}
+
+.sliceView{
+	background-color: #000000;
+	float: left;
+	width: 33%;
+	margin-top: 10px;
+	display: inline-block;
+        position: relative;
+        height: 500px;
+}
+
+
+.sliceX{
+	border-top: 3px solid red;
+	margin-bottom: 10px;
+}
+
+.sliceY{
+	border-top: 3px solid green;
+	margin-bottom: 10px;
+}
+
+.sliceZ{
+	border-top: 3px solid blue;
+    margin-bottom: 10px;
+}
+
+.sliceView .ui-slider {
+    height: 5px;
+    margin-bottom: 5px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.slice .ui-slider-handle {
+    height: 15px;
+}
+
+.slider{
+    height: 5px !important;
+    position: absolute !important;
+    bottom: 0;
+}
+
+/*
+#pane {
+    position: absolute;
+    z-index: 10;
+    top: 50px;
+    background-color: red;
+    width: 400px;
+	float: left;
+	margin-left: -180px;
+	border-radius: 0px 5px 5px 0px;
+}*/
+
+#controls {
+    float: left;
+    padding: 10px;
+}
+
+#controls .ui-slider {
+    margin: 5px 12px;
+    width: 100px !important;
+    height: 5px !important;
+}
+
+.ui-slider-handle {
+    height: 10px !important;
+    width: 8px;
+}
+
+#bottom_row{
+	padding: 10px;
+}
+
+#wrap {
+	height: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.specimen_view{
+	height: 100%;
+}
+
+.ui-button, .ui-button-text {
+    font-size: 10px !important;
+    margin: 2px;
 }
