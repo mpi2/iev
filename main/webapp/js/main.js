@@ -5,6 +5,8 @@
 //TODO: sync zooming
 //
 
+chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
+viewer_testing = false;
 
 (function () {
     if (typeof dcc === 'undefined')
@@ -22,13 +24,12 @@
 //        window.location.href = url;
         //window.location.assign(url);
         loadViewers(volpath, container);
-        setUpLinkViews();
         setupZoomSlider();
         attachEvents();
         container = div;
-        volpath= v;
+        volpath = v;
         console.log('test volpath ' + volpath);
-        console.log('test v', + v);
+        console.log('test v', +v);
     }
 
 
@@ -52,19 +53,11 @@
             return;
         }
         number_to_load--;
-       
+
         var view = new Slices('260814', 's' + number_to_load, 'viewer', loadViewers, sliceChange);
         view.createHTML();
         view.setup_renderers();
         views.push(view);
-    }
-
-    function setUpLinkViews() {
-        //Link the views so that sliding/scrolling/zooming affect all
-
-        $('#link_views_toggle').change(function (e) {
-            viewsLinked = e.currentTarget.checked;
-        });
     }
 
 
@@ -85,6 +78,7 @@
 
         // Hide/show slice views from the checkboxes
         $('.toggle_slice').change(function () {
+
             var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
             var toView = {}
             var count = 0;
@@ -100,21 +94,64 @@
                 }
             }
             for (var i = 0; i < views.length; i++) {
-                views[i].setOrthogonalViews(toView, count);
+                views[i].setVisibleViews(toView, count);
             }
+            window.dispatchEvent(new Event('resize')); //
 
         });
 
 
         // Invert the color map 
-
-        $('#invert_colours').change(function () {
-            for (var i = 0; i < views.length; i++) {
-                views[i].invertColour($(this).is(':checked'));
+        $('#invert_colours')
+                .button()
+                .change(function () {
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].invertColour($(this).is(':checked'));
             }
         });
+        
+           
+        //Link the views so that sliding/scrolling/zooming affect all
+
+        $('#link_views')
+                .button()
+                .change(function (e) {
+                    viewsLinked = e.currentTarget.checked;
+        });
+    
+
+
+        // Zooming
+        $("#zoomIn")
+                .button()
+                .click(function (event) {
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].cameraZoomIn()
+                    }
+
+                });
+
+        $("#zoomOut")
+                .button()
+                .click(function (event) {
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].cameraZoomOut();
+                    }
+                });
+
+        $("#reset")
+                .button()
+                .click(function (event) {
+                    var e = new X.event.ResetViewEvent();
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].resetView(e);
+                    }
+                    $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
+
+                });
 
     }
+
 
     // Style the control buttons
 
@@ -125,16 +162,6 @@
     $('body').bind('beforeunload', function () {
         console.log('bye');
     });
-    
-    $(function() {
-	$("#invert_colours").button();
-    $(function() {
-        $("#zoomIn").button();
-        $("#zoomOut").button();
-        $("#reset").button();
-    
-        });
 
-});
 
 })();

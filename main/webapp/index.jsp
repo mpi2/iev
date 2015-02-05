@@ -49,6 +49,7 @@ limitations under the License.
 
                     <div id='controls'>
                         <input type="checkbox" id="invert_colours"><label id="invert_text" for="invert_colours">Invert colours</label>
+                        <input type="checkbox" id="link_views"><label id="link" for="link_views">Link views</label>
                         <div id="zooming">
                             <a id ="zoomIn" href="#">+</a>
                             <a id ="zoomOut" href="#">-</a>
