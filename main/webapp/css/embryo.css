@@ -6,7 +6,8 @@
 }
 
 .specimen_view{
-            height: 75%;
+            height: 500px;
+            position: relative;
 }
 
 .sliceView{
@@ -53,20 +54,20 @@
     bottom: 0;
 }
 
-/*
-#pane {
+
+.pane {
     position: absolute;
     z-index: 10;
-    top: 50px;
-    background-color: red;
-    width: 400px;
-	float: left;
-	margin-left: -180px;
-	border-radius: 0px 5px 5px 0px;
-}*/
+    top: 70px;
+    background-color: #03899C;
+    width: 200px;
+    float: left;
+    margin-left: -180px;
+    border-radius: 0px 5px 5px 0px;
+}
 
 #controls {
-    float: left;
+    /*float: left;*/
     padding: 10px;
 }
 
@@ -86,14 +87,12 @@
 }
 
 #wrap {
-	height: 100%;
+	
 	margin-left: auto;
 	margin-right: auto;
 }
 
-.specimen_view{
-	height: 100%;
-}
+
 
 .ui-button, .ui-button-text {
     font-size: 10px !important;

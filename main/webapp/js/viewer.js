@@ -10,13 +10,10 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
     this.finished_callback = finished_cb;
     this.id = id;
     this.view_container = container;
-    if (viewer_testing) {
-        this.volPath = 'chrome-extension://' + chromeID + '/260814.nrrd';
-    }
-    else {
-        this.volPath = volPath + '.nrrd';
-    }
-    console.log('volume path ' + volPath);
+    console.log('slices container ', container);
+    this.volPath = volPath;
+   
+    console.log('Slices vol ' + volPath);
 
 
     var Xcontainer = 'X_' + this.id;
@@ -30,6 +27,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
     var y_slider;
     var z_slider;
     var volume;
+    var controlsVisible = false;
 
 
     this.setSlices = function (idxX, idxY, idxZ) {
@@ -39,21 +37,88 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         volume.indexZ = idxZ;
     };
 
-
-    this.onWheelScroll = function () {
-        $('#' + this.x_slider_id).slider('value', volume.indexX);
-        $('#' + this.y_slider_id).slider('value', volume.indexY);
-        $('#' + this.z_slider_id).slider('value', volume.indexZ);
-        this.sliceChange();
+    this.setXslice = function (idxX) {
+        volume.indexX = idxX;
     };
+
+    this.setYslice = function (idxY) {
+        volume.indexY = idxY;
+    };
+
+    this.setZslice = function (idxZ) {
+        volume.indexZ = idxZ;
+    };
+
+
+//    this.onWheelScroll = function () {
+//        $('#' + this.x_slider_id).slider('value', volume.indexX);
+//        $('#' + this.y_slider_id).slider('value', volume.indexY);
+//        $('#' + this.z_slider_id).slider('value', volume.indexZ);
+//        this.sliceChange();
+//    };
 
 
     this.setDisplayOrientation = function () {
         // h or v : horizontal/vertiacl
         // This mght not be needed. Maybe just some css tweeks
-        return
+        return;
     };
 
+
+    this.controls_tab = function(){
+        // NH. this is horendous. Should I use templating or some other way of accessing the buttons on this object
+
+        var controlsPane = 'pane_' + this.id;
+        var invertColours = 'invert_colours_' + this.id;
+        
+        controlsHTML =
+                '<div id="'+ controlsPane +'"' + 'class="pane"' + '>' +
+                '<div id="controls_' + this.id + '">' +
+                '<input type="checkbox" id="' + invertColours +'"><label for="invert_colours_' + this.id + '">Invert colours</label>' +
+                //'<input type="checkbox" id="link_views"><label id="link" for="link_views">Link views</label>' +
+                '<div id="zooming_' + this.id + '">' +
+                '<a id="zoomIn_' + this.id + '" href="#">+</a>' +
+                '<a id="zoomOut_' + this.id + '" href="#">-</a>' +
+                '</div>' +
+                '<a id ="reset_' + this.id + '" href="#">Reset</a>' +
+                '<div id="windowLevel_' + this.id + '"></div>' +
+                '<input type="checkbox" class="closecontrols" id="close_controls_' + this.id + '">' +
+                '<label for="close_controls_' + this.id + '">X</label>'
+                '</div></div>';
+               
+        $("body").on('click', 'div#'+ controlsPane, function (e) { 
+                if (e.target.className === 'closecontrols') return;
+                if (!controlsVisible) {
+                    $(this).animate({
+                        'marginLeft': '0px'
+                        }, 500);
+                        controlsVisible = true;
+                }
+            
+        });
+        
+        $("body").on('click', "#close_controls_" + this.id, function(e){
+       
+             if (controlsVisible){
+                $(this).parent().parent().animate({
+                    'marginLeft': '-180px'
+                }, 500);
+                controlsVisible = false;
+            }
+
+        });
+        
+        
+        // Invert the color map 
+        $("body").on('change', "#" + invertColours, $.proxy(function(e){
+            this.invertColour(e.target.checked); 
+        }, this));
+        
+                
+                
+        
+        return controlsHTML;
+    };
 
     this.createHTML = function () {
         // Create the html for this specimen orthogonal views. 
@@ -80,9 +145,15 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         specimen_view.append([x_xtk, this.x_slider]);
         specimen_view.append([y_xtk, this.y_slider]);
         specimen_view.append([z_xtk, this.z_slider]);
+        specimen_view.append(this.controls_tab());
 
         viewsContainer.append(specimen_view);
+        
+        
+        
     };
+    
+    
 //	
 
     this.setup_renderers = function (container) {
@@ -90,33 +161,16 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         this.sliceX = new X.renderer2D();
         this.sliceX.container = x_xtk.get(0);
         this.sliceX.orientation = 'X';
-        this.sliceX.onWheelScroll = function () {
-            this.onScroll();
-            // Lets try and monkey-patch the renderer's camera zoom event'
-            var old_onZoom = this.sliceX._camera.onZoom_;
-            this.newZoom = function () {
-                //call the original function
-                old_onZoom();
-                console.log('zooming');
-            };
-        }.bind(this);
-
         this.sliceX.init();
 
         this.sliceY = new X.renderer2D();
         this.sliceY.container = y_xtk.get(0);
         this.sliceY.orientation = 'Y';
-        this.sliceY.onWheelScroll = function () {
-            this.onScroll();
-        }.bind(this);
         this.sliceY.init();
 
         this.sliceZ = new X.renderer2D();
         this.sliceZ.container = z_xtk.get(0);
         this.sliceZ.orientation = 'Z';
-        this.sliceZ.onWheelScroll = function () {
-            this.onScroll();
-        }.bind(this);
         this.sliceZ.init();
 
         //
@@ -138,7 +192,6 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         this.sliceX.onResize_ = function () {
             console.log('computing end');
         };
-
 
         this.sliceX.render();
 
@@ -176,6 +229,22 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 
         }
     };
+    
+    
+    this.updateSliders = function (_slice) {
+
+            windowLevelEvent = _slice._interactor.leftButtonDown;
+            crosshairEvent = _slice._interactor._shiftDown;
+
+            if (windowLevelEvent) {
+                $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
+            } else if (crosshairEvent) {
+                $("#sliderX").slider("value", volume.indexX);
+                $("#sliderY").slider("value", volume.indexY);
+                $("#sliderZ").slider("value", volume.indexZ);
+            }
+
+        }
 
 
 
@@ -214,7 +283,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
                     return;
                 }
                 volume.indexX = ui.value;
-                this.sliceChange(this);
+                this.sliceChange(this.id, 'x', volume.indexX);
             }.bind(this)
         });
 
@@ -230,7 +299,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
                     return;
                 }
                 volume.indexY = ui.value;
-                this.sliceChange(this);
+                this.sliceChange(this.id, 'y', volume.indexY);
             }.bind(this)
         });
 
@@ -246,31 +315,52 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
                     return;
                 }
                 volume.indexZ = ui.value;
-                this.sliceChange(this);
+                this.sliceChange(this.id, 'z', volume.indexZ);
             }.bind(this)
         });
-        
+
         // Overload onMouseWheel event to control sliders
         this.sliceX._interactor.onMouseWheel = function (event) {
 
             var oldValue = x_slider.slider("option", "value");
             var sign = event.deltaY ? event.deltaY < 0 ? -1 : 1 : 0
             x_slider.slider({value: oldValue + sign});
-        }
+            this.sliceChange(this.id, 'x', volume.indexX);
+        }.bind(this)
 
         this.sliceY._interactor.onMouseWheel = function (event) {
 
             var oldValue = y_slider.slider("option", "value");
             var sign = event.deltaY ? event.deltaY < 0 ? -1 : 1 : 0
             y_slider.slider({value: oldValue + sign});
-        }
+            this.sliceChange(this.id, 'y', volume.indexY);
+        }.bind(this)
 
         this.sliceZ._interactor.onMouseWheel = function (event) {
-   
+
             var oldValue = z_slider.slider("option", "value");
             var sign = event.deltaY ? event.deltaY < 0 ? -1 : 1 : 0
             z_slider.slider({value: oldValue + sign});
-        }
+            this.sliceChange(this.id, 'z', volume.indexZ);
+        }.bind(this)
+
+
+        // Overload sliceX mouse moved
+        this.sliceX._interactor.onMouseMove = function (event) {
+            this.updateSliders(this.sliceX);
+        }.bind(this);
+
+        // Overload sliceY mouse moved
+        this.sliceY._interactor.onMouseMove = function (event) {
+            this.updateSliders(this.sliceY);
+        }.bind(this);
+
+        // Overload sliceZ mouse moved
+        this.sliceZ._interactor.onMouseMove = function (event) {
+            this.updateSliders(this.sliceZ);
+        }.bind(this);
+        
+
         this.finished_callback(); // Create the next specimen view if required
 
     }.bind(this);
@@ -314,19 +404,19 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
     }.bind(this);
 
 
-    this.cameraZoomIn = function(){
+    this.cameraZoomIn = function () {
         this.sliceX.camera.zoomIn(false);
         this.sliceY.camera.zoomIn(false);
         this.sliceZ.camera.zoomIn(false);
     };
-    
-    this.cameraZoomOut = function(){
+
+    this.cameraZoomOut = function () {
         this.sliceX.camera.zoomOut(false);
         this.sliceY.camera.zoomOut(false);
         this.sliceZ.camera.zoomOut(false);
     };
-    
-    this.resetView = function(X_event){
+
+    this.resetView = function (X_event) {
         this.sliceX.interactor.dispatchEvent(X_event);
         this.sliceY.interactor.dispatchEvent(X_event);
         this.sliceZ.interactor.dispatchEvent(X_event);
