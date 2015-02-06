@@ -3,17 +3,15 @@ goog.require('X.interactor2D');
 
 
 
-function Slices(volPath, id, container, finished_cb, sliceChange) {
+function Slices(volPath, id, container, sliceChange) {
     //:param finished_callback function what to call when fisinshed rendering
 
     this.sliceChange = sliceChange;
-    this.finished_callback = finished_cb;
+    //this.finished_callback = finished_cb;
     this.id = id;
     this.view_container = container;
-    console.log('slices container ', container);
     this.volPath = volPath;
-   
-    console.log('Slices vol ' + volPath);
+
 
 
     var Xcontainer = 'X_' + this.id;
@@ -28,6 +26,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
     var z_slider;
     var volume;
     var controlsVisible = false;
+    this.specimenSelector = undefined;
 
 
     this.setSlices = function (idxX, idxY, idxZ) {
@@ -70,55 +69,80 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 
         var controlsPane = 'pane_' + this.id;
         var invertColours = 'invert_colours_' + this.id;
+        this.windowLevel = 'windowLevel_' + this.id;
         
         controlsHTML =
                 '<div id="'+ controlsPane +'"' + 'class="pane"' + '>' +
                 '<div id="controls_' + this.id + '">' +
-                '<input type="checkbox" id="' + invertColours +'"><label for="invert_colours_' + this.id + '">Invert colours</label>' +
+                '<input type="checkbox" id="' + invertColours +'" class="button">' + 
+                '<label for="invert_colours_' + this.id + '">Invert colours</label>' +
                 //'<input type="checkbox" id="link_views"><label id="link" for="link_views">Link views</label>' +
                 '<div id="zooming_' + this.id + '">' +
-                '<a id="zoomIn_' + this.id + '" href="#">+</a>' +
-                '<a id="zoomOut_' + this.id + '" href="#">-</a>' +
+                '<a id="zoomIn_' + this.id + '" href="#" class="button">+</a>' +
+                '<a id="zoomOut_' + this.id + '" href="#" class="button">-</a>' +
                 '</div>' +
-                '<a id ="reset_' + this.id + '" href="#">Reset</a>' +
-                '<div id="windowLevel_' + this.id + '"></div>' +
-                '<input type="checkbox" class="closecontrols" id="close_controls_' + this.id + '">' +
-                '<label for="close_controls_' + this.id + '">X</label>'
+                '<a id ="reset_' + this.id + '" href="#" class="button">Reset</a>' +
+                '<div id="' + this.windowLevel + '"></div>' +
                 '</div></div>';
-               
-        $("body").on('click', 'div#'+ controlsPane, function (e) { 
-                if (e.target.className === 'closecontrols') return;
-                if (!controlsVisible) {
-                    $(this).animate({
-                        'marginLeft': '0px'
-                        }, 500);
-                        controlsVisible = true;
-                }
-            
-        });
         
-        $("body").on('click', "#close_controls_" + this.id, function(e){
-       
-             if (controlsVisible){
-                $(this).parent().parent().animate({
-                    'marginLeft': '-180px'
+      
+        
+        $("body").on('click', 'div#' + controlsPane, function (e) {
+            if (!controlsVisible) {
+                $(this).animate({
+                    'marginLeft': '0px'
                 }, 500);
-                controlsVisible = false;
-            }
+                controlsVisible = true;
+            } else {
+                if (controlsVisible) {   
+                    console.log(e.target.className);
 
+                    if (e.target.className ==='ui-button-text') return;
+                    $(this).animate({
+                        'marginLeft': '-180px'
+                    }, 500);
+                    controlsVisible = false;
+                }
+            }
         });
         
+  
         
         // Invert the color map 
         $("body").on('change', "#" + invertColours, $.proxy(function(e){
             this.invertColour(e.target.checked); 
         }, this));
         
-                
-                
+        //Add the styling       
+        $("#invert_colours_" + this.id).button();
+        $("#zoomIn_" + this.id ).button();
+     
         
         return controlsHTML;
     };
+    
+    
+    
+    this.createEventHandlers = function () {
+        $("#" + this.windowLevel).slider({
+            range: true,
+            min: parseInt(volume.windowLow),
+            max: parseInt(volume.windowHigh),
+            min: 0,
+            max: 256,
+            step: 1,
+            //values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
+            values: [0, 200],
+            slide: function (event, ui) {
+                    volume.windowLow = ui.values[0];
+                    volume.windowHigh = ui.values[1];
+                    volume.modified(true);
+            }
+        });
+
+    };
+    
+    
 
     this.createHTML = function () {
         // Create the html for this specimen orthogonal views. 
@@ -148,6 +172,9 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         specimen_view.append(this.controls_tab());
 
         viewsContainer.append(specimen_view);
+        
+        
+        
         
         
         
@@ -196,6 +223,8 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         this.sliceX.render();
 
         this.sliceX.onShowtime = this.xtk_showtime;
+        
+        this.createEventHandlers();
 
 
     };
@@ -205,13 +234,13 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 
         if (!volume)
             return;
-        console.log(this);
+      
 
         if (checked) {
             volume.maxColor = [0, 0, 0];
             volume.minColor = [1, 1, 1];
-            $(".sliceView").css("background-color", "#FFFFFF");
-
+            $("#" + this.id + "> .sliceView").css("background-color", "#FFFFFF");
+           
             volume.indexX++;
             volume.indexY++;
             volume.indexZ++;
@@ -220,7 +249,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
 
             volume.maxColor = [1, 1, 1];
             volume.minColor = [0, 0, 0];
-            $(".sliceView").css("background-color", "#000000");
+             $("#" + this.id + "> .sliceView").css("background-color", "#000000");
 
             // Bodge to get the colours to update
             volume.indexX--;
@@ -268,7 +297,6 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         var x_slider_id = this.x_slider_id;
         var y_slider_id = this.x_slider_id;
         var z_slider_id = this.x_slider_id;
-
 
 
         // make the sliders
@@ -361,7 +389,7 @@ function Slices(volPath, id, container, finished_cb, sliceChange) {
         }.bind(this);
         
 
-        this.finished_callback(); // Create the next specimen view if required
+        //this.finished_callback(); // Create the next specimen view if required
 
     }.bind(this);
 

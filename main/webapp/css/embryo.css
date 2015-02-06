@@ -8,6 +8,7 @@
 .specimen_view{
             height: 500px;
             position: relative;
+          
 }
 
 .sliceView{
@@ -60,6 +61,8 @@
     z-index: 10;
     top: 70px;
     background-color: #03899C;
+    opacity: 0.6;
+    filter: alpha(opacity=60); /* For IE8 and earlier */
     width: 200px;
     float: left;
     margin-left: -180px;
@@ -67,7 +70,7 @@
 }
 
 #controls {
-    /*float: left;*/
+    float: left;
     padding: 10px;
 }
 
@@ -75,6 +78,11 @@
     margin: 5px 12px;
     width: 100px !important;
     height: 5px !important;
+}
+
+#controls .ui-slider-handle {
+    height: 10px;
+    width: 10px;
 }
 
 .ui-slider-handle {
@@ -97,4 +105,23 @@
 .ui-button, .ui-button-text {
     font-size: 10px !important;
     margin: 2px;
+}
+
+
+/*Style the orthogonal views buttons*/
+#X_check
+{
+    border: 1px solid #132b14;
+    color:#FF0000;
+}
+#X_check:hover
+{ 
+    border: 1px solid #132b14;
+    color:#FFFFFF;
+}
+#X_check:active
+{
+    background-color:#FFFFFF;
+    border: 1px solid #132b14;
+    color:#132b14;
 }

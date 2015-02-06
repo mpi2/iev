@@ -79,17 +79,14 @@ window.addEventListener('load', function() {
     }
 
     function loadViewers() {
-
-        if (number_to_load < 1) {
-            return;
+        console.log('load viewers called');
+        for (var i =0; i < number_to_load; ++i){
+            console.log('load_viewer ' + i)
+            var view = new Slices(volpath, 's' + i, 'viewer', sliceChange);
+            views.push(view);
+            view.createHTML();
+            view.setup_renderers();
         }
-        number_to_load--;
-        console.log('loadViewers ' + volpath);
-        var view = new Slices(volpath, 's' + number_to_load, 'viewer', loadViewers, sliceChange);
-        views.push(view);
-        view.createHTML();
-        view.setup_renderers();
-        
     }
 
 
@@ -142,8 +139,24 @@ window.addEventListener('load', function() {
 //            }
 //        });
 //        
-           
-        //Link the views so that sliding/scrolling/zooming affect all
+        //Try to add styling to buttons here
+        $(".button").button();
+        
+//        $(".wl").slider({
+//                range: true,
+//                //min: parseInt(volume.windowLow),
+//                //max: parseInt(volume.windowHigh),
+//                min:0,
+//                max:256,
+//                step: 1,
+//                //values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
+//                values: [ 0, 200 ],
+//                slide: function( event, ui ) {
+////                    volume.windowLow = ui.values[0];
+////                    volume.windowHigh = ui.values[1];
+////                    volume.modified(true);
+//                }
+//            });
 
         $('#link_views')
                 .button()
@@ -183,28 +196,14 @@ window.addEventListener('load', function() {
                 });
                 
                 
-            $("#windowLevel").slider({
-                range: true,
-                //min: parseInt(volume.windowLow),
-                //max: parseInt(volume.windowHigh),
-                min:0,
-                max:256,
-                step: 1,
-                //values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
-                values: [ 0, 200 ],
-                slide: function( event, ui ) {
-//                    volume.windowLow = ui.values[0];
-//                    volume.windowHigh = ui.values[1];
-//                    volume.modified(true);
-                }
-            });
+
     }
 
 
     // Style the control buttons
 
     $(function () {
-        $("#link_views_toggle").button();
+        $(".toggle_slice").button();
     });
 
     $('body').bind('beforeunload', function () {
