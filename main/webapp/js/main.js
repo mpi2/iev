@@ -130,33 +130,9 @@ window.addEventListener('load', function() {
         });
 
 
-//        // Invert the color map 
-//        $('#invert_colours')
-//                .button()
-//                .change(function () {
-//                    for (var i = 0; i < views.length; i++) {
-//                        views[i].invertColour($(this).is(':checked'));
-//            }
-//        });
-//        
         //Try to add styling to buttons here
         $(".button").button();
         
-//        $(".wl").slider({
-//                range: true,
-//                //min: parseInt(volume.windowLow),
-//                //max: parseInt(volume.windowHigh),
-//                min:0,
-//                max:256,
-//                step: 1,
-//                //values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
-//                values: [ 0, 200 ],
-//                slide: function( event, ui ) {
-////                    volume.windowLow = ui.values[0];
-////                    volume.windowHigh = ui.values[1];
-////                    volume.modified(true);
-//                }
-//            });
 
         $('#link_views')
                 .button()
@@ -174,7 +150,7 @@ window.addEventListener('load', function() {
                         views[i].cameraZoomIn()
                     }
 
-                });
+        });
 
         $("#zoomOut")
                 .button()
@@ -182,7 +158,7 @@ window.addEventListener('load', function() {
                     for (var i = 0; i < views.length; i++) {
                         views[i].cameraZoomOut();
                     }
-                });
+        });
 
         $("#reset")
                 .button()
@@ -193,8 +169,14 @@ window.addEventListener('load', function() {
                     }
                     $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
 
-                });
-                
+        });
+        
+        
+        $("#vertical_check")
+                .click(function (event) {
+                   $
+        });
+
                 
 
     }

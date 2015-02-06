@@ -64,40 +64,54 @@ function Slices(volPath, id, container, sliceChange) {
     };
 
 
-    this.controls_tab = function(){
+    this.controls_tab = function () {
         // NH. this is horendous. Should I use templating or some other way of accessing the buttons on this object
 
-        var controlsPane = 'pane_' + this.id;
-        var invertColours = 'invert_colours_' + this.id;
+        this.controlsPane = 'pane_' + this.id;
+        this.invertColours = 'invert_colours_' + this.id;
         this.windowLevel = 'windowLevel_' + this.id;
-        
+        this.reset = 'reset_' + this.id;
+        this.zoomIn = 'zoomIn_' + this.id;
+        this.zoomOut = 'zoomOut_' + this.id;
+
         controlsHTML =
-                '<div id="'+ controlsPane +'"' + 'class="pane"' + '>' +
-                '<div id="controls_' + this.id + '">' +
-                '<input type="checkbox" id="' + invertColours +'" class="button">' + 
-                '<label for="invert_colours_' + this.id + '">Invert colours</label>' +
-                //'<input type="checkbox" id="link_views"><label id="link" for="link_views">Link views</label>' +
-                '<div id="zooming_' + this.id + '">' +
-                '<a id="zoomIn_' + this.id + '" href="#" class="button">+</a>' +
-                '<a id="zoomOut_' + this.id + '" href="#" class="button">-</a>' +
-                '</div>' +
-                '<a id ="reset_' + this.id + '" href="#" class="button">Reset</a>' +
-                '<div id="' + this.windowLevel + '"></div>' +
-                '</div></div>';
+                '<div id="' + this.controlsPane + '"' + 'class="pane"' + '>' +
+                    '<div id="controls_' + this.id + '">' +
+                        '<input type="checkbox" id="' + this.invertColours + '" class="button">' +
+                        '<label for="invert_colours_' + this.id + '">Invert colours</label>' +
+                        '<div id="zooming_' + this.id + '">' +
+                            '<a id="' + this.zoomIn + '" href="#" class="button">+</a>' +
+                            '<a id="' + this.zoomOut + '" href="#" class="button">-</a>' +
+                        '</div>' +
+                        '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
+                        '<div id="' + this.windowLevel + '"></div>' +
+                    '</div></div>';
+
+
+        //Add the styling       
+        $("#invert_colours_" + this.id).button();
+        $("#zoomIn_" + this.id).button();
+
+
+        return controlsHTML;
+    };
+
+
+
+    this.createEventHandlers = function () {
         
-      
-        
-        $("body").on('click', 'div#' + controlsPane, function (e) {
+        $("#" + this.controlsPane).click(function (e) {
             if (!controlsVisible) {
                 $(this).animate({
                     'marginLeft': '0px'
                 }, 500);
                 controlsVisible = true;
             } else {
-                if (controlsVisible) {   
+                if (controlsVisible) {
                     console.log(e.target.className);
 
-                    if (e.target.className ==='ui-button-text') return;
+                    if (e.target.className === 'ui-button-text')
+                        return;
                     $(this).animate({
                         'marginLeft': '-180px'
                     }, 500);
@@ -106,43 +120,65 @@ function Slices(volPath, id, container, sliceChange) {
             }
         });
         
-  
         
         // Invert the color map 
-        $("body").on('change', "#" + invertColours, $.proxy(function(e){
-            this.invertColour(e.target.checked); 
+        $("#" + this.invertColours).change($.proxy(function (e) {
+            this.invertColour(e.target.checked);
         }, this));
+
         
-        //Add the styling       
-        $("#invert_colours_" + this.id).button();
-        $("#zoomIn_" + this.id ).button();
-     
         
-        return controlsHTML;
-    };
-    
-    
-    
-    this.createEventHandlers = function () {
         $("#" + this.windowLevel).slider({
             range: true,
             min: parseInt(volume.windowLow),
             max: parseInt(volume.windowHigh),
             min: 0,
-            max: 256,
-            step: 1,
+                    max: 256,
+                    step: 1,
             //values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
             values: [0, 200],
             slide: function (event, ui) {
-                    volume.windowLow = ui.values[0];
-                    volume.windowHigh = ui.values[1];
-                    volume.modified(true);
+                volume.windowLow = ui.values[0];
+                volume.windowHigh = ui.values[1];
+                volume.modified(true);
             }
         });
 
+
+        $("#" + this.reset)
+            .button()
+            .click($.proxy(function (event) {
+                var e = new X.event.ResetViewEvent();
+                this.sliceX.interactor.dispatchEvent(e);
+                this.sliceY.interactor.dispatchEvent(e);
+                this.sliceZ.interactor.dispatchEvent(e);
+                $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
+
+            }, this));
+            
+            
+            
+        $("#" + this.zoomIn)
+            .button()
+            .click($.proxy(function( event ) {
+               this.sliceX.camera.zoomIn(false);
+               this.sliceY.camera.zoomIn(false);
+               this.sliceZ.camera.zoomIn(false);
+            }, this));
+
+
+
+        $("#" + this.zoomOut)
+            .button()
+            .click($.proxy(function( event ) {
+               this.sliceX.camera.zoomOut(false);
+               this.sliceY.camera.zoomOut(false);
+               this.sliceZ.camera.zoomOut(false);
+            }, this));
+
     };
-    
-    
+
+
 
     this.createHTML = function () {
         // Create the html for this specimen orthogonal views. 
@@ -172,16 +208,9 @@ function Slices(volPath, id, container, sliceChange) {
         specimen_view.append(this.controls_tab());
 
         viewsContainer.append(specimen_view);
-        
-        
-        
-        
-        
-        
     };
-    
-    
-//	
+
+
 
     this.setup_renderers = function (container) {
 
@@ -223,7 +252,7 @@ function Slices(volPath, id, container, sliceChange) {
         this.sliceX.render();
 
         this.sliceX.onShowtime = this.xtk_showtime;
-        
+
         this.createEventHandlers();
 
 
@@ -234,13 +263,13 @@ function Slices(volPath, id, container, sliceChange) {
 
         if (!volume)
             return;
-      
+
 
         if (checked) {
             volume.maxColor = [0, 0, 0];
             volume.minColor = [1, 1, 1];
             $("#" + this.id + "> .sliceView").css("background-color", "#FFFFFF");
-           
+
             volume.indexX++;
             volume.indexY++;
             volume.indexZ++;
@@ -249,7 +278,7 @@ function Slices(volPath, id, container, sliceChange) {
 
             volume.maxColor = [1, 1, 1];
             volume.minColor = [0, 0, 0];
-             $("#" + this.id + "> .sliceView").css("background-color", "#000000");
+            $("#" + this.id + "> .sliceView").css("background-color", "#000000");
 
             // Bodge to get the colours to update
             volume.indexX--;
@@ -258,22 +287,22 @@ function Slices(volPath, id, container, sliceChange) {
 
         }
     };
-    
-    
+
+
     this.updateSliders = function (_slice) {
 
-            windowLevelEvent = _slice._interactor.leftButtonDown;
-            crosshairEvent = _slice._interactor._shiftDown;
+        windowLevelEvent = _slice._interactor.leftButtonDown;
+        crosshairEvent = _slice._interactor._shiftDown;
 
-            if (windowLevelEvent) {
-                $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
-            } else if (crosshairEvent) {
-                $("#sliderX").slider("value", volume.indexX);
-                $("#sliderY").slider("value", volume.indexY);
-                $("#sliderZ").slider("value", volume.indexZ);
-            }
-
+        if (windowLevelEvent) {
+            $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
+        } else if (crosshairEvent) {
+            $("#sliderX").slider("value", volume.indexX);
+            $("#sliderY").slider("value", volume.indexY);
+            $("#sliderZ").slider("value", volume.indexZ);
         }
+
+    }
 
 
 
@@ -387,7 +416,7 @@ function Slices(volPath, id, container, sliceChange) {
         this.sliceZ._interactor.onMouseMove = function (event) {
             this.updateSliders(this.sliceZ);
         }.bind(this);
-        
+
 
         //this.finished_callback(); // Create the next specimen view if required
 

@@ -8,6 +8,7 @@
 .specimen_view{
             height: 500px;
             position: relative;
+            width: 100%;
           
 }
 
@@ -90,8 +91,21 @@
     width: 8px;
 }
 
-#bottom_row{
-	padding: 10px;
+#top_bar{
+
+    height: 30px;
+    border-bottom: 1px solid #EEE;
+    height: 40px;
+    
+}
+
+
+#topleft{
+	float: left;
+}
+
+#topright{
+    float:right;
 }
 
 #wrap {
