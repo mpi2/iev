@@ -17,10 +17,10 @@ window.addEventListener('load', function() {
        
         var wildtypes = 
                 ['chrome-extension://' + chromeID + '/260814.nrrd',
-                 'chrome-extension://' + chromeID + '20140107_MLLT3_16.3_e_wt_rec_28um_vox.nrrd'];
+                 'chrome-extension://' + chromeID + '/20140107_MLLT3_16.3_e_wt_rec_28um_vox.nrrd'];
         var mutants = 
                 ['chrome-extension://' + chromeID + '/260814.nrrd',
-                 'chrome-extension://' + chromeID + '20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
+                 'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
         
         
         var div = 'viewer' // For developing outside of web app
@@ -86,11 +86,11 @@ window.addEventListener('load', function() {
         var wildtypeView = new dcc.SpecimenView(wildtypes, 'wt', 'viewer', sliceChange);
         console.log(wildtypes);
         wildtypeView.createHTML();
-        wildtypeView.setup_renderers();
+        wildtypeView.setupRenderers();
         views.push(wildtypeView);
         var mutantView = new dcc.SpecimenView(mutants, 'mut', 'viewer', sliceChange);
         mutantView.createHTML();
-        mutantView.setup_renderers();
+        mutantView.setupRenderers();
         views.push(mutantView);
         
         

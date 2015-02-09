@@ -47,9 +47,7 @@ function Slices(volumePaths, id, container, sliceChange) {
     
 
 
-    this.setVolume = function(volumePath){
-        this.volume.file = volumePath;
-    };
+
 
     this.setSlices = function(idxX, idxY, idxZ) {
         // called from main
@@ -87,8 +85,8 @@ function Slices(volumePaths, id, container, sliceChange) {
 
 
     this.controls_tab = function() {
-        console.log('controls tab');
-        console.log(this);
+      
+       
         // NH. this is horendous. Should I use templating or some other way of accessing the buttons on this object
 
         controlsHTML =
@@ -130,7 +128,7 @@ function Slices(volumePaths, id, container, sliceChange) {
                 this.controlsVisible = true;
             } else {
                 if (this.controlsVisible) {
-                    console.log(e.target.className);
+                  
 
                     if (e.target.className === 'ui-button-text')
                         return;
@@ -201,18 +199,25 @@ function Slices(volumePaths, id, container, sliceChange) {
         
         
         // Add the volume options
-        var options = []; 
-        for (i = 0; i < this.volumePaths; i++) {
+    
+       var options = []; 
+       for (i = 0; i < this.volumePaths.length; i++){ 
+                  
             options.push("<option value='" + this.volumePaths[i]  +"'>" + this.basename(this.volumePaths[i]) + "</option>");
         }
-        
-        // TODO: Wire this up to loading a new this.volume
-        $('#' + this.vselector)
-        .append(options.join(""))
-        .selectmenu({ change: function( event, ui ) {alert(this.value); }});
-    };
+       
+      // TODO: Wire this up to loading a new this.volume
+       $('#' + this.vselector)
+       .append(options.join(""))
 
+                .selectmenu({ 
+                change: $.proxy(function( event, ui ) {
+               this.replaceVolume(ui.item.value);
+               }, this)
+            });
+       
 
+    }; //createEventHandlers
 
     this.createHTML = function() {
         // Create the html for this specimen orthogonal views. 
@@ -245,10 +250,27 @@ function Slices(volumePaths, id, container, sliceChange) {
    
         viewsContainer.append(specimen_view);
     };
+    
+    
 
+    this.replaceVolume = function(volumePath){
+        this.currentVolumePath = volumePath;
+        this.setupRenderers();
+    };
+    
+    
 
-
-    this.setup_renderers = function(container) {
+    this.setupRenderers = function(container) {
+        
+        if (typeof(this.sliceX) !== 'undefined'){
+            this.sliceX.destroy();
+        }
+        if (typeof(this.sliceY) !== 'undefined'){
+            this.sliceY.destroy();
+        }
+        if (typeof(this.sliceZ) !== 'undefined'){
+            this.sliceZ.destroy();
+        }
 
         this.sliceX = new X.renderer2D();
         this.sliceX.container = this.x_xtk.get(0);
@@ -270,10 +292,8 @@ function Slices(volumePaths, id, container, sliceChange) {
         //
         // create a X.volume
         this.volume = new X.volume();
-
-        //volume.file = this.volPath;
-        console.log('cpdsofksod '  + this.currentVolumePath);
-        this.setVolume(this.currentVolumePath);
+        this.volume.file = this.currentVolumePath;
+        console.log('jhgygu ' + this.volume.file);
 
         this.sliceX.add(this.volume);
 
@@ -346,8 +366,7 @@ function Slices(volumePaths, id, container, sliceChange) {
         //
         // the onShowtime method gets executed after all files were fully loaded and
         // just before the first rendering attempt
-        console.log(this);
-        console.log(this.volume);
+     
         this.sliceY.add(this.volume);
         this.sliceY.render();
         this.sliceZ.add(this.volume);
