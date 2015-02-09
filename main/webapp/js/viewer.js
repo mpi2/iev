@@ -84,38 +84,6 @@ function Slices(volumePaths, id, container, sliceChange) {
     };
 
 
-    this.controls_tab = function() {
-      
-       
-        // NH. this is horendous. Should I use templating or some other way of accessing the buttons on this object
-
-        controlsHTML =
-                '<div id="' + this.controlsPane + '"' + 'class="pane"' + '>' +
-                    '<div id="controls_' + this.id + '">' +
-                        '<input type="checkbox" id="' + this.invertColours + '" class="button">' +
-                        '<label for="invert_colours_' + this.id + '">Invert colours</label>' +
-                        '<div id="zooming_' + this.id + '">' +
-                            '<a id="' + this.zoomIn + '" href="#" class="button">+</a>' +
-                            '<a id="' + this.zoomOut + '" href="#" class="button">-</a>' +
-                        '</div>' +
-                        '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
-                        '<div id="' + this.windowLevel + '"></div>' +
-                        '<div id="' + this.selectorWrap + 
-                        '"><select id="' + this.vselector + '" class ="volselector"></select>'+  
-
-                    '</div></div>';
-
-
-        //Add the styling       
-        $("#invert_colours_" + this.id).button();
-        $("#zoomIn_" + this.id).button();
-    
-
-
-        return controlsHTML;
-    };
-
-
 
     this.createEventHandlers = function() {
         
@@ -240,7 +208,7 @@ function Slices(volumePaths, id, container, sliceChange) {
         this.z_xtk.append(this.z_slider);
 
         var specimen_view = $("<div id='" + this.id + "' class='specimen_view'></div>");
-       
+        specimen_view.append("<div id='controls2" + this.id + "' class='controls2'></div>")
 
         specimen_view.append(this.x_xtk);
         specimen_view.append(this.y_xtk);
@@ -250,6 +218,42 @@ function Slices(volumePaths, id, container, sliceChange) {
    
         viewsContainer.append(specimen_view);
     };
+    
+      this.controls_tab = function() {
+      
+       
+        // NH. Do not like. Should I use templating to generate this HTML?
+
+        controlsHTML =
+                '<div id="' + this.controlsPane + '"' + 'class="pane"' + '>' +
+                    '<div id="controls_' + this.id + '">' +
+                        '<input type="checkbox" id="' + this.invertColours + '" class="button">' +
+                        '<label for="invert_colours_' + this.id + '">Invert colours</label>' +
+                        '<div id="zooming_' + this.id + '">' +
+                            '<a id="' + this.zoomIn + '" href="#" class="button">+</a>' +
+                            '<a id="' + this.zoomOut + '" href="#" class="button">-</a>' +
+                        '</div>' +
+                        '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
+                        '<div id="' + this.windowLevel + '"></div>' +
+                       
+                    '</div></div>';
+
+
+        //Add the styling       
+        $("#invert_colours_" + this.id).button();
+        $("#zoomIn_" + this.id).button();
+    
+
+
+        return controlsHTML;
+    };
+    
+    this.makeVolumeSelector(){
+         '<div id="' + this.selectorWrap + 
+                        '"><select id="' + this.vselector + '" class ="volselector"></select>'+  
+
+    }
+
     
     
 

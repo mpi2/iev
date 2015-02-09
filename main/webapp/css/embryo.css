@@ -6,7 +6,7 @@
 }
 
 .specimen_view{
-            height: 500px;
+            height: 550px;
             position: relative;
             width: 100%;
           
@@ -22,20 +22,7 @@
 }
 
 
-.sliceX{
-	border-top: 3px solid red;
-	
-}
 
-.sliceY{
-	border-top: 3px solid green;
-	
-}
-
-.sliceZ{
-	border-top: 3px solid blue;
-   
-}
 
 .sliceView .ui-slider {
     height: 5px;
@@ -53,7 +40,8 @@
     height: 5px !important;
     position: absolute !important;
     bottom: 0;
-    width:100%;
+    width:70%;
+    float: right;
 }
 
 #talkbubble {
@@ -78,6 +66,12 @@
     border-top: solid 50px #03899C;
     border-left: solid 60px transparent;
     border-right: solid 50px transparent;
+}
+
+.controls2{
+    height: 30px;
+    width: 100%;
+    background:white;
 }
 
 .volselector{
@@ -174,4 +168,30 @@
     background-color:#FFFFFF;
     border: 1px solid #132b14;
     color:#132b14;
+}
+
+
+
+
+.sliderX{
+     background: red; 
+}
+
+.sliderX .ui-slider-range{
+    background: red;
+}
+
+.sliderY{
+     background: green; 
+}
+
+.sliderY .ui-slider-range{
+    background: green;
+}
+.sliderZ{
+     background: blue; 
+}
+
+.sliderZ .ui-slider-range{
+    background: blue;
 }
