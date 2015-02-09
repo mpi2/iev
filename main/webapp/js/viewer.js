@@ -10,19 +10,15 @@ goog.require('X.interactor2D');
 function Slices(volumes, id, container, sliceChange) {
     //:param finished_callback function what to call when fisinshed rendering
 
-    sliceChange = sliceChange;
-    this.id = id;
-    this.view_container = container;
+    var sliceChange = sliceChange;
+    var id = id;
+    var view_container = container;
     var volumePaths = volumes;
     var currentVolumePath = volumePaths[0];
     
-
-
-
-
-    var Xcontainer = 'X_' + this.id;
-    var Ycontainer = 'Y_' + this.id;
-    var Zcontainer = 'Z_' + this.id;
+    var Xcontainer = 'X_' + id;
+    var Ycontainer = 'Y_' + id;
+    var Zcontainer = 'Z_' + id;
 
     var x_xtk;
     var y_xtk;
@@ -32,29 +28,38 @@ function Slices(volumes, id, container, sliceChange) {
     var z_slider;
     var volume;
     var controlsVisible = false;
-    this.specimenSelector = undefined;
+    var specimenSelector = undefined;
+    
+    var controlsPane = 'pane_' + id;
+    var invertColours = 'invert_colours_' + id;
+    var windowLevel = 'windowLevel_' + id;
+    var reset = 'reset_' + id;
+    var zoomIn = 'zoomIn_' + id;
+    var zoomOut = 'zoomOut_' + id;
+    var selectorWrap = 'selectorWrap_' + id;
+    var vselector = 'volumeSelector_' + id;
 
 
     this.setVolume = function(volumePath){
         volume.file = volumePath;
     };
 
-    this.setSlices = function (idxX, idxY, idxZ) {
+    function setSlices(idxX, idxY, idxZ) {
         // called from main
         volume.indexX = idxX;
         volume.indexY = idxY;
         volume.indexZ = idxZ;
     };
 
-    this.setXslice = function (idxX) {
+    function setXslice(idxX) {
         volume.indexX = idxX;
     };
 
-    this.setYslice = function (idxY) {
+    function setYslice(idxY) {
         volume.indexY = idxY;
     };
 
-    this.setZslice = function (idxZ) {
+    function setZslice(idxZ) {
         volume.indexZ = idxZ;
     };
 
@@ -67,45 +72,36 @@ function Slices(volumes, id, container, sliceChange) {
 //    };
 
 
-    this.setDisplayOrientation = function () {
+    function setDisplayOrientation() {
         // h or v : horizontal/vertiacl
         // This mght not be needed. Maybe just some css tweeks
         return;
     };
 
 
-    this.controls_tab = function () {
+    function controls_tab() {
         // NH. this is horendous. Should I use templating or some other way of accessing the buttons on this object
 
-        this.controlsPane = 'pane_' + this.id;
-        this.invertColours = 'invert_colours_' + this.id;
-        this.windowLevel = 'windowLevel_' + this.id;
-        this.reset = 'reset_' + this.id;
-        this.zoomIn = 'zoomIn_' + this.id;
-        this.zoomOut = 'zoomOut_' + this.id;
-        var selectorWrap = 'selectorWrap_' + this.id;
-        this.vselector = 'volumeSelector_' + this.id;
-
         controlsHTML =
-                '<div id="' + this.controlsPane + '"' + 'class="pane"' + '>' +
-                    '<div id="controls_' + this.id + '">' +
-                        '<input type="checkbox" id="' + this.invertColours + '" class="button">' +
-                        '<label for="invert_colours_' + this.id + '">Invert colours</label>' +
-                        '<div id="zooming_' + this.id + '">' +
-                            '<a id="' + this.zoomIn + '" href="#" class="button">+</a>' +
-                            '<a id="' + this.zoomOut + '" href="#" class="button">-</a>' +
+                '<div id="' + controlsPane + '"' + 'class="pane"' + '>' +
+                    '<div id="controls_' + id + '">' +
+                        '<input type="checkbox" id="' + invertColours + '" class="button">' +
+                        '<label for="invert_colours_' + id + '">Invert colours</label>' +
+                        '<div id="zooming_' + id + '">' +
+                            '<a id="' + zoomIn + '" href="#" class="button">+</a>' +
+                            '<a id="' + zoomOut + '" href="#" class="button">-</a>' +
                         '</div>' +
-                        '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
-                        '<div id="' + this.windowLevel + '"></div>' +
+                        '<a id ="' + reset +'" href="#" class="button">Reset</a>' +
+                        '<div id="' + windowLevel + '"></div>' +
                         '<div id="' + selectorWrap + 
-                        '"><select id="' + this.vselector + '" class ="volselector"></select>'+  
+                        '"><select id="' + vselector + '" class ="volselector"></select>'+  
 
                     '</div></div>';
 
 
         //Add the styling       
-        $("#invert_colours_" + this.id).button();
-        $("#zoomIn_" + this.id).button();
+        $("#invert_colours_" + id).button();
+        $("#zoomIn_" + id).button();
     
 
 
@@ -114,9 +110,9 @@ function Slices(volumes, id, container, sliceChange) {
 
 
 
-    this.createEventHandlers = function () {
+    this.createEventHandlers = function() {
         console.log('cp ' + this.controlsPane);
-        $("#" + this.controlsPane).click(function (e) {
+        $("#" + controlsPane).click(function (e) {
             if (!controlsVisible) {
                 $(this).animate({
                     'marginLeft': '0px'
@@ -138,13 +134,13 @@ function Slices(volumes, id, container, sliceChange) {
         
         
         // Invert the color map 
-        $("#" + this.invertColours).change($.proxy(function (e) {
-            this.invertColour(e.target.checked);
+        $("#" + invertColours).change($.proxy(function (e) {
+            invertColour(e.target.checked);
         }, this));
 
         
         
-        $("#" + this.windowLevel).slider({
+        $("#" + windowLevel).slider({
             range: true,
             min: parseInt(volume.windowLow),
             max: parseInt(volume.windowHigh),
@@ -161,7 +157,7 @@ function Slices(volumes, id, container, sliceChange) {
         });
 
 
-        $("#" + this.reset)
+        $("#" + reset)
             .button()
             .click($.proxy(function (event) {
                 var e = new X.event.ResetViewEvent();
@@ -174,7 +170,7 @@ function Slices(volumes, id, container, sliceChange) {
             
             
             
-        $("#" + this.zoomIn)
+        $("#" + zoomIn)
             .button()
             .click($.proxy(function( event ) {
                this.sliceX.camera.zoomIn(false);
@@ -184,7 +180,7 @@ function Slices(volumes, id, container, sliceChange) {
 
 
 
-        $("#" + this.zoomOut)
+        $("#" + zoomOut)
             .button()
             .click($.proxy(function( event ) {
                this.sliceX.camera.zoomOut(false);
@@ -201,21 +197,21 @@ function Slices(volumes, id, container, sliceChange) {
         }
         
         // TODO: Wire this up to loading a new volume
-        $('#' + this.vselector)
+        $('#' + vselector)
         .append(options.join(""))
         .selectmenu({ change: function( event, ui ) {alert(this.value); }});
     };
 
 
 
-    this.createHTML = function () {
+    this.createHTML = function() {
         // Create the html for this specimen orthogonal views. 
 
-        var viewsContainer = $("#" + this.view_container);
+        var viewsContainer = $("#" + view_container);
 
-        this.x_slider_id = 'slider_x_' + this.id;
-        this.y_slider_id = 'slider_y_' + this.id;
-        this.z_slider_id = 'slider_z_' + this.id;
+        this.x_slider_id = 'slider_x_' + id;
+        this.y_slider_id = 'slider_y_' + id;
+        this.z_slider_id = 'slider_z_' + id;
 
         x_slider = $("<div id='" + this.x_slider_id + "' class ='sliderX slider'></div>");
         y_slider = $("<div id='" + this.y_slider_id + "' class ='sliderY slider'></div>");
@@ -228,13 +224,13 @@ function Slices(volumes, id, container, sliceChange) {
         z_xtk = $("<div id='Z" + Zcontainer + "' class='sliceZ sliceView'></div>");
         z_xtk.append(z_slider);
 
-        var specimen_view = $("<div id='" + this.id + "' class='specimen_view'></div>");
+        var specimen_view = $("<div id='" + id + "' class='specimen_view'></div>");
        
 
         specimen_view.append([x_xtk, this.x_slider]);
         specimen_view.append([y_xtk, this.y_slider]);
         specimen_view.append([z_xtk, this.z_slider]);
-        specimen_view.append(this.controls_tab());
+        specimen_view.append(controls_tab());
         
    
         viewsContainer.append(specimen_view);
@@ -242,7 +238,7 @@ function Slices(volumes, id, container, sliceChange) {
 
 
 
-    this.setup_renderers = function (container) {
+    this.setup_renderers = function(container) {
 
         this.sliceX = new X.renderer2D();
         this.sliceX.container = x_xtk.get(0);
@@ -289,7 +285,7 @@ function Slices(volumes, id, container, sliceChange) {
     };
 
 
-    this.invertColour = function (checked) {
+    this.invertColour = function(checked) {
 
         if (!volume)
             return;
@@ -298,7 +294,7 @@ function Slices(volumes, id, container, sliceChange) {
         if (checked) {
             volume.maxColor = [0, 0, 0];
             volume.minColor = [1, 1, 1];
-            $("#" + this.id + "> .sliceView").css("background-color", "#FFFFFF");
+            $("#" + id + "> .sliceView").css("background-color", "#FFFFFF");
 
             volume.indexX++;
             volume.indexY++;
@@ -308,7 +304,7 @@ function Slices(volumes, id, container, sliceChange) {
 
             volume.maxColor = [1, 1, 1];
             volume.minColor = [0, 0, 0];
-            $("#" + this.id + "> .sliceView").css("background-color", "#000000");
+            $("#" + id + "> .sliceView").css("background-color", "#000000");
 
             // Bodge to get the colours to update
             volume.indexX--;
@@ -319,7 +315,7 @@ function Slices(volumes, id, container, sliceChange) {
     };
 
 
-    this.updateSliders = function (_slice) {
+    function updateSliders(_slice) {
 
         windowLevelEvent = _slice._interactor.leftButtonDown;
         crosshairEvent = _slice._interactor._shiftDown;

@@ -83,12 +83,12 @@ window.addEventListener('load', function() {
 
     this.loadViewers = function () {
         
-        var wildtypeView = new Slices(wildtypes, 'wt', 'viewer', sliceChange);
+        var wildtypeView = new dcc.SpecimenView(wildtypes, 'wt', 'viewer', sliceChange);
         console.log(wildtypes);
         wildtypeView.createHTML();
         wildtypeView.setup_renderers();
         views.push(wildtypeView);
-        var mutantView = new Slices(mutants, 'mut', 'viewer', sliceChange);
+        var mutantView = new dcc.SpecimenView(mutants, 'mut', 'viewer', sliceChange);
         mutantView.createHTML();
         mutantView.setup_renderers();
         views.push(mutantView);
