@@ -16,7 +16,6 @@
 	background-color: #000000;
 	float: left;
 	width: 33%;
-	margin-top: 10px;
 	display: inline-block;
         position: relative;
         height: 500px;
@@ -25,17 +24,17 @@
 
 .sliceX{
 	border-top: 3px solid red;
-	margin-bottom: 10px;
+	
 }
 
 .sliceY{
 	border-top: 3px solid green;
-	margin-bottom: 10px;
+	
 }
 
 .sliceZ{
 	border-top: 3px solid blue;
-    margin-bottom: 10px;
+   
 }
 
 .sliceView .ui-slider {
@@ -56,19 +55,55 @@
     bottom: 0;
 }
 
+#talkbubble {
+   width: 120px;
+   height: 80px;
+   background: red;
+   position: relative;
+   -moz-border-radius:    10px;
+   -webkit-border-radius: 10px;
+   border-radius:         10px;
+}
+
+
+.pane:after{
+    content:'';
+    position: absolute;
+    left: 100%;
+    margin-left: -60px;
+    width: 0;
+    height: 0;
+    bottom:51%;
+    border-top: solid 50px #03899C;
+    border-left: solid 60px transparent;
+    border-right: solid 50px transparent;
+}
+
+.volselector{
+    width:150px;
+}
+
+#viewHeightSlider{
+    float: right;
+    width: 300px;
+}
 
 .pane {
     position: absolute;
     z-index: 10;
-    top: 70px;
+    top: 0px;
     background-color: #03899C;
     opacity: 0.6;
     filter: alpha(opacity=60); /* For IE8 and earlier */
-    width: 200px;
+    width: 250px;
     float: left;
-    margin-left: -180px;
+    margin-left: -250px;
     border-radius: 0px 5px 5px 0px;
 }
+
+/*#checkbox{
+    color:#FFFFFF !important;
+}*/
 
 #controls {
     float: left;

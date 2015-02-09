@@ -19,10 +19,6 @@ limitations under the License.
         <title>Embryo Viewer Web Application</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-        <link rel="stylesheet" type="text/css" href="css/embryo.css">
-    </head>
-    <body>
-        <div id="embryo-container"></div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
@@ -31,7 +27,9 @@ limitations under the License.
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
         <script type="text/javascript" src="js/viewer.js"></script>
-
+        <link rel="stylesheet" type="text/css" href="css/embryo.css">
+        </head>
+        <body>
         <div id='wrap'>
             <div id='top_bar'>
                 <div id='topleft'>
@@ -43,11 +41,18 @@ limitations under the License.
                     <label for="Z_check">Axial</label>
                 </div>
                 <div id='topright'>
-                    <input type="checkbox" id="vertical_check" class='button' checked>
+<!--                    <input type="checkbox" id="vertical_check" class='button'>
                     <label for="vertical_check">vertical</label>
                     <input type="checkbox" id="horizontal_check" class='button' checked>
+                    <label for="horizontal_check">Horizontal</label>-->
+                    <span id="orientation_radio">
+                    <input type="radio" id="vertical_check" name="radio" checked="checked">
+                    <label for="vertical_check">Vertical</label>
+                    <input type="radio" id="horizontal_check" name="radio">
                     <label for="horizontal_check">Horizontal</label>
+                    </span>
                 </div>
+                <div id="viewHeightSlider"></div>
             </div>
             </div>
         

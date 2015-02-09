@@ -13,10 +13,18 @@ window.addEventListener('load', function() {
     
     if (viewer_testing){
         // So we can just use index.html instead of deploying the web app
-        chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
-        var v =  'chrome-extension://' + chromeID + '/260814.nrrd';
+		chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
+       
+        var wildtypes = 
+                ['chrome-extension://' + chromeID + '/260814.nrrd',
+                 'chrome-extension://' + chromeID + '20140107_MLLT3_16.3_e_wt_rec_28um_vox.nrrd'];
+        var mutants = 
+                ['chrome-extension://' + chromeID + '/260814.nrrd',
+                 'chrome-extension://' + chromeID + '20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
+        
+        
         var div = 'viewer' // For developing outside of web app
-        dcc.EmbryoViewer(v, div);
+        dcc.EmbryoViewer(wildtypes, mutants, div);
     }
 });
 
@@ -28,32 +36,27 @@ window.addEventListener('load', function() {
     if (typeof dcc === 'undefined')
         dcc = {};
     
-    console.log('herererere');
-
     var viewsLinked = false;
-    var number_to_load = 2;
     var views = [];
-    var container = 'viewer'// Div to put the viewers
+    var container = 'viewer';// Div to put the viewers
     var chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
-    var volpath ='chrome-extension://' + chromeID + '/260814.nrrd';
-   
     var controlsVisible = false;
+    var wildtypes;
+    var mutants;
     
-
+ 
     
-    dcc.EmbryoViewer = function (v, div) {
-        //console.log(container);
-        //url = 'http://localhost:8084/embryo-viewer/viewer.html';
-//        window.location.href = url;
-        //window.location.assign(url);
-        loadViewers(volpath, container);
-        //setupZoomSlider();
+    function EmbryoViewer(wild, mut, div) {
+        
+        wildtypes = wild;
+        mutants = mut;
+        loadViewers();
         attachEvents();
         container = div;
-        volpath = v;
-        console.log('dcc EmbryOView  volpath ' + volpath);
-      
     }
+      
+    dcc.EmbryoViewer = EmbryoViewer;
+    
 
 
     function sliceChange(viewid, orientation, indx) {
@@ -78,30 +81,21 @@ window.addEventListener('load', function() {
         }
     }
 
-    function loadViewers() {
-        console.log('load viewers called');
-        for (var i =0; i < number_to_load; ++i){
-            console.log('load_viewer ' + i)
-            var view = new Slices(volpath, 's' + i, 'viewer', sliceChange);
-            views.push(view);
-            view.createHTML();
-            view.setup_renderers();
-        }
+    this.loadViewers = function () {
+        
+        var wildtypeView = new Slices(wildtypes, 'wt', 'viewer', sliceChange);
+        console.log(wildtypes);
+        wildtypeView.createHTML();
+        wildtypeView.setup_renderers();
+        views.push(wildtypeView);
+        var mutantView = new Slices(mutants, 'mut', 'viewer', sliceChange);
+        mutantView.createHTML();
+        mutantView.setup_renderers();
+        views.push(mutantView);
+        
+        
     }
 
-
-//    function setupZoomSlider() {
-//        $("#level_slider").slider({
-//            "disabled": false,
-//            range: "min",
-//            min: 100,
-//            max: 1000,
-//            value: 400,
-//            slide: function (event, ui) {
-//
-//            }
-//        });
-//    }
 
     function attachEvents() {
         console.log('attach events');
@@ -172,10 +166,52 @@ window.addEventListener('load', function() {
         });
         
         
+        $(function() {
+            $( "#orientation_radio" ).buttonset();
+        });
+        
+        
         $("#vertical_check")
                 .click(function (event) {
-                   $
+                   $('.specimen_view').css({
+                     float: 'left',
+                       width: '48%',
+                       height: 'auto'
+                });
+                $('.sliceView').css({
+                       width: '100%'
+                });
+                $('#horizontal_check').prop('checked', true).button("refresh");
+           
         });
+        
+        $('#horizontal_check')
+                .click(function (event) {
+                   $('.specimen_view').css({
+                       float: 'left',
+                       width: '100%',
+                       height: '500px'
+                });
+                $('.sliceView').css({
+                       width: '33%' // what about if some ortho views are not shown?
+                });
+                $('#vertical_check').prop('checked', true).button("refresh");
+                
+           
+        });
+        
+        
+         $( "#viewHeightSlider" )
+            .slider({
+                min: 200,
+                max: 1000,
+                values: [500],
+                slide: function(event, ui){
+                    console.log(ui);
+            }
+         });
+          
+
 
                 
 
@@ -191,6 +227,6 @@ window.addEventListener('load', function() {
     $('body').bind('beforeunload', function () {
         console.log('bye');
     });
-
+    
 
 })();

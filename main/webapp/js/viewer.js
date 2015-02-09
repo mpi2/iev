@@ -2,15 +2,21 @@ goog.require('X.renderer2D');
 goog.require('X.interactor2D');
 
 
-
-function Slices(volPath, id, container, sliceChange) {
+(function () {
+    if (typeof dcc === 'undefined')
+        dcc = {};
+    
+    
+function Slices(volumes, id, container, sliceChange) {
     //:param finished_callback function what to call when fisinshed rendering
 
-    this.sliceChange = sliceChange;
-    //this.finished_callback = finished_cb;
+    sliceChange = sliceChange;
     this.id = id;
     this.view_container = container;
-    this.volPath = volPath;
+    var volumePaths = volumes;
+    var currentVolumePath = volumePaths[0];
+    
+
 
 
 
@@ -28,6 +34,10 @@ function Slices(volPath, id, container, sliceChange) {
     var controlsVisible = false;
     this.specimenSelector = undefined;
 
+
+    this.setVolume = function(volumePath){
+        volume.file = volumePath;
+    };
 
     this.setSlices = function (idxX, idxY, idxZ) {
         // called from main
@@ -73,6 +83,8 @@ function Slices(volPath, id, container, sliceChange) {
         this.reset = 'reset_' + this.id;
         this.zoomIn = 'zoomIn_' + this.id;
         this.zoomOut = 'zoomOut_' + this.id;
+        var selectorWrap = 'selectorWrap_' + this.id;
+        this.vselector = 'volumeSelector_' + this.id;
 
         controlsHTML =
                 '<div id="' + this.controlsPane + '"' + 'class="pane"' + '>' +
@@ -85,12 +97,16 @@ function Slices(volPath, id, container, sliceChange) {
                         '</div>' +
                         '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
                         '<div id="' + this.windowLevel + '"></div>' +
+                        '<div id="' + selectorWrap + 
+                        '"><select id="' + this.vselector + '" class ="volselector"></select>'+  
+
                     '</div></div>';
 
 
         //Add the styling       
         $("#invert_colours_" + this.id).button();
         $("#zoomIn_" + this.id).button();
+    
 
 
         return controlsHTML;
@@ -99,7 +115,7 @@ function Slices(volPath, id, container, sliceChange) {
 
 
     this.createEventHandlers = function () {
-        
+        console.log('cp ' + this.controlsPane);
         $("#" + this.controlsPane).click(function (e) {
             if (!controlsVisible) {
                 $(this).animate({
@@ -113,7 +129,7 @@ function Slices(volPath, id, container, sliceChange) {
                     if (e.target.className === 'ui-button-text')
                         return;
                     $(this).animate({
-                        'marginLeft': '-180px'
+                        'marginLeft': '-250px'
                     }, 500);
                     controlsVisible = false;
                 }
@@ -176,6 +192,18 @@ function Slices(volPath, id, container, sliceChange) {
                this.sliceZ.camera.zoomOut(false);
             }, this));
 
+        
+        
+        // Add the volume options
+        var options = []; 
+        for (i = 0; i < 8; i++) {
+            options.push("<option value='volumePath_" + i + "'> a volume </option>");
+        }
+        
+        // TODO: Wire this up to loading a new volume
+        $('#' + this.vselector)
+        .append(options.join(""))
+        .selectmenu({ change: function( event, ui ) {alert(this.value); }});
     };
 
 
@@ -201,12 +229,14 @@ function Slices(volPath, id, container, sliceChange) {
         z_xtk.append(z_slider);
 
         var specimen_view = $("<div id='" + this.id + "' class='specimen_view'></div>");
+       
 
         specimen_view.append([x_xtk, this.x_slider]);
         specimen_view.append([y_xtk, this.y_slider]);
         specimen_view.append([z_xtk, this.z_slider]);
         specimen_view.append(this.controls_tab());
-
+        
+   
         viewsContainer.append(specimen_view);
     };
 
@@ -235,9 +265,9 @@ function Slices(volPath, id, container, sliceChange) {
         // create a X.volume
         volume = new X.volume();
 
-
-        //volume.file = 'http://labs.publicdevelopment1.har.mrc.ac.uk/neil/xtk_viewer/volumes/260814.nii';
-        volume.file = this.volPath;
+        //volume.file = this.volPath;
+        console.log('cpdsofksod '  + currentVolumePath);
+        this.setVolume(currentVolumePath);
 
         this.sliceX.add(volume);
 
@@ -405,6 +435,11 @@ function Slices(volPath, id, container, sliceChange) {
         // Overload sliceX mouse moved
         this.sliceX._interactor.onMouseMove = function (event) {
             this.updateSliders(this.sliceX);
+            if (event.cntrlKey){
+               console.log('ppppppp');
+            }
+            
+            
         }.bind(this);
 
         // Overload sliceY mouse moved
@@ -483,3 +518,6 @@ function Slices(volPath, id, container, sliceChange) {
         // Delete the html 
     };
 }
+
+    dcc.SpecimenView = Slices;
+})();
