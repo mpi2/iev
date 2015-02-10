@@ -33,7 +33,6 @@ function Slices(volumePaths, id, container, sliceChange) {
     
     this.volume;
     this.controlsVisible = false;
-    this.specimenSelector = undefined;
     
     this.controlsPane = 'pane_' + id;
     this.invertColours = 'invert_colours_' + id;
@@ -125,11 +124,11 @@ function Slices(volumePaths, id, container, sliceChange) {
                     step: 1,
             //values: [ parseInt(this.volume.windowLow), parseInt(this.volume.windowHigh) ],
             values: [0, 200],
-            slide: function (event, ui) {
+            slide: $.proxy(function (event, ui) {
                 this.volume.windowLow = ui.values[0];
                 this.volume.windowHigh = ui.values[1];
                 this.volume.modified(true);
-            }
+            },this)
         });
 
 
@@ -145,7 +144,7 @@ function Slices(volumePaths, id, container, sliceChange) {
             }, this));
             
             
-            
+      
         $("#" + this.zoomIn)
             .button()
             .click($.proxy(function( event ) {
@@ -179,6 +178,8 @@ function Slices(volumePaths, id, container, sliceChange) {
        .append(options.join(""))
 
                 .selectmenu({ 
+                width: 200,
+                height: 20,
                 change: $.proxy(function( event, ui ) {
                this.replaceVolume(ui.item.value);
                }, this)
@@ -208,12 +209,14 @@ function Slices(volumePaths, id, container, sliceChange) {
         this.z_xtk.append(this.z_slider);
 
         var specimen_view = $("<div id='" + this.id + "' class='specimen_view'></div>");
-        specimen_view.append("<div id='controls2" + this.id + "' class='controls2'></div>")
+        specimen_view.append(this.controls_tab());
+        //specimen_view.append("<div id='controls" + this.id + "' class='controls'></div>")
 
         specimen_view.append(this.x_xtk);
         specimen_view.append(this.y_xtk);
         specimen_view.append(this.z_xtk);
-        specimen_view.append(this.controls_tab());
+        
+        //specimen_view.append(this.makeVolumeSelector());
         
    
         viewsContainer.append(specimen_view);
@@ -225,18 +228,24 @@ function Slices(volumePaths, id, container, sliceChange) {
         // NH. Do not like. Should I use templating to generate this HTML?
 
         controlsHTML =
-                '<div id="' + this.controlsPane + '"' + 'class="pane"' + '>' +
-                    '<div id="controls_' + this.id + '">' +
+                    '<div id="controls_' + this.id + '" class="controls clear">' +
+                    '<span id="controlsButtons_' + this.id + '" class="controlsButtons">' +
                         '<input type="checkbox" id="' + this.invertColours + '" class="button">' +
                         '<label for="invert_colours_' + this.id + '">Invert colours</label>' +
-                        '<div id="zooming_' + this.id + '">' +
+                        
                             '<a id="' + this.zoomIn + '" href="#" class="button">+</a>' +
                             '<a id="' + this.zoomOut + '" href="#" class="button">-</a>' +
-                        '</div>' +
-                        '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
-                        '<div id="' + this.windowLevel + '"></div>' +
+                            '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
+                  
+                         '<div class="selectorWrap" id="' + this.selectorWrap + 
+                        '"><select id="' + this.vselector + '" class ="volselector"></select></div>' +
+                         '<div class= wlwrap>' +
+                                '<div id="' + this.windowLevel + '" class="windowLevel"></div>' +
+                         '</div>'
+                           
                        
-                    '</div></div>';
+                       
+                    '</span>';
 
 
         //Add the styling       
@@ -248,34 +257,29 @@ function Slices(volumePaths, id, container, sliceChange) {
         return controlsHTML;
     };
     
-    this.makeVolumeSelector(){
-         '<div id="' + this.selectorWrap + 
-                        '"><select id="' + this.vselector + '" class ="volselector"></select>'+  
-
-    }
-
-    
-    
 
     this.replaceVolume = function(volumePath){
+        //TODO. Memory is not being released wehen we delete renderer
+        if (typeof(this.sliceX) !== 'undefined'){
+            this.sliceX.destroy();
+            delete this.sliceX;
+        }
+        if (typeof(this.sliceY) !== 'undefined'){
+            this.sliceY.destroy();
+            delete this.sliceY;
+        }
+        if (typeof(this.sliceZ) !== 'undefined'){
+            this.sliceZ.destroy();
+            delete this.sliceZ;
+        }
         this.currentVolumePath = volumePath;
         this.setupRenderers();
     };
     
-    
 
     this.setupRenderers = function(container) {
         
-        if (typeof(this.sliceX) !== 'undefined'){
-            this.sliceX.destroy();
-        }
-        if (typeof(this.sliceY) !== 'undefined'){
-            this.sliceY.destroy();
-        }
-        if (typeof(this.sliceZ) !== 'undefined'){
-            this.sliceZ.destroy();
-        }
-
+     
         this.sliceX = new X.renderer2D();
         this.sliceX.container = this.x_xtk.get(0);
         this.sliceX.orientation = 'X';
@@ -297,17 +301,12 @@ function Slices(volumePaths, id, container, sliceChange) {
         // create a X.volume
         this.volume = new X.volume();
         this.volume.file = this.currentVolumePath;
-        console.log('jhgygu ' + this.volume.file);
 
         this.sliceX.add(this.volume);
 
         // We need to catch events that might change the slice, then pass taht to main
         // Navigation, slider shift, wheel scrolling and zoom
         // Naviagtion has a problem that it fires even when not moving the cross-hairs
-
-        this.sliceX.onResize_ = function () {
-            console.log('computing end');
-        };
 
         this.sliceX.render();
 

@@ -16,10 +16,10 @@ window.addEventListener('load', function() {
 		chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
        
         var wildtypes = 
-                ['chrome-extension://' + chromeID + '/260814.nrrd',
+                ['chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
                  'chrome-extension://' + chromeID + '/20140107_MLLT3_16.3_e_wt_rec_28um_vox.nrrd'];
         var mutants = 
-                ['chrome-extension://' + chromeID + '/260814.nrrd',
+                ['chrome-extension://' + chromeID + '/20140107_MLLT3_16.3_e_wt_rec_28um_vox.nrrd',
                  'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
         
         
@@ -91,16 +91,22 @@ window.addEventListener('load', function() {
         var mutantView = new dcc.SpecimenView(mutants, 'mut', 'viewer', sliceChange);
         mutantView.createHTML();
         mutantView.setupRenderers();
-        views.push(mutantView);
-        
-        
+        views.push(mutantView);   
     }
+    
+    this.setViewHeight = function(height){
+ 
+            
+        
+    };
 
 
     function attachEvents() {
-        console.log('attach events');
         // Hide/show slice views from the checkboxes
-        $('.toggle_slice').change(function () {
+        $('.toggle_slice').change(function (e, ui) {
+            console.log(e);
+          
+            //e.target.css('backgound-color', 'blue');
 
             var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
             var toView = {}
@@ -134,36 +140,6 @@ window.addEventListener('load', function() {
                     viewsLinked = e.currentTarget.checked;
         });
     
-
-
-        // Zooming
-        $("#zoomIn")
-                .button()
-                .click(function (event) {
-                    for (var i = 0; i < views.length; i++) {
-                        views[i].cameraZoomIn()
-                    }
-
-        });
-
-        $("#zoomOut")
-                .button()
-                .click(function (event) {
-                    for (var i = 0; i < views.length; i++) {
-                        views[i].cameraZoomOut();
-                    }
-        });
-
-        $("#reset")
-                .button()
-                .click(function (event) {
-                    var e = new X.event.ResetViewEvent();
-                    for (var i = 0; i < views.length; i++) {
-                        views[i].resetView(e);
-                    }
-                    $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
-
-        });
         
         
         $(function() {
@@ -174,7 +150,7 @@ window.addEventListener('load', function() {
         $("#vertical_check")
                 .click(function (event) {
                    $('.specimen_view').css({
-                     float: 'left',
+                       float: 'left',
                        width: '48%',
                        height: 'auto'
                 });
@@ -187,8 +163,8 @@ window.addEventListener('load', function() {
         
         $('#horizontal_check')
                 .click(function (event) {
-                   $('.specimen_view').css({
-                       float: 'left',
+                $('.specimen_view').css({
+                       float: 'none',
                        width: '100%',
                        height: '500px'
                 });
@@ -206,12 +182,15 @@ window.addEventListener('load', function() {
                 min: 200,
                 max: 1000,
                 values: [500],
-                slide: function(event, ui){
-                    console.log(ui);
-            }
+                slide: $.proxy(function(event, ui){
+                         $('.sliceView').css('height', ui.value);
+                         window.dispatchEvent(new Event('resize'));
+                            
+            }, this)
          });
           
-
+         
+         
 
                 
 
@@ -227,6 +206,9 @@ window.addEventListener('load', function() {
     $('body').bind('beforeunload', function () {
         console.log('bye');
     });
+    
+
+        
     
 
 })();

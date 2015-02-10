@@ -6,9 +6,11 @@
 }
 
 .specimen_view{
-            height: 550px;
+            height: auto;
             position: relative;
             width: 100%;
+            
+          
           
 }
 
@@ -21,27 +23,39 @@
         height: 500px;
 }
 
-
-
-
-.sliceView .ui-slider {
-    height: 5px;
-    margin-bottom: 5px;
-    width: 95%;
-    margin-left: auto;
-    margin-right: auto;
+.windowLevel{
+    float: left;
+    width: 200px;
 }
 
-.slice .ui-slider-handle {
-    height: 15px;
+/*clear{
+    clear:both;
+}*/
+
+
+
+
+
+
+/*.wlwrap{
+    position: relative;
+    float: left;
+    height: auto;
+}*/
+
+.windowLevel{
+    float:left;
+    vertical-align: middle; 
+    top:50%;
+    margin-left: 10px;
+    margin-top: 5px;  // Bodge. Need to get it to vertically align automatically*/ 
 }
 
-.slider{
-    height: 5px !important;
-    position: absolute !important;
-    bottom: 0;
-    width:70%;
-    float: right;
+.wlwrap{
+    top: 5px;
+    float:left;
+    height: auto;
+    margin: 0 5px;
 }
 
 #talkbubble {
@@ -68,14 +82,10 @@
     border-right: solid 50px transparent;
 }
 
-.controls2{
-    height: 30px;
-    width: 100%;
-    background:white;
-}
-
-.volselector{
-    width:150px;
+.selectorWrap{
+    height: auto;
+    padding: 2px 0 0 0;
+    float:left;
 }
 
 #viewHeightSlider{
@@ -83,6 +93,9 @@
     width: 300px;
 }
 
+.ui-selectmenu-text{
+    font-size: 10px;
+}
 .pane {
     position: absolute;
     z-index: 10;
@@ -101,24 +114,51 @@
 }*/
 
 #controls {
-    float: left;
-    padding: 10px;
+    position:relative;
+    width: 100%;
+    //padding: 10px;
 }
 
-#controls .ui-slider {
-    margin: 5px 12px;
+.controlsButtons{
+   
+}
+
+/*#controls .ui-slider {
+    margin: 30px 12px;
     width: 100px !important;
-    height: 5px !important;
-}
-
-#controls .ui-slider-handle {
+    height: 15px !important;
+}*/
+/*
+#windowLevel .ui-slider-handle {
+    top: 10px;
     height: 10px;
     width: 10px;
-}
+}*/
 
-.ui-slider-handle {
+.sliceView .ui-slider-handle {
     height: 10px !important;
     width: 8px;
+}
+
+.sliceView .ui-slider {
+    height: 20px;
+    margin-bottom: 5px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    vertical-align: middle; 
+}
+
+.slice .ui-slider-handle {
+    height: 15px;
+}
+
+.slider{
+    height: 5px !important;
+    position: absolute !important;
+    bottom: 0;
+    width:70%;
+    float: right;
 }
 
 #top_bar{
@@ -153,11 +193,15 @@
 
 
 /*Style the orthogonal views buttons*/
-#X_check
+input#X_check
 {
     border: 1px solid #132b14;
-    color:#FF0000;
+    color:red;
 }
+.ui-active-state#X_check_label {
+    background-color: blue !important;
+}
+
 #X_check:hover
 { 
     border: 1px solid #132b14;
