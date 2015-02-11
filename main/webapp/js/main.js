@@ -43,8 +43,12 @@ window.addEventListener('load', function() {
     var controlsVisible = false;
     var wildtypes;
     var mutants;
+    var visible = {'x': true,
+                   'y': true,
+                   'z': true
+                  };
+
     
- 
     
     function EmbryoViewer(wild, mut, div) {
         
@@ -109,21 +113,21 @@ window.addEventListener('load', function() {
             //e.target.css('backgound-color', 'blue');
 
             var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
-            var toView = {}
+            visible = {}
             var count = 0;
 
             //Count the number of checked boxes so we can work out a new width
             for (var i = 0; i < slice_list.length; i++) {
                 if ($('#' + slice_list[i]).is(':checked')) {
-                    toView[slice_list[i].charAt(0)] = true;
+                    visible[slice_list[i].charAt(0)] = true;
                     count++;
                 }
                 else {
-                    toView[slice_list[i].charAt(0)] = false;
+                    visible[slice_list[i].charAt(0)] = false;
                 }
             }
             for (var i = 0; i < views.length; i++) {
-                views[i].setVisibleViews(toView, count);
+                views[i].setVisibleViews(visible, count);
             }
             window.dispatchEvent(new Event('resize')); //
 
@@ -152,7 +156,7 @@ window.addEventListener('load', function() {
                    $('.specimen_view').css({
                        float: 'left',
                        width: '48%',
-                       height: 'auto'
+                       
                 });
                 $('.sliceView').css({
                        width: '100%'
@@ -163,13 +167,19 @@ window.addEventListener('load', function() {
         
         $('#horizontal_check')
                 .click(function (event) {
+                    var numVisible = 0;
+                    for(var item in visible){
+                        if(visible[item]) ++ numVisible;
+                    }
+                      
                 $('.specimen_view').css({
                        float: 'none',
                        width: '100%',
-                       height: '500px'
+                       
                 });
                 $('.sliceView').css({
-                       width: '33%' // what about if some ortho views are not shown?
+                       width: String(100 / numVisible) + '%',
+//                      
                 });
                 $('#vertical_check').prop('checked', true).button("refresh");
                 

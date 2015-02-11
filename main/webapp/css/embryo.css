@@ -13,7 +13,7 @@ body{
     height: auto;
     position: relative;
     width: 100%;
-    overflow: auto;     
+    overflow: hidden;     
 }
 
 .sliceView{
@@ -93,6 +93,8 @@ body{
 #viewHeightSlider{
     float: right;
     width: 300px;
+    top: 5px;
+    margin: 0 10px;
 
 }
 
