@@ -210,8 +210,7 @@ function Slices(volumePaths, id, container, sliceChange) {
 
         var specimen_view = $("<div id='" + this.id + "' class='specimen_view'></div>");
         specimen_view.append(this.controls_tab());
-        //specimen_view.append("<div id='controls" + this.id + "' class='controls'></div>")
-
+        
         specimen_view.append(this.x_xtk);
         specimen_view.append(this.y_xtk);
         specimen_view.append(this.z_xtk);
@@ -237,15 +236,14 @@ function Slices(volumePaths, id, container, sliceChange) {
                             '<a id="' + this.zoomOut + '" href="#" class="button">-</a>' +
                             '<a id ="' + this.reset +'" href="#" class="button">Reset</a>' +
                   
-                         '<div class="selectorWrap" id="' + this.selectorWrap + 
-                        '"><select id="' + this.vselector + '" class ="volselector"></select></div>' +
+                         '<div class="selectorWrap" id="' + this.selectorWrap + '">'
+                            '<select id="' + this.vselector + '" class ="volselector"></select>' +
+                         '</div>' +
                          '<div class= wlwrap>' +
                                 '<div id="' + this.windowLevel + '" class="windowLevel"></div>' +
-                         '</div>'
-                           
-                       
-                       
-                    '</span>';
+                         '</div>'                     
+                    '</span>' + 
+                    '</div>';
 
 
         //Add the styling       
@@ -497,29 +495,29 @@ function Slices(volumePaths, id, container, sliceChange) {
         var slice_view_width = String(100 / count);
 
         if (viewList['X']) {
-            x_xtk.show();
-            x_xtk.width(slice_view_width + '%');
-            x_xtk.width(slice_view_width + '%');
+            this.x_xtk.show();
+            this.x_xtk.width(slice_view_width + '%');
+            this.x_xtk.width(slice_view_width + '%');
 
         } else {
-            x_xtk.hide();
+            this.x_xtk.hide();
 
         }
 
         if (viewList['Y']) {
-            y_xtk.show();
-            y_xtk.width(slice_view_width + '%');
-            y_xtk.width(slice_view_width + '%');
+            this.y_xtk.show();
+            this.y_xtk.width(slice_view_width + '%');
+            this.y_xtk.width(slice_view_width + '%');
         } else {
-            y_xtk.hide();
+            this.y_xtk.hide();
         }
 
         if (viewList['Z']) {
-            z_xtk.show();
-            z_xtk.width(slice_view_width + '%');
-            z_xtk.width(slice_view_width + '%');
+            this.z_xtk.show();
+            this.z_xtk.width(slice_view_width + '%');
+            this.z_xtk.width(slice_view_width + '%');
         } else {
-            z_xtk.hide();
+            this.z_xtk.hide();
         }
 
 

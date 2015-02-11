@@ -16,10 +16,10 @@ window.addEventListener('load', function() {
 		chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
        
         var wildtypes = 
-                ['chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
-                 'chrome-extension://' + chromeID + '/20140107_MLLT3_16.3_e_wt_rec_28um_vox.nrrd'];
+                ['chrome-extension://' + chromeID + '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
+                 'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
         var mutants = 
-                ['chrome-extension://' + chromeID + '/20140107_MLLT3_16.3_e_wt_rec_28um_vox.nrrd',
+                ['chrome-extension://' + chromeID + '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
                  'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
         
         
@@ -177,10 +177,10 @@ window.addEventListener('load', function() {
         });
         
         
-         $( "#viewHeightSlider" )
+        $( "#viewHeightSlider" )
             .slider({
                 min: 200,
-                max: 1000,
+                max: 1920,
                 values: [500],
                 slide: $.proxy(function(event, ui){
                          $('.sliceView').css('height', ui.value);

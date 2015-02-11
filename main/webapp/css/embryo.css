@@ -1,3 +1,7 @@
+body{
+    min-width: 800px;
+}
+
 #viewer {
   position: relative;
   margin: 0;
@@ -6,12 +10,10 @@
 }
 
 .specimen_view{
-            height: auto;
-            position: relative;
-            width: 100%;
-            
-          
-          
+    height: auto;
+    position: relative;
+    width: 100%;
+    overflow: auto;     
 }
 
 .sliceView{
@@ -91,6 +93,7 @@
 #viewHeightSlider{
     float: right;
     width: 300px;
+
 }
 
 .ui-selectmenu-text{
