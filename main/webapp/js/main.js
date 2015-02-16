@@ -13,13 +13,15 @@ window.addEventListener('load', function() {
     
     if (viewer_testing){
         // So we can just use index.html instead of deploying the web app
-		chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
+		var chromeID = 'imnbjldclgefjpoiclhgkhodldbgkefo';
        
         var wildtypes = 
                 ['chrome-extension://' + chromeID + '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
-                 'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
+                 'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
+                 'chrome-extension://' + chromeID + '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd'];
         var mutants = 
-                ['chrome-extension://' + chromeID + '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
+                ['chrome-extension://' + chromeID + '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd',
+                 'chrome-extension://' + chromeID + '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
                  'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
         
         
@@ -29,80 +31,33 @@ window.addEventListener('load', function() {
 });
 
 
-
-    
-
 (function () {
     if (typeof dcc === 'undefined')
         dcc = {};
     
-    var viewsLinked = false;
-    var views = [];
-    var container = 'viewer';// Div to put the viewers
-    var chromeID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
-    var controlsVisible = false;
-    var wildtypes;
-    var mutants;
-    var visible = {'x': true,
-                   'y': true,
-                   'z': true
-                  };
-
-    
-    
-    function EmbryoViewer(wild, mut, div) {
-        
-        wildtypes = wild;
-        mutants = mut;
-        loadViewers();
-        attachEvents();
-        container = div;
-    }
-      
-    dcc.EmbryoViewer = EmbryoViewer;
-    
-
-
-    function sliceChange(viewid, orientation, indx) {
-        // Calback from viewer for when slice changes
-        if (!viewsLinked)
-            return;
-        // on scrolling, scroll the other views as well
-        for (var i = 0; i < views.length; i++) {
-            if (viewid === views[i].id) {
-                continue;
-            } else {
-               if (orientation === 'x') {
-                   views[i].setXslice(indx);
-               }
-               else if (orientation === 'y'){
-                    views[i].setYslice(indx);
-               }
-               else if (orientation === 'z'){
-                    views[i].setZslice(indx);
-               }
-            }
-        }
-    }
-
-    this.loadViewers = function () {
-        
-        var wildtypeView = new dcc.SpecimenView(wildtypes, 'wt', 'viewer', sliceChange);
-        console.log(wildtypes);
-        wildtypeView.createHTML();
-        wildtypeView.setupRenderers();
-        views.push(wildtypeView);
-        var mutantView = new dcc.SpecimenView(mutants, 'mut', 'viewer', sliceChange);
-        mutantView.createHTML();
-        mutantView.setupRenderers();
-        views.push(mutantView);   
-    }
-    
-    this.setViewHeight = function(height){
  
-            
+    function EmbryoViewer(wild, mut, div) {
+        var wildtypes = wild;
+        var mutants = mut;
+        var container = div;
+        var views = [];
         
+        var visible = {'x': true,
+                       'y': true,
+                       'z': true
+                      };
+    
+      
+    
+    function loadViewers(container) {
+        
+        var wildtypeView = new dcc.SpecimenView(wildtypes, 'wt', container);
+        views.push(wildtypeView);
+        
+        var mutantView = new dcc.SpecimenView(mutants, 'mut', container);
+        views.push(mutantView);   
     };
+    
 
 
     function attachEvents() {
@@ -129,15 +84,12 @@ window.addEventListener('load', function() {
             for (var i = 0; i < views.length; i++) {
                 views[i].setVisibleViews(visible, count);
             }
-            window.dispatchEvent(new Event('resize')); //
+            window.dispatchEvent(new Event('resize')); 
 
         });
 
-
-        //Try to add styling to buttons here
         $(".button").button();
         
-
         $('#link_views')
                 .button()
                 .change(function (e) {
@@ -145,7 +97,7 @@ window.addEventListener('load', function() {
         });
     
         
-        
+
         $(function() {
             $( "#orientation_radio" ).buttonset();
         });
@@ -198,12 +150,6 @@ window.addEventListener('load', function() {
                             
             }, this)
          });
-          
-         
-         
-
-                
-
     }
 
 
@@ -217,8 +163,10 @@ window.addEventListener('load', function() {
         console.log('bye');
     });
     
-
-        
+    loadViewers(container);
+    attachEvents();
+    }
+     
+    dcc.EmbryoViewer = EmbryoViewer;
     
-
 })();
