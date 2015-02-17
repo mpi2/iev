@@ -9,7 +9,7 @@
 
 window.addEventListener('load', function() {
                
-    viewer_testing = true;
+    viewer_testing = false;
     
     if (viewer_testing){
         // So we can just use index.html instead of deploying the web app

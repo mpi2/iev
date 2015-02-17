@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.mousephenotype.dcc.embryo.viewer.entities.ACentre;
 import org.mousephenotype.dcc.embryo.viewer.webservice.AbstractFacade;
+import javax.ws.rs.QueryParam;
 
 @Stateless
 @Path("centres")
@@ -33,8 +34,11 @@ public class CentreFacadeREST extends AbstractFacade<ACentre> {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public CentrePack all() {
+    public CentrePack all(
+            @QueryParam("colonyId") String colonyId
+    ) {
         CentrePack p = new CentrePack();
+        System.out.println("colony id: " + colonyId);
         p.setDataSet(super.findAll());
         return p;
     }

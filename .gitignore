@@ -1,4 +1,4 @@
-volumes/
+main/webapp/IMPC_media/
 chrome/
 *~
 *.nrrd

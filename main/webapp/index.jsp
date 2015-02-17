@@ -56,8 +56,10 @@ limitations under the License.
   
         <script>
             window.addEventListener('load', function() {
-                //dcc.embryo("<%= request.getParameter("vol")%>");
-                dcc.embryo('260814');
+                //vol = "<%= request.getParameter("vol")%>";
+                var colonyId = "H-Cbx2-F12-TM1B";
+                dcc.embryo(colonyId);
+                
             });
         </script>
         

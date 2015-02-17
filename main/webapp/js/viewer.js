@@ -26,8 +26,7 @@ goog.require('X.interactor2D');
 
         var volume;
         var controlsVisible = false;
-        var ctrlDown = false;
-
+      
         var invertColours = 'invert_colours_' + id;
         var windowLevel = 'windowLevel_' + id;
         var $windowLevel;
