@@ -15,27 +15,19 @@
  */
 package org.mousephenotype.dcc.embryo.viewer.webservice;
 
-import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import org.mousephenotype.dcc.embryo.viewer.entities.ACentre;
-import org.mousephenotype.dcc.embryo.viewer.webservice.AbstractFacade;
+import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
+import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 
-@Stateless
-@Path("centres")
-public class CentreFacadeREST extends AbstractFacade<ACentre> {
+@XmlSeeAlso(Preprocessed.class)
+@XmlType(propOrder = {"success", "total", "volumes"})
+public class VolumesPack extends AbstractRestResponse<Preprocessed> {
 
-    public CentreFacadeREST() {
-        super(ACentre.class);
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public CentrePack all() {
-        CentrePack p = new CentrePack();
-        p.setDataSet(super.findAll());
-        return p;
+    @Override
+    @XmlElement(name = "volumes")
+    public List<Preprocessed> getDataSet() {
+        return super.getDataSet();
     }
 }

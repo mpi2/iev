@@ -4,8 +4,6 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>org.mousephenotype.dcc.embryo.viewer.entities.ACentre</class>
     <class>org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed</class>
-    <class>Preprocessed.Preprocessed</class>
-    <class>entities.Preprocessed</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="${db.url}"/>
       <property name="javax.persistence.jdbc.driver" value="${db.driver}"/>

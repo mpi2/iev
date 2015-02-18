@@ -15,27 +15,40 @@
  */
 package org.mousephenotype.dcc.embryo.viewer.webservice;
 
+import java.util.List;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import org.mousephenotype.dcc.embryo.viewer.entities.ACentre;
-import org.mousephenotype.dcc.embryo.viewer.webservice.AbstractFacade;
+import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 
 @Stateless
-@Path("centres")
-public class CentreFacadeREST extends AbstractFacade<ACentre> {
+@Path("volumes")
+public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
 
-    public CentreFacadeREST() {
-        super(ACentre.class);
+    public VolumesFacadeREST() {
+        super(Preprocessed.class);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public CentrePack all() {
-        CentrePack p = new CentrePack();
-        p.setDataSet(super.findAll());
+    public VolumesPack all(
+            @QueryParam("colony_id") String colonyId
+            
+            //@QueryParam("cid") Integer centreId
+    ) {
+        VolumesPack p = new VolumesPack();
+        EntityManager em = getEntityManager();
+        TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
+        q.setParameter("colonyId", colonyId);
+        //q.setParameter("cid", centreId);
+        List<Preprocessed> v = q.getResultList();
+        em.close();
+        p.setDataSet(v);
         return p;
     }
 }

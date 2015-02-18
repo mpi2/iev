@@ -25,41 +25,16 @@ limitations under the License.
     </head>
     <body>
         <div id="embryo-container"></div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
         <script type="text/javascript" src="js/embryo.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
-        <script type="text/javascript" src="js/viewer.js"></script>
 
-        <div id='wrap'>
-            <div id='top_bar'>
-                <div id='bottom_row'>
-                    <input type="checkbox" id="X_check" class='toggle_slice' checked>
-                    <label for="check">Sagittal</label>
-                    <input type="checkbox" id="Y_check" class='toggle_slice' checked>
-                    <label for="check">Coronal</label>
-                    <input type="checkbox" id="Z_check" class='toggle_slice' checked>
-                    <label for="check">Axial</label>
-                </div>
-            </div>
-             
-
-                </div>
-            <div id="viewer">
-                
-            </div>
-
-        </div>
-  
         <script>
             window.addEventListener('load', function() {
-                //vol = "<%= request.getParameter("vol")%>";
-                var colonyId = "H-Cbx2-F12-TM1B";
-                dcc.embryo(colonyId);
-                
+                dcc.embryo("<%= request.getParameter("colony_id")%>");
+//                var colonyId = "H-Cbx2-F12-TM1B";
+////                var centreId = "4";
+//                console.log('jsp: ' + colonyId);
+//                dcc.embryo(colonyId);
+//                  
             });
         </script>
         
