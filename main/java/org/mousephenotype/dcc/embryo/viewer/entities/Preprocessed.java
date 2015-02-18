@@ -72,6 +72,11 @@ public class Preprocessed implements Serializable {
     private String colonyId;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "gene_symbol", nullable = false, length = 200)
+    private String geneSymbol;
+    @Basic(optional = false)
+    @NotNull
     @Column(nullable = false)
     private int sid;
     @Basic(optional = false)
@@ -114,9 +119,8 @@ public class Preprocessed implements Serializable {
     private Date lastUpdated;
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(nullable = false)
-    private byte[] touched;
+    private int touched;
 
     public Preprocessed() {
     }
@@ -125,11 +129,12 @@ public class Preprocessed implements Serializable {
         this.id = id;
     }
 
-    public Preprocessed(Integer id, int cid, int lid, int gid, String colonyId, int sid, String mid, int statusId, String url, String checksums, String extensionId, long pixelsize, Date created, Date lastUpdated, byte[] touched) {
+    public Preprocessed(Integer id, int cid, int lid, int gid, String geneSymbol, String colonyId, int sid, String mid, int statusId, String url, String checksums, String extensionId, long pixelsize, Date created, Date lastUpdated, int touched) {
         this.id = id;
         this.cid = cid;
         this.lid = lid;
         this.gid = gid;
+        this.geneSymbol = geneSymbol;
         this.colonyId = colonyId;
         this.sid = sid;
         this.mid = mid;
@@ -174,6 +179,15 @@ public class Preprocessed implements Serializable {
     public void setGid(int gid) {
         this.gid = gid;
     }
+    
+    public String getGeneSymbol() {
+        return geneSymbol;
+    }
+
+    public void setGeneSymbol(String geneSymbol) {
+        this.geneSymbol = geneSymbol;
+    }
+
 
     public String getColonyId() {
         return colonyId;
@@ -255,11 +269,11 @@ public class Preprocessed implements Serializable {
         this.lastUpdated = lastUpdated;
     }
 
-    public byte[] getTouched() {
+    int getTouched() {
         return touched;
     }
 
-    public void setTouched(byte[] touched) {
+    public void setTouched(int touched) {
         this.touched = touched;
     }
 
