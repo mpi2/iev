@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Preprocessed.findByLid", query = "SELECT p FROM Preprocessed p WHERE p.lid = :lid"),
     @NamedQuery(name = "Preprocessed.findByGid", query = "SELECT p FROM Preprocessed p WHERE p.gid = :gid"),
     @NamedQuery(name = "Preprocessed.findByColonyId", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId"),
+    @NamedQuery(name = "Preprocessed.findByColonyIdAndWt", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId OR p.colonyId = 'baseline'"),
     @NamedQuery(name = "Preprocessed.findBySid", query = "SELECT p FROM Preprocessed p WHERE p.sid = :sid"),
     @NamedQuery(name = "Preprocessed.findByMid", query = "SELECT p FROM Preprocessed p WHERE p.mid = :mid"),
     @NamedQuery(name = "Preprocessed.findByStatusId", query = "SELECT p FROM Preprocessed p WHERE p.statusId = :statusId"),
@@ -65,6 +66,14 @@ public class Preprocessed implements Serializable {
     @NotNull
     @Column(nullable = false)
     private int gid;
+    @Basic(optional = false)
+    @NotNull
+    @Column(nullable = false)
+    private int pid;
+    @Basic(optional = false)
+    @NotNull
+    @Column(nullable = false)
+    private int qid;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 45)
@@ -129,7 +138,7 @@ public class Preprocessed implements Serializable {
         this.id = id;
     }
 
-    public Preprocessed(Integer id, int cid, int lid, int gid, String geneSymbol, String colonyId, int sid, String mid, int statusId, String url, String checksums, String extensionId, long pixelsize, Date created, Date lastUpdated, int touched) {
+    public Preprocessed(Integer id, int cid, int lid, int gid, int pid, int qid, String geneSymbol, String colonyId, int sid, String mid, int statusId, String url, String checksums, String extensionId, long pixelsize, Date created, Date lastUpdated, int touched) {
         this.id = id;
         this.cid = cid;
         this.lid = lid;
@@ -178,6 +187,22 @@ public class Preprocessed implements Serializable {
 
     public void setGid(int gid) {
         this.gid = gid;
+    }
+    
+    public int getPid() {
+        return pid;
+    }
+
+    public void setPid(int pid) {
+        this.pid = pid;
+    }
+    
+    public int getQid() {
+        return qid;
+    }
+
+    public void setQid(int qid) {
+        this.qid = qid;
     }
     
     public String getGeneSymbol() {

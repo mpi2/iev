@@ -12,20 +12,21 @@ window.addEventListener('load', function() {
     return;  // Remove for testing on local chrome app
     
     // So we can just use index.html instead of deploying the web app
-            var chromeID = 'imnbjldclgefjpoiclhgkhodldbgkefo';
+    var CHROME_ID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
+    var IMAGE_SERVER = 'chrome-extension://' + CHROME_ID; 
 
     var wildtypes = 
-            ['chrome-extension://' + chromeID + '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
-             'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
-             'chrome-extension://' + chromeID + '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd'];
+            ['20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
+             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
+             '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd'];
     var mutants = 
-            ['chrome-extension://' + chromeID + '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd',
-             'chrome-extension://' + chromeID + '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
-             'chrome-extension://' + chromeID + '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
+            ['/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd',
+             '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
+             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
 
 
     var div = 'viewer' // For developing outside of web app
-    dcc.EmbryoViewer(wildtypes, mutants, div);
+    dcc.EmbryoViewer(wildtypes, mutants, div, IMAGE_SERVER);
 
 });
 
@@ -34,17 +35,30 @@ window.addEventListener('load', function() {
     if (typeof dcc === 'undefined')
         dcc = {};
     
+   
  
     function EmbryoViewer(data, div) {
         
-       for(var i = 0; i < data.volumes.length; i++) {
-            var obj = json[i];
-            console.log(obj);
+    
+        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/'; 
+ 
+    
+        var wildtypes = [];
+        var mutants = [];
+    
+        // Get the baselines and the mutant paths
+        for(var i = 0; i < data.volumes.length; i++) {
+            var obj = data.volumes[i];
+            if (obj.colonyId === 'baseline'){
+                wildtypes.push(buildUrl(obj));
+                console.log(obj.url);
+            }
+            else{
+                mutants.push(buildUrl(obj));
+                console.log(obj.url);
+            }
     }
     
-    
-        var wildtypes = wild;
-        var mutants = mut;
         var container = div;
         var views = [];
         
@@ -53,7 +67,20 @@ window.addEventListener('load', function() {
                        'z': true
                       };
     
-      
+    
+    function buildUrl(data){
+        
+        url = IMAGE_SERVER + data.cid + '/' 
+                + data.lid + '/' 
+                + data.gid + '/' 
+                + data.sid + '/' 
+                + data.pid + '/' 
+                + data.qid + '/' 
+                + data.url;
+        
+        return url;
+    }
+    
     
     function loadViewers(container) {
         

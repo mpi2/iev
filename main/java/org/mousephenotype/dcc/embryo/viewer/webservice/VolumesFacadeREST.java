@@ -43,7 +43,7 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
     ) {
         VolumesPack p = new VolumesPack();
         EntityManager em = getEntityManager();
-        TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
+        TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyIdAndWt", Preprocessed.class);
         q.setParameter("colonyId", colonyId);
         //q.setParameter("cid", centreId);
         List<Preprocessed> v = q.getResultList();
