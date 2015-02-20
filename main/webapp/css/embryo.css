@@ -19,7 +19,7 @@ body{
 .sliceView{
 	background-color: #000000;
 	float: left;
-	width: 33%;
+	width: 30%;
 	display: inline-block;
         position: relative;
         height: 500px;

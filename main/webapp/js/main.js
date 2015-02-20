@@ -7,28 +7,28 @@
 
 
 
-window.addEventListener('load', function() {
-               
-    return;  // Remove for testing on local chrome app
-    
-    // So we can just use index.html instead of deploying the web app
-    var CHROME_ID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
-    var IMAGE_SERVER = 'chrome-extension://' + CHROME_ID; 
-
-    var wildtypes = 
-            ['20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
-             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
-             '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd'];
-    var mutants = 
-            ['/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd',
-             '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
-             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
-
-
-    var div = 'viewer' // For developing outside of web app
-    dcc.EmbryoViewer(wildtypes, mutants, div, IMAGE_SERVER);
-
-});
+//window.addEventListener('load', function() {
+//               
+//    return;  // Remove for testing on local chrome app
+//    
+//    // So we can just use index.html instead of deploying the web app
+//    var CHROME_ID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
+//    var IMAGE_SERVER = 'chrome-extension://' + CHROME_ID; 
+//
+//    var wildtypes = 
+//            ['20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
+//             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
+//             '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd'];
+//    var mutants = 
+//            ['/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd',
+//             '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
+//             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
+//
+//
+//    var div = 'viewer' // For developing outside of web app
+//    dcc.EmbryoViewer(wildtypes, mutants, div, IMAGE_SERVER);
+//
+//});
 
 
 (function () {
@@ -39,10 +39,7 @@ window.addEventListener('load', function() {
  
     function EmbryoViewer(data, div) {
         
-    
-        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/'; 
- 
-    
+        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         var wildtypes = [];
         var mutants = [];
     
@@ -69,7 +66,6 @@ window.addEventListener('load', function() {
     
     
     function buildUrl(data){
-        
         url = IMAGE_SERVER + data.cid + '/' 
                 + data.lid + '/' 
                 + data.gid + '/' 
@@ -84,11 +80,10 @@ window.addEventListener('load', function() {
     
     function loadViewers(container) {
         
-        var wildtypeView = new dcc.SpecimenView(wildtypes, 'wt', container);
-        views.push(wildtypeView);
         
-        var mutantView = new dcc.SpecimenView(mutants, 'mut', container);
-        views.push(mutantView);   
+        views.push(dcc.SpecimenView(wildtypes, 'wt', container));
+        views.push(dcc.SpecimenView(mutants, 'mut', container));
+        
     };
     
 
