@@ -141,6 +141,13 @@ goog.require('X.interactor2D');
             // Create the html for this specimen orthogonal views. 
 
             var $viewsContainer = $("#" + viewContainer);
+            
+            if (volumePaths.length < 1){
+                $specimenView.append("<div class='novols_msg'> " +
+                        "Could not find any volumes </div>");
+                return;
+            }
+            
             var XcontainerID = 'X_' + id;
             var YcontainerID = 'Y_' + id;
             var ZcontainerID = 'Z_' + id;
