@@ -1,5 +1,5 @@
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 
 (function () {
@@ -20,16 +20,13 @@ goog.require('X.interactor2D');
         var $xSlider;
         var $ySlider;
         var $zSlider;
+        var $windowLevel;
         var xRen;
         var yRen;
         var zRen;
-
         var volume;
-        var controlsVisible = false;
-      
         var invertColours = 'invert_colours_' + id;
         var windowLevel = 'windowLevel_' + id;
-        var $windowLevel;
         var reset = 'reset_' + id;
         var zoomIn = 'zoomIn_' + id;
         var zoomOut = 'zoomOut_' + id;
@@ -37,26 +34,6 @@ goog.require('X.interactor2D');
 
 
         function createEventHandlers() {
-
-            $("#pane_" + id).click(function (e) {
-                if (!controlsVisible) {
-                    $(this).animate({
-                        'marginLeft': '0px'
-                    }, 500);
-                    controlsVisible = true;
-                } else {
-                    if (controlsVisible) {
-
-                        if (e.target.className === 'ui-button-text')
-                            return;
-                        $(this).animate({
-                            'marginLeft': '-250px'
-                        }, 500);
-                        controlsVisible = false;
-                    }
-                }
-            });
-
 
             // Invert the color map 
             $("#" + invertColours).change($.proxy(function (e) {
@@ -85,44 +62,50 @@ goog.require('X.interactor2D');
 
             $("#" + reset)
             .button()
-            .click($.proxy(function (event) {
-                var e = new X.event.ResetViewEvent();
-                xRen.interactor.dispatchEvent(e);
-                yRen.interactor.dispatchEvent(e);
-                zRen.interactor.dispatchEvent(e);
-                $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
-
+            .click($.proxy(function () {
+                  //reset the zoom
+                  xRen.resetViewAndRender();
+                  yRen.resetViewAndRender();
+                  zRen.resetViewAndRender();
+                  //Reset the slider position
+                  var dims = volume.dimensions;
+                  volume.indexX = Math.floor((dims[0] - 1) / 2);
+                  volume.indexY = Math.floor((dims[1] - 1) / 2);
+                  volume.indexZ = Math.floor((dims[2] - 1) / 2);
+                  $xSlider.slider("value", volume.indexX);
+                  $ySlider.slider("value", volume.indexY);
+                  $zSlider.slider("value", volume.indexZ);
+                  //reset the window level
+                  $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
             }, this));
 
 
 
             $("#" + zoomIn)
             .button()
-            .click($.proxy(function (event) {
+            .click($.proxy(function () {
                 xRen.camera.zoomIn(false);
                 yRen.camera.zoomIn(false);
                 zRen.camera.zoomIn(false);
             }, this));
 
 
-
             $("#" + zoomOut)
             .button()
-            .click($.proxy(function (event) {
+            .click($.proxy(function () {
                 xRen.camera.zoomOut(false);
                 yRen.camera.zoomOut(false);
                 zRen.camera.zoomOut(false);
             }, this));
+            
 
             // Add the volume options
-
             var options = [];
             for (i = 0; i < volumePaths.length; i++) {
-
                 options.push("<option value='" + volumePaths[i] + "'>" + basename(volumePaths[i]) + "</option>");
             }
+            
 
-           
             $('#' + vselector)
             .append(options.join(""))
 
@@ -133,8 +116,7 @@ goog.require('X.interactor2D');
                     replaceVolume(ui.item.value);
                 }, this)
             });
-        }
-        ; 
+        }; 
 
 
         function createHTML () {
@@ -142,8 +124,9 @@ goog.require('X.interactor2D');
 
             var $viewsContainer = $("#" + viewContainer);
             
+            var $specimenView;
             if (volumePaths.length < 1){
-                $specimenView.append("<div class='novols_msg'> " +
+                $specimenView = $("<div class='novols_msg'> " +
                         "Could not find any volumes </div>");
                 return;
             }
@@ -167,7 +150,7 @@ goog.require('X.interactor2D');
             $zContainer = $("<div id='Z" + ZcontainerID + "' class='sliceZ sliceView'></div>");
             $zContainer.append($zSlider);
 
-            var $specimenView = $("<div id='" + id + "' class='specimen_view'></div>");
+            $specimenView = $("<div id='" + id + "' class='specimen_view'></div>");
             $specimenView.append(controls_tab());
             $specimenView.append($xContainer);
             $specimenView.append($yContainer);
@@ -205,8 +188,7 @@ goog.require('X.interactor2D');
             $("#zoomIn_" + id).button();
 
             return controlsHTML;
-        }
-        ;
+        };
 
 
         function replaceVolume(volumePath) {
@@ -225,13 +207,13 @@ goog.require('X.interactor2D');
             }
             currentVolumePath = volumePath;
             setupRenderers();
-        }
-        ;
+        };
 
 
-        function setupRenderers(container) {
+        function setupRenderers() {
 
-
+            if (volumePaths.length < 1) return;
+            
             xRen = new X.renderer2D();
             xRen.container = $xContainer.get(0);
             xRen.orientation = 'X';
@@ -256,17 +238,12 @@ goog.require('X.interactor2D');
 
             xRen.add(volume);
 
-            // We need to catch events that might change the slice, then pass taht to main
-            // Navigation, slider shift, wheel scrolling and zoom
-            // Naviagtion has a problem that it fires even when not moving the cross-hairs
-
             xRen.render();
 
             xRen.onShowtime = xtk_showtime;
 
             createEventHandlers();
-        }
-        ;
+        };
 
 
         function invertColour(checked) {
@@ -293,34 +270,20 @@ goog.require('X.interactor2D');
                 volume.indexX--;
                 volume.indexY--;
                 volume.indexZ--;
-
             }
-        }
-        ;
+        };
 
 
         function updateSliders(_slice, event) {
             
-            if (event.ctrlKey){
-                ctrlDown = true;
-                //console.log(_slice._interactor.mousePosition);
-                console.log(_slice.camera.position);
-                console.log(event);
-                _slice.camera.pan([10, 10]);
-            }
-            else{
-                ctrlDown = false;
-            }
-
-            if (_slice._interactor.leftButtonDown) {
+            if (_slice.interactor.leftButtonDown) {
                 $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
-            } else if (_slice._interactor._shiftDown) {
+            } else if (_slice.interactor._shiftDown) {
                 $xSlider.slider("value", volume.indexX);
                 $ySlider.slider("value", volume.indexY);
                 $zSlider.slider("value", volume.indexZ);
             }
-        }
-        ;
+        };
 
 
 
@@ -391,48 +354,34 @@ goog.require('X.interactor2D');
                 }.bind(this)
             });
 
-            // Overload onMouseWheel event to control sliders
-            xRen._interactor.onMouseWheel = function (event) {
-
-                var oldValue = $xSlider.slider("option", "value");
-                var sign = event.deltaY ? event.deltaY < 0 ? -1 : 1 : 0
-                $xSlider.slider({value: oldValue + sign});
-                //sliceChange(id, 'x', volume.indexX);
+            // Overload onMouseWheel event to control slice sliders
+            xRen.interactor.onMouseWheel = function (event) {
+                $xSlider.slider({value: volume.indexX});
             }.bind(this);
 
-            yRen._interactor.onMouseWheel = function (event) {
-
-                var oldValue = $ySlider.slider("option", "value");
-                var sign = event.deltaY ? event.deltaY < 0 ? -1 : 1 : 0
-                $ySlider.slider({value: oldValue + sign});
-                //sliceChange(id, 'y', volume.indexY);
+            yRen.interactor.onMouseWheel = function (event) {
+                $ySlider.slider({value: volume.indexY});
             }.bind(this);
 
-            zRen._interactor.onMouseWheel = function (event) {
-
-                var oldValue = $zSlider.slider("option", "value");
-                var sign = event.deltaY ? event.deltaY < 0 ? -1 : 1 : 0
-                $zSlider.slider({value: oldValue + sign});
-                //sliceChange(id, 'z', volume.indexZ);
+            zRen.interactor.onMouseWheel = function (event) {
+                $zSlider.slider({value: volume.indexZ});
             }.bind(this);
-
 
             // Overload sliceX mouse moved
-            xRen._interactor.onMouseMove = function (event) {
+            xRen.interactor.onMouseMove = function (event) {
                 updateSliders(xRen, event);
             }.bind(this);
 
             // Overload yRen mouse moved
-            yRen._interactor.onMouseMove = function (event) {
+            yRen.interactor.onMouseMove = function (event) {
                 updateSliders(yRen, event);
             }.bind(this);
 
             // Overload zRen mouse moved
-            zRen._interactor.onMouseMove = function (event) {
+            zRen.interactor.onMouseMove = function (event) {
                 updateSliders(zRen, event);
             }.bind(this);
-        }
-        ;
+        };
 
 
         function setVisibleViews(viewList, count) {
@@ -465,19 +414,13 @@ goog.require('X.interactor2D');
             } else {
                 $zContainer.hide();
             }
-        }
-        ;
+        };
 
 
         function basename(path) {
             return path.split(/[\\/]/).pop();
-        }
-        ;
+        };
 
-        function setup() {
-            createHTML();
-            setupRenderers();
-        }
 
         var public_interface = {
             setVisibleViews: setVisibleViews
