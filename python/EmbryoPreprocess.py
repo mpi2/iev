@@ -19,6 +19,7 @@ class EmbryoPreprocess(object):
 
         self.base_path = '/home/james/IMPC_media'
         self.embryo_path = os.path.join(self.base_path, 'emb')
+        self.src_path = os.path.join(self.base_path, 'src')
         self.conn = None
         self.cursor = None
         self.preprocessing = []
@@ -51,27 +52,29 @@ class EmbryoPreprocess(object):
                     id_list = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
                            fields.index('sid'), fields.index('pid'), fields.index('qid')]
 
-                    media_dirs = os.path.join(*[str(row[x]) for x in id_list])
-                    media_folder = os.path.join(self.embryo_path, media_dirs)
+                    dirs = os.path.join(*[str(row[x]) for x in id_list])
 
-                    self.preprocessing.append({'recon_type': param, 'folder': media_folder,
-                                               'url': media_url, 'ext': media_extension })
+                    src_folder = os.path.join(self.src_path, dirs)
+                    out_folder = os.path.join(self.embryo_path, dirs)
+
+                    self.preprocessing.append({'recon_type': param, 'src_folder': src_folder,
+                                               'out_folder': out_folder,  'ext': media_extension,
+                                               'metadata': row[-1]})
 
             # Loop through preprocessing list
             print "Processing downloaded embryo media"
             for recon in self.preprocessing:
 
                 # Get metadata group
-                metadata_group = row[-1]
-                fields, metadata = self.query_database('sql/get_pixel_sizes.sql', replacement=metadata_group)
+                fields, metadata = self.query_database('sql/get_pixel_sizes.sql', replacement=recon['metadata'])
 
                 # Extract and parse JSON string for pixel size
                 json_dict = json.loads('{' + metadata[0][fields.index('metadata_json')] + '}')
                 pixel_size = json_dict.setdefault('Image Pixel Size', None)
 
                 # Create paths on IMPC_media if the directories do not exist yet
-                if os.path.exists(recon['folder']) is False:
-                    os.makedirs(recon['folder'])
+                if os.path.exists(recon['out_folder']) is False:
+                    os.makedirs(recon['out_folder'])
 
                 # Process the image
                 self.process_recon(recon)
@@ -85,8 +88,8 @@ class EmbryoPreprocess(object):
     def process_recon(self, recon):
 
         print "Parameter: " +recon['recon_type']
-        print "Output folder: " + recon['folder']
-        print "URL: " + recon['url']
+        print "Source folder: " + recon['src_folder']
+        print "Output folder: " + recon['out_folder']
         print "Extension: " + recon['ext']
 
     def query_database(self, sql_file, replacement=None):
