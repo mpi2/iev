@@ -12,17 +12,17 @@ DATA_TYPES = {"unsigned short": np.uint16, "uint16": np.uint16,
               "signed byte": np.int8, "int8": np.int8}
 
 
-def minc_to_nrrd(self, minc_file):
+def minc_to_array(input_folder, minc_file):
 
     # Open minc file using HDF5 module
     print "Loading {}".format(minc_file)
-    minc = h5py.File(os.path.join(self.input_folder, minc_file), "r")['minc-2.0']
-    volume = np.transpose(minc['image']['0']['image'])
+    minc = h5py.File(os.path.join(input_folder, minc_file), "r")['minc-2.0']
+    #volume = np.transpose(minc['image']['0']['image'])
 
-    return volume
+    return minc
 
 
-def tiffs_to_nrrd(folder_, out_path):
+def tiffs_to_array(folder_, out_path):
 
     print "Loading TIFF files in '{}'".format(folder_)
     tiff_list = sorted([f for f in os.listdir(folder_) if f.lower().endswith('tiff') or f.lower().endswith('tif')])

@@ -26,9 +26,9 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <!--<script type="text/javascript" src="js/xtk_edge.js"></script>-->
+        <!--<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>-->
+        <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
+        <script type="text/javascript" src="js/xtk_edge.js"></script>
         
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
@@ -48,7 +48,7 @@ limitations under the License.
                 </div>
                 <div id='topright'>
                     
-                    <button type="submit" id="fullscreen"><img src="fullscreen.png" height="20px"></button>
+                    <!--<button type="submit" id="fullscreen"><img src="fullscreen.png" height="20px"></button>-->
                     <span id="orientation_radio">
                     <input type="radio" id="vertical_check" name="radio" checked="checked">
                     <label for="vertical_check">Vertical</label>

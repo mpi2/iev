@@ -1,5 +1,5 @@
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 
 (function () {
@@ -154,8 +154,9 @@ goog.require('X.interactor2D');
             $specimenView = $("<div id='" + id + "' class='specimen_view'></div>");
             $specimenView.append(controls_tab());
       
-            $specimenView.append($yContainer);
+            // This defines the order of the orthogonal views
             $specimenView.append($xContainer);
+            $specimenView.append($yContainer);
             $specimenView.append($zContainer);
 
             $viewsContainer.append($specimenView);
@@ -300,10 +301,12 @@ goog.require('X.interactor2D');
             zRen.add(volume);
             zRen.render();
             
-            var xWidth = xRen._sliceWidth;
-            var xHeight = xRen._sliceHeight;
-            xRen._sliceWidth = xHeight;
-            xRen._sliceHeight = xWidth;
+//            var xWidth = xRen._sliceWidth;
+//            var xHeight = xRen._sliceHeight;
+//            xRen._sliceWidth = xHeight;
+//            xRen._sliceHeight = xWidth;
+//            xRen.sliceWidth = xHeight;
+//            xRen.sliceHeight = xWidth;
 
             var dims = volume.dimensions;
 
