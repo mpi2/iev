@@ -27,7 +27,8 @@
         dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
             function(data) {
                 //console.log(data);
-                dcc.EmbryoViewer(data, 'viewer')
+                dcc.EmbryoViewer(data, 'viewer', colonyId)
+               
         });
     };
 

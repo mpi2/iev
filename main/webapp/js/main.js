@@ -37,18 +37,14 @@
     
    
  
-     dcc.EmbryoViewer = function(data, div) {
+     dcc.EmbryoViewer = function(data, div, queryColonyId) {
         
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         var WILDTYPE_COLONYID = 'baseline';
         var wildtypes = [];
         var mutants = [];
-       
-        var $sliceView = $('.sliceView');
+        var queryColonyId = queryColonyId;
      
-        
-            
-            
         // Get the baselines and the mutant paths
         for(var i = 0; i < data.volumes.length; i++) {
             var obj = data.volumes[i];
@@ -60,6 +56,8 @@
                 console.log(obj.url);
             }
         }
+        
+        console.log(window);
        
     
         var container = div;
@@ -86,8 +84,8 @@
     
         function loadViewers(container) {
 
-            views.push(dcc.SpecimenView(wildtypes, 'wt', container));
-            views.push(dcc.SpecimenView(mutants, 'mut', container));
+            views.push(dcc.SpecimenView(wildtypes, 'wt', container, 'baseline'));
+            views.push(dcc.SpecimenView(mutants, 'mut', container, queryColonyId));
 
         };
     
@@ -136,11 +134,25 @@
                         values: [500],
                         slide: $.proxy(function (event, ui) {
                             $('.sliceView').css('height', ui.value);
-                            window.dispatchEvent(new Event('resize'));
+                            var evt = document.createEvent('UIEvents');
+                            evt.initUIEvent('resize', true, false,window,0);
+                            window.dispatchEvent(evt);
+                            //window.dispatchEvent(new Event('resize'));
                         }, this)
                     });
+            
+            $('#fullscreen')
+                    .click(function(){
+                        console.log('fullscreen');
+                        
+         
+                     
+            });
         
     }//AttachEvents
+    
+    
+
     
     
     function setupOrientationControls(){

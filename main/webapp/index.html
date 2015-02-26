@@ -17,7 +17,7 @@ limitations under the License.
 
 
 <!DOCTYPE html>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <html>
     <head>
         <title>Embryo Viewer Web Application</title>
@@ -26,9 +26,9 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <!--<script type="text/javascript" src="js/xtk_edge.js"></script>-->
+        <!--<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>-->
+        <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
+        <script type="text/javascript" src="js/xtk_edge.js"></script>
         
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
@@ -68,7 +68,7 @@ limitations under the License.
     
     
     window.addEventListener('load', function() {
-                dcc.embryo("<%= request.getParameter("colony_id")%>");                
+                dcc.embryo();                
             });
     </script>
     <script>

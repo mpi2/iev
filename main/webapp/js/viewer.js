@@ -1,5 +1,5 @@
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+goog.require('X.renderer2D');
+goog.require('X.interactor2D');
 
 
 (function () {
@@ -7,7 +7,7 @@
         dcc = {};
 
 
-    function Slices(volumePaths, id, container) {
+    function Slices(volumePaths, id, container, queryColonyId) {
 
         var id = id;
         var viewContainer = container;
@@ -45,8 +45,8 @@
             
             $windowLevel.slider({
                 range: true,
-                min: parseInt(volume.windowLow),
-                max: parseInt(volume.windowHigh),
+//                min: parseInt(volume.windowLow),
+//                max: parseInt(volume.windowHigh),
                 min: 0, // TODO: remove hard coding
                 max: 256,
                 step: 1,
@@ -125,9 +125,10 @@
             var $viewsContainer = $("#" + viewContainer);
             
             var $specimenView;
-            if (volumePaths.length < 1){
-                $specimenView = $("<div class='novols_msg'> " +
-                        "Could not find any volumes </div>");
+            if (volumePaths.length < 1 && queryColonyId !==  null){
+                $viewsContainer.append("<div class='novols_msg'> " +
+                        "Could not find any volumes for " + queryColonyId +  " </div>");
+                
                 return;
             }
             
@@ -152,8 +153,9 @@
 
             $specimenView = $("<div id='" + id + "' class='specimen_view'></div>");
             $specimenView.append(controls_tab());
-            $specimenView.append($xContainer);
+      
             $specimenView.append($yContainer);
+            $specimenView.append($xContainer);
             $specimenView.append($zContainer);
 
             $viewsContainer.append($specimenView);
@@ -237,12 +239,13 @@
             volume.file = currentVolumePath;
 
             xRen.add(volume);
+            
 
             xRen.render();
 
             xRen.onShowtime = xtk_showtime;
 
-            createEventHandlers();
+           
         };
 
 
@@ -296,6 +299,11 @@
             yRen.render();
             zRen.add(volume);
             zRen.render();
+            
+            var xWidth = xRen._sliceWidth;
+            var xHeight = xRen._sliceHeight;
+            xRen._sliceWidth = xHeight;
+            xRen._sliceHeight = xWidth;
 
             var dims = volume.dimensions;
 
@@ -429,6 +437,7 @@
         
         createHTML();
         setupRenderers();
+        createEventHandlers();
         return public_interface;
     }
 

@@ -35,7 +35,11 @@ body{
 }*/
 
 
-
+.novols_msg{
+    font: 25px arial, sans-serif;
+    top: 50%;
+    position: relative;
+}
 
 
 
