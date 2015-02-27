@@ -28,49 +28,40 @@ def teardown():
     pass
 
 
-def test_minc_to_array():
+def test_hdf5_resample_nrrd():
     minc = conversion.minc_to_array(INPUT_DIR, TEST_MINC)
-    mapped_array = minc['image']['0']['image']
+    hdf5array = minc['image']['0']['image']
     #print type(mapped_array[10, 10, 10])
 
-    TEMP_XY = 'tempXYscaledH5'
-
-    if os.path.isfile(TEMP_XY):
-        os.remove(TEMP_XY)
-
-    xyscaledH5 = h5py.File(TEMP_XY, 'a')
+    tempXY = tempfile.TemporaryFile(mode='wb+')
 
     # We need to get the shape of the resized array
-    xyshrunk_shape = list(cv2.resize(mapped_array[1, :, :], None, fx=0.5, fy=0.5).shape)
-    xyshrunk_shape.insert(0, mapped_array.shape[0])
+    xyshrunk_shape = list(cv2.resize(hdf5array[1, :, :], None, fx=0.5, fy=0.5).shape)
+    xyshrunk_shape.insert(0, hdf5array.shape[0])
 
-    dtype = mapped_array.dtype
+    dtype = hdf5array.dtype
 
-    xy_dset = xyscaledH5.create_dataset('tempscale', xyshrunk_shape, dtype)
+    for i in range(0, hdf5array.shape[0]):
 
-    for i in range(0, mapped_array.shape[0]):
+        shrunk_slice = cv2.resize(hdf5array[i, :, :], None, fx=0.5, fy=0.5)
 
-        shrunk_slice = cv2.resize(mapped_array[i, :, :], None, fx=0.5, fy=0.5)
+        if windows:
+            shrunk_slice.tofile(tempXY.file)
+        else:
+            shrunk_slice.tofile(tempXY)
 
-        xy_dset[i, ] = shrunk_slice
+    #Scale in XZ
 
-    #scale in xz
-    TEMP_XYZ = 'tempXYZscaledRaw'
+    xy_scaled_mmap = np.memmap(tempXY, dtype=dtype, mode='r', shape=tuple(xyshrunk_shape))
 
-    if os.path.isfile(TEMP_XYZ):
-        os.remove(TEMP_XYZ)
-
-    xyzshrunk_shape = list(cv2.resize(xy_dset[:, :, 1], None, fx=1.0, fy=0.5).shape)
-    xyzshrunk_shape.insert(2, xy_dset.shape[2])
-
-    #xyzscaledH5 = h5py.File(TEMP_XYZ, 'a')
+    xyzshrunk_shape = list(cv2.resize(xy_scaled_mmap[:, :, 1], None, fx=1.0, fy=0.5).shape)
+    xyzshrunk_shape.insert(2, xy_scaled_mmap.shape[2])
 
     temp_xyz = tempfile.TemporaryFile(mode='wb+')
-    #xyz_dset = xyzscaledH5.create_dataset('tempscaleXYZ', xyzshrunk_shape, dtype)
 
-    for i in range(0, xy_dset.shape[2]):
+    for i in range(0, xy_scaled_mmap.shape[2]):
 
-        shrunk_slice = cv2.resize(xy_dset[:, :, i], None, fx=1.0, fy=0.5)
+        shrunk_slice = cv2.resize(xy_scaled_mmap[:, :, i], None, fx=1.0, fy=0.5)
         if windows:
             shrunk_slice.tofile(temp_xyz.file)
         else:
@@ -82,8 +73,10 @@ def test_minc_to_array():
     if os.path.isfile(nrrdout):
         os.remove(nrrdout)
 
-    nrrd.write('scaled_nrrd_temp.nrrd', np.swapaxes(xyz_scaled_mmap, 0, 1 )
+    nrrd.write('scaled_nrrd_temp.nrrd', np.swapaxes(xyz_scaled_mmap, 0, 1 ))
 
+    tempXY.close()
+    temp_xyz.close()
 
 
 #create memory mapped version of the temporary xy scaled slices
