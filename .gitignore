@@ -6,3 +6,4 @@ chrome/
 *.bmp
 X/
 target/
+*.pyc
