@@ -201,27 +201,18 @@ body{
 }
 
 
-/*Style the orthogonal views buttons*/
-input#X_check
-{
-    border: 1px solid #132b14;
-    color:red;
-}
-.ui-active-state#X_check_label {
-    background-color: blue !important;
+#X_check.ui-button{
+    background: red;
 }
 
-#X_check:hover
-{ 
-    border: 1px solid #132b14;
-    color:#FFFFFF;
+label#Y_check_label{
+    background-color: green;
 }
-#X_check:active
-{
-    background-color:#FFFFFF;
-    border: 1px solid #132b14;
-    color:#132b14;
+
+label#Z_check_label{
+    background-color: blue;
 }
+
 
 
 

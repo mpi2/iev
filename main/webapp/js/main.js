@@ -95,8 +95,6 @@
             $('.toggle_slice').change(function (e, ui) {
                 console.log(e);
 
-                //e.target.css('backgound-color', 'blue');
-
                 var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
                 visible = {}
                 var count = 0;
