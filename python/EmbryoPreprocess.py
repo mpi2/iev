@@ -6,11 +6,13 @@ import MySQLdb
 import json
 import conversion as conv
 
-PARAMETERS = {'IMPC_EOL_001_001': 'OPT E9.5',
-              'IMPC_EMO_001_001': 'uCT E14.5/E15.5',
-              'IMPC_EMA_001_001': 'uCT E18.5'}
+PARAMETERS = {'IMPC_EOL_001_001': (0, 2, 4),
+              'IMPC_EMO_001_001': ((5, 10, 20), (14, 28, 56)),
+              'IMPC_EMA_001_001': (14, 28, 56)}
 
-VALID_IMAGE_EXTENSIONS = {'tif', 'tiff', 'nrrd', 'mnc', 'bz2', 'zip'}
+IMAGE_READERS = {'tif': conv.tiffs_to_array, 'tiff': conv.tiffs_to_array,
+                 'nrrd': conv.nrrd_to_array, 'mnc': conv.minc_to_array,
+                 'bz2': conv.decompress_bz2}
 
 
 class EmbryoPreprocess(object):
@@ -61,8 +63,10 @@ class EmbryoPreprocess(object):
                                                'out_folder': out_folder,  'ext': media_extension,
                                                'metadata': row[-1]})
 
+                    # Add row to phenodcc_embryo here
+                    # QUERY QUERY QUERY QUERY QUERY QUERY
+
             # Loop through preprocessing list
-            print "Processing downloaded embryo media"
             for recon in self.preprocessing:
 
                 # Get metadata group
@@ -70,14 +74,19 @@ class EmbryoPreprocess(object):
 
                 # Extract and parse JSON string for pixel size
                 json_dict = json.loads('{' + metadata[0][fields.index('metadata_json')] + '}')
-                pixel_size = json_dict.setdefault('Image Pixel Size', None)
+                recon['pixel_size'] = json_dict.setdefault('Image Pixel Size', None)
 
                 # Create paths on IMPC_media if the directories do not exist yet
                 if os.path.exists(recon['out_folder']) is False:
                     os.makedirs(recon['out_folder'])
 
-                # Process the image
-                self.process_recon(recon)
+                # Determine which reader to use based on dictionary
+                reader = IMAGE_READERS.setdefault(recon['ext'], None)
+
+                if reader:
+                    self.process_recon(recon, reader)  # process the recon
+                else:
+                    print "Invalid file extension '{}'. Skipping...".format(recon['ext'])
 
             # Close connection to database
             self.db_disconnect()
@@ -85,12 +94,18 @@ class EmbryoPreprocess(object):
         else:
             print "Failed to connect to {}".format(self.HOST)
 
-    def process_recon(self, recon):
+    def process_recon(self, recon, reader):
 
-        print "Parameter: " +recon['recon_type']
-        print "Source folder: " + recon['src_folder']
-        print "Output folder: " + recon['out_folder']
-        print "Extension: " + recon['ext']
+        # Load the volume
+        volume = reader(recon.src_folder)
+
+        # Get scaling factors
+        param = recon['param']
+        scaling = PARAMETERS[param]
+
+        # Do the rescaling here
+        # RESCALE RESCALE RESCALE RESCALE RESCALE
+
 
     def query_database(self, sql_file, replacement=None):
 
