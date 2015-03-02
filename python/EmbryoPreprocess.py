@@ -4,15 +4,17 @@ import os
 import yaml
 import MySQLdb
 import json
-import conversion as conv
+from SliceGenerator import *
 
-PARAMETERS = {'IMPC_EOL_001_001': (0, 2, 4),
-              'IMPC_EMO_001_001': ((5, 10, 20), (14, 28, 56)),
-              'IMPC_EMA_001_001': (14, 28, 56)}
 
-IMAGE_READERS = {'tif': conv.tiffs_to_array, 'tiff': conv.tiffs_to_array,
-                 'nrrd': conv.nrrd_to_array, 'mnc': conv.minc_to_array,
-                 'bz2': conv.decompress_bz2}
+# Todo: add minc rescale as well
+PARAMETERS = {'IMPC_EOL_001_001': (2, 4),
+              'IMPC_EMO_001_001': (2, 4),
+              'IMPC_EMA_001_001': (2, 4)}
+
+# Todo: add zip as well
+SLICE_GENERATORS = {'tif': TiffSliceGenerator, 'tiff': TiffSliceGenerator,
+                    'nrrd': NrrdSliceGenerator, 'mnc': MincSliceGenerator}
 
 
 class EmbryoPreprocess(object):
@@ -47,6 +49,9 @@ class EmbryoPreprocess(object):
                 # Loop through each row and see if URL exists.
                 for row in rows:
 
+                    # Add row to phenodcc_embryo here
+                    # QUERY QUERY QUERY QUERY QUERY QUERY
+
                     # Extract media url and file extension
                     media_url = row[fields.index('value')]
                     media_extension = row[fields.index('extension')]
@@ -63,9 +68,6 @@ class EmbryoPreprocess(object):
                                                'out_folder': out_folder,  'ext': media_extension,
                                                'metadata': row[-1]})
 
-                    # Add row to phenodcc_embryo here
-                    # QUERY QUERY QUERY QUERY QUERY QUERY
-
             # Loop through preprocessing list
             for recon in self.preprocessing:
 
@@ -80,11 +82,11 @@ class EmbryoPreprocess(object):
                 if os.path.exists(recon['out_folder']) is False:
                     os.makedirs(recon['out_folder'])
 
-                # Determine which reader to use based on dictionary
-                reader = IMAGE_READERS.setdefault(recon['ext'], None)
+                # Determine which slicer generator to use based on dictionary
+                slice_gen = SLICE_GENERATORS.setdefault(recon['ext'], None)
 
-                if reader:
-                    self.process_recon(recon, reader)  # process the recon
+                if slice_gen:
+                    self.process_recon(recon, slice_gen)  # process the recon
                 else:
                     print "Invalid file extension '{}'. Skipping...".format(recon['ext'])
 

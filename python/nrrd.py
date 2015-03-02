@@ -205,7 +205,7 @@ def _determine_dtype(fields):
     return np.dtype(np_typestring)
 
 
-def read_data(fields, filehandle, filename=None):
+def read_data(fields, filehandle, filename=None, memmap=False):
     """Read the actual data into a numpy structure."""
     data = np.zeros(0)
     # Determine the data type from the fields
@@ -233,7 +233,11 @@ def read_data(fields, filehandle, filename=None):
             for _ in range(lineskip):
                 datafilehandle.readline()
             datafilehandle.read(byteskip)
-        data = np.fromfile(datafilehandle, dtype)
+        if memmap:
+            data = np.memmap(datafilehandle, dtype=dtype, mode="r", shape=tuple(fields['sizes']))
+        else:
+            data = np.fromfile(datafilehandle, dtype)
+
     elif fields['encoding'] == 'gzip' or\
          fields['encoding'] == 'gz':
         gzipfile = gzip.GzipFile(fileobj=datafilehandle)
