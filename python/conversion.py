@@ -18,7 +18,6 @@ def minc_to_array(input_folder, minc_file):
     print "Loading {}".format(minc_file)
     minc = h5py.File(os.path.join(input_folder, minc_file), "r")['minc-2.0']
     #volume = np.transpose(minc['image']['0']['image'])
-
     return minc
 
 
