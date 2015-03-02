@@ -12,6 +12,10 @@ DATA_TYPES = {"unsigned short": np.uint16, "uint16": np.uint16,
               "signed byte": np.int8, "int8": np.int8}
 
 
+def nrrd_to_array(nrrd_file):
+    return nrrd.read(nrrd_file)
+
+
 def minc_to_array(input_folder, minc_file):
 
     # Open minc file using HDF5 module
