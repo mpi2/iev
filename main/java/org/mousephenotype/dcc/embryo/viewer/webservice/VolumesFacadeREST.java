@@ -39,16 +39,24 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
     public VolumesPack all(
             @QueryParam("colony_id") String colonyId
             
-            //@QueryParam("cid") Integer centreId
     ) {
-        VolumesPack p = new VolumesPack();
+        
+        // Get the centreId of the first volume found by colonyId
+        EntityManager emcid = getEntityManager();
+        TypedQuery<Preprocessed> qcid = emcid.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
+        qcid.setParameter("colonyId", colonyId);
+        List<Preprocessed> p = qcid.getResultList();
+        int centreId = p.get(0).getCid();
+            
+        // Get data for all mutants with colonyId and all baseslines from the same centre
+        VolumesPack vp = new VolumesPack();
         EntityManager em = getEntityManager();
         TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyIdAndWt", Preprocessed.class);
         q.setParameter("colonyId", colonyId);
-        //q.setParameter("cid", centreId);
+        q.setParameter("centreId", centreId);
         List<Preprocessed> v = q.getResultList();
         em.close();
-        p.setDataSet(v);
-        return p;
+        vp.setDataSet(v);
+        return vp;
     }
 }

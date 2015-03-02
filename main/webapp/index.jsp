@@ -39,7 +39,7 @@ limitations under the License.
         <div id='wrap'>
             <div id='top_bar'>
                 <div id='topleft'>
-                    <input type="checkbox" id="X_check" value='Sagittal' class='toggle_slice' checked>
+                    <input type="checkbox" id="X_check" class='toggle_slice' checked>
                     <label for="X_check" id='X_check_label'>Sagittal</label>
                     <input type="checkbox" id="Y_check" class='toggle_slice' checked>
                     <label for="Y_check">Coronal</label>
