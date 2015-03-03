@@ -2,7 +2,7 @@ import SliceGenerator
 import resampler
 
 
-INPUT_NRRD = '/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd'
+INPUT_NRRD = '/home/neil/work/20140515_KLHDC2_E14.5_21.1h_WT_XX_REC_14.nrrd'
 OUT = 'testing.nrrd'
 
 def test_resampler():
