@@ -174,7 +174,7 @@
                        width: '100%'
                 });
                 $('#horizontal_check').prop('checked', true).button("refresh");
-           
+                window.dispatchEvent(new Event('resize')); 
         });
         
         $('#horizontal_check')
@@ -194,6 +194,7 @@
 //                      
                 });
                 $('#vertical_check').prop('checked', true).button("refresh");
+                window.dispatchEvent(new Event('resize')); 
                 
            
         });
@@ -202,10 +203,10 @@
 
 //    $(function() {
 //
-//        $("#X_check").tooltip({
-//           content: "Hello siduIUDSIAIDUSAIUDAS cat"
-//           
-//        });
+        $("#X_check").tooltip({
+           content: "Hello siduIUDSIAIDUSAIUDAS cat"
+           
+        });
 //        console.log('toggle');
 //    });
 //    Does not work

@@ -1,17 +1,8 @@
-import sys
 import SliceGenerator
 import resampler
 
 
-
-if sys.platform == "win32" or sys.platform == "win64":
-    windows = True
-else:
-    windows = False
-
-#use @with_setup(setup_func, teardown_func)
-
-INPUT_NRRD = '/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd'
+INPUT_NRRD = '/home/neil/work/20140515_KLHDC2_E14.5_21.1h_WT_XX_REC_14.nrrd'
 OUT = 'testing.nrrd'
 
 def test_resampler():

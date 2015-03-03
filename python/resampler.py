@@ -15,6 +15,8 @@ import nrrd
 import cv2
 import tempfile
 import numpy as np
+import sys
+import matplotlib.pyplot as plt
 
 if sys.platform == "win32" or sys.platform == "win64":
     windows = True
@@ -38,19 +40,22 @@ def resample(slicegen, scale, nrrd_path):
     scaleby_int = True
 
     #Get dimensions for the memory mapped raw xy file
-    xy_scaled_dims = [slicegen.shape[0]]
+    xy_scaled_dims = [slicegen.shape()[0]]
 
     datatype = slicegen.dtype #TODO chage
 
     first = True
 
-    for z_slice_arr in slicegen:
+    for i, z_slice_arr in enumerate(slicegen.slices()):
+        if i == 150:
+            plt.imshow(z_slice_arr)
+            plt.show()
 
         # This might slow things doen by reasigning to the original array. Maybe we jsut need a differnt view on it
 
-        z_slice_arr = np.array(_droppixels(z_slice_arr, scale, scale))
+        z_slice_arr = _droppixels(z_slice_arr, scale, scale)
 
-        z_slice_resized = cv2.resize(z_slice_arr, (0, 0), fx=1/scale, fy=1/scale, interpolation=cv2.INTER_AREA)
+        z_slice_resized = cv2.resize(z_slice_arr, (0, 0), fx=1/scale, fy=scale, interpolation=cv2.INTER_AREA)
 
         if first:
             xy_scaled_dims.extend(z_slice_resized.shape)
@@ -80,7 +85,7 @@ def resample(slicegen, scale, nrrd_path):
         if scaleby_int:
             xz_plane = _droppixels(xz_plane, 1, scale)
 
-        scaled_xz = cv2.resize(xz_plane, (0, 0), fx=1, fy=1/scale, interpolation=cv2.INTER_AREA)
+        scaled_xz = cv2.resize(xz_plane, (0, 0), fx=1, fy=scale, interpolation=cv2.INTER_AREA)
 
         if first:
             first = False
@@ -88,7 +93,6 @@ def resample(slicegen, scale, nrrd_path):
             xyz_scaled_dims.append(scaled_xz.shape[0])
             xyz_scaled_dims.append(scaled_xz.shape[1])
 
-        final_scaled_slices.append(scaled_xz)
         if windows:
             scaled_xz.tofile(temp_xyz.file)
         else:
