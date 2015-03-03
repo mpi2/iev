@@ -8,6 +8,7 @@ import nrrd
 import h5py
 import tempfile
 from matplotlib import pyplot as plt
+import matplotlib.cm as cm
 
 
 class SliceGenerator(object):
@@ -108,8 +109,8 @@ class MincSliceGenerator(SliceGenerator):
         self.volume = minc['image']['0']['image']
 
     def slices(self, start=0):
-
-        for i in range(start, self.volume.shape[0]):
+        # TODO check not transposed
+        for i in range(self.volume.shape[0], -1, start):
             yield self.volume[i, :, :]
 
     def dtype(self):
@@ -124,17 +125,17 @@ if __name__ == "__main__":
     #            "20140515_KLHDC2_E14.5_21.1h_WT_XX_REC_14.nrrd.bz2"
     # conv.decompress_bz2(bz2_nrrd, "/home/james/soft/test.nrrd")
 
-    gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
-    # gen = MincSliceGenerator("/home/james/soft/test.mnc")
+    # gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
+    gen = MincSliceGenerator("/home/james/soft/test.mnc")
     # gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
     # gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
 
     print gen.dtype()
     print gen.shape()
 
-    for slice_ in gen.slices(200):
+    for slice_ in gen.slices(720):
 
-        plt.imshow(slice_)
+        plt.imshow(slice_, cmap=cm.Greys_r)
         plt.show()
         break
         # print slice_.shape
