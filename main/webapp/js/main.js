@@ -202,10 +202,10 @@
 
 //    $(function() {
 //
-//        $("#X_check").tooltip({
-//           content: "Hello siduIUDSIAIDUSAIUDAS cat"
-//           
-//        });
+        $("#X_check").tooltip({
+           content: "Hello siduIUDSIAIDUSAIUDAS cat"
+           
+        });
 //        console.log('toggle');
 //    });
 //    Does not work

@@ -15,6 +15,7 @@ import nrrd
 import cv2
 import tempfile
 import numpy as np
+import sys
 
 if sys.platform == "win32" or sys.platform == "win64":
     windows = True
@@ -38,13 +39,13 @@ def resample(slicegen, scale, nrrd_path):
     scaleby_int = True
 
     #Get dimensions for the memory mapped raw xy file
-    xy_scaled_dims = [slicegen.shape[0]]
+    xy_scaled_dims = [slicegen.shape()[0]]
 
     datatype = slicegen.dtype #TODO chage
 
     first = True
 
-    for z_slice_arr in slicegen:
+    for z_slice_arr in slicegen.slices():
 
         # This might slow things doen by reasigning to the original array. Maybe we jsut need a differnt view on it
 
