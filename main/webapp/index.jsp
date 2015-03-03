@@ -51,9 +51,9 @@ limitations under the License.
                     <!--<button type="submit" id="fullscreen"><img src="fullscreen.png" height="20px"></button>-->
                     <span id="orientation_radio">
                     <input type="radio" id="vertical_check" name="radio" checked="checked">
-                    <label for="vertical_check">Vertical</label>
+                    <label for="vertical_check" id='vertical_check_label'>Vertical</label>
                     <input type="radio" id="horizontal_check" name="radio">
-                    <label for="horizontal_check">Horizontal</label>
+                    <label for="horizontal_check" id='horizontal_check_label'>Horizontal</label>
                     </span>
                 </div>
                 <div id="viewHeightSlider"></div>
