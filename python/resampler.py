@@ -40,22 +40,23 @@ def resample(slicegen, scale, nrrd_path):
     scaleby_int = True
 
     #Get dimensions for the memory mapped raw xy file
-    xy_scaled_dims = [slicegen.shape()[0]]
+    xy_scaled_dims = [slicegen.shape()[2]]
 
     datatype = slicegen.dtype #TODO chage
 
     first = True
 
     for i, z_slice_arr in enumerate(slicegen.slices()):
-        if i == 150:
-            plt.imshow(z_slice_arr)
-            plt.show()
+
+        # if i == 150:
+        #     plt.imshow(z_slice_arr)
+        #     plt.show()
 
         # This might slow things doen by reasigning to the original array. Maybe we jsut need a differnt view on it
 
         z_slice_arr = _droppixels(z_slice_arr, scale, scale)
 
-        z_slice_resized = cv2.resize(z_slice_arr, (0, 0), fx=1/scale, fy=scale, interpolation=cv2.INTER_AREA)
+        z_slice_resized = cv2.resize(z_slice_arr, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
 
         if first:
             xy_scaled_dims.extend(z_slice_resized.shape)
@@ -74,16 +75,14 @@ def resample(slicegen, scale, nrrd_path):
     xyz_scaled_dims = []
     first = True
 
-    final_scaled_slices = []
+    # Scale in zy plane
 
-    # Scale in x_z plane
-    count = 0
     for y in range(xy_scaled_mmap.shape[1]):
 
         xz_plane = xy_scaled_mmap[:, y, :]
 
-        if scaleby_int:
-            xz_plane = _droppixels(xz_plane, 1, scale)
+        # if scaleby_int:
+        #     xz_plane = _droppixels(xz_plane, 1, scale)
 
         scaled_xz = cv2.resize(xz_plane, (0, 0), fx=1, fy=scale, interpolation=cv2.INTER_AREA)
 
@@ -113,6 +112,10 @@ def _droppixels(a, scaley, scalex):
     """
 
     #If New dimension not integral factors of original, drop pixels to make it so they are
+
+    scalex = 1.0/scalex
+    scaley = 1.0/scaley
+
     y1, x1 = a.shape
     changed = False
 
