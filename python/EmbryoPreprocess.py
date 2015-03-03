@@ -49,28 +49,42 @@ class EmbryoPreprocess(object):
                 # Loop through each row and see if URL exists.
                 for row in rows:
 
-                    # Extract media url and file extension
-                    media_url = row[fields.index('value')]
+                    # Extract file extension and URL
+                    media_URL = row[fields.index('value')]
                     media_extension = row[fields.index('extension')]
 
-                    # Add row to phenodcc_embryo here
+                    # Query phenodcc_embryo for url
+                    url_query = "SELECT * FROM phenodcc_embryo.preprocessed " \
+                                    "WHERE url = '{}'".format(media_extension)
 
-                    field_to_insert = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
-                                       fields.index('pid'), fields.index('qid'), fields.index('sid'),
-                                       fields.index('measurement_id')]
+                    fields, rows = self.query_database(url_query)
 
-                    # Create output directory based on colony, litter, etc.
-                    folder_ids = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
-                           fields.index('sid'), fields.index('pid'), fields.index('qid')]
+                    if len(rows) == 0:
 
-                    dirs = os.path.join(*[str(row[x]) for x in folder_ids])
+                        # Fields that we can insert data into phenodcc_embryo
+                        embryo_fields = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
+                                         fields.index('pid'), fields.index('qid'), fields.index('gene_symbol'),
+                                         fields.index('sid'),  fields.index('measurement_id'), fields.index('value'),
+                                         fields.index('checksum')]
 
-                    src_folder = os.path.join(self.src_path, dirs)
-                    out_folder = os.path.join(self.embryo_path, dirs)
+                        embryo_entries = [str(row[x]) for x in embryo_fields]
 
-                    self.preprocessing.append({'recon_type': param, 'src_folder': src_folder,
-                                               'out_folder': out_folder,  'ext': media_extension,
-                                               'metadata': row[-1]})
+                        insert_query = "INSERT INTO phenodcc_embryo.preprocessed " \
+                                       "(cid, lid, gid, pid, qid, gene_symbol, sid, mid, url, checksum, phase_id) " \
+                                       "VALUES ({}, {}, {}, {}, {}, '{}', {}, {}, '{}', '{}', 0".format(*embryo_entries)
+                        _, _ = self.query_database(insert_query)
+
+                        # Directory structure for output files
+                        folder_ids = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
+                               fields.index('sid'), fields.index('pid'), fields.index('qid')]
+                        dirs = os.path.join(*[str(row[x]) for x in folder_ids])
+
+                        src_folder = os.path.join(self.src_path, dirs)
+                        out_folder = os.path.join(self.embryo_path, dirs)
+
+                        self.preprocessing.append({'recon_type': param, 'src_folder': src_folder,
+                                                   'out_folder': out_folder,  'ext': media_extension,
+                                                   'metadata': row[-1]})
 
             # Loop through preprocessing list
             for recon in self.preprocessing:
@@ -109,10 +123,13 @@ class EmbryoPreprocess(object):
         # Do the rescaling here
         # RESCALE RESCALE RESCALE RESCALE RESCALE
 
-    def query_database(self, sql_file, replacement=None):
+    def query_database(self, sql, replacement=None):
 
-        sql = open(sql_file)
-        query = sql.read()
+        if sql.endswith('.sql'):
+            sql = open(sql)
+            query = sql.read()
+        else:
+            query = sql
 
         if replacement:
             query = query.replace('$REPLACE$', replacement)
