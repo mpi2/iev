@@ -86,7 +86,7 @@ class NrrdSliceGenerator(SliceGenerator):
                     elif line == '\n':
                         header_end = True
 
-        self.raw = np.memmap(nrrd_raw, dtype=self.header['dtype'], mode='r', shape=self.header['dims'], order='F')
+        self.raw = np.memmap(nrrd_raw.T, dtype=self.header['dtype'], mode='r', shape=self.header['dims'], order='F')
 
     def slices(self, start=0):
 
@@ -110,7 +110,7 @@ class MincSliceGenerator(SliceGenerator):
 
     def slices(self, start=0):
         # TODO check not transposed
-        for i in range(self.volume.shape[0], -1, start):
+        for i in range(start, self.volume.shape[0]):
             yield self.volume[i, :, :]
 
     def dtype(self):
