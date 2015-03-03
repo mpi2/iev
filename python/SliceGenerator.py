@@ -40,6 +40,7 @@ class TiffSliceGenerator(SliceGenerator):
         dims = list(first_tiff.shape)
         dims.append(len(self.tiff_list))
         self.dims = tuple(dims)
+        self.datatype = first_tiff.dtype
 
     def slices(self, start=0):
 
@@ -47,6 +48,12 @@ class TiffSliceGenerator(SliceGenerator):
 
             current_slice = tifffile.imread(os.path.join(self.recon, self.tiff_list[i]))
             yield current_slice
+
+    def dtype(self):
+        return self.datatype
+
+    def shape(self):
+        return self.dims
 
 
 class NrrdSliceGenerator(SliceGenerator):
@@ -97,13 +104,19 @@ class MincSliceGenerator(SliceGenerator):
     def __init__(self, recon):
         super(MincSliceGenerator, self).__init__(recon)
 
+        minc = h5py.File(self.recon, "r")['minc-2.0']
+        self.volume = minc['image']['0']['image']
+
     def slices(self, start=0):
 
-        minc = h5py.File(self.recon, "r")['minc-2.0']
-        volume = minc['image']['0']['image']
+        for i in range(start, self.volume.shape[0]):
+            yield self.volume[i, :, :]
 
-        for i in range(start, volume.shape[0]):
-            yield volume[i, :, :]
+    def dtype(self):
+        return self.volume.dtype
+
+    def shape(self):
+        return self.volume.shape
 
 if __name__ == "__main__":
 
@@ -111,11 +124,13 @@ if __name__ == "__main__":
     #            "20140515_KLHDC2_E14.5_21.1h_WT_XX_REC_14.nrrd.bz2"
     # conv.decompress_bz2(bz2_nrrd, "/home/james/soft/test.nrrd")
 
-    # gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
+    gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
     # gen = MincSliceGenerator("/home/james/soft/test.mnc")
     # gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
-    gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
+    # gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
 
+    print gen.dtype()
+    print gen.shape()
 
     for slice_ in gen.slices(200):
 
