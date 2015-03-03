@@ -86,18 +86,18 @@ class NrrdSliceGenerator(SliceGenerator):
                     elif line == '\n':
                         header_end = True
 
-        self.raw = np.memmap(nrrd_raw.T, dtype=self.header['dtype'], mode='r', shape=self.header['dims'], order='F')
+        self.raw = np.memmap(nrrd_raw, dtype=self.header['dtype'], mode='r', shape=self.header['dims'], order='F')
 
     def slices(self, start=0):
 
         for i in range(start, self.header['dims'][2]):
-            yield self.raw[:, :, i]
+            yield self.raw[:, :, i].T
 
     def dtype(self):
         return self.header['dtype']
 
     def shape(self):
-        return self.header['shape']
+        return self.header['dims']
 
 
 class MincSliceGenerator(SliceGenerator):
@@ -110,7 +110,7 @@ class MincSliceGenerator(SliceGenerator):
 
     def slices(self, start=0):
         # TODO check not transposed
-        for i in range(start, self.volume.shape[0]):
+        for i in range(self.volume.shape[0] - start - 2, 0, -1):
             yield self.volume[i, :, :]
 
     def dtype(self):
@@ -125,15 +125,15 @@ if __name__ == "__main__":
     #            "20140515_KLHDC2_E14.5_21.1h_WT_XX_REC_14.nrrd.bz2"
     # conv.decompress_bz2(bz2_nrrd, "/home/james/soft/test.nrrd")
 
-    # gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
-    gen = MincSliceGenerator("/home/james/soft/test.mnc")
+    gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
+    # gen = MincSliceGenerator("/home/james/soft/test.mnc")
     # gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
     # gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
 
     print gen.dtype()
     print gen.shape()
 
-    for slice_ in gen.slices(720):
+    for slice_ in gen.slices(100):
 
         plt.imshow(slice_, cmap=cm.Greys_r)
         plt.show()
