@@ -9,9 +9,9 @@ import resampler
 
 
 # Todo: add minc rescale as well
-PARAMETERS = {'IMPC_EOL_001_001': (2, 4),
-              'IMPC_EMO_001_001': (2, 4),
-              'IMPC_EMA_001_001': (2, 4)}
+PARAMETERS = {'IMPC_EOL_001_001': (0, 0.5, 0.25),
+              'IMPC_EMO_001_001': (0, 0.5, 0.25),
+              'IMPC_EMA_001_001': (0, 0.5, 0.25)}
 
 # Todo: add zip as well
 SLICE_GENERATORS = {'tif': TiffSliceGenerator, 'tiff': TiffSliceGenerator,
@@ -51,17 +51,16 @@ class EmbryoPreprocess(object):
                 for row in rows:
 
                     # Extract file extension and URL
-                    media_URL = row[fields.index('value')]
+                    media_url = row[fields.index('value')]
                     media_extension = row[fields.index('extension')]
 
                     # Query phenodcc_embryo for url
                     url_query = "SELECT * FROM phenodcc_embryo.preprocessed " \
-                                    "WHERE url = '{}'".format(media_extension)
+                                    "WHERE url = '{}'".format(media_url)
 
-                    fields, rows = self.query_database(url_query)
+                    _, url_rows = self.query_database(url_query)
 
-                    if len(rows) == 0:
-                        #TODO: check status
+                    if len(url_rows) == 0:
 
                         # Fields that we can insert data into phenodcc_embryo
                         embryo_fields = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
@@ -71,9 +70,9 @@ class EmbryoPreprocess(object):
 
                         embryo_entries = [str(row[x]) for x in embryo_fields]
 
-                        insert_query = "INSERT INTO phenodcc_embryo.preprocessed " \
-                                       "(cid, lid, gid, pid, qid, gene_symbol, sid, mid, url, checksum, phase_id) " \
-                                       "VALUES ({}, {}, {}, {}, {}, '{}', {}, {}, '{}', '{}', 0".format(*embryo_entries)
+                        insert_query = 'INSERT INTO phenodcc_embryo.preprocessed ' \
+                                       '(cid, lid, gid, pid, qid, gene_symbol, sid, mid, url, checksum, status_id, created) ' \
+                                       'VALUES ({}, {}, {}, {}, {}, "{}", {}, {}, "{}", "{}", 0, Now());'.format(*embryo_entries)
                         _, _ = self.query_database(insert_query)
 
                         # Directory structure for output files
@@ -87,8 +86,21 @@ class EmbryoPreprocess(object):
                         self.preprocessing.append({'recon_type': param, 'src_folder': src_folder,
                                                    'out_folder': out_folder,  'ext': media_extension,
                                                    'metadata': row[-1]})
+                    else:
 
-            # Loop through preprocessing list
+                        # Update metadata group and measurement_id
+                        mid = fields.index('measurement_id')
+                        metadata = fields.index('metadataGroup')
+
+                        update_embryo = 'UPDATE phenodcc_embryo.preprocessed ' \
+                                        'SET mid={}, metadataGroup="{}" ' \
+                                        'WHERE url="{}"'.format(mid, metadata, media_url)
+                        _, _ = self.query_database(update_embryo)
+
+                        # TODO: check if the other columns have changed
+                        # TODO: check status and see if we need to reprocess
+
+            # Loop through pre-processing list
             for recon in self.preprocessing:
 
                 # Get metadata group
@@ -108,8 +120,7 @@ class EmbryoPreprocess(object):
                 if slice_gen:
                     self.process_recon(recon, slice_gen)  # process the recon
                 else:
-                    #TODO raise an exception
-                    print "Invalid file extension '{}'. Skipping...".format(recon['ext'])
+                    raise ValueError("Invalid file extension '{}'. Skipping...".format(recon['ext']))
 
             # Close connection to database
             self.db_disconnect()
@@ -123,7 +134,7 @@ class EmbryoPreprocess(object):
         param = recon['param']
         scaling = PARAMETERS[param]
 
-        resampler.resample(slice)
+        resampler.resample(slice_gen)
 
 
     def query_database(self, sql, replacement=None):
@@ -139,13 +150,19 @@ class EmbryoPreprocess(object):
 
         try:
             self.cursor.execute(query)
+            self.conn.commit()
         except MySQLdb.MySQLError as e:
             print "Error querying database!", e
 
-        field_names = [i[0] for i in self.cursor.description]
-        rows = self.cursor.fetchall()
+        # If this was an INSERT, there will be no description
+        if self.cursor.description:
+            field_names = [i[0] for i in self.cursor.description]
+        else:
+            field_names = None
 
+        rows = self.cursor.fetchall()
         return field_names, rows
+
 
     def db_connect(self):
 

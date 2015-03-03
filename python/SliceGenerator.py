@@ -97,12 +97,7 @@ class NrrdSliceGenerator(SliceGenerator):
         return self.header['dtype']
 
     def shape(self):
-<<<<<<< HEAD
         return self.raw.shape
-=======
-        return self.header['dims']
->>>>>>> b405ea955947582d71ae9dc369bac8d087b3d812
-
 
 class MincSliceGenerator(SliceGenerator):
 
