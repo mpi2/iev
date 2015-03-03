@@ -19,6 +19,12 @@ class SliceGenerator(object):
     def slices(self):
         pass
 
+    def dtype(self):
+        raise NotImplementedError("Ths method needs overriding")
+
+    def shape(self):
+        raise NotImplementedError("Ths method needs overriding")
+
 
 class TiffSliceGenerator(SliceGenerator):
 
@@ -79,6 +85,12 @@ class NrrdSliceGenerator(SliceGenerator):
         for i in range(start, self.header['dims'][2]):
             yield self.raw[:, :, i]
 
+    def dtype(self):
+        return self.header['dtype']
+
+    def shape(self):
+        return self.header['shape']
+
 
 class MincSliceGenerator(SliceGenerator):
 
@@ -101,7 +113,9 @@ if __name__ == "__main__":
 
     # gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
     # gen = MincSliceGenerator("/home/james/soft/test.mnc")
-    gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
+    # gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
+    gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
+
 
     for slice_ in gen.slices(200):
 

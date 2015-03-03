@@ -5,6 +5,7 @@ import yaml
 import MySQLdb
 import json
 from SliceGenerator import *
+import resampler
 
 
 # Todo: add minc rescale as well
@@ -60,6 +61,7 @@ class EmbryoPreprocess(object):
                     fields, rows = self.query_database(url_query)
 
                     if len(rows) == 0:
+                        #TODO: check status
 
                         # Fields that we can insert data into phenodcc_embryo
                         embryo_fields = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
@@ -106,6 +108,7 @@ class EmbryoPreprocess(object):
                 if slice_gen:
                     self.process_recon(recon, slice_gen)  # process the recon
                 else:
+                    #TODO raise an exception
                     print "Invalid file extension '{}'. Skipping...".format(recon['ext'])
 
             # Close connection to database
@@ -120,8 +123,8 @@ class EmbryoPreprocess(object):
         param = recon['param']
         scaling = PARAMETERS[param]
 
-        # Do the rescaling here
-        # RESCALE RESCALE RESCALE RESCALE RESCALE
+        resampler.resample(slice)
+
 
     def query_database(self, sql, replacement=None):
 

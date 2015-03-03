@@ -22,7 +22,7 @@ else:
     windows = False
 
 
-def resample(array, scale, nrrd_path):
+def resample(slicegen, scale, nrrd_path):
     """
 
     :param array: numpy-like array - accepts np.memmap objects and h5py array objects
@@ -38,16 +38,13 @@ def resample(array, scale, nrrd_path):
     scaleby_int = True
 
     #Get dimensions for the memory mapped raw xy file
-    xy_scaled_dims = [array.shape[0]]
+    xy_scaled_dims = [slicegen.shape[0]]
 
-    datatype = array.dtype
+    datatype = slicegen.dtype #TODO chage
 
     first = True
 
-    for z in range(0, array.shape[0]):
-
-        # Rescale the z slices
-        z_slice_arr = array[z, ]
+    for z_slice_arr in slicegen:
 
         # This might slow things doen by reasigning to the original array. Maybe we jsut need a differnt view on it
 
