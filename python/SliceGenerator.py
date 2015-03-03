@@ -117,7 +117,7 @@ class MincSliceGenerator(SliceGenerator):
         return self.volume.dtype
 
     def shape(self):
-        return self.volume.shape
+        return self.volume.shape[::-1]
 
 if __name__ == "__main__":
 
@@ -125,9 +125,9 @@ if __name__ == "__main__":
     #            "20140515_KLHDC2_E14.5_21.1h_WT_XX_REC_14.nrrd.bz2"
     # conv.decompress_bz2(bz2_nrrd, "/home/james/soft/test.nrrd")
 
-    gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
+    # gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
     # gen = MincSliceGenerator("/home/james/soft/test.mnc")
-    # gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
+    gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
     # gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
 
     print gen.dtype()
