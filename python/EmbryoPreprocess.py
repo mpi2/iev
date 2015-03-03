@@ -49,17 +49,21 @@ class EmbryoPreprocess(object):
                 # Loop through each row and see if URL exists.
                 for row in rows:
 
-                    # Add row to phenodcc_embryo here
-                    # QUERY QUERY QUERY QUERY QUERY QUERY
-
                     # Extract media url and file extension
                     media_url = row[fields.index('value')]
                     media_extension = row[fields.index('extension')]
 
-                    id_list = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
+                    # Add row to phenodcc_embryo here
+
+                    field_to_insert = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
+                                       fields.index('pid'), fields.index('qid'), fields.index('sid'),
+                                       fields.index('measurement_id')]
+
+                    # Create output directory based on colony, litter, etc.
+                    folder_ids = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
                            fields.index('sid'), fields.index('pid'), fields.index('qid')]
 
-                    dirs = os.path.join(*[str(row[x]) for x in id_list])
+                    dirs = os.path.join(*[str(row[x]) for x in folder_ids])
 
                     src_folder = os.path.join(self.src_path, dirs)
                     out_folder = os.path.join(self.embryo_path, dirs)
@@ -96,10 +100,7 @@ class EmbryoPreprocess(object):
         else:
             print "Failed to connect to {}".format(self.HOST)
 
-    def process_recon(self, recon, reader):
-
-        # Load the volume
-        volume = reader(recon.src_folder)
+    def process_recon(self, recon, slice_gen):
 
         # Get scaling factors
         param = recon['param']
@@ -107,7 +108,6 @@ class EmbryoPreprocess(object):
 
         # Do the rescaling here
         # RESCALE RESCALE RESCALE RESCALE RESCALE
-
 
     def query_database(self, sql_file, replacement=None):
 

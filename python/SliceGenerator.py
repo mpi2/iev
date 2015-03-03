@@ -6,7 +6,8 @@ import tifffile
 import numpy as np
 import nrrd
 import h5py
-import conversion as conv
+import tempfile
+from matplotlib import pyplot as plt
 
 
 class SliceGenerator(object):
@@ -34,11 +35,11 @@ class TiffSliceGenerator(SliceGenerator):
         dims.append(len(self.tiff_list))
         self.dims = tuple(dims)
 
-    def slices(self):
+    def slices(self, start=0):
 
-        for i in range(0, self.dims[2]):
+        for i in range(start, self.dims[2]):
 
-            current_slice = tifffile.imread(os.path.join(self.recon, self.tiff_list[self.slice_index]))
+            current_slice = tifffile.imread(os.path.join(self.recon, self.tiff_list[i]))
             yield current_slice
 
 
@@ -47,11 +48,35 @@ class NrrdSliceGenerator(SliceGenerator):
     def __init__(self, recon):
 
         super(NrrdSliceGenerator, self).__init__(recon)
-        self.raw, self.header = nrrd.read(recon)
+        # self.raw, self.header = nrrd.read(recon)
 
-    def slices(self):
+        nrrd_raw = tempfile.TemporaryFile(mode='wb+')
+        self.header = {}
 
-        for i in range(0, self.header['sizes'][2]):
+        with open(recon, "rb") as f:
+
+            header_end = False
+
+            for line in f:
+
+                if header_end:
+                    nrrd_raw.write(line)
+                else:
+
+                    if line.startswith('type'):
+                        self.header['dtype'] = eval('np.' + line.split(':')[1].strip())
+                    elif line.startswith('encoding'):
+                        self.header['encoding'] = line.split(':')[1].strip()
+                    elif line.startswith('sizes'):
+                        self.header['dims'] = tuple([int(d) for d in line.split(':')[1].split()])
+                    elif line == '\n':
+                        header_end = True
+
+        self.raw = np.memmap(nrrd_raw, dtype=self.header['dtype'], mode='r', shape=self.header['dims'], order='F')
+
+    def slices(self, start=0):
+
+        for i in range(start, self.header['dims'][2]):
             yield self.raw[:, :, i]
 
 
@@ -60,12 +85,12 @@ class MincSliceGenerator(SliceGenerator):
     def __init__(self, recon):
         super(MincSliceGenerator, self).__init__(recon)
 
-    def slices(self):
+    def slices(self, start=0):
 
         minc = h5py.File(self.recon, "r")['minc-2.0']
         volume = minc['image']['0']['image']
 
-        for i in range(0, volume.shape[0]):
+        for i in range(start, volume.shape[0]):
             yield volume[i, :, :]
 
 if __name__ == "__main__":
@@ -78,5 +103,9 @@ if __name__ == "__main__":
     # gen = MincSliceGenerator("/home/james/soft/test.mnc")
     gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
 
-    for slice_ in gen.slices():
-        print slice_.shape
+    for slice_ in gen.slices(200):
+
+        plt.imshow(slice_)
+        plt.show()
+        break
+        # print slice_.shape
