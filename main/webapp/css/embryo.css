@@ -201,20 +201,37 @@ body{
 }
 
 
-#X_check.ui-button{
-    background: red;
+/*The orthogonal views buttons *************************************************
+*/
+
+label#X_check_label span {
+background-color: #FF8585;
 }
 
-label#Y_check_label{
+label#X_check_label.ui-state-active span {
+background-color: red;
+     color:#DEDEDE;
+}
+
+label#Y_check_label span{
+    background-color: #CEFFB5;
+}
+label#Y_check_label.ui-state-active span{
     background-color: green;
+    color:#DEDEDE;
 }
 
-label#Z_check_label{
+label#Z_check_label span{
+    background-color: #A9AFFC;
+}
+label#Z_check_label.ui-state-active span{
     background-color: blue;
+    color:#DEDEDE;
 }
 
 
-
+/*******************************************************************************
+*/
 
 
 .sliderX{

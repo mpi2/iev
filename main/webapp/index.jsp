@@ -42,9 +42,9 @@ limitations under the License.
                     <input type="checkbox" id="X_check" class='toggle_slice' checked>
                     <label for="X_check" id='X_check_label'>Sagittal</label>
                     <input type="checkbox" id="Y_check" class='toggle_slice' checked>
-                    <label for="Y_check">Coronal</label>
+                    <label for="Y_check" id='Y_check_label'>Coronal</label>
                     <input type="checkbox" id="Z_check" class='toggle_slice' checked>
-                    <label for="Z_check">Axial</label>
+                    <label for="Z_check" id='Z_check_label'>Axial</label>
                 </div>
                 <div id='topright'>
                     
