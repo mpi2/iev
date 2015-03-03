@@ -198,13 +198,23 @@
            
         });
         }
-    
-    
+        
+
+//    $(function() {
+//
+//        $("#X_check").tooltip({
+//           content: "Hello siduIUDSIAIDUSAIUDAS cat"
+//           
+//        });
+//        console.log('toggle');
+//    });
+//    Does not work
 
 
     // Style the control buttons
 
     $(function () {
+       
         $(".toggle_slice").button();
     });
 
@@ -215,6 +225,7 @@
     loadViewers(container);
     attachEvents();
     setupOrientationControls();
+    tooltips();
     }//EmbryoViewer
      
    

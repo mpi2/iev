@@ -230,8 +230,26 @@ label#Z_check_label.ui-state-active span{
 }
 
 
+/* The orientation buttons *****************************************************
+*/
+label#vertical_check_label.ui-state-active span {
+background-color: #DEDEDE;
+}
+label#vertical_check_label span {
+background-color: #FFB64F;
+}
+
+label#horizontal_check_label.ui-state-active span {
+background-color: #DEDEDE;
+}
+label#horizontal_check_label span {
+background-color: #FFB64F;
+}
+
+
 /*******************************************************************************
 */
+
 
 
 .sliderX{
