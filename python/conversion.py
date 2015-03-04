@@ -57,19 +57,11 @@ def decompress_bz2(bz2_in, decompressed_out):
 
     try:
         print "Decompressing '{}'".format(bz2_in)
-        decompressed = bz2.BZ2File(bz2_in, 'rb').read()
+        with open(decompressed_out, 'wb') as decom, bz2.BZ2File(bz2_in, 'rb') as com:
+            for data in iter(lambda: com.read(100 * 1024), b''):
+                decom.write(data)
     except IOError as e:
-        print "Error decompressing '{}'".format(bz2_in)
-        print e
-        return None
-
-    try:
-        print "Writing decompressed NRRD to {}".format(decompressed_out)
-        open(decompressed_out, 'wb').write(decompressed)
-    except IOError as e:
-        print "Error writing decompressed NRRD '{}'".format(decompressed_out)
-        print e
-        return None
+        print "Error decompressing '{}'".format(bz2_in), e
 
 
 def write_xtk_nrrd(volume, nrrd_out):

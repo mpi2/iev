@@ -57,6 +57,28 @@ class TiffSliceGenerator(SliceGenerator):
         return self.dims
 
 
+class TiffStackSliceGenerator(SliceGenerator):
+
+    def __init__(self, recon):
+
+        super(TiffStackSliceGenerator, self).__init__(recon)
+
+        self.tiff_stack = tifffile.imread(recon)
+        self.dims = self.tiff_stack.shape[::-1]
+        self.datatype = self.tiff_stack.dtype
+
+    def slices(self, start=0):
+
+        for i in range(self.dims[2] - start, 0, -1):
+            yield self.tiff_stack[i, :, :]
+
+    def dtype(self):
+        return self.datatype
+
+    def shape(self):
+        return self.dims
+
+
 class NrrdSliceGenerator(SliceGenerator):
 
     def __init__(self, recon):
@@ -99,6 +121,7 @@ class NrrdSliceGenerator(SliceGenerator):
     def shape(self):
         return self.raw.shape
 
+
 class MincSliceGenerator(SliceGenerator):
 
     def __init__(self, recon):
@@ -126,7 +149,8 @@ if __name__ == "__main__":
 
     # gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
     # gen = MincSliceGenerator("/home/james/soft/test.mnc")
-    gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
+    # gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
+    gen = TiffStackSliceGenerator("/home/james/soft/test.tif")
     # gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
 
     print gen.dtype()

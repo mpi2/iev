@@ -6,7 +6,7 @@ import MySQLdb
 import json
 from SliceGenerator import *
 import resampler
-
+import conversion as conv
 
 # Todo: add minc rescale as well
 PARAMETERS = {'IMPC_EOL_001_001': (0, 0.5, 0.25),
@@ -14,8 +14,10 @@ PARAMETERS = {'IMPC_EOL_001_001': (0, 0.5, 0.25),
               'IMPC_EMA_001_001': (0, 0.5, 0.25)}
 
 # Todo: add zip as well
-SLICE_GENERATORS = {'tif': TiffSliceGenerator, 'tiff': TiffSliceGenerator,
+SLICE_GENERATORS = {'tif': TiffStackSliceGenerator, 'tiff': TiffStackSliceGenerator,
                     'nrrd': NrrdSliceGenerator, 'mnc': MincSliceGenerator}
+
+COMPRESSION = {'bz2': conv.decompress_bz2}  # 'zip': conv.decompress_zip,
 
 
 class EmbryoPreprocess(object):
@@ -52,7 +54,7 @@ class EmbryoPreprocess(object):
 
                     # Extract file extension and URL
                     media_url = row[fields.index('value')]
-                    media_extension = row[fields.index('extension')]
+                    media_extension = row[fields.index('extension')].lower()
 
                     # Query phenodcc_embryo for url
                     url_query = "SELECT * FROM phenodcc_embryo.preprocessed " \
@@ -114,6 +116,13 @@ class EmbryoPreprocess(object):
                 if os.path.exists(recon['out_folder']) is False:
                     os.makedirs(recon['out_folder'])
 
+                # Is this file compressed?
+                decom_func = COMPRESSION.setdefault(recon['ext'])
+
+                if decom_func:
+                    decom_func(recon['src_folder'], recon['out_folder'])
+                    # recon['ext'] =
+
                 # Determine which slicer generator to use based on dictionary
                 slice_gen = SLICE_GENERATORS.setdefault(recon['ext'], None)
 
@@ -135,7 +144,6 @@ class EmbryoPreprocess(object):
         scaling = PARAMETERS[param]
 
         resampler.resample(slice_gen)
-
 
     def query_database(self, sql, replacement=None):
 
