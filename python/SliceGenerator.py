@@ -70,7 +70,7 @@ class TiffStackSliceGenerator(SliceGenerator):
 
     def slices(self, start=0):
 
-        for i in range(self.dims[2] - start, 0, -1):
+        for i in range(self.dims[2]):
             yield self.tiff_stack[i, :, :]
 
     def dtype(self):
@@ -152,7 +152,7 @@ class MincSliceGenerator(SliceGenerator):
 
     def slices(self, start=0):
         # TODO check not transposed
-        for i in range(self.volume.shape[0] - start - 2, 0, -1):
+        for i in reversed(range(self.volume.shape[0])):
             yield self.volume[i, :, :]
 
     def dtype(self):
