@@ -168,6 +168,7 @@
                    $('.specimen_view').css({
                        float: 'left',
                        width: '48%',
+                       clear: 'none'
                        
                 });
                 $('.sliceView').css({
@@ -187,6 +188,7 @@
                 $('.specimen_view').css({
                        float: 'none',
                        width: '100%',
+                       clear: 'both'
                        
                 });
                 $('.sliceView').css({
@@ -214,10 +216,18 @@
     $(function () {
        
         $(".toggle_slice").button();
+        
         $("#X_check").tooltip({
-           content: "Hello siduIUDSIAIDUSAIUDAS cat"
-           
+           content: "This is a tooltip"
         });
+                
+        $( "button#help_button" ).button({
+             icons: {
+                 primary: 'ui-icon-help'
+             }
+        }).click(function(){
+            //Get link to the docs
+        }).css({width: '30'});
     });
 
 //    $('body').bind('beforeunload', function () {
@@ -227,7 +237,7 @@
     loadViewers(container);
     attachEvents();
     setupOrientationControls();
-
+    //tooltips();
     }//EmbryoViewer
      
    

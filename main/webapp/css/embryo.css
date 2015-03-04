@@ -14,6 +14,7 @@ body{
     position: relative;
     width: 100%;
     overflow: hidden;     
+    
 }
 
 .sliceView{
@@ -145,17 +146,20 @@ body{
 }*/
 
 .sliceView .ui-slider-handle {
-    height: 10px !important;
-    width: 8px;
+    height: 15px !important;
+    width: 20px;
+    top: -8px;;
+    
 }
 
 .sliceView .ui-slider {
-    height: 20px;
-    margin-bottom: 5px;
+    height: 15px;
+    margin-bottom: 5px; ;
     width: 95%;
     margin-left: auto;
     margin-right: auto;
     vertical-align: middle; 
+    border: none;
 }
 
 .slice .ui-slider-handle {
@@ -168,7 +172,10 @@ body{
     bottom: 0;
     width:70%;
     float: right;
+    height: 30px;
+ 
 }
+
 
 #top_bar{
 
