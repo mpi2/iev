@@ -203,10 +203,7 @@
 
 //    $(function() {
 //
-        $("#X_check").tooltip({
-           content: "Hello siduIUDSIAIDUSAIUDAS cat"
-           
-        });
+        
 //        console.log('toggle');
 //    });
 //    Does not work
@@ -217,6 +214,10 @@
     $(function () {
        
         $(".toggle_slice").button();
+        $("#X_check").tooltip({
+           content: "Hello siduIUDSIAIDUSAIUDAS cat"
+           
+        });
     });
 
 //    $('body').bind('beforeunload', function () {
@@ -226,7 +227,7 @@
     loadViewers(container);
     attachEvents();
     setupOrientationControls();
-    tooltips();
+
     }//EmbryoViewer
      
    

@@ -39,11 +39,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Preprocessed.findByMid", query = "SELECT p FROM Preprocessed p WHERE p.mid = :mid"),
     @NamedQuery(name = "Preprocessed.findByStatusId", query = "SELECT p FROM Preprocessed p WHERE p.statusId = :statusId"),
     @NamedQuery(name = "Preprocessed.findByUrl", query = "SELECT p FROM Preprocessed p WHERE p.url = :url"),
-    @NamedQuery(name = "Preprocessed.findByChecksums", query = "SELECT p FROM Preprocessed p WHERE p.checksums = :checksums"),
+    @NamedQuery(name = "Preprocessed.findByChecksums", query = "SELECT p FROM Preprocessed p WHERE p.checksum = :checksum"),
     @NamedQuery(name = "Preprocessed.findByExtensionId", query = "SELECT p FROM Preprocessed p WHERE p.extensionId = :extensionId"),
     @NamedQuery(name = "Preprocessed.findByPixelsize", query = "SELECT p FROM Preprocessed p WHERE p.pixelsize = :pixelsize"),
     @NamedQuery(name = "Preprocessed.findByCreated", query = "SELECT p FROM Preprocessed p WHERE p.created = :created"),
-    @NamedQuery(name = "Preprocessed.findByLastUpdated", query = "SELECT p FROM Preprocessed p WHERE p.lastUpdated = :lastUpdated"),
+    @NamedQuery(name = "Preprocessed.findByLastUpdate", query = "SELECT p FROM Preprocessed p WHERE p.lastUpdate = :lastUpdate"),
     @NamedQuery(name = "Preprocessed.findByCentreColonyId", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId AND p.cid = :cid")
 })
 public class Preprocessed implements Serializable {
@@ -105,7 +105,7 @@ public class Preprocessed implements Serializable {
     @NotNull
     @Size(min = 1, max = 45)
     @Column(nullable = false, length = 45)
-    private String checksums;
+    private String checksum;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 6)
@@ -122,13 +122,17 @@ public class Preprocessed implements Serializable {
     private Date created;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "last_updated", nullable = false)
+    @Column(name = "last_update", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdated;
+    private Date lastUpdate;
     @Basic(optional = false)
     @NotNull
     @Column(nullable = false)
     private int touched;
+    @Basic(optional = false)
+    @NotNull
+    @Column(nullable = false)
+    private String metadataGroup;
 
     public Preprocessed() {
     }
@@ -137,7 +141,7 @@ public class Preprocessed implements Serializable {
         this.id = id;
     }
 
-    public Preprocessed(Integer id, int cid, int lid, int gid, int pid, int qid, String geneSymbol, String colonyId, int sid, String mid, int statusId, String url, String checksums, String extensionId, long pixelsize, Date created, Date lastUpdated, int touched) {
+    public Preprocessed(Integer id, int cid, int lid, int gid, int pid, int qid, String geneSymbol, String colonyId, int sid, String mid, int statusId, String url, String checksum, String extensionId, long pixelsize, Date created, Date lastUpdate, int touched, String metadataGroup) {
         this.id = id;
         this.cid = cid;
         this.lid = lid;
@@ -148,12 +152,13 @@ public class Preprocessed implements Serializable {
         this.mid = mid;
         this.statusId = statusId;
         this.url = url;
-        this.checksums = checksums;
+        this.checksum = checksum;
         this.extensionId = extensionId;
         this.pixelsize = pixelsize;
         this.created = created;
-        this.lastUpdated = lastUpdated;
+        this.lastUpdate = lastUpdate;
         this.touched = touched;
+        this.metadataGroup = metadataGroup;
     }
 
     public Integer getId() {
@@ -253,12 +258,12 @@ public class Preprocessed implements Serializable {
         this.url = url;
     }
 
-    public String getChecksums() {
-        return checksums;
+    public String getChecksum() {
+        return checksum;
     }
 
-    public void setChecksums(String checksums) {
-        this.checksums = checksums;
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
     }
 
     public String getExtensionId() {
@@ -285,12 +290,12 @@ public class Preprocessed implements Serializable {
         this.created = created;
     }
 
-    public Date getLastUpdated() {
-        return lastUpdated;
+    public Date getLastUpdate() {
+        return lastUpdate;
     }
 
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     int getTouched() {
@@ -299,6 +304,14 @@ public class Preprocessed implements Serializable {
 
     public void setTouched(int touched) {
         this.touched = touched;
+    }
+    
+    String getMetadataGroup() {
+        return metadataGroup;
+    }
+
+    public void setTouc(String metadataGroup) {
+        this.metadataGroup = metadataGroup;
     }
 
     @Override
