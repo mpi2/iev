@@ -9,6 +9,7 @@ import h5py
 import tempfile
 from matplotlib import pyplot as plt
 import matplotlib.cm as cm
+from ctutils import readers
 
 
 class SliceGenerator(object):
@@ -78,6 +79,25 @@ class TiffStackSliceGenerator(SliceGenerator):
     def shape(self):
         return self.dims
 
+
+class TXMSliceGenerator(SliceGenerator):
+
+    def __init__(self, recon):
+
+        super(TXMSliceGenerator, self).__init__(recon)
+        self.txm = readers.open_scan(recon)
+        print self.txm
+
+    def slices(self, start=0):
+
+        for i in self.txm:
+            yield np.reshape(self.txm[i], tuple([self.txm.height, self.txm.width]))
+
+    def dtype(self):
+        return self.txm.datatype
+
+    def shape(self):
+        return tuple([self.txm.height, self.txm.width, len(self.txm)])
 
 class NrrdSliceGenerator(SliceGenerator):
 
@@ -150,15 +170,14 @@ if __name__ == "__main__":
     # gen = TiffSliceGenerator("/home/james/soft/test_tiffs")
     # gen = MincSliceGenerator("/home/james/soft/test.mnc")
     # gen = NrrdSliceGenerator("/home/james/soft/test.nrrd")
-    gen = TiffStackSliceGenerator("/home/james/soft/test.tif")
+    # gen = TiffStackSliceGenerator("/home/james/soft/test.tif")
+    gen = TXMSliceGenerator("/home/james/soft/test.txm")
     # gen = NrrdSliceGenerator("/home/neil/siah/IMPC_pipeline/preprocessing/example_data/IMPC_cropped_20141104_RYR2_18.1h_WT_Rec.nrrd")
 
     print gen.dtype()
     print gen.shape()
 
-    for slice_ in gen.slices(100):
+    for slice_ in gen.slices():
 
         plt.imshow(slice_, cmap=cm.Greys_r)
         plt.show()
-        break
-        # print slice_.shape

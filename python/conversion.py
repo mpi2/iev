@@ -5,6 +5,7 @@ import nrrd
 import SimpleITK as sitk
 import bz2
 import tifffile
+import tempfile
 
 DATA_TYPES = {"unsigned short": np.uint16, "uint16": np.uint16,
               "signed short": np.int16, "int16": np.int16,
@@ -125,14 +126,11 @@ def write_xtk_nrrd(volume, nrrd_out):
 
 if __name__ == "__main__":
 
-    import argparse
-    if __name__ == "__main__":
+    recon = '/home/james/soft/test.nrrd.bz2'
+    image_parts = recon.split(os.extsep)
 
-        # parser = argparse.ArgumentParser("Conversion between MINC/RAW and NRRD")
-        # parser.add_argument('-f', '--folder', dest='input_folder', help='Input folder')
-        #
-        # args = parser.parse_args()
-        # xc = XTKConverter(args.input_folder)
+    decom_out = '.'.join(image_parts[0:2])
 
-        # decompress_bz2('/home/james/tmp/IMPC_cropped_20140430_KLF7_E14.5_16.5b_WT_XX_rec.nrrd.bz2', '/home/james/tmp/decom.nrrd')
-        tiffs_to_nrrd('/home/james/tmp/test_tiffs/', '/home/james/tmp/test.nrrd')
+    decom_tmp = decompress_bz2(recon, decom_out)
+    print decom_tmp
+    # tiffs_to_nrrd('/home/james/tmp/test_tiffs/', '/home/james/tmp/test.nrrd')

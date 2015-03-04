@@ -1,6 +1,6 @@
 SELECT cid, lid, gid, sid, pid, qid, genotype.genotype, gene_symbol, measurement_id, value, checksum, extension, metadataGroup
 
-FROM phenodcc_media.media_file, phenodcc_media.file_extension, phenodcc_overviews.measurements_performed, phenodcc_overviews.genotype
+FROM phenodcc_media.media_file, phenodcc_embryo.file_extension, phenodcc_overviews.measurements_performed, phenodcc_overviews.genotype
 
 where 
 
@@ -26,4 +26,3 @@ and ((phase_id = 2) or (phase_id = 3))
 and checksum is not null
 
 limit 10000000
-
