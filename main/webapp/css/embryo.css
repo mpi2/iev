@@ -35,6 +35,15 @@ body{
     clear:both;
 }*/
 
+#help_link, #help_form{
+    float: left;
+}
+
+#help_link{
+    top: 2px;
+    margin-right: 10px;
+}
+
 
 .novols_msg{
     font: 25px arial, sans-serif;
@@ -123,10 +132,9 @@ body{
     color:#FFFFFF !important;
 }*/
 
-#controls {
-    position:relative;
-    width: 100%;
-    //padding: 10px;
+.controls {
+
+    margin: 3px 0 3px 0;
 }
 
 .controlsButtons{

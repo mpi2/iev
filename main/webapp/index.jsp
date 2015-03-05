@@ -39,7 +39,12 @@ limitations under the License.
         <div id='wrap'>
             <div id='top_bar'>
                 <div id='topleft'>
-                     <button id="help_button"></button>
+                    <!--<a href="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"><span id="help_link" class="ui-icon  ui-icon-help"</span></a>-->
+                      
+                    <form action="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"  id="help_form">
+                        <input type="submit" value="?" id="help_link" >
+                    </form>
+                    
                     <input type="checkbox" id="X_check" class='toggle_slice' checked>
                     <label for="X_check" id='X_check_label'>Sagittal</label>
                     <input type="checkbox" id="Y_check" class='toggle_slice' checked>

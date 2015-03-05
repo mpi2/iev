@@ -91,6 +91,7 @@
     
 
         function attachEvents() {
+            
             // Hide/show slice views from the checkboxes
             $('.toggle_slice').change(function (e, ui) {
                 console.log(e);
@@ -115,8 +116,10 @@
                 window.dispatchEvent(new Event('resize')); 
 
             });
+            
 
             $(".button").button();
+            
 
             $('#link_views')
                 .button()
@@ -192,8 +195,8 @@
                        
                 });
                 $('.sliceView').css({
-                       width: String(100 / numVisible) + '%',
-//                      
+                       width: String(100 / numVisible) + '%'
+                      
                 });
                 $('#vertical_check').prop('checked', true).button("refresh");
                 window.dispatchEvent(new Event('resize')); 
@@ -221,7 +224,7 @@
            content: "This is a tooltip"
         });
                 
-        $( "button#help_button" ).button({
+        $( "#help_link" ).button({
              icons: {
                  primary: 'ui-icon-help'
              }
