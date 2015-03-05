@@ -127,7 +127,11 @@
                 .change(function (e) {
                     viewsLinked = e.currentTarget.checked;
             });
-        
+            
+            $("#viewHeightSlider").tooltip({
+                content: "Modify slice viewer height",
+                 show: {delay: 1200 }
+            });
 
             $("#viewHeightSlider")
                     .slider({
@@ -144,11 +148,17 @@
             
             $('#fullscreen')
                     .click(function(){
-                        console.log('fullscreen');
-                        
-         
-                     
+                        console.log('fullscreen');     
             });
+            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
+                 show: {delay: 1200 }
+             });
+             
+            $("#selectorWrap_wt").tooltip({content: "Select WT embryo to view",
+             show: {delay: 1200 }});
+         
+            $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
+             show: {delay: 1200 }});
         
     }//AttachEvents
     

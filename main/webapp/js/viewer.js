@@ -21,6 +21,10 @@
         var $ySlider;
         var $zSlider;
         var $windowLevel;
+        var $xLinkViews;
+        var $yLinkViews;
+        var $zLinkViews;
+        
         var xRen;
         var yRen;
         var zRen;
@@ -59,6 +63,9 @@
                 }, this)
             });
 
+            $('#windowLevel_mut').tooltip({content: "gjdfhs",
+                 show: {delay: 1000 }
+             });
 
             $("#" + reset)
             .button()
@@ -139,13 +146,21 @@
             var xSliderID = 'slider_x_' + id;
             var ySliderID = 'slider_y_' + id;
             var zSliderID = 'slider_z_' + id;
+            
+            var xLinkViewsId = 'xLinkViews_' + id;
+            var yLinkViewsId = 'yLinkViews_' + id;
+            var zLinkViewsId = 'zLinkViews_' + id;
 
-            $xSlider = $("<div id='" + xSliderID + "' class ='sliderX slider'></div>");
+            $xLinkViews = $("<div class='linkViews ui-icon ui-icon-link' id='" + xLinkViewsId + "'></dv>");
+            $yLinkViews = $("<div class='linkViews ui-icon ui-icon-link' id='" + yLinkViewsId  + "'></dv>");
+            $zLinkViews = $("<div class='linkViews ui-icon ui-icon-link' class='linkViews'id='" + zLinkViewsId  + "'></dv>");
+            
+            $xSlider = $("<span id='test'><div id='" + xSliderID + "' class ='sliderX slider'></div><span>");
             $ySlider = $("<div id='" + ySliderID + "' class ='sliderY slider'></div>");
             $zSlider = $("<div id='" + zSliderID + "' class ='sliderZ slider'></div>");
 
             $xContainer = $("<div id='X" + XcontainerID + "' class='sliceX sliceView'></div>");
-            $xContainer.append($xSlider);
+            $xContainer.append($xSlider).append($xLinkViews);
             $yContainer = $("<div id='Y" + YcontainerID + "' class='sliceY sliceView'></div>");
             $yContainer.append($ySlider);
             $zContainer = $("<div id='Z" + ZcontainerID + "' class='sliceZ sliceView'></div>");
@@ -168,7 +183,7 @@
 
             var selectorWrap = 'selectorWrap_' + id;
 
-            controlsHTML =
+            var controlsHTML =
                     '<div id="controls_' + id + '" class="controls clear">' +
                     '<span id="controlsButtons_' + id + '" class="controlsButtons">' +
                     '<input type="checkbox" id="' + invertColours + '" class="button">' +
@@ -177,11 +192,11 @@
                     '<a id="' + zoomOut + '" href="#" class="button">-</a>' +
                     '<a id ="' + reset + '" href="#" class="button">Reset</a>' +
                     '</span>' +
-                    '<div class="selectorWrap" id="' + selectorWrap + '">' +
+                    '<div class="selectorWrap" id="' + selectorWrap + '" title="test">' +
                     '<select id="' + vselector + '" class ="volselector"></select>' +
                     '</div>' +
                     '<div class="wlwrap">' +
-                    '<div id="' + windowLevel + '" class="windowLevel"></div>' +
+                    '<div id="' + windowLevel + '" class="windowLevel" title="test"></div>' +
                     '</div>'
 
             '</div>';
@@ -401,7 +416,7 @@
             //Calcualte new with of each orthogonal view
             
             //If orientation in vertial, slice width should always be 100%
-            console.log('hv ' + horizontalView);
+     
             var slice_view_width;
             
             if (horizontalView){

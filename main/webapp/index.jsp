@@ -61,7 +61,7 @@ limitations under the License.
                     <label for="horizontal_check" id='horizontal_check_label'>Horizontal</label>
                     </span>
                 </div>
-                <div id="viewHeightSlider"></div>
+                <div id="viewHeightSlider" title="test"></div>
             </div>
             </div>
         
