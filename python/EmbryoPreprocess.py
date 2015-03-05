@@ -24,7 +24,8 @@ class EmbryoPreprocess(object):
 
     def __init__(self, config_file):
 
-        self.base_path = '/home/james/IMPC_media'
+        self.base_path = '/media/sf_siah/IMPC_pipeline'
+        self.embryo_table = 'phenodcc_embryo.preprocessed_test'
         self.embryo_path = os.path.join(self.base_path, 'emb')
         self.src_path = os.path.join(self.base_path, 'src')
         self.conn = None
@@ -47,18 +48,20 @@ class EmbryoPreprocess(object):
             # Loop through relevant parameters and query phenodcc_media
             for param in PARAMETERS:
 
-                fields, rows = self.query_database('sql/all_media.sql', replacement=param)
+                fields, rows = self.query_database('sql/valid_entries.sql', replacement=param)
 
                 # Loop through each row and see if URL exists.
                 for row in rows:
 
-                    # Extract file extension and URL
-                    media_url = row[fields.index('value')]
-                    media_extension = row[fields.index('extension')].lower()
+                    # Extract URL, extension, measurement_id and metadata
+                    url = row[fields.index('value')]
+                    ext = row[fields.index('extension')].lower()
+                    mid = row[fields.index('measurement_id')]
+                    metadata = row[fields.index('metadataGroup')]
 
                     # Query phenodcc_embryo for url
-                    url_query = "SELECT * FROM phenodcc_embryo.preprocessed " \
-                                    "WHERE url = '{}'".format(media_url)
+                    url_query = "SELECT * FROM {} " \
+                                "WHERE url = '{}'".format(self.embryo_table, url)
 
                     _, url_rows = self.query_database(url_query)
 
@@ -68,13 +71,16 @@ class EmbryoPreprocess(object):
                         embryo_fields = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
                                          fields.index('pid'), fields.index('qid'), fields.index('gene_symbol'),
                                          fields.index('sid'),  fields.index('measurement_id'), fields.index('value'),
-                                         fields.index('checksum')]
+                                         fields.index('checksum'), fields.index('metadataGroup')]
 
                         embryo_entries = [str(row[x]) for x in embryo_fields]
 
-                        insert_query = 'INSERT INTO phenodcc_embryo.preprocessed ' \
-                                       '(cid, lid, gid, pid, qid, gene_symbol, sid, mid, url, checksum, status_id, created) ' \
-                                       'VALUES ({}, {}, {}, {}, {}, "{}", {}, {}, "{}", "{}", 0, Now());'.format(*embryo_entries)
+                        insert_query = 'INSERT INTO {} ' \
+                                       '(cid, lid, gid, pid, qid, gene_symbol, sid, mid, url, checksum,' \
+                                       'metadataGroup, status_id, created) ' \
+                                       'VALUES ({}, {}, {}, {}, {}, "{}", {}, {}, "{}", "{}", "{}", 0, Now());' \
+                                       ''.format(self.embryo_table, *embryo_entries)
+
                         _, _ = self.query_database(insert_query)
 
                         # Directory structure for output files
@@ -82,21 +88,18 @@ class EmbryoPreprocess(object):
                                fields.index('sid'), fields.index('pid'), fields.index('qid')]
                         dirs = os.path.join(*[str(row[x]) for x in folder_ids])
 
-                        src_folder = os.path.join(self.src_path, dirs)
+                        src = os.path.join(self.src_path, dirs, str(mid)) + '.{}'.format(ext)
                         out_folder = os.path.join(self.embryo_path, dirs)
 
-                        self.preprocessing.append({'recon_type': param, 'src_folder': src_folder,
-                                                   'out_folder': out_folder,  'ext': media_extension,
-                                                   'metadata': row[-1]})
+                        self.preprocessing.append({'recon_type': param, 'src': src,
+                                                   'out_folder': out_folder,  'ext': ext,
+                                                   'url': url, 'metadata': row[-1]})
                     else:
 
-                        # Update metadata group and measurement_id
-                        mid = fields.index('measurement_id')
-                        metadata = fields.index('metadataGroup')
-
-                        update_embryo = 'UPDATE phenodcc_embryo.preprocessed ' \
+                        # Update metadata group and measurement_id in pre-processing table
+                        update_embryo = 'UPDATE {} ' \
                                         'SET mid={}, metadataGroup="{}" ' \
-                                        'WHERE url="{}"'.format(mid, metadata, media_url)
+                                        'WHERE url="{}"'.format(self.embryo_table, mid, metadata, url)
                         _, _ = self.query_database(update_embryo)
 
                         # TODO: check if the other columns have changed
@@ -109,25 +112,42 @@ class EmbryoPreprocess(object):
                 fields, metadata = self.query_database('sql/get_pixel_sizes.sql', replacement=recon['metadata'])
 
                 # Extract and parse JSON string for pixel size
+                #Todo update embryo database
                 json_dict = json.loads('{' + metadata[0][fields.index('metadata_json')] + '}')
                 recon['pixel_size'] = json_dict.setdefault('Image Pixel Size', None)
 
-                # Create paths on IMPC_media if the directories do not exist yet
+                # Create paths on IMPC_media/emb/ if the directories do not exist yet
                 if os.path.exists(recon['out_folder']) is False:
                     os.makedirs(recon['out_folder'])
 
                 # Is this file compressed?
-                decom_func = COMPRESSION.setdefault(recon['ext'])
+                decompressor = COMPRESSION.setdefault(recon['ext'])
 
-                if decom_func:
-                    decom_func(recon['src_folder'], recon['out_folder'])
-                    # recon['ext'] =
+                if decompressor:
 
-                # Determine which slicer generator to use based on dictionary
-                slice_gen = SLICE_GENERATORS.setdefault(recon['ext'], None)
+                    # Create a name for the decompressed file
+                    file_parts = recon.split(os.extsep)
+                    image_path = '.'.join(file_parts[0:2])
+                    image_ext = file_parts[1]
+
+                    # Decompress the file
+                    decompressor(recon['src'], os.path.join(recon['out_folder'], image_path))
+
+                else:
+                    image_path = recon['src']
+                    image_ext = recon['ext']
+
+                # Assign slice generator based on image extension
+                slice_gen = SLICE_GENERATORS.setdefault(image_ext, None)(image_path)
 
                 if slice_gen:
-                    self.process_recon(recon, slice_gen)  # process the recon
+
+                    # Get scaling factors
+                    scaling = PARAMETERS[recon['param']]
+
+                    for scale in scaling:
+                        resampler.resample(slice_gen, scale, recon['out_folder'])  # process the recon
+
                 else:
                     raise ValueError("Invalid file extension '{}'. Skipping...".format(recon['ext']))
 
@@ -136,14 +156,6 @@ class EmbryoPreprocess(object):
 
         else:
             print "Failed to connect to {}".format(self.HOST)
-
-    def process_recon(self, recon, slice_gen):
-
-        # Get scaling factors
-        param = recon['param']
-        scaling = PARAMETERS[param]
-
-        resampler.resample(slice_gen)
 
     def query_database(self, sql, replacement=None):
 

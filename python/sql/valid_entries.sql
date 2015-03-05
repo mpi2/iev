@@ -2,28 +2,25 @@ SELECT cid, lid, gid, sid, pid, qid, genotype.genotype, gene_symbol, measurement
 
 FROM phenodcc_media.media_file, phenodcc_media.file_extension, phenodcc_overviews.measurements_performed, phenodcc_overviews.genotype
 
-where 
+WHERE
 
-# get the qid for the recon parameters 
-# IMPC_EOL_001_001 OPT E9.5
-# IMPC_EMO_001_001 uCT E14.5/E15.5
-# IMPC_EMA_001_001 uCT E18.5
-
-# using IMPC_ABR_014_001 as a series media example
+--get the qid for the recon parameters
+--IMPC_EOL_001_001 OPT E9.5
+--IMPC_EMO_001_001 uCT E14.5/E15.5
+--IMPC_EMA_001_001 uCT E18.5
 qid = (select impress.parameter.parameter_id from impress.parameter where parameter.parameter_key = "$REPLACE$" )
 
-# join with measurements_performed to get the latest active and valid data
+--# join with measurements_performed to get the latest active and valid data
 and mid = measurements_performed.measurement_id
 
-#join with genotype to get the colony id and gene_symbol
-and genotype.genotype_id = gid
+--join with genotype to get the colony id and gene_symbol
+AND genotype.genotype_id = gid
 
-# join with extension to get the extension
-and extension_id = file_extension.id
+--join with extension to get the extension
+AND extension_id = file_extension.id
 
 #recon has been downloaded and skipped tiling  
-and ((phase_id = 2) or (phase_id = 3))
-and checksum is not null
+AND phase_id = 2
+AND checksum IS NOT null
 
-limit 10000000
-
+LIMIT 10000000
