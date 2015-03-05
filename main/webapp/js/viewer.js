@@ -395,12 +395,21 @@
         };
 
 
-        function setVisibleViews(viewList, count) {
+        function setVisibleViews(viewList, count, horizontalView) {
             //ViewList: Hash
             //var slice_view_width = String(100 / total_visible);
             //Calcualte new with of each orthogonal view
-            console.log('here');
-            var slice_view_width = String(100 / count);
+            
+            //If orientation in vertial, slice width should always be 100%
+            console.log('hv ' + horizontalView);
+            var slice_view_width;
+            
+            if (horizontalView){
+                slice_view_width = 100;
+            }
+            else{
+                var slice_view_width = String(100 / count);
+            }
 
             if (viewList['X']) {
                 $xContainer.show();

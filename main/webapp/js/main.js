@@ -44,6 +44,7 @@
         var wildtypes = [];
         var mutants = [];
         var queryColonyId = queryColonyId;
+        var horizontalView = undefined;
      
         // Get the baselines and the mutant paths
         for(var i = 0; i < data.volumes.length; i++) {
@@ -111,7 +112,7 @@
                     }
                 }
                 for (var i = 0; i < views.length; i++) {
-                    views[i].setVisibleViews(visible, count);
+                    views[i].setVisibleViews(visible, count, horizontalView);
                 }
                 window.dispatchEvent(new Event('resize')); 
 
@@ -168,6 +169,7 @@
         
             $("#vertical_check")
                 .click(function (event) {
+                    horizontalView = true;
                    $('.specimen_view').css({
                        float: 'left',
                        width: '48%',
@@ -179,10 +181,11 @@
                 });
                 $('#horizontal_check').prop('checked', true).button("refresh");
                 window.dispatchEvent(new Event('resize')); 
-        });
+        }.bind(this));
         
         $('#horizontal_check')
                 .click(function (event) {
+                    horizontalView = false;
                     var numVisible = 0;
                     for(var item in visible){
                         if(visible[item]) ++ numVisible;
@@ -202,7 +205,7 @@
                 window.dispatchEvent(new Event('resize')); 
                 
            
-        });
+        }.bind(this));
         }
         
 
