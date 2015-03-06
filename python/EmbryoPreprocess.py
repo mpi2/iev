@@ -9,13 +9,13 @@ import resampler
 import conversion as conv
 
 # Todo: add minc rescale as well
-PARAMETERS = {'IMPC_EOL_001_001': (0, 0.5, 0.25),
-              'IMPC_EMO_001_001': (0, 0.5, 0.25),
-              'IMPC_EMA_001_001': (0, 0.5, 0.25)}
+PARAMETERS = {'IMPC_EOL_001_001': (0.5, 0.25),
+              'IMPC_EMO_001_001': (0.5, 0.25),
+              'IMPC_EMA_001_001': (0.5, 0.25)}
 
 # Todo: add zip as well
-SLICE_GENERATORS = {'tif': TiffStackSliceGenerator, 'tiff': TiffStackSliceGenerator,
-                    'nrrd': NrrdSliceGenerator, 'mnc': MincSliceGenerator}
+SLICE_GENERATORS = {'nrrd': NrrdSliceGenerator, 'mnc': MincSliceGenerator,
+                    'tif': TiffStackSliceGenerator, 'tiff': TiffStackSliceGenerator}
 
 COMPRESSION = {'bz2': conv.decompress_bz2}  # 'zip': conv.decompress_zip,
 
@@ -54,10 +54,7 @@ class EmbryoPreprocess(object):
                 for row in rows:
 
                     # Extract URL, extension, measurement_id and metadata
-                    url = row[fields.index('value')]
-                    ext = row[fields.index('extension')].lower()
-                    mid = row[fields.index('measurement_id')]
-                    metadata = row[fields.index('metadataGroup')]
+                    url = row[fields.index('url')]
 
                     # Query phenodcc_embryo for url
                     url_query = "SELECT * FROM {} " \
@@ -70,7 +67,7 @@ class EmbryoPreprocess(object):
                         # Fields that we can insert data into phenodcc_embryo
                         embryo_fields = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
                                          fields.index('pid'), fields.index('qid'), fields.index('gene_symbol'),
-                                         fields.index('sid'),  fields.index('measurement_id'), fields.index('value'),
+                                         fields.index('sid'),  fields.index('measurement_id'), fields.index('url'),
                                          fields.index('checksum'), fields.index('metadataGroup')]
 
                         embryo_entries = [str(row[x]) for x in embryo_fields]
@@ -85,34 +82,44 @@ class EmbryoPreprocess(object):
 
                         # Directory structure for output files
                         folder_ids = [fields.index('cid'), fields.index('lid'), fields.index('gid'),
-                               fields.index('sid'), fields.index('pid'), fields.index('qid')]
+                                      fields.index('sid'), fields.index('pid'), fields.index('qid')]
                         dirs = os.path.join(*[str(row[x]) for x in folder_ids])
+
+                        # Get measurement_id, extension and metadata
+                        mid = row[fields.index('measurement_id')]
+                        ext = row[fields.index('extension')].lower()
+                        metadata = row[fields.index('metadataGroup')]
 
                         src = os.path.join(self.src_path, dirs, str(mid)) + '.{}'.format(ext)
                         out_folder = os.path.join(self.embryo_path, dirs)
 
-                        self.preprocessing.append({'recon_type': param, 'src': src,
-                                                   'out_folder': out_folder,  'ext': ext,
-                                                   'url': url, 'metadata': row[-1]})
+                        # Create dictionary for recon
+                        recon_dict = {'param': param, 'src': src,
+                                      'out_folder': out_folder,  'ext': ext,
+                                      'url': url, 'metadata': row[-1]}
+
+                        self.preprocessing.append(recon_dict)
+
                     else:
 
                         # Update metadata group and measurement_id in pre-processing table
                         update_embryo = 'UPDATE {} ' \
-                                        'SET mid={}, metadataGroup="{}" ' \
-                                        'WHERE url="{}"'.format(self.embryo_table, mid, metadata, url)
+                                    'SET mid={}, metadataGroup="{}" ' \
+                                    'WHERE url="{}"'.format(self.embryo_table, mid, metadata, url)
                         _, _ = self.query_database(update_embryo)
 
                         # TODO: check if the other columns have changed
-                        # TODO: check status and see if we need to reprocess
 
             # Loop through pre-processing list
             for recon in self.preprocessing:
+
+                print "* Processing '{}' *".format(recon['src'])
 
                 # Get metadata group
                 fields, metadata = self.query_database('sql/get_pixel_sizes.sql', replacement=recon['metadata'])
 
                 # Extract and parse JSON string for pixel size
-                #Todo update embryo database
+                # TODO update embryo database
                 json_dict = json.loads('{' + metadata[0][fields.index('metadata_json')] + '}')
                 recon['pixel_size'] = json_dict.setdefault('Image Pixel Size', None)
 
@@ -126,30 +133,44 @@ class EmbryoPreprocess(object):
                 if decompressor:
 
                     # Create a name for the decompressed file
-                    file_parts = recon.split(os.extsep)
-                    image_path = '.'.join(file_parts[0:2])
-                    image_ext = file_parts[1]
+                    file_parts = recon['src'].split(os.extsep)
+                    image_path = file_parts[0]  # + '.' + recon['ext']
 
-                    # Decompress the file
-                    decompressor(recon['src'], os.path.join(recon['out_folder'], image_path))
+                    if os.path.exists(image_path) is False:
+                        # Decompress the file
+                        decompressor(recon['src'], os.path.join(recon['out_folder'], image_path))
 
                 else:
                     image_path = recon['src']
-                    image_ext = recon['ext']
 
-                # Assign slice generator based on image extension
-                slice_gen = SLICE_GENERATORS.setdefault(image_ext, None)(image_path)
+                # Go through all the slice generators, starting with NRRD
+                # TODO something more sensible than this
 
-                if slice_gen:
+                valid_file_type = False
+                for key in SLICE_GENERATORS:
 
-                    # Get scaling factors
-                    scaling = PARAMETERS[recon['param']]
+                        try:
+                            slice_gen = SLICE_GENERATORS.setdefault(key, None)(image_path)
+                        except Exception as e:
+                            print "Failed to generate slices as '{}' : ".format(key), e
+                            slice_gen = None
 
-                    for scale in scaling:
-                        resampler.resample(slice_gen, scale, recon['out_folder'])  # process the recon
+                        # If the slice generator returns a non-None value, we're good to go
+                        if slice_gen:
 
-                else:
-                    raise ValueError("Invalid file extension '{}'. Skipping...".format(recon['ext']))
+                            valid_file_type = True
+                            print "Resampling..."
+
+                            # Get scaling factors
+                            scaling = PARAMETERS[recon['param']]
+
+                            # Go through all scaling factors
+                            for scale in scaling:
+                                resampler.resample(slice_gen, scale, recon['out_folder'])  # process the recon
+                            break
+
+                if valid_file_type is False:
+                    raise ValueError("Invalid file type for '{}'").format(recon['src'])
 
             # Close connection to database
             self.db_disconnect()

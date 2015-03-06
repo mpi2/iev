@@ -59,7 +59,7 @@ def decompress_bz2(bz2_in, decompressed_out):
     try:
         print "Decompressing '{}'".format(bz2_in)
         with open(decompressed_out, 'wb') as decom, bz2.BZ2File(bz2_in, 'rb') as com:
-            for data in iter(lambda: com.read(100 * 1024), b''):
+            for data in iter(lambda: com.read(1000 * 1024), b''):
                 decom.write(data)
     except IOError as e:
         print "Error decompressing '{}'".format(bz2_in), e
