@@ -111,7 +111,6 @@
 
             $('#' + vselector)
             .append(options.join(""))
-
             .selectmenu({
                 width: 200,
                 height: 20,
@@ -122,78 +121,83 @@
         }; 
 
 
+
         function createHTML () {
             // Create the html for this specimen orthogonal views. 
 
             var $viewsContainer = $("#" + viewContainer);
             
-            var $specimenView;
             if (volumePaths.length < 1 && queryColonyId !==  null){
                 $viewsContainer.append("<div class='novols_msg'> " +
-                        "Could not find any volumes for " + queryColonyId +  " </div>");
-                
-                return;
+                   "Could not find any volumes for " + queryColonyId +  " </div>");
+                    return;
             }
             
-            var XcontainerID = 'X_' + id;
-            var YcontainerID = 'Y_' + id;
-            var ZcontainerID = 'Z_' + id;
-
-            var xSliderID = 'slider_x_' + id;
-            var ySliderID = 'slider_y_' + id;
-            var zSliderID = 'slider_z_' + id;
-
-            $xSlider = $("<div id='" + xSliderID + "' class ='sliderX slider'></div>");
-            $ySlider = $("<div id='" + ySliderID + "' class ='sliderY slider'></div>");
-            $zSlider = $("<div id='" + zSliderID + "' class ='sliderZ slider'></div>");
-
-            $xContainer = $("<div id='X" + XcontainerID + "' class='sliceX sliceView'></div>");
-            $xContainer.append($xSlider);
-            $yContainer = $("<div id='Y" + YcontainerID + "' class='sliceY sliceView'></div>");
-            $yContainer.append($ySlider);
-            $zContainer = $("<div id='Z" + ZcontainerID + "' class='sliceZ sliceView'></div>");
-            $zContainer.append($zSlider);
-
-            $specimenView = $("<div id='" + id + "' class='specimen_view'></div>");
+            var data = {
+                id: id
+            };
+            
+            var source   = $("#specimen_view_template").html();
+            var template = Handlebars.compile(source);
+            
+            var $specimenView = $(template(data));
+            
             $specimenView.append(controls_tab());
       
             // This defines the order of the orthogonal views
-            $specimenView.append($xContainer);
-            $specimenView.append($yContainer);
-            $specimenView.append($zContainer);
+            $specimenView.append(createSliceView('X'));
+            $specimenView.append(createSliceView('Y'));
+            $specimenView.append(createSliceView('Z'));
 
             $viewsContainer.append($specimenView);
-        };
-
+        }
+        
+        
+        
+        function createSliceView(orient){
+            
+            var data = {
+                sliceContainerID: orient + '_' + id,
+                viewSliceClasss: 'slice' + orient,
+                sliderId: 'slider_' + orient + '_'+ id,
+                sliderClass: 'slider' + orient
+            };
+            
+            var source   = $("#slice_view_template").html();
+            var template = Handlebars.compile(source);
+            return template(data);
+        }
+        
+        
+        
+        function jQuerySelectors(){
+            $xContainer =  $('#X_' + id);
+            $yContainer =  $('#Y_' + id);
+            $zContainer =  $('#Z_' + id);
+            $xSlider = $('#slider_X_'+ id);
+            $ySlider = $('#slider_Y_'+ id);
+            $zSlider = $('#slider_Z_'+ id);
+        }
+        
+        
 
         function controls_tab() {
-            // NH. Do not like. Should I use templating to generate this HTML?
-
-            var selectorWrap = 'selectorWrap_' + id;
-
-            var controlsHTML =
-                    '<div id="controls_' + id + '" class="controls clear">' +
-                    '<span id="controlsButtons_' + id + '" class="controlsButtons">' +
-                    '<input type="checkbox" id="' + invertColours + '" class="button">' +
-                    '<label for="invert_colours_' + id + '">Invert colours</label>' +
-                    '<a id="' + zoomIn + '" href="#" class="button">+</a>' +
-                    '<a id="' + zoomOut + '" href="#" class="button">-</a>' +
-                    '<a id ="' + reset + '" href="#" class="button">Reset</a>' +
-                    '</span>' +
-                    '<div class="selectorWrap" id="' + selectorWrap + '" title="test">' +
-                    '<select id="' + vselector + '" class ="volselector"></select>' +
-                    '</div>' +
-                    '<div class="wlwrap">' +
-                    '<div id="' + windowLevel + '" class="windowLevel" title="test"></div>' +
-                    '</div>'
-
-            '</div>';
-
-            //Add the styling       
-            $("#invert_colours_" + id).button();
-            $("#zoomIn_" + id).button();
-
-            return controlsHTML;
+   
+            var data = {
+                id: id,
+                controlsButtonsId: "controlsButtons_" + id,
+                invertColoursId: invertColours,
+                zoomInId: zoomIn,
+                zoomOutId: zoomOut,
+                resetID: reset,
+                selectorWrapId: "selectorWrap_" + id,
+                vselectorId: vselector,
+                windowLevelId: windowLevel 
+            };
+            
+            var source   = $("#slice_controls_template").html();
+            var template = Handlebars.compile(source);
+            return template(data);
         };
 
 
@@ -451,6 +455,7 @@
         };
         
         createHTML();
+        jQuerySelectors();
         setupRenderers();
         createEventHandlers();
         return public_interface;
