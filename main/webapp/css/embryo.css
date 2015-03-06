@@ -29,7 +29,7 @@ body{
 
 .sliceView{
     position: absolute;
-    bottom:15px;
+    bottom:20px;
     top: 0px;
     left: 0;
     right: 0;
@@ -43,12 +43,13 @@ body{
 }
 
 .sliceControls{
-    height: 5px !important;
+    height: 25px !important;
     position: absolute !important;
     bottom: 0;
-    width:95%;
-    float: right;
-    height: 25px;
+    width:100%;
+    
+   
+
 }
 
 .windowLevel{
@@ -183,26 +184,28 @@ body{
 {
     background-image: url(../ui-icons_FFFC33_256x240.png);
 }
-.linkViews .ui-icon{
+.linkViews{
     float: left;
+    top: 20px;
 }
 
 .sliceWrap .ui-slider-handle {
     height: 15px !important;
     width: 25px;
-    top: -12px;  
+    top: -8px;  
 }
 
 
 
 .sliceWrap .ui-slider {
-    height: 15px;
+    height: 5px;
     margin-bottom: 1px; ;
     width: 85%;
     margin-left: auto;
     margin-right: auto;
     vertical-align: middle; 
     border: none;
+    top:15px;
 }
 
 

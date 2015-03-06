@@ -62,10 +62,20 @@
         var container = div;
         var views = [];
         
-        var visible = {'x': true,
-                       'y': true,
-                       'z': true
-                      };
+        var ortho = {
+            'X': {
+                visible: true,
+                linked: true
+            },
+            'Y': {
+                visible: true,
+                linked: true
+            },
+            'Z': {
+                visible: true,
+                linked: true
+            }
+        };
     
     
         function buildUrl(data){
@@ -83,34 +93,77 @@
     
         function loadViewers(container) {
 
-            views.push(dcc.SpecimenView(wildtypes, 'wt', container, 'baseline'));
-            views.push(dcc.SpecimenView(mutants, 'mut', container, queryColonyId));
+            views.push(dcc.SpecimenView(wildtypes, 'wt', container, 'baseline', sliceChange));
+            views.push(dcc.SpecimenView(mutants, 'mut', container, queryColonyId, sliceChange));
+            console.log(views);
 
         };
-    
+        
+        
+        
+        function sliceChange(id, orientation, index){
+            //Listens to the slice change events from the viewers
+          
+           for (var i = 0; i < views.length; i++) {
+               if (views[i].id === id) continue; //this is the views that changed
+               if (orientation === 'X' && ortho['X'].linked) views[i].setXindex(index);
+               else if (orientation === 'Y' && ortho['Y'].linked) views[i].setYindex(index);
+               else if (orientation === 'Z' && ortho['Z'].linked) views[i].setZindex(index);
+           }   
+            
+        }
+        
+        
+        function linkViews(orthoView, isLink){
+            //OrthoView -> 'X', 'Y', or 'Z'
+            
+            // Change check or uncheck the correpsonding views checkboxes
+            for (var i = 0; i < views.length; i++) {
+                views[i].linkOrthoView(orthoView, isLink);
+            }
+            ortho[orthoView].linked = isLink;
+        }
+        
+        
 
         function attachEvents() {
+
+            $('.linkViews')
+                    .change(function (e) {
+                        
+                        if ($(e.target).hasClass('X')) {
+                            linkViews('X', e.currentTarget.checked);
+                        }
+                        else if ($(e.target).hasClass('Y')) {
+                            linkViews('Y', e.currentTarget.checked);
+                        }
+                        else if ($(e.target).hasClass('Z')) {
+                            linkViews('Z', e.currentTarget.checked);
+                        }
+                        
+            }.bind(this)); 
+             
+           
             
             // Hide/show slice views from the checkboxes
             $('.toggle_slice').change(function (e, ui) {
                 console.log(e);
 
                 var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
-                visible = {}
                 var count = 0;
 
                 //Count the number of checked boxes so we can work out a new width
                 for (var i = 0; i < slice_list.length; i++) {
                     if ($('#' + slice_list[i]).is(':checked')) {
-                        visible[slice_list[i].charAt(0)] = true;
+                        ortho[slice_list[i].charAt(0)].visible = true;
                         count++;
                     }
                     else {
-                        visible[slice_list[i].charAt(0)] = false;
+                        ortho[slice_list[i].charAt(0)].visible = false;
                     }
                 }
                 for (var i = 0; i < views.length; i++) {
-                    views[i].setVisibleViews(visible, count, horizontalView);
+                    views[i].setVisibleViews(ortho, count, horizontalView);
                 }
                 window.dispatchEvent(new Event('resize')); 
 
@@ -120,11 +173,7 @@
             $(".button").button();
             
 
-            $('#link_views')
-                .button()
-                .change(function (e) {
-                    viewsLinked = e.currentTarget.checked;
-            });
+
             
             $("#viewHeightSlider").tooltip({
                 content: "Modify slice viewer height",
@@ -198,8 +247,8 @@
                 .click(function (event) {
                     horizontalView = false;
                     var numVisible = 0;
-                    for(var item in visible){
-                        if(visible[item]) ++ numVisible;
+                    for(var item in ortho){
+                        if(ortho[item].visible) ++ numVisible;
                     }
                       
                 $('.specimen_view').css({
@@ -234,7 +283,6 @@
        
         $(".toggle_slice").button();
         
-        $("#X_check").tooltip();
                 
         $( "#help_link" ).button({
              icons: {
@@ -252,7 +300,6 @@
     loadViewers(container);
     attachEvents();
     setupOrientationControls();
-    //tooltips();
     }//EmbryoViewer
      
    

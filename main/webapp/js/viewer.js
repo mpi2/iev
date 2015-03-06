@@ -7,7 +7,7 @@
         dcc = {};
 
 
-    function Slices(volumePaths, id, container, queryColonyId) {
+    function Slices(volumePaths, id, container, queryColonyId, sliceChange) {
 
         var id = id;
         var viewContainer = container;
@@ -17,6 +17,9 @@
         var $xContainer;
         var $yContainer;
         var $zContainer;
+        var $xWrap;
+        var $yWrap;
+        var $zWrap;
         var $xSlider;
         var $ySlider;
         var $zSlider;
@@ -34,7 +37,7 @@
 
 
         function createEventHandlers() {
-
+   
             // Invert the color map 
             $("#" + invertColours).change($.proxy(function (e) {
                 invertColour(e.target.checked);
@@ -153,14 +156,16 @@
         }
         
         
-        
         function createSliceView(orient){
             
             var data = {
+                sliceWrapId: 'sliceWrap_' + orient + '_' + id,
                 sliceContainerID: orient + '_' + id,
                 viewSliceClasss: 'slice' + orient,
                 sliderId: 'slider_' + orient + '_'+ id,
-                sliderClass: 'slider' + orient
+                sliderClass: 'slider' + orient,
+                orientation: orient
+               
             };
             
             var source   = $("#slice_view_template").html();
@@ -169,14 +174,24 @@
         }
         
         
+        function linkOrthoView(orthoView, isLink){
+            //For now just the X, Y, or Z class. Come up with better name
+            $('.' + orthoView).prop('checked', isLink);
+        }
+        
+        
         
         function jQuerySelectors(){
+            // Todo: should not have to define these IDs twice
             $xContainer =  $('#X_' + id);
             $yContainer =  $('#Y_' + id);
             $zContainer =  $('#Z_' + id);
             $xSlider = $('#slider_X_'+ id);
             $ySlider = $('#slider_Y_'+ id);
             $zSlider = $('#slider_Z_'+ id);
+            $xWrap = $('#sliceWrap_X_' + id);
+            $yWrap = $('#sliceWrap_Y_' + id);
+            $zWrap = $('#sliceWrap_Z_' + id);
         }
         
         
@@ -189,7 +204,7 @@
                 invertColoursId: invertColours,
                 zoomInId: zoomIn,
                 zoomOutId: zoomOut,
-                resetID: reset,
+                resetId: reset,
                 selectorWrapId: "selectorWrap_" + id,
                 vselectorId: vselector,
                 windowLevelId: windowLevel 
@@ -285,16 +300,24 @@
         };
 
 
-        function updateSliders(_slice, event) {
-            
-            if (_slice.interactor.leftButtonDown) {
-                $("#windowLevel").slider("option", "values", [volume.windowLow, volume.windowHigh]);
-            } else if (_slice.interactor._shiftDown) {
+        function updateSliders(renderer, event) {
+ 
+            if (renderer.interactor.mousemoveEvent.shiftKey) {  
+                //Cross-hair navigating///////////////////
+                
+                //Set the index sliders
                 $xSlider.slider("value", volume.indexX);
                 $ySlider.slider("value", volume.indexY);
-                $zSlider.slider("value", volume.indexZ);
+                $zSlider.slider("value", volume.indexZ);   
+                //Set the index in the other linked views
+                sliceChange(id, 'X', volume.indexX);
+                sliceChange(id, 'Y', volume.indexY);
+                sliceChange(id, 'Z', volume.indexZ);
             }
-        };
+            else if(renderer.interactor.leftButtonDown){
+                  $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+            }
+    }
 
 
 
@@ -307,13 +330,6 @@
             yRen.render();
             zRen.add(volume);
             zRen.render();
-            
-//            var xWidth = xRen._sliceWidth;
-//            var xHeight = xRen._sliceHeight;
-//            xRen._sliceWidth = xHeight;
-//            xRen._sliceHeight = xWidth;
-//            xRen.sliceWidth = xHeight;
-//            xRen.sliceHeight = xWidth;
 
             var dims = volume.dimensions;
 
@@ -336,7 +352,7 @@
                         return;
                     }
                     volume.indexX = ui.value;
-                    //sliceChange(id, 'x', volume.indexX);
+                    sliceChange(id, 'X', volume.indexX);
                 }.bind(this)
             });
 
@@ -352,7 +368,7 @@
                         return;
                     }
                     volume.indexY = ui.value;
-                    //sliceChange(id, 'y', volume.indexY);
+                    sliceChange(id, 'Y', volume.indexY);
                 }.bind(this)
             });
 
@@ -368,21 +384,24 @@
                         return;
                     }
                     volume.indexZ = ui.value;
-                    //sliceChange(id, 'z', volume.indexZ);
+                    sliceChange(id, 'Z', volume.indexZ);
                 }.bind(this)
             });
 
             // Overload onMouseWheel event to control slice sliders
             xRen.interactor.onMouseWheel = function (event) {
                 $xSlider.slider({value: volume.indexX});
+                sliceChange(id, 'X', volume.indexX);
             }.bind(this);
 
             yRen.interactor.onMouseWheel = function (event) {
                 $ySlider.slider({value: volume.indexY});
+                sliceChange(id, 'Y', volume.indexY);
             }.bind(this);
 
             zRen.interactor.onMouseWheel = function (event) {
                 $zSlider.slider({value: volume.indexZ});
+                sliceChange(id, 'Z', volume.indexZ);
             }.bind(this);
 
             // Overload sliceX mouse moved
@@ -400,6 +419,22 @@
                 updateSliders(zRen, event);
             }.bind(this);
         };
+        
+        function setXindex(index){
+             volume.indexX = index;
+             $xSlider.slider("value", index);
+        }
+        
+        function setYindex(index){
+             volume.indexY = index;
+             $ySlider.slider("value", index);
+        }
+        
+        function setZindex(index){
+             volume.indexZ = index;
+             $zSlider.slider("value", index);
+        }
+
 
 
         function setVisibleViews(viewList, count, horizontalView) {
@@ -418,28 +453,28 @@
                 var slice_view_width = String(100 / count);
             }
 
-            if (viewList['X']) {
-                $xContainer.show();
-                $xContainer.width(slice_view_width + '%');
+            if (viewList['X'].visible) {
+                $xWrap.show();
+                $xWrap.width(slice_view_width + '%');
 
             } else {
-                $xContainer.hide();
+                $xWrap.hide();
             }
 
-            if (viewList['Y']) {
-                $yContainer.show();
-                $yContainer.width(slice_view_width + '%');
+            if (viewList['Y'].visible) {
+                $yWrap.show();
+                $yWrap.width(slice_view_width + '%');
            
             } else {
-                $yContainer.hide();
+                $yWrap.hide();
             }
 
-            if (viewList['Z']) {
-                $zContainer.show();
-                $zContainer.width(slice_view_width + '%');
+            if (viewList['Z'].visible) {
+                $zWrap.show();
+                $zWrap.width(slice_view_width + '%');
           
             } else {
-                $zContainer.hide();
+                $zWrap.hide();
             }
         };
 
@@ -450,7 +485,12 @@
 
 
         var public_interface = {
-            setVisibleViews: setVisibleViews
+            setVisibleViews: setVisibleViews,
+            linkOrthoView: linkOrthoView,
+            setXindex: setXindex,
+            setYindex: setYindex,
+            setZindex: setZindex,
+            id: id
 
         };
         
