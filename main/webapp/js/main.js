@@ -234,9 +234,7 @@
        
         $(".toggle_slice").button();
         
-        $("#X_check").tooltip({
-           content: "This is a tooltip"
-        });
+        $("#X_check").tooltip();
                 
         $( "#help_link" ).button({
              icons: {

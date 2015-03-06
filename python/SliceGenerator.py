@@ -1,16 +1,13 @@
 __author__ = 'james'
 
 import os
-import sys
 import tifffile
 import numpy as np
-import nrrd
 import h5py
-import tempfile
 from matplotlib import pyplot as plt
 import matplotlib.cm as cm
 from ctutils import readers
-
+import subprocess as sp
 
 class SliceGenerator(object):
 
@@ -68,6 +65,7 @@ class TiffStackSliceGenerator(SliceGenerator):
         self.dims = self.tiff_stack.shape[::-1]
         self.datatype = self.tiff_stack.dtype
 
+
     def slices(self, start=0):
 
         for i in range(self.dims[2]):
@@ -86,7 +84,6 @@ class TXMSliceGenerator(SliceGenerator):
 
         super(TXMSliceGenerator, self).__init__(recon)
         self.txm = readers.open_scan(recon)
-        print self.txm
 
     def slices(self, start=0):
 
@@ -99,54 +96,81 @@ class TXMSliceGenerator(SliceGenerator):
     def shape(self):
         return tuple([self.txm.height, self.txm.width, len(self.txm)])
 
+
 class NrrdSliceGenerator(SliceGenerator):
 
     def __init__(self, recon):
 
         super(NrrdSliceGenerator, self).__init__(recon)
         # self.raw, self.header = nrrd.read(recon)
+        self.dims = None
+        self.datatype = None
+        self.encoding = None
 
-        nrrd_raw = tempfile.TemporaryFile(mode='wb+')
-        self.header = {}
+        nrrd_hdr = recon + '.hdr'
+        raw_offset = 0
 
-        with open(recon, "rb") as f:
+        if os.path.exists(recon):
+            try:
+                sp.check_call(['unu', 'head', recon], stdout=open(nrrd_hdr, 'wb'))
+                raw_offset = os.path.getsize(nrrd_hdr)
+            except sp.CalledProcessError as cpe:
+                print "Error extracting raw data from NRRD using 'unu': ", cpe
+        else:
+            raise IOError("Failed to locate '{}'".format(recon))
 
-            header_end = False
+        self.parse_header(nrrd_hdr)
+        self.raw = np.memmap(recon, dtype=self.datatype, offset=raw_offset, mode='r', shape=self.dims,
+                             order='F')
 
+        # self.header = {}
+        #
+        # with open(recon, "rb") as f:
+        #
+        #     header_end = False
+        #
+        #     for line in f:
+        #
+        #         if header_end:
+        #             nrrd_raw.write(line)
+        #         else:
+        #
+        #             if line.startswith('type'):
+        #                 self.header['dtype'] = eval('np.' + line.split(':')[1].strip())
+        #             elif line.startswith('encoding'):
+        #                 self.header['encoding'] = line.split(':')[1].strip()
+        #             elif line.startswith('sizes'):
+        #                 self.header['dims'] = tuple([int(d) for d in line.split(':')[1].split()])
+        #             elif line == '\n':
+        #                 header_end = True
+
+    def parse_header(self, hdr):
+
+        with open(hdr, 'rb') as f:
             for line in f:
-
-                if header_end:
-                    nrrd_raw.write(line)
-                else:
-
-                    if line.startswith('type'):
-                        self.header['dtype'] = eval('np.' + line.split(':')[1].strip())
-                    elif line.startswith('encoding'):
-                        self.header['encoding'] = line.split(':')[1].strip()
-                    elif line.startswith('sizes'):
-                        self.header['dims'] = tuple([int(d) for d in line.split(':')[1].split()])
-                    elif line == '\n':
-                        header_end = True
-
-        self.raw = np.memmap(nrrd_raw, dtype=self.header['dtype'], mode='r', shape=self.header['dims'], order='F')
+                if line.startswith('type'):
+                    self.datatype = line.split(':')[1].strip()
+                elif line.startswith('sizes'):
+                    self.dims = tuple([int(d) for d in line.split(':')[1].split()])
+                elif line.startswith('encoding'):
+                    self.encoding = line.split(':')[1].strip()
 
     def slices(self, start=0):
 
-        for i in range(start, self.header['dims'][2]):
+        for i in range(start, self.dims[2]):
             yield self.raw[:, :, i].T
 
     def dtype(self):
-        return self.header['dtype']
+        return self.datatype
 
     def shape(self):
-        return self.raw.shape
+        return self.dims
 
 
 class MincSliceGenerator(SliceGenerator):
 
     def __init__(self, recon):
         super(MincSliceGenerator, self).__init__(recon)
-
         minc = h5py.File(self.recon, "r")['minc-2.0']
         self.volume = minc['image']['0']['image']
 
