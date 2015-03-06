@@ -57,8 +57,6 @@
                 console.log(obj.url);
             }
         }
-        
-        console.log(window);
        
     
         var container = div;
@@ -139,7 +137,7 @@
                         max: 1920,
                         values: [500],
                         slide: $.proxy(function (event, ui) {
-                            $('.sliceView').css('height', ui.value);
+                            $('.sliceWrap').css('height', ui.value);
                             var evt = document.createEvent('UIEvents');
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);
@@ -189,7 +187,7 @@
                        clear: 'none'
                        
                 });
-                $('.sliceView').css({
+                $('.sliceWrap').css({
                        width: '100%'
                 });
                 $('#horizontal_check').prop('checked', true).button("refresh");
@@ -210,7 +208,7 @@
                        clear: 'both'
                        
                 });
-                $('.sliceView').css({
+                $('.sliceWrap').css({
                        width: String(100 / numVisible) + '%'
                       
                 });

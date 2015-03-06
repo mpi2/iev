@@ -93,23 +93,39 @@ limitations under the License.
     </body>
     
     
-    <!--Specimen view template-->
-    <script id="controls_template" type="text/x-handlebars-template">      
+    <!--Slice controls template-->
+    <script id="slice_controls_template" type="text/x-handlebars-template">      
     <div id="controls_{{id}}"class="controls clear">
         <span id="{{controlsButtonsId}}" class="controlsButtons">
             <input type="checkbox" id="{{invertColoursId}}" class="button">
-            <label for="{{invert_coloursId}}">Invert colours</label>
+            <label for="{{invertColoursId}}">Invert colours</label>
             <a id="{{zoomInId}}" href="#" class="button">+</a>
             <a id="{{zoomOutId}}" href="#" class="button">-</a>
             <a id ="{{resetId}}" href="#" class="button">Reset</a>
         </span>
         <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
-            <select id="{{vselectorId}}" class ="volselector"></select>
+            <select id="{{vselectorId}}" class ="selectmenu"></select>
         </div>
         <div class="wlwrap">
-            <div id="windowLevel" class="windowLevel" title="test"></div>
+            <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
         </div>
-    </div>';
+    </div>
+    </script>
+    
+    
+    <!--Specimen view template-->
+    <script id="specimen_view_template" type="text/x-handlebars-template">  
+    <div id="{{id}}" class='specimen_view'></div>"    
     </script>
 
+    
+    <!--Slice view template-->
+    <script id="slice_view_template" type="text/x-handlebars-template">
+    <div class="sliceWrap">
+        <div id="{{sliceContainerID}}" class ="{{viewSiceClass}} sliceView"></div>
+        <div class="sliceControls">
+            <div id="{{sliderId}}" class ="{{sliderClass}} slider"></div>
+        </div>
+    </div>
+    </script>
 </html>
