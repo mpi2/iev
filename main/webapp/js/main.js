@@ -159,6 +159,9 @@
          
             $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
              show: {delay: 1200 }});
+         
+         
+  
         
     }//AttachEvents
     

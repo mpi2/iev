@@ -26,6 +26,7 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+        <script src="js/handlebars.min.js"></script>
         <!--<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>-->
         <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
         <script type="text/javascript" src="js/xtk.js"></script>
@@ -64,8 +65,6 @@ limitations under the License.
                 <div id="viewHeightSlider" title="test"></div>
             </div>
             </div>
-        
-        
             <div id="viewer"></div>
            <script>
    
@@ -92,4 +91,25 @@ limitations under the License.
         ga('send', 'pageview');
     </script>  
     </body>
+    
+    
+    <!--Specimen view template-->
+    <script id="controls_template" type="text/x-handlebars-template">      
+    <div id="controls_{{id}}"class="controls clear">
+        <span id="{{controlsButtonsId}}" class="controlsButtons">
+            <input type="checkbox" id="{{invertColoursId}}" class="button">
+            <label for="{{invert_coloursId}}">Invert colours</label>
+            <a id="{{zoomInId}}" href="#" class="button">+</a>
+            <a id="{{zoomOutId}}" href="#" class="button">-</a>
+            <a id ="{{resetId}}" href="#" class="button">Reset</a>
+        </span>
+        <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
+            <select id="{{vselectorId}}" class ="volselector"></select>
+        </div>
+        <div class="wlwrap">
+            <div id="windowLevel" class="windowLevel" title="test"></div>
+        </div>
+    </div>';
+    </script>
+
 </html>

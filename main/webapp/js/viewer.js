@@ -21,10 +21,6 @@
         var $ySlider;
         var $zSlider;
         var $windowLevel;
-        var $xLinkViews;
-        var $yLinkViews;
-        var $zLinkViews;
-        
         var xRen;
         var yRen;
         var zRen;
@@ -146,21 +142,13 @@
             var xSliderID = 'slider_x_' + id;
             var ySliderID = 'slider_y_' + id;
             var zSliderID = 'slider_z_' + id;
-            
-            var xLinkViewsId = 'xLinkViews_' + id;
-            var yLinkViewsId = 'yLinkViews_' + id;
-            var zLinkViewsId = 'zLinkViews_' + id;
 
-            $xLinkViews = $("<div class='linkViews ui-icon ui-icon-link' id='" + xLinkViewsId + "'></dv>");
-            $yLinkViews = $("<div class='linkViews ui-icon ui-icon-link' id='" + yLinkViewsId  + "'></dv>");
-            $zLinkViews = $("<div class='linkViews ui-icon ui-icon-link' class='linkViews'id='" + zLinkViewsId  + "'></dv>");
-            
-            $xSlider = $("<span id='test'><div id='" + xSliderID + "' class ='sliderX slider'></div><span>");
+            $xSlider = $("<div id='" + xSliderID + "' class ='sliderX slider'></div>");
             $ySlider = $("<div id='" + ySliderID + "' class ='sliderY slider'></div>");
             $zSlider = $("<div id='" + zSliderID + "' class ='sliderZ slider'></div>");
 
             $xContainer = $("<div id='X" + XcontainerID + "' class='sliceX sliceView'></div>");
-            $xContainer.append($xSlider).append($xLinkViews);
+            $xContainer.append($xSlider);
             $yContainer = $("<div id='Y" + YcontainerID + "' class='sliceY sliceView'></div>");
             $yContainer.append($ySlider);
             $zContainer = $("<div id='Z" + ZcontainerID + "' class='sliceZ sliceView'></div>");

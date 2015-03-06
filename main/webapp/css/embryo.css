@@ -159,7 +159,6 @@ body{
 }
 .linkViews .ui-icon{
     float: left;
-
 }
 
 .sliceView .ui-slider-handle {
@@ -167,15 +166,6 @@ body{
     width: 20px;
     top: -8px;;
     
-}
-
-#test{
-        height: 5px !important;
-    position: absolute !important;
-    bottom: 0;
-    width:70%;
-    float: right;
-    height: 30px;
 }
 
 .sliceView .ui-slider {
@@ -193,13 +183,13 @@ body{
 }
 
 .slider{
-/*    height: 5px !important;
+    height: 5px !important;
     position: absolute !important;
     bottom: 0;
     width:70%;
     float: right;
     height: 30px;
- */
+ 
 }
 
 
