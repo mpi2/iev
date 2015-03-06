@@ -99,7 +99,7 @@ body{
 }
 
 .selectorWrap{
-    height: 10px;;
+    height: auto;
     padding: 2px 0 0 0;
     float:left;
 }
@@ -153,6 +153,14 @@ body{
     width: 10px;
 }*/
 
+.ui-icon
+{
+    background-image: url(../ui-icons_FFFC33_256x240.png);
+}
+.linkViews .ui-icon{
+    float: left;
+}
+
 .sliceView .ui-slider-handle {
     height: 15px !important;
     width: 20px;
@@ -163,7 +171,7 @@ body{
 .sliceView .ui-slider {
     height: 15px;
     margin-bottom: 5px; ;
-    width: 95%;
+    width: 85%;
     margin-left: auto;
     margin-right: auto;
     vertical-align: middle; 
@@ -260,6 +268,13 @@ background-color: #DEDEDE;
 label#horizontal_check_label span {
 background-color: #FFB64F;
 }
+
+.ui-tooltip{
+    font-size: 8pt;
+}
+
+/*.ui-icon-vertical { background-image: url(images/vertical.png); }
+.ui-icon-horizontal { background-image: url(images/horizontal.png); }*/
 
 
 /*******************************************************************************

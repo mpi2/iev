@@ -44,6 +44,7 @@
         var wildtypes = [];
         var mutants = [];
         var queryColonyId = queryColonyId;
+        var horizontalView = undefined;
      
         // Get the baselines and the mutant paths
         for(var i = 0; i < data.volumes.length; i++) {
@@ -111,7 +112,7 @@
                     }
                 }
                 for (var i = 0; i < views.length; i++) {
-                    views[i].setVisibleViews(visible, count);
+                    views[i].setVisibleViews(visible, count, horizontalView);
                 }
                 window.dispatchEvent(new Event('resize')); 
 
@@ -126,7 +127,11 @@
                 .change(function (e) {
                     viewsLinked = e.currentTarget.checked;
             });
-        
+            
+            $("#viewHeightSlider").tooltip({
+                content: "Modify slice viewer height",
+                 show: {delay: 1200 }
+            });
 
             $("#viewHeightSlider")
                     .slider({
@@ -143,11 +148,20 @@
             
             $('#fullscreen')
                     .click(function(){
-                        console.log('fullscreen');
-                        
-         
-                     
+                        console.log('fullscreen');     
             });
+            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
+                 show: {delay: 1200 }
+             });
+             
+            $("#selectorWrap_wt").tooltip({content: "Select WT embryo to view",
+             show: {delay: 1200 }});
+         
+            $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
+             show: {delay: 1200 }});
+         
+         
+  
         
     }//AttachEvents
     
@@ -168,6 +182,7 @@
         
             $("#vertical_check")
                 .click(function (event) {
+                    horizontalView = true;
                    $('.specimen_view').css({
                        float: 'left',
                        width: '48%',
@@ -179,10 +194,11 @@
                 });
                 $('#horizontal_check').prop('checked', true).button("refresh");
                 window.dispatchEvent(new Event('resize')); 
-        });
+        }.bind(this));
         
         $('#horizontal_check')
                 .click(function (event) {
+                    horizontalView = false;
                     var numVisible = 0;
                     for(var item in visible){
                         if(visible[item]) ++ numVisible;
@@ -202,7 +218,7 @@
                 window.dispatchEvent(new Event('resize')); 
                 
            
-        });
+        }.bind(this));
         }
         
 

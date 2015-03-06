@@ -59,6 +59,9 @@
                 }, this)
             });
 
+            $('#windowLevel_mut').tooltip({content: "gjdfhs",
+                 show: {delay: 1000 }
+             });
 
             $("#" + reset)
             .button()
@@ -168,7 +171,7 @@
 
             var selectorWrap = 'selectorWrap_' + id;
 
-            controlsHTML =
+            var controlsHTML =
                     '<div id="controls_' + id + '" class="controls clear">' +
                     '<span id="controlsButtons_' + id + '" class="controlsButtons">' +
                     '<input type="checkbox" id="' + invertColours + '" class="button">' +
@@ -177,11 +180,11 @@
                     '<a id="' + zoomOut + '" href="#" class="button">-</a>' +
                     '<a id ="' + reset + '" href="#" class="button">Reset</a>' +
                     '</span>' +
-                    '<div class="selectorWrap" id="' + selectorWrap + '">' +
+                    '<div class="selectorWrap" id="' + selectorWrap + '" title="test">' +
                     '<select id="' + vselector + '" class ="volselector"></select>' +
                     '</div>' +
                     '<div class="wlwrap">' +
-                    '<div id="' + windowLevel + '" class="windowLevel"></div>' +
+                    '<div id="' + windowLevel + '" class="windowLevel" title="test"></div>' +
                     '</div>'
 
             '</div>';
@@ -395,12 +398,21 @@
         };
 
 
-        function setVisibleViews(viewList, count) {
+        function setVisibleViews(viewList, count, horizontalView) {
             //ViewList: Hash
             //var slice_view_width = String(100 / total_visible);
             //Calcualte new with of each orthogonal view
-            console.log('here');
-            var slice_view_width = String(100 / count);
+            
+            //If orientation in vertial, slice width should always be 100%
+     
+            var slice_view_width;
+            
+            if (horizontalView){
+                slice_view_width = 100;
+            }
+            else{
+                var slice_view_width = String(100 / count);
+            }
 
             if (viewList['X']) {
                 $xContainer.show();
