@@ -192,15 +192,20 @@ class EmbryoPreprocess(object):
                     # Go through all scaling factors
                     try:
                         for scale in scaling:
+
                             print "-- rescaling at {}".format(scale)
                             rescaled_path = os.path.join(recon['out_folder'], recon['out_name'])
                             rescaled_path += '_{}.{}'.format(1.0/scale, gen_type)  # append scaling factor and path
+
+                            if scale < 0.5:
+                                mip_path = rescaled_path
+
                             resampler.resample(slice_gen, scale, rescaled_path)  # process the recon
+
+                        rescaling_success = True
                     except Exception as e:
                         print "-- error rescaling: ", e
                         break  # might as well stop if any of them break
-
-                    rescaling_success = True
 
                     # We're done, so break out of for loop
                     break
@@ -212,7 +217,8 @@ class EmbryoPreprocess(object):
                 status_id = 2  # we tried to rescale, but something broke
             else:
                 status_id = 1  # everything went fine
-                print "-- done"
+                print "-- generating QC MIP"
+                self.get_mip(mip_path, recon['out_folder'])
 
             # Update the pre-processed table
             url = recon['url']
@@ -220,6 +226,9 @@ class EmbryoPreprocess(object):
 
         # We're all done, so close connection to database
         self.db_disconnect()
+
+    def get_mip(self, in_path, out_dir):
+        pass  # TODO implement this!
 
     def query_database(self, sql, replacement=None):
 
