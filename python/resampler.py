@@ -16,6 +16,7 @@ import cv2
 import tempfile
 import numpy as np
 import sys
+import conversion as conv
 import matplotlib.pyplot as plt
 
 if sys.platform == "win32" or sys.platform == "win64":
@@ -100,7 +101,8 @@ def resample(slicegen, scale, nrrd_path):
     #create memory mapped version of the temporary xy scaled slices
     xyz_scaled_mmap = np.memmap(temp_xyz, dtype=datatype, mode='r', shape=tuple(xyz_scaled_dims))
 
-    nrrd.write(nrrd_path, np.swapaxes(xyz_scaled_mmap.T, 1, 2))
+    # nrrd.write(nrrd_path, np.swapaxes(xyz_scaled_mmap.T, 1, 2))
+    conv.write_xtk_nrrd(np.swapaxes(xyz_scaled_mmap.T, 1, 2), nrrd_path)
 
     temp_xy.close()  # deletes temp file
     temp_xyz.close()

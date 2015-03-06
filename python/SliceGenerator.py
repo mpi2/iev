@@ -60,7 +60,7 @@ class TiffStackSliceGenerator(SliceGenerator):
     def __init__(self, recon):
 
         super(TiffStackSliceGenerator, self).__init__(recon)
-
+        self.ext = 'tiff'
         self.tiff_stack = tifffile.imread(recon)
         self.dims = self.tiff_stack.shape[::-1]
         self.datatype = self.tiff_stack.dtype
@@ -83,6 +83,7 @@ class TXMSliceGenerator(SliceGenerator):
     def __init__(self, recon):
 
         super(TXMSliceGenerator, self).__init__(recon)
+        self.ext = 'txm'
         self.txm = readers.open_scan(recon)
 
     def slices(self, start=0):
@@ -103,6 +104,7 @@ class NrrdSliceGenerator(SliceGenerator):
 
         super(NrrdSliceGenerator, self).__init__(recon)
         # self.raw, self.header = nrrd.read(recon)
+        self.ext = 'nrrd'
         self.dims = None
         self.datatype = None
         self.encoding = None
@@ -171,6 +173,7 @@ class MincSliceGenerator(SliceGenerator):
 
     def __init__(self, recon):
         super(MincSliceGenerator, self).__init__(recon)
+        self.ext = 'mnc'
         minc = h5py.File(self.recon, "r")['minc-2.0']
         self.volume = minc['image']['0']['image']
 

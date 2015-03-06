@@ -57,7 +57,6 @@ def decompress_bz2(bz2_in, decompressed_out):
         return None
 
     try:
-        print "Decompressing '{}'".format(bz2_in)
         with open(decompressed_out, 'wb') as decom, bz2.BZ2File(bz2_in, 'rb') as com:
             for data in iter(lambda: com.read(1000 * 1024), b''):
                 decom.write(data)
@@ -68,7 +67,6 @@ def decompress_bz2(bz2_in, decompressed_out):
 def write_xtk_nrrd(volume, nrrd_out):
 
     try:
-        print "Writing NRRD file..."
         options = {"encoding": "gzip",
                    "space": "left-posterior-superior",
                    "space directions": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
