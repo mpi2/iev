@@ -63,17 +63,23 @@
         var views = [];
         
         var ortho = {
+            // Visible: for the orthogonal views buttons
+            // Linked: are the corresponding ortho views from the different specimens linked
+            // offset: Index offset of the mutant in relation to baseline
             'X': {
                 visible: true,
-                linked: true
+                linked: true,
+                offset: 0
             },
             'Y': {
                 visible: true,
-                linked: true
+                linked: true,
+                offset: 0
             },
             'Z': {
                 visible: true,
-                linked: true
+                linked: true,
+                offset: 0
             }
         };
     
@@ -93,35 +99,50 @@
     
         function loadViewers(container) {
 
-            views.push(dcc.SpecimenView(wildtypes, 'wt', container, 'baseline', sliceChange));
+            views.push(dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, sliceChange));
             views.push(dcc.SpecimenView(mutants, 'mut', container, queryColonyId, sliceChange));
             console.log(views);
-
         };
         
         
         
-        function sliceChange(id, orientation, index){
-            //Listens to the slice change events from the viewers
-          
-           for (var i = 0; i < views.length; i++) {
-               if (views[i].id === id) continue; //this is the views that changed
-               if (orientation === 'X' && ortho['X'].linked) views[i].setXindex(index);
-               else if (orientation === 'Y' && ortho['Y'].linked) views[i].setYindex(index);
-               else if (orientation === 'Z' && ortho['Z'].linked) views[i].setZindex(index);
-           }   
-            
+        function sliceChange(id, orientation, index) {
+            //Listens to the slice change events from the viewers, and calls the
+            // other specimen view if required
+
+            for (var i = 0; i < views.length; i++) {
+                if (views[i].id === id) continue; //this is the views that changed
+                if (orientation === 'X' && ortho['X'].linked) {
+                    views[i].setXindex(index - ortho['X'].offset);
+                } else if (orientation === 'Y' && ortho['Y'].linked) {
+                    views[i].setYindex(index - ortho['Y'].offset);
+                } else if (orientation === 'Z' && ortho['Z'].linked) {
+                    views[i].setZindex(index - ortho['Z'].offset);
+                }
+            }
         }
-        
         
         function linkViews(orthoView, isLink){
             //OrthoView -> 'X', 'Y', or 'Z'
             
             // Change check or uncheck the correpsonding views checkboxes
-            for (var i = 0; i < views.length; i++) {
-                views[i].linkOrthoView(orthoView, isLink);
-            }
+            // And work out the offset, if any
+            var wtIdx;
+            var mutIdx;
+            
             ortho[orthoView].linked = isLink;
+            
+            for (var i = 0; i < views.length; i++) {
+                // Set/unset the link buttons
+                views[i].linkOrthoView(orthoView, isLink);
+                
+                if(views[i].id === 'wt'){
+                    wtIdx = views[i].getIndex(orthoView);
+                }else if (views[i].id === 'mut'){
+                    mutIdx = views[i].getIndex(orthoView);
+                }
+            }
+            ortho[orthoView].offset = wtIdx - mutIdx; 
         }
         
         

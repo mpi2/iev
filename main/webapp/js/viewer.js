@@ -175,7 +175,7 @@
         
         
         function linkOrthoView(orthoView, isLink){
-            //For now just the X, Y, or Z class. Come up with better name
+            //Chek/uncheck the link buttons
             $('.' + orthoView).prop('checked', isLink);
         }
         
@@ -434,6 +434,13 @@
              volume.indexZ = index;
              $zSlider.slider("value", index);
         }
+        
+        function getIndex(ortho){
+            if (ortho === 'X') return volume.indexX;
+            if (ortho === 'Y') return volume.indexY;
+            if (ortho === 'Z') return volume.indexZ;
+        }
+        
 
 
 
@@ -490,6 +497,7 @@
             setXindex: setXindex,
             setYindex: setYindex,
             setZindex: setZindex,
+            getIndex: getIndex,
             id: id
 
         };
