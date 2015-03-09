@@ -65,21 +65,17 @@
         var ortho = {
             // Visible: for the orthogonal views buttons
             // Linked: are the corresponding ortho views from the different specimens linked
-            // offset: Index offset of the mutant in relation to baseline
             'X': {
                 visible: true,
                 linked: true,
-                offset: 0
             },
             'Y': {
                 visible: true,
                 linked: true,
-                offset: 0
             },
             'Z': {
                 visible: true,
                 linked: true,
-                offset: 0
             }
         };
     
@@ -112,15 +108,19 @@
 
             for (var i = 0; i < views.length; i++) {
                 if (views[i].id === id) continue; //this is the views that changed
+                
                 if (orientation === 'X' && ortho['X'].linked) {
-                    views[i].setXindex(index - ortho['X'].offset);
+                    views[i].setXindex(index);
+                
                 } else if (orientation === 'Y' && ortho['Y'].linked) {
-                    views[i].setYindex(index - ortho['Y'].offset);
+                    views[i].setYindex(index);
+                
                 } else if (orientation === 'Z' && ortho['Z'].linked) {
-                    views[i].setZindex(index - ortho['Z'].offset);
+                    views[i].setZindex(index);
                 }
             }
         }
+        
         
         function linkViews(orthoView, isLink){
             //OrthoView -> 'X', 'Y', or 'Z'
@@ -144,7 +144,11 @@
                     mutIdx = views[i].getIndex(orthoView);
                 }
             }
-            ortho[orthoView].offset = wtIdx - mutIdx; 
+            for (var i = 0; i < views.length; i++) {
+                if (views[i].id === 'mut'){
+                    views[i].setIdxOffset(orthoView, wtIdx - mutIdx);
+                }
+            }  
         }
         
         

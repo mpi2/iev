@@ -7,7 +7,7 @@
         dcc = {};
 
 
-    function Slices(volumePaths, id, container, queryColonyId, sliceChange) {
+    function Slices(volumePaths, id, container, queryColonyId, indexCallback) {
 
         var id = id;
         var viewContainer = container;
@@ -34,6 +34,9 @@
         var zoomIn = 'zoomIn_' + id;
         var zoomOut = 'zoomOut_' + id;
         var vselector = 'volumeSelector_' + id;
+        var xOffset = 0;
+        var yOffset = 0;
+        var zOffset = 0;
 
 
         function createEventHandlers() {
@@ -303,6 +306,16 @@
                 volume.indexZ--;
             }
         };
+        
+        
+        
+       function sliceChange(id, ortho, index){
+           //Update the outside world when slice indicies change
+            if (ortho === 'X') indexCallback(id, ortho, index + xOffset );
+            if (ortho === 'Y') indexCallback(id, ortho, index + yOffset );
+            if (ortho === 'Z') indexCallback(id, ortho, index + zOffset );
+       }
+          
 
 
         function updateSliders(renderer, event) {
@@ -426,24 +439,30 @@
         };
         
         function setXindex(index){
-             volume.indexX = index;
-             $xSlider.slider("value", index);
+             volume.indexX = index -xOffset;
+             $xSlider.slider("value", volume.indexX);
         }
         
         function setYindex(index){
-             volume.indexY = index;
-             $ySlider.slider("value", index);
+             volume.indexY = index - yOffset;
+             $ySlider.slider("value", volume.indexY);
         }
         
         function setZindex(index){
-             volume.indexZ = index;
-             $zSlider.slider("value", index);
+             volume.indexZ = index - zOffset;
+             $zSlider.slider("value", volume.indexZ);
         }
         
         function getIndex(ortho){
             if (ortho === 'X') return volume.indexX;
             if (ortho === 'Y') return volume.indexY;
             if (ortho === 'Z') return volume.indexZ;
+        }
+       
+        function setIdxOffset(ortho, offset){
+            if (ortho === 'X') xOffset = offset;
+            if (ortho === 'Y') yOffset = offset;
+            if (ortho === 'Z') zOffset = offset;
         }
         
 
@@ -503,7 +522,8 @@
             setYindex: setYindex,
             setZindex: setZindex,
             getIndex: getIndex,
-            id: id
+            id: id,
+            setIdxOffset: setIdxOffset
 
         };
         
