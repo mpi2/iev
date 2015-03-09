@@ -130,12 +130,14 @@
             var wtIdx;
             var mutIdx;
             
+            $('.' + orthoView).button("option", { 
+                icons: { primary: isLink ? 'ui-icon-check' : 'ui-icon-closethick' }
+                });
+            
             ortho[orthoView].linked = isLink;
             
             for (var i = 0; i < views.length; i++) {
                 // Set/unset the link buttons
-                views[i].linkOrthoView(orthoView, isLink);
-                
                 if(views[i].id === 'wt'){
                     wtIdx = views[i].getIndex(orthoView);
                 }else if (views[i].id === 'mut'){
@@ -151,15 +153,10 @@
       
 
             $('.linkViews').button({
-                 icons: {primary:'ui-icon-closethick'},
+                 icons: {primary:'lnkedViewCheck'},
                  text: false 
             })
-            .change($.proxy(function (e, ui) {
-                console.log(e);
-        console.log(ui);
-                $(e.currentTarget).button("option", { 
-                icons: { primary: this.checked ? 'ui-icon-check' : 'ui-icon-closethick' }
-                });
+            .change(function (e) {
                 
                 if ($(e.target).hasClass('X')) {
                     console.log('link x');
@@ -172,7 +169,7 @@
                     linkViews('Z', e.currentTarget.checked);
                 }
                         
-            }, this)); 
+            }.bind(this)); 
              
            
             

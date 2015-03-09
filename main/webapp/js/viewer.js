@@ -175,11 +175,15 @@
         }
         
         
-        function linkOrthoView(orthoView, isLink){
-            //Chek/uncheck the link buttons
-            $('.' + orthoView).prop('checked', isLink);
-        }
-        
+//        function linkOrthoView(orthoView, isLink){
+//            //Chek/uncheck the link buttons
+//    
+//            
+//           $('.' + orthoView).button("option", { 
+//                icons: { primary: e.currentTarget.checked ? 'ui-icon-check' : 'ui-icon-closethick' }
+//                });
+//        }
+//        
         
         
         function jQuerySelectors(){
@@ -494,7 +498,7 @@
 
         var public_interface = {
             setVisibleViews: setVisibleViews,
-            linkOrthoView: linkOrthoView,
+            //linkOrthoView: linkOrthoView,
             setXindex: setXindex,
             setYindex: setYindex,
             setZindex: setZindex,

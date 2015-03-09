@@ -70,6 +70,11 @@ body{
     margin-right: 10px;
 }
 
+.lnkedViewCheck{
+    text-decoration: none;
+   background-image: url("images/Link-icon.svg_grey.png"); 
+}
+
 
 .novols_msg{
     font: 25px arial, sans-serif;
