@@ -148,21 +148,31 @@
         
 
         function attachEvents() {
+      
 
-            $('.linkViews')
-                    .change(function (e) {
+            $('.linkViews').button({
+                 icons: {primary:'ui-icon-closethick'},
+                 text: false 
+            })
+            .change($.proxy(function (e, ui) {
+                console.log(e);
+        console.log(ui);
+                $(e.currentTarget).button("option", { 
+                icons: { primary: this.checked ? 'ui-icon-check' : 'ui-icon-closethick' }
+                });
+                
+                if ($(e.target).hasClass('X')) {
+                    console.log('link x');
+                    linkViews('X', e.currentTarget.checked);
+                }
+                else if ($(e.target).hasClass('Y')) {
+                    linkViews('Y', e.currentTarget.checked);
+                }
+                else if ($(e.target).hasClass('Z')) {
+                    linkViews('Z', e.currentTarget.checked);
+                }
                         
-                        if ($(e.target).hasClass('X')) {
-                            linkViews('X', e.currentTarget.checked);
-                        }
-                        else if ($(e.target).hasClass('Y')) {
-                            linkViews('Y', e.currentTarget.checked);
-                        }
-                        else if ($(e.target).hasClass('Z')) {
-                            linkViews('Z', e.currentTarget.checked);
-                        }
-                        
-            }.bind(this)); 
+            }, this)); 
              
            
             

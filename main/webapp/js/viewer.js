@@ -164,7 +164,8 @@
                 viewSliceClasss: 'slice' + orient,
                 sliderId: 'slider_' + orient + '_'+ id,
                 sliderClass: 'slider' + orient,
-                orientation: orient
+                orientation: orient,
+                id: id
                
             };
             

@@ -124,8 +124,10 @@ limitations under the License.
     <div class="sliceWrap" id="{{sliceWrapId}}">
         <div id="{{sliceContainerID}}" class ="{{viewSiceClass}} sliceView"></div>
         <div class="sliceControls">
-            <div id="{{sliderId}}" class ="{{sliderClass}} slider"></div>
-            <input type="checkbox" class='linkViews {{orientation}} ui-icon ui-icon-link' checked>
+            <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
+                <input type="checkbox" id="{{id}}{{orientation}}" class=' linkViews linkViews {{orientation}}' checked ><label for="{{id}}{{orientation}}">Choice 1</label>
+             
+       
             
         </div>
     </div>
