@@ -46,16 +46,26 @@
         var queryColonyId = queryColonyId;
         var horizontalView = undefined;
      
-        // Get the baselines and the mutant paths
-        for(var i = 0; i < data.volumes.length; i++) {
-            var obj = data.volumes[i];
-            if (obj.colonyId === WILDTYPE_COLONYID){
-                wildtypes.push(buildUrl(obj));
-                console.log(obj.url);
-            }else{
-                mutants.push(buildUrl(obj));
-                console.log(obj.url);
+        if (data['success']){
+            // Get the baselines and the mutant paths
+            for(var i = 0; i < data.volumes.length; i++) {
+
+                var obj = data.volumes[i];
+
+                 if (obj.colonyId === WILDTYPE_COLONYID){
+                    wildtypes.push(buildUrl(obj));
+
+                }else{
+                    mutants.push(buildUrl(obj));   
+                }
             }
+            
+        }else{
+            //Just display a message informing no data
+            var data = {colonyId: queryColonyId};
+            var source   = $("#no_data_template").html();
+            var template = Handlebars.compile(source);
+            $('#' + div).append(template(data));
         }
        
     
@@ -97,7 +107,6 @@
 
             views.push(dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, sliceChange));
             views.push(dcc.SpecimenView(mutants, 'mut', container, queryColonyId, sliceChange));
-            console.log(views);
         };
         
         
@@ -129,10 +138,8 @@
             // And work out the offset, if any
             var wtIdx;
             var mutIdx;
-            
-            $('.' + orthoView).button("option", { 
-                icons: { primary: isLink ? 'ui-icon-check' : 'ui-icon-closethick' }
-                });
+         
+            $('.' + orthoView).prop('checked', isLink);
             
             ortho[orthoView].linked = isLink;
             
@@ -155,15 +162,9 @@
 
         function attachEvents() {
       
-
-            $('.linkViews').button({
-                 icons: {primary:'lnkedViewCheck'},
-                 text: false 
-            })
-            .change(function (e) {
-                
+            $(".linkCheck").change(function(e){
+              
                 if ($(e.target).hasClass('X')) {
-                    console.log('link x');
                     linkViews('X', e.currentTarget.checked);
                 }
                 else if ($(e.target).hasClass('Y')) {
@@ -178,8 +179,7 @@
            
             
             // Hide/show slice views from the checkboxes
-            $('.toggle_slice').change(function (e, ui) {
-                console.log(e);
+            $('.toggle_slice').change(function () {
 
                 var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
                 var count = 0;
@@ -224,11 +224,7 @@
                             window.dispatchEvent(evt);
                         }, this)
                     });
-            
-            $('#fullscreen')
-                    .click(function(){
-                        console.log('fullscreen');     
-            });
+
             $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
                  show: {delay: 1200 }
              });
@@ -299,15 +295,7 @@
            
         }.bind(this));
         }
-        
-
-//    $(function() {
-//
-        
-//        console.log('toggle');
-//    });
-//    Does not work
-
+  
 
     // Style the control buttons
 

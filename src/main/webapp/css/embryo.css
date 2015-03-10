@@ -76,10 +76,13 @@ body{
 }
 
 
-.novols_msg{
-    font: 25px arial, sans-serif;
+.nodata{
+    font: 3em arial, sans-serif;
     top: 50%;
     position: relative;
+    background-color: #EBE7B9;
+    height: 300px;
+    width: 100%;
 }
 
 
@@ -185,14 +188,38 @@ body{
     width: 10px;
 }*/
 
-.ui-icon
+/*.ui-icon
 {
     background-image: url(../ui-icons_FFFC33_256x240.png);
+}*/
+
+input[type=checkbox].linkCheck {
+    display:none;
+  }
+
+.sliceControls input[type="checkbox"]:checked + label{
+    background-image:url(../Link-icon.svg.png);
+ 
 }
+
+
+.sliceControls input[type="checkbox"] + label{
+    display: inline-block;
+    padding-left:10px;
+    
+    height:15px;
+    width: 15px;
+    background-image:url(../Link-icon.svg_grey.png);
+    background-size: 15px;
+    background-repeat: no-repeat;
+}
+
+
 .linkViews{
     float: left;
     top: 20px;
 }
+
 
 .sliceWrap .ui-slider-handle {
     height: 15px !important;

@@ -134,8 +134,6 @@
             var $viewsContainer = $("#" + viewContainer);
             
             if (volumePaths.length < 1 && queryColonyId !==  null){
-                $viewsContainer.append("<div class='novols_msg'> " +
-                   "Could not find any volumes for " + queryColonyId +  " </div>");
                     return;
             }
             
