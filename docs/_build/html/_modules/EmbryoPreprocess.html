@@ -61,8 +61,38 @@
 <span class="sd">&quot;prince&quot; and &quot;live&quot;.</span>
 
 <span class="sd">To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,</span>
-<span class="sd">the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid</span>
-<span class="sd">data is added to a pre-processing list which is subsequently handled by the &quot;process_recons()&quot; method.</span>
+<span class="sd">the program queries phenodcc_media.media_file, finding all valid recon media:</span>
+
+<span class="sd">.. code-block:: mysql</span>
+
+<span class="sd">    SELECT cid, lid, gid, sid, pid, qid, genotype.genotype, gene_symbol, measurement_id, url, checksum, extension, metadataGroup</span>
+
+<span class="sd">    FROM phenodcc_media.media_file, phenodcc_overviews.genotype, phenodcc_embryo.file_extension, phenodcc_overviews.measurements_performed</span>
+
+<span class="sd">    WHERE</span>
+
+<span class="sd">    -- get the qid for the recon parameters</span>
+<span class="sd">    -- IMPC_EOL_001_001 OPT E9.5</span>
+<span class="sd">    -- IMPC_EMO_001_001 uCT E14.5/E15.5</span>
+<span class="sd">    -- IMPC_EMA_001_001 uCT E18.5</span>
+<span class="sd">    qid = (select impress.parameter.parameter_id from impress.parameter where parameter.parameter_key = &quot;IMPC_EMO_001_001&quot; )</span>
+
+<span class="sd">    -- join with measurements_performed to get the latest active and valid data</span>
+<span class="sd">    and mid = measurements_performed.measurement_id</span>
+
+<span class="sd">    -- join with genotype to get the colony id and gene_symbol</span>
+<span class="sd">    AND genotype.genotype_id = gid</span>
+
+<span class="sd">    -- join with extension to get the extension</span>
+<span class="sd">    AND extension_id = file_extension.id</span>
+
+<span class="sd">    -- recon has been downloaded and skipped tiling</span>
+<span class="sd">    AND ((phase_id = 2) or (phase_id = 3))</span>
+<span class="sd">    AND checksum IS NOT null</span>
+
+<span class="sd">    LIMIT 10000000</span>
+
+<span class="sd">Subject to certain constraints, valid data is added to a pre-processing list which is subsequently handled by the process_recons() method.</span>
 
 <span class="sd">:Author:</span>
 <span class="sd">  `James Brown`</span>
@@ -84,6 +114,7 @@
 <span class="sd">--------</span>
 <span class="sd">&gt;&gt;&gt; ep = EmbryoPreprocess(&#39;/local/folder/IMPC_media&#39;, &#39;phenodcc_embryo.preprocessed&#39;, &#39;db_connect.yaml&#39;)</span>
 <span class="sd">&gt;&gt;&gt; ep.run()</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;james&#39;</span>
@@ -125,15 +156,17 @@
 
 
 <div class="viewcode-block" id="EmbryoPreprocess"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess">[docs]</a><span class="k">class</span> <span class="nc">EmbryoPreprocess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The __init__ initialises a number of class attributes, and parses the .yaml config file.</span>
+
+<span class="sd">    :param config_file: path to .yaml containing database connection credentials.</span>
+<span class="sd">    :param base_path: path where the embryo &#39;src&#39; and &#39;emb&#39; directories are located</span>
+<span class="sd">    :param embryo_table: name of the table where embryo pre-processing rows are to be added</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_path</span><span class="p">,</span> <span class="n">embryo_table</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The __init__ initialises a number of class attributes, and parses the .yaml config file.</span>
 
-<span class="sd">        :param config_file: path to .yaml containing database connection credentials.</span>
-<span class="sd">        :param base_path: path where the embryo &#39;src&#39; and &#39;emb&#39; directories are located</span>
-<span class="sd">        :param embryo_table: name of the table where embryo pre-processing rows are to be added</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">base_path</span> <span class="o">=</span> <span class="n">base_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embryo_table</span> <span class="o">=</span> <span class="n">embryo_table</span>
@@ -157,6 +190,10 @@
 <span class="sd">        IMPC_EMO_001_001 (uCT E14.5/15.5) and IMPC_EMA_001_001 (uCT E18.5).</span>
 
 <span class="sd">        For each of the rows returned, its unique URL is used to determine where it has already processed:</span>
+
+<span class="sd">            .. code-block:: mysql</span>
+
+<span class="sd">                SELECT * FROM phenodcc_embryo.preprocessed WHERE url = &#39;/the/url/123456.bz2&#39;</span>
 
 <span class="sd">            If URL already exists in phenodcc_embryo.preprocessed:</span>
 <span class="sd">                (1) Check its status ID and extension ID</span>
@@ -259,8 +296,14 @@
 <span class="sd">        extension. Unfortunately, we do not know what image format the data will be. To overcome this, the program will</span>
 <span class="sd">        attempt to open the file using each of the valid file readers in turn.</span>
 
-<span class="sd">        If the file is successfully opened, the correct extension ID is stored and the pixel size extracted from the</span>
-<span class="sd">        database. The image data is then rescaled to pre-specified image resolutions, writing the results to disk as</span>
+<span class="sd">        If the file is successfully opened, the pixel size extracted from the database:</span>
+
+<span class="sd">        .. code-block:: mysql</span>
+
+<span class="sd">            SELECT * FROM phenodcc_overviews.metadata_group_to_values</span>
+<span class="sd">                WHERE metadata_group = &quot;$REPLACE$&quot;</span>
+
+<span class="sd">        The image data is then rescaled to pre-specified image resolutions, writing the results to disk as</span>
 <span class="sd">        NRRD files. In addition to the rescaled images, three orthogonal maximum intensity projection (MIP) are</span>
 <span class="sd">        generated for visual QC purposes (for the moment, these are written to the IMPC_media/emb/... directory)</span>
 
@@ -270,7 +313,12 @@
 <span class="sd">            (2) Failed to read image data, presumably due to an invalid file extension (status_id 2)</span>
 <span class="sd">            (3) Error when resampling image data (status_id 3)</span>
 
-<span class="sd">        Finally, the status ID, extension ID and pixel size are updated in the embryo pre-processing table.</span>
+<span class="sd">        Finally, the status ID, extension ID and pixel size are updated in the embryo pre-processing table:</span>
+
+<span class="sd">        .. code-block:: mysql</span>
+
+<span class="sd">            UPDATE phenodcc_embryo.preprocessed SET status_id=1, extension_id=12, pixelsize=13.59 WHERE url=&quot;/the/url/123456.bz2&quot;</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Loop through pre-processing list</span>
