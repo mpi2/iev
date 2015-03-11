@@ -124,10 +124,19 @@ limitations under the License.
     <div class="sliceWrap" id="{{sliceWrapId}}">
         <div id="{{sliceContainerID}}" class ="{{viewSiceClass}} sliceView"></div>
         <div class="sliceControls">
-            <div id="{{sliderId}}" class ="{{sliderClass}} slider"></div>
-            <input type="checkbox" class='linkViews {{orientation}} ui-icon ui-icon-link' checked>
-            
+            <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
+            <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
+            <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
+
         </div>
+    </div>
+    </script>
+    
+    
+    <!--No data template-->
+    <script id="no_data_template" type="text/x-handlebars-template">
+    <div class="nodata">
+    <p>There is no data available for {{colonyId}}</p>
     </div>
     </script>
 </html>

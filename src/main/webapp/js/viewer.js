@@ -7,7 +7,7 @@
         dcc = {};
 
 
-    function Slices(volumePaths, id, container, queryColonyId, sliceChange) {
+    function Slices(volumePaths, id, container, queryColonyId, indexCallback) {
 
         var id = id;
         var viewContainer = container;
@@ -34,6 +34,9 @@
         var zoomIn = 'zoomIn_' + id;
         var zoomOut = 'zoomOut_' + id;
         var vselector = 'volumeSelector_' + id;
+        var xOffset = 0;
+        var yOffset = 0;
+        var zOffset = 0;
 
 
         function createEventHandlers() {
@@ -131,8 +134,6 @@
             var $viewsContainer = $("#" + viewContainer);
             
             if (volumePaths.length < 1 && queryColonyId !==  null){
-                $viewsContainer.append("<div class='novols_msg'> " +
-                   "Could not find any volumes for " + queryColonyId +  " </div>");
                     return;
             }
             
@@ -164,7 +165,8 @@
                 viewSliceClasss: 'slice' + orient,
                 sliderId: 'slider_' + orient + '_'+ id,
                 sliderClass: 'slider' + orient,
-                orientation: orient
+                orientation: orient,
+                id: id
                
             };
             
@@ -174,11 +176,15 @@
         }
         
         
-        function linkOrthoView(orthoView, isLink){
-            //For now just the X, Y, or Z class. Come up with better name
-            $('.' + orthoView).prop('checked', isLink);
-        }
-        
+//        function linkOrthoView(orthoView, isLink){
+//            //Chek/uncheck the link buttons
+//    
+//            
+//           $('.' + orthoView).button("option", { 
+//                icons: { primary: e.currentTarget.checked ? 'ui-icon-check' : 'ui-icon-closethick' }
+//                });
+//        }
+//        
         
         
         function jQuerySelectors(){
@@ -298,6 +304,16 @@
                 volume.indexZ--;
             }
         };
+        
+        
+        
+       function sliceChange(id, ortho, index){
+           //Update the outside world when slice indicies change
+            if (ortho === 'X') indexCallback(id, ortho, index + xOffset );
+            if (ortho === 'Y') indexCallback(id, ortho, index + yOffset );
+            if (ortho === 'Z') indexCallback(id, ortho, index + zOffset );
+       }
+          
 
 
         function updateSliders(renderer, event) {
@@ -421,19 +437,32 @@
         };
         
         function setXindex(index){
-             volume.indexX = index;
-             $xSlider.slider("value", index);
+             volume.indexX = index -xOffset;
+             $xSlider.slider("value", volume.indexX);
         }
         
         function setYindex(index){
-             volume.indexY = index;
-             $ySlider.slider("value", index);
+             volume.indexY = index - yOffset;
+             $ySlider.slider("value", volume.indexY);
         }
         
         function setZindex(index){
-             volume.indexZ = index;
-             $zSlider.slider("value", index);
+             volume.indexZ = index - zOffset;
+             $zSlider.slider("value", volume.indexZ);
         }
+        
+        function getIndex(ortho){
+            if (ortho === 'X') return volume.indexX;
+            if (ortho === 'Y') return volume.indexY;
+            if (ortho === 'Z') return volume.indexZ;
+        }
+       
+        function setIdxOffset(ortho, offset){
+            if (ortho === 'X') xOffset = offset;
+            if (ortho === 'Y') yOffset = offset;
+            if (ortho === 'Z') zOffset = offset;
+        }
+        
 
 
 
@@ -486,11 +515,13 @@
 
         var public_interface = {
             setVisibleViews: setVisibleViews,
-            linkOrthoView: linkOrthoView,
+            //linkOrthoView: linkOrthoView,
             setXindex: setXindex,
             setYindex: setYindex,
             setZindex: setZindex,
-            id: id
+            getIndex: getIndex,
+            id: id,
+            setIdxOffset: setIdxOffset
 
         };
         

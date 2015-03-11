@@ -46,16 +46,26 @@
         var queryColonyId = queryColonyId;
         var horizontalView = undefined;
      
-        // Get the baselines and the mutant paths
-        for(var i = 0; i < data.volumes.length; i++) {
-            var obj = data.volumes[i];
-            if (obj.colonyId === WILDTYPE_COLONYID){
-                wildtypes.push(buildUrl(obj));
-                console.log(obj.url);
-            }else{
-                mutants.push(buildUrl(obj));
-                console.log(obj.url);
+        if (data['success']){
+            // Get the baselines and the mutant paths
+            for(var i = 0; i < data.volumes.length; i++) {
+
+                var obj = data.volumes[i];
+
+                 if (obj.colonyId === WILDTYPE_COLONYID){
+                    wildtypes.push(buildUrl(obj));
+
+                }else{
+                    mutants.push(buildUrl(obj));   
+                }
             }
+            
+        }else{
+            //Just display a message informing no data
+            var data = {colonyId: queryColonyId};
+            var source   = $("#no_data_template").html();
+            var template = Handlebars.compile(source);
+            $('#' + div).append(template(data));
         }
        
     
@@ -63,17 +73,19 @@
         var views = [];
         
         var ortho = {
+            // Visible: for the orthogonal views buttons
+            // Linked: are the corresponding ortho views from the different specimens linked
             'X': {
                 visible: true,
-                linked: true
+                linked: true,
             },
             'Y': {
                 visible: true,
-                linked: true
+                linked: true,
             },
             'Z': {
                 visible: true,
-                linked: true
+                linked: true,
             }
         };
     
@@ -93,24 +105,29 @@
     
         function loadViewers(container) {
 
-            views.push(dcc.SpecimenView(wildtypes, 'wt', container, 'baseline', sliceChange));
+            views.push(dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, sliceChange));
             views.push(dcc.SpecimenView(mutants, 'mut', container, queryColonyId, sliceChange));
-            console.log(views);
-
         };
         
         
         
-        function sliceChange(id, orientation, index){
-            //Listens to the slice change events from the viewers
-          
-           for (var i = 0; i < views.length; i++) {
-               if (views[i].id === id) continue; //this is the views that changed
-               if (orientation === 'X' && ortho['X'].linked) views[i].setXindex(index);
-               else if (orientation === 'Y' && ortho['Y'].linked) views[i].setYindex(index);
-               else if (orientation === 'Z' && ortho['Z'].linked) views[i].setZindex(index);
-           }   
-            
+        function sliceChange(id, orientation, index) {
+            //Listens to the slice change events from the viewers, and calls the
+            // other specimen view if required
+
+            for (var i = 0; i < views.length; i++) {
+                if (views[i].id === id) continue; //this is the views that changed
+                
+                if (orientation === 'X' && ortho['X'].linked) {
+                    views[i].setXindex(index);
+                
+                } else if (orientation === 'Y' && ortho['Y'].linked) {
+                    views[i].setYindex(index);
+                
+                } else if (orientation === 'Z' && ortho['Z'].linked) {
+                    views[i].setZindex(index);
+                }
+            }
         }
         
         
@@ -118,36 +135,51 @@
             //OrthoView -> 'X', 'Y', or 'Z'
             
             // Change check or uncheck the correpsonding views checkboxes
-            for (var i = 0; i < views.length; i++) {
-                views[i].linkOrthoView(orthoView, isLink);
-            }
+            // And work out the offset, if any
+            var wtIdx;
+            var mutIdx;
+         
+            $('.' + orthoView).prop('checked', isLink);
+            
             ortho[orthoView].linked = isLink;
+            
+            for (var i = 0; i < views.length; i++) {
+                // Set/unset the link buttons
+                if(views[i].id === 'wt'){
+                    wtIdx = views[i].getIndex(orthoView);
+                }else if (views[i].id === 'mut'){
+                    mutIdx = views[i].getIndex(orthoView);
+                }
+            }
+            for (var i = 0; i < views.length; i++) {
+                if (views[i].id === 'mut'){
+                    views[i].setIdxOffset(orthoView, wtIdx - mutIdx);
+                }
+            }  
         }
         
         
 
         function attachEvents() {
-
-            $('.linkViews')
-                    .change(function (e) {
-                        
-                        if ($(e.target).hasClass('X')) {
-                            linkViews('X', e.currentTarget.checked);
-                        }
-                        else if ($(e.target).hasClass('Y')) {
-                            linkViews('Y', e.currentTarget.checked);
-                        }
-                        else if ($(e.target).hasClass('Z')) {
-                            linkViews('Z', e.currentTarget.checked);
-                        }
+      
+            $(".linkCheck").change(function(e){
+              
+                if ($(e.target).hasClass('X')) {
+                    linkViews('X', e.currentTarget.checked);
+                }
+                else if ($(e.target).hasClass('Y')) {
+                    linkViews('Y', e.currentTarget.checked);
+                }
+                else if ($(e.target).hasClass('Z')) {
+                    linkViews('Z', e.currentTarget.checked);
+                }
                         
             }.bind(this)); 
              
            
             
             // Hide/show slice views from the checkboxes
-            $('.toggle_slice').change(function (e, ui) {
-                console.log(e);
+            $('.toggle_slice').change(function () {
 
                 var slice_list = ['X_check', 'Y_check', 'Z_check'];	//IDs of the checkboxes
                 var count = 0;
@@ -192,11 +224,7 @@
                             window.dispatchEvent(evt);
                         }, this)
                     });
-            
-            $('#fullscreen')
-                    .click(function(){
-                        console.log('fullscreen');     
-            });
+
             $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
                  show: {delay: 1200 }
              });
@@ -267,15 +295,7 @@
            
         }.bind(this));
         }
-        
-
-//    $(function() {
-//
-        
-//        console.log('toggle');
-//    });
-//    Does not work
-
+  
 
     // Style the control buttons
 
