@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>resampler &mdash; Embryo Pre-processing 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Embryo Pre-processing 0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for resampler</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Resampler for the preprocessing script</span>
+
+<span class="sd">What this script will do when finished:</span>
+
+<span class="sd">    Get src and dest directories</span>
+
+<span class="sd">    make a memory-mapped version</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">nrrd</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">progressbar</span> <span class="kn">import</span> <span class="n">ProgressBar</span><span class="p">,</span> <span class="n">Percentage</span><span class="p">,</span> <span class="n">Bar</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&quot;win32&quot;</span> <span class="ow">or</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&quot;win64&quot;</span><span class="p">:</span>
+    <span class="n">windows</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">windows</span> <span class="o">=</span> <span class="bp">False</span>
+
+
+<div class="viewcode-block" id="resample"><a class="viewcode-back" href="../resampler.html#resampler.resample">[docs]</a><span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="n">slicegen</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nrrd_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param array: numpy-like array - accepts np.memmap objects and h5py array objects</span>
+<span class="sd">    :param scale: scale factor. Should be &lt; 1 for downscaling</span>
+<span class="sd">    :param outfile: outfile NRRD containing extension</span>
+<span class="sd">    :raises: Make sure to add some error handling</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">temp_xy</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;wb+&#39;</span><span class="p">)</span>
+
+    <span class="n">temp_xyz</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;wb+&#39;</span><span class="p">)</span>
+
+    <span class="n">scaleby_int</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c">#Get dimensions for the memory mapped raw xy file</span>
+    <span class="n">xy_scaled_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">slicegen</span><span class="o">.</span><span class="n">shape</span><span class="p">()[</span><span class="mi">2</span><span class="p">]]</span>
+
+    <span class="n">datatype</span> <span class="o">=</span> <span class="n">slicegen</span><span class="o">.</span><span class="n">dtype</span> <span class="c">#TODO chage</span>
+
+    <span class="n">first</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="n">pbar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;-- scaling in xy: &quot;</span><span class="p">,</span> <span class="n">Percentage</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()],</span> <span class="n">maxval</span><span class="o">=</span><span class="n">xy_scaled_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">z_slice_arr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">slicegen</span><span class="o">.</span><span class="n">slices</span><span class="p">()):</span>
+
+        <span class="c"># if i == 150:</span>
+        <span class="c">#     plt.imshow(z_slice_arr)</span>
+        <span class="c">#     plt.show()</span>
+
+        <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c"># This might slow things doen by reasigning to the original array. Maybe we jsut need a differnt view on it</span>
+
+        <span class="n">z_slice_arr</span> <span class="o">=</span> <span class="n">_droppixels</span><span class="p">(</span><span class="n">z_slice_arr</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+
+        <span class="n">z_slice_resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">z_slice_arr</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+            <span class="n">xy_scaled_dims</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">z_slice_resized</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">datatype</span> <span class="o">=</span> <span class="n">z_slice_resized</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="n">windows</span><span class="p">:</span>
+            <span class="n">z_slice_resized</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">temp_xy</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z_slice_resized</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">temp_xy</span><span class="p">)</span>
+
+    <span class="n">pbar</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+
+    <span class="c">#create memory mapped version of the temporary xy scaled slices</span>
+    <span class="n">xy_scaled_mmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">memmap</span><span class="p">(</span><span class="n">temp_xy</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">datatype</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">xy_scaled_dims</span><span class="p">))</span>
+
+    <span class="c">#Get dimensions for the memory mapped raw xyz file</span>
+    <span class="n">xyz_scaled_dims</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c"># Scale in zy plane</span>
+    <span class="n">pbar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;-- scaling in yz: &quot;</span><span class="p">,</span> <span class="n">Percentage</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()],</span> <span class="n">maxval</span><span class="o">=</span><span class="n">xy_scaled_mmap</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xy_scaled_mmap</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+
+        <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">xz_plane</span> <span class="o">=</span> <span class="n">xy_scaled_mmap</span><span class="p">[:,</span> <span class="n">y</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c"># if scaleby_int:</span>
+        <span class="c">#     xz_plane = _droppixels(xz_plane, 1, scale)</span>
+
+        <span class="n">scaled_xz</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">xz_plane</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">xyz_scaled_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xy_scaled_mmap</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">xyz_scaled_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scaled_xz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">xyz_scaled_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scaled_xz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">windows</span><span class="p">:</span>
+            <span class="n">scaled_xz</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">temp_xyz</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scaled_xz</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">temp_xyz</span><span class="p">)</span>
+
+    <span class="n">pbar</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+
+    <span class="c">#create memory mapped version of the temporary xy scaled slices</span>
+    <span class="n">xyz_scaled_mmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">memmap</span><span class="p">(</span><span class="n">temp_xyz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">datatype</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">xyz_scaled_dims</span><span class="p">))</span>
+
+    <span class="n">xtk_opt</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;encoding&quot;</span><span class="p">:</span> <span class="s">&quot;gzip&quot;</span><span class="p">,</span>
+               <span class="s">&quot;space&quot;</span><span class="p">:</span> <span class="s">&quot;left-posterior-superior&quot;</span><span class="p">,</span>
+               <span class="s">&quot;space directions&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+               <span class="s">&quot;kinds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;domain&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">],</span>
+               <span class="s">&quot;space origin&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]}</span>
+    <span class="n">nrrd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">nrrd_path</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">xyz_scaled_mmap</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">options</span><span class="o">=</span><span class="n">xtk_opt</span><span class="p">)</span>
+
+    <span class="n">temp_xy</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c"># deletes temp file</span>
+    <span class="n">temp_xyz</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_droppixels</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">scaley</span><span class="p">,</span> <span class="n">scalex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make an array divisible by integar scale factors by dropping pixels from the right and bottom of the image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c">#If New dimension not integral factors of original, drop pixels to make it so they are</span>
+
+    <span class="n">scalex</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">scalex</span>
+    <span class="n">scaley</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">scaley</span>
+
+    <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c"># Get the shape of the old array after dropping pixels</span>
+
+    <span class="n">dropy</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">%</span> <span class="n">scaley</span>
+    <span class="k">if</span> <span class="n">dropy</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="n">dropy</span><span class="p">]</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="n">dropx</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">%</span> <span class="n">scalex</span>
+    <span class="k">if</span> <span class="n">dropx</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="n">dropx</span><span class="p">]</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">a</span>
+
+    <span class="k">return</span> <span class="n">b</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="n">resample</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, James Brown.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

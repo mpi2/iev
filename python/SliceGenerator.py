@@ -9,6 +9,7 @@ import matplotlib.cm as cm
 from ctutils import readers
 import subprocess as sp
 
+
 class SliceGenerator(object):
 
     def __init__(self, recon):
@@ -16,7 +17,7 @@ class SliceGenerator(object):
         self.slice_index = 0
 
     def slices(self):
-        pass
+        raise NotImplementedError("Ths method needs overriding")
 
     def dtype(self):
         raise NotImplementedError("Ths method needs overriding")

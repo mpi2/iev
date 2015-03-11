@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SliceGenerator module &mdash; Embryo Pre-processing 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Embryo Pre-processing 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="conversion module" href="conversion.html" />
+    <link rel="prev" title="EmbryoPreprocess module" href="EmbryoPreprocess.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="conversion.html" title="conversion module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="EmbryoPreprocess.html" title="EmbryoPreprocess module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-SliceGenerator">
+<span id="slicegenerator-module"></span><h1>SliceGenerator module<a class="headerlink" href="#module-SliceGenerator" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="SliceGenerator.MincSliceGenerator">
+<em class="property">class </em><tt class="descclassname">SliceGenerator.</tt><tt class="descname">MincSliceGenerator</tt><big>(</big><em>recon</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#MincSliceGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.MincSliceGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SliceGenerator.SliceGenerator" title="SliceGenerator.SliceGenerator"><tt class="xref py py-class docutils literal"><span class="pre">SliceGenerator.SliceGenerator</span></tt></a></p>
+<dl class="method">
+<dt id="SliceGenerator.MincSliceGenerator.dtype">
+<tt class="descname">dtype</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#MincSliceGenerator.dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.MincSliceGenerator.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.MincSliceGenerator.shape">
+<tt class="descname">shape</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#MincSliceGenerator.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.MincSliceGenerator.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.MincSliceGenerator.slices">
+<tt class="descname">slices</tt><big>(</big><em>start=0</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#MincSliceGenerator.slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.MincSliceGenerator.slices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="SliceGenerator.NrrdSliceGenerator">
+<em class="property">class </em><tt class="descclassname">SliceGenerator.</tt><tt class="descname">NrrdSliceGenerator</tt><big>(</big><em>recon</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#NrrdSliceGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.NrrdSliceGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SliceGenerator.SliceGenerator" title="SliceGenerator.SliceGenerator"><tt class="xref py py-class docutils literal"><span class="pre">SliceGenerator.SliceGenerator</span></tt></a></p>
+<dl class="method">
+<dt id="SliceGenerator.NrrdSliceGenerator.dtype">
+<tt class="descname">dtype</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#NrrdSliceGenerator.dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.NrrdSliceGenerator.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.NrrdSliceGenerator.parse_header">
+<tt class="descname">parse_header</tt><big>(</big><em>hdr</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#NrrdSliceGenerator.parse_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.NrrdSliceGenerator.parse_header" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.NrrdSliceGenerator.shape">
+<tt class="descname">shape</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#NrrdSliceGenerator.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.NrrdSliceGenerator.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.NrrdSliceGenerator.slices">
+<tt class="descname">slices</tt><big>(</big><em>start=0</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#NrrdSliceGenerator.slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.NrrdSliceGenerator.slices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="SliceGenerator.SliceGenerator">
+<em class="property">class </em><tt class="descclassname">SliceGenerator.</tt><tt class="descname">SliceGenerator</tt><big>(</big><em>recon</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#SliceGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.SliceGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="SliceGenerator.SliceGenerator.dtype">
+<tt class="descname">dtype</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#SliceGenerator.dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.SliceGenerator.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.SliceGenerator.shape">
+<tt class="descname">shape</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#SliceGenerator.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.SliceGenerator.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.SliceGenerator.slices">
+<tt class="descname">slices</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#SliceGenerator.slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.SliceGenerator.slices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="SliceGenerator.TXMSliceGenerator">
+<em class="property">class </em><tt class="descclassname">SliceGenerator.</tt><tt class="descname">TXMSliceGenerator</tt><big>(</big><em>recon</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TXMSliceGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TXMSliceGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SliceGenerator.SliceGenerator" title="SliceGenerator.SliceGenerator"><tt class="xref py py-class docutils literal"><span class="pre">SliceGenerator.SliceGenerator</span></tt></a></p>
+<dl class="method">
+<dt id="SliceGenerator.TXMSliceGenerator.dtype">
+<tt class="descname">dtype</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TXMSliceGenerator.dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TXMSliceGenerator.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.TXMSliceGenerator.shape">
+<tt class="descname">shape</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TXMSliceGenerator.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TXMSliceGenerator.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.TXMSliceGenerator.slices">
+<tt class="descname">slices</tt><big>(</big><em>start=0</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TXMSliceGenerator.slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TXMSliceGenerator.slices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="SliceGenerator.TiffSliceGenerator">
+<em class="property">class </em><tt class="descclassname">SliceGenerator.</tt><tt class="descname">TiffSliceGenerator</tt><big>(</big><em>recon</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffSliceGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffSliceGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SliceGenerator.SliceGenerator" title="SliceGenerator.SliceGenerator"><tt class="xref py py-class docutils literal"><span class="pre">SliceGenerator.SliceGenerator</span></tt></a></p>
+<dl class="method">
+<dt id="SliceGenerator.TiffSliceGenerator.dtype">
+<tt class="descname">dtype</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffSliceGenerator.dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffSliceGenerator.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.TiffSliceGenerator.shape">
+<tt class="descname">shape</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffSliceGenerator.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffSliceGenerator.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.TiffSliceGenerator.slices">
+<tt class="descname">slices</tt><big>(</big><em>start=0</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffSliceGenerator.slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffSliceGenerator.slices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="SliceGenerator.TiffStackSliceGenerator">
+<em class="property">class </em><tt class="descclassname">SliceGenerator.</tt><tt class="descname">TiffStackSliceGenerator</tt><big>(</big><em>recon</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffStackSliceGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffStackSliceGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SliceGenerator.SliceGenerator" title="SliceGenerator.SliceGenerator"><tt class="xref py py-class docutils literal"><span class="pre">SliceGenerator.SliceGenerator</span></tt></a></p>
+<dl class="method">
+<dt id="SliceGenerator.TiffStackSliceGenerator.dtype">
+<tt class="descname">dtype</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffStackSliceGenerator.dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffStackSliceGenerator.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.TiffStackSliceGenerator.shape">
+<tt class="descname">shape</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffStackSliceGenerator.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffStackSliceGenerator.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SliceGenerator.TiffStackSliceGenerator.slices">
+<tt class="descname">slices</tt><big>(</big><em>start=0</em><big>)</big><a class="reference internal" href="_modules/SliceGenerator.html#TiffStackSliceGenerator.slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SliceGenerator.TiffStackSliceGenerator.slices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="EmbryoPreprocess.html"
+                        title="previous chapter">EmbryoPreprocess module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="conversion.html"
+                        title="next chapter">conversion module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/SliceGenerator.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="conversion.html" title="conversion module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="EmbryoPreprocess.html" title="EmbryoPreprocess module"
+             >previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, James Brown.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

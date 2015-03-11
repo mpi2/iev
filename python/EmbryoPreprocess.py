@@ -7,8 +7,11 @@ from SliceGenerator import *
 import resampler
 import conversion as conv
 from collections import OrderedDict
-from time import time
+import time
 import datetime
+import nrrd
+import SimpleITK as sitk
+
 
 # TODO: ensure that these are correct
 PARAMETERS = {'IMPC_EOL_001_001': (0.5, 0.25),
@@ -34,24 +37,63 @@ UPDATE_STATUS_EXT_PIXEL = 'UPDATE {} SET status_id={}, extension_id={}, pixelsiz
 
 
 class EmbryoPreprocess(object):
+    """EmbryoProcess is a object which queries and pre-processes embryo image data (uCT/OPT)
 
-    def __init__(self, config_file):
+    Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),
+    username (USER) and password (PASS) required to connect to the database. This allows for easy switching between
+    "prince" and "live".
 
-        self.base_path = '/media/sf_siah/IMPC_pipeline'
-        self.embryo_table = 'phenodcc_embryo.preprocessed_test'
+    To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,
+    the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid
+    data is added to a pre-processing list which is subsequently handled by the "process_recons()" method.
+    """
+
+    def __init__(self, base_path, embryo_table, config_file):
+        """ The __init__ initialises a number of class attributes, and parses the .yaml config file.
+
+        :param config_file: path to .yaml containing database connection credentials.
+        :param base_path: path where the embryo 'src' and 'emb' directories are located
+        :param embryo_table: name of the table where embryo pre-processing rows are to be added
+        :return:
+        """
+
+        self.base_path = base_path
+        self.embryo_table = embryo_table
         self.embryo_path = os.path.join(self.base_path, 'emb')
         self.src_path = os.path.join(self.base_path, 'src')
         self.conn = None
         self.cursor = None
         self.preprocessing = []
+        self.orientations = ['sagittal', 'coronal', 'axial']
+        self.start_time = time.time()
 
         with open(config_file) as f:
             self.HOST, self.USER, self.PASS = yaml.load(f)
 
     def run(self):
+        """The run method queries the phenodcc_media.media_file table, identifying those that require pre-processing.
 
-        timestamp = datetime.datetime.fromtimestamp(time()).strftime('%Y-%m-%d %H:%M:%S')
-        print "Embryo pre-processing - " + timestamp
+        The method firsts attempts to connect to the database. If this connection fails, an exception is raised and the
+        program terminates. If the connection is successful, the program queries phenodcc_media.media_file for media
+        submitted for each of the three "embryo reconstruction" parameters; IMPC_EOL_001_001 (OPT E9.5),
+        IMPC_EMO_001_001 (uCT E14.5/15.5) and IMPC_EMA_001_001 (uCT E18.5).
+
+        For each of the rows returned, its unique URL is used to determine where it has already processed:
+
+            If URL already exists in phenodcc_embryo.preprocessed:
+                (1) Check its status ID and extension ID
+                (2) If status_id != 1 (success), add job to the pre-processing list
+                (3) Otherwise, update its metadataGroup and measurement_id.
+
+            Otherwise:
+                (1) Create a new row in the pre-processing table
+                (2) Add job to the pre-processing list.
+
+        Once all of the parameters have been searched against, the process_recons method is called.
+        """
+
+        start_timestamp = datetime.datetime.fromtimestamp(self.start_time).strftime('%Y-%m-%d %H:%M:%S')
+        print "Embryo pre-processing started at " + start_timestamp
 
         # Connect to database, raises exception and returns None upon failure
         self.conn = self.db_connect()
@@ -100,7 +142,8 @@ class EmbryoPreprocess(object):
                         # Otherwise, it's already in the table so get its status ID and true extensions
                         status_id = existing_rows[0]['status_id']
                         ext_id = existing_rows[0]['extension_id']
-                        decom_ext = self.query_database(GET_EXTENSION_BY_ID.format(ext_id))[0]['extension']
+                        if ext_id:
+                            decom_ext = self.query_database(GET_EXTENSION_BY_ID.format(ext_id))[0]['extension']
 
                     # If the status ID is not 1, then it hasn't been processed
                     if status_id != 1:
@@ -123,15 +166,34 @@ class EmbryoPreprocess(object):
                     else:  # TODO: check if the other columns have changed
 
                         # The data has already been processed, just update measurement ID and metadata group
-                        _, _ = self.query_database(UPDATE_MID_META.format(self.embryo_table, mid, metadata, url))
+                        self.query_database(UPDATE_MID_META.format(self.embryo_table, mid, metadata, url))
 
             # We're done, so lets process the reconstructions that were added to the list
             self.process_recons()
 
         else:
-            print "Failed to connect to {}".format(self.HOST)
+            raise MySQLdb.MySQLError("Failed to connect to {}".format(self.HOST))
 
     def process_recons(self):
+        """The process_recons method loops through the pre-processing list, and attempts to process each recon in turn.
+
+        For each recon in the pre-processing list, it is first decompressed (if necessary) according to its file
+        extension. Unfortunately, we do not know what image format the data will be. To overcome this, the program will
+        attempt to open the file using each of the valid file readers in turn.
+
+        If the file is successfully opened, the correct extension ID is stored and the pixel size extracted from the
+        database. The image data is then rescaled to pre-specified image resolutions, writing the results to disk as
+        NRRD files. In addition to the rescaled images, three orthogonal maximum intensity projection (MIP) are
+        generated for visual QC purposes (for the moment, these are written to the IMPC_media/emb/... directory)
+
+        The three possible outcomes of the pre-processing job are as follows:
+
+            (1) Successfully read and resample image data (status_id 1)
+            (2) Failed to read image data, presumably due to an invalid file extension (status_id 2)
+            (3) Error when resampling image data (status_id 3)
+
+        Finally, the status ID, extension ID and pixel size are updated in the embryo pre-processing table.
+        """
 
         # Loop through pre-processing list
         for recon in self.preprocessing:
@@ -153,7 +215,7 @@ class EmbryoPreprocess(object):
 
                 if os.path.exists(image_path) is False:
                     # Decompress the file
-                    print "Decompressing {}".format(recon['ext'])
+                    print "-- decompressing {}".format(recon['ext'])
                     decompressor(recon['src'], os.path.join(recon['out_folder'], image_path))
 
             else:
@@ -227,10 +289,40 @@ class EmbryoPreprocess(object):
         # We're all done, so close connection to database
         self.db_disconnect()
 
+        end_time = time.time()
+        end_timestamp = datetime.datetime.fromtimestamp(end_time).strftime('%Y-%m-%d %H:%M:%S')
+        print "\nEmbryo pre-processing finished at " + end_timestamp
+
+        m, s = divmod(end_time - self.start_time, 60)
+        h, m = divmod(m, 60)
+        print "Time taken: %d:%02d:%02d" % (h, m, s)
+
     def get_mip(self, in_path, out_dir):
-        pass  # TODO implement this!
+        """The get_mip method generates three maximum intensity projections (MIP) for visual QC purposes.
+
+        MIPs are generated from the downscaled image data, so the whole image can be loaded into memory for ease. The
+        resulting images are written to disk in .png format.
+        """
+
+        volume, header = nrrd.read(in_path)
+
+        for ax, view in enumerate(self.orientations):
+            mip = np.amax(volume, axis=ax)
+            sitk.WriteImage(sitk.GetImageFromArray(mip.T), os.path.join(out_dir, 'mip_{}.png'.format(view)))
 
     def query_database(self, sql, replacement=None):
+        """The query_database method executes arbitrary queries and returns any results as dictionary lists.
+
+        Input queries can be either strings or SQL files. If a replacement is specified, the $REPLACE$ wildcard will be
+        replaced with it. The query is then executed and committed, raising an exception upon failure. If there are rows
+        to be returned, the resulting data is parsed and returned as a list of dictionaries that can be referenced
+        by column name for convenience.
+
+        :param sql: either a string containing an SQL query, or a path to an SQL file
+        :param replacement: optional argument for SQL files, $REPLACE$ wildcard is replaced with the specified string
+        :return: a list of dictionaries if there were rows returned, otherwise None
+
+        """
 
         if sql.endswith('.sql'):
             sql = open(sql)
@@ -268,6 +360,10 @@ class EmbryoPreprocess(object):
             return None
 
     def db_connect(self):
+        """ The db_connect method attempts to connect to a database using the credentials in the specified .yaml file.
+
+        :return: MySQLdb connect object if successful, or None if connection fails
+        """
 
         try:
             conn = MySQLdb.connect(host=self.HOST, user=self.USER, passwd=self.PASS)
@@ -279,6 +375,9 @@ class EmbryoPreprocess(object):
         return conn
 
     def db_disconnect(self):
+        """The db_disconnect method attempts to disconnect from the database, and is called at the end of processing.
+        Raises an exception upon failure (i.e. if the connection has already been closed).
+        """
 
         try:
             self.conn.close()
@@ -289,6 +388,5 @@ class EmbryoPreprocess(object):
 
 if __name__ == '__main__':
 
-    config = 'db_connect.yaml'
-    ep = EmbryoPreprocess(config)
+    ep = EmbryoPreprocess('/media/sf_siah/IMPC_pipeline', 'phenodcc_embryo.preprocessed_test', 'db_connect.yaml')
     ep.run()

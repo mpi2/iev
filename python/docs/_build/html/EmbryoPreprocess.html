@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>EmbryoPreprocess module &mdash; Embryo Pre-processing 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Embryo Pre-processing 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="SliceGenerator module" href="SliceGenerator.html" />
+    <link rel="prev" title="Welcome to Embryo Pre-processing’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="SliceGenerator.html" title="SliceGenerator module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Embryo Pre-processing’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-EmbryoPreprocess">
+<span id="embryopreprocess-module"></span><h1>EmbryoPreprocess module<a class="headerlink" href="#module-EmbryoPreprocess" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="EmbryoPreprocess.EmbryoPreprocess">
+<em class="property">class </em><tt class="descclassname">EmbryoPreprocess.</tt><tt class="descname">EmbryoPreprocess</tt><big>(</big><em>base_path</em>, <em>embryo_table</em>, <em>config_file</em><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>EmbryoProcess is a object which queries and pre-processes embryo image data (uCT/OPT)</p>
+<p>Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),
+username (USER) and password (PASS) required to connect to the database. This allows for easy switching between
+&#8220;prince&#8221; and &#8220;live&#8221;.</p>
+<p>To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,
+the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid
+data is added to a pre-processing list which is subsequently handled by the &#8220;process_recons()&#8221; method.</p>
+<dl class="method">
+<dt id="EmbryoPreprocess.EmbryoPreprocess.db_connect">
+<tt class="descname">db_connect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess.db_connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess.db_connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>The db_connect method attempts to connect to a database using the credentials in the specified .yaml file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">MySQLdb connect object if successful, or None if connection fails</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmbryoPreprocess.EmbryoPreprocess.db_disconnect">
+<tt class="descname">db_disconnect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess.db_disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess.db_disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>The db_disconnect method attempts to disconnect from the database, and is called at the end of processing.
+Raises an exception upon failure (i.e. if the connection has already been closed).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmbryoPreprocess.EmbryoPreprocess.get_mip">
+<tt class="descname">get_mip</tt><big>(</big><em>in_path</em>, <em>out_dir</em><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess.get_mip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess.get_mip" title="Permalink to this definition">¶</a></dt>
+<dd><p>The get_mip method generates three maximum intensity projections (MIP) for visual QC purposes.</p>
+<p>MIPs are generated from the downscaled image data, so the whole image can be loaded into memory for ease. The
+resulting images are written to disk in .png format.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmbryoPreprocess.EmbryoPreprocess.process_recons">
+<tt class="descname">process_recons</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess.process_recons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess.process_recons" title="Permalink to this definition">¶</a></dt>
+<dd><p>The process_recons method loops through the pre-processing list, and attempts to process each recon in turn.</p>
+<p>For each recon in the pre-processing list, it is first decompressed (if necessary) according to its file
+extension. Unfortunately, we do not know what image format the data will be. To overcome this, the program will
+attempt to open the file using each of the valid file readers in turn.</p>
+<p>If the file is successfully opened, the correct extension ID is stored and the pixel size extracted from the
+database. The image data is then rescaled to pre-specified image resolutions, writing the results to disk as
+NRRD files. In addition to the rescaled images, three orthogonal maximum intensity projection (MIP) are
+generated for visual QC purposes (for the moment, these are written to the IMPC_media/emb/... directory)</p>
+<p>The three possible outcomes of the pre-processing job are as follows:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Successfully read and resample image data (status_id 1)</li>
+<li>Failed to read image data, presumably due to an invalid file extension (status_id 2)</li>
+<li>Error when resampling image data (status_id 3)</li>
+</ol>
+</div></blockquote>
+<p>Finally, the status ID, extension ID and pixel size are updated in the embryo pre-processing table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmbryoPreprocess.EmbryoPreprocess.query_database">
+<tt class="descname">query_database</tt><big>(</big><em>sql</em>, <em>replacement=None</em><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess.query_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess.query_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>The query_database method executes arbitrary queries and returns any results as dictionary lists.</p>
+<p>Input queries can be either strings or SQL files. If a replacement is specified, the $REPLACE$ wildcard will be
+replaced with it. The query is then executed and committed, raising an exception upon failure. If there are rows
+to be returned, the resulting data is parsed and returned as a list of dictionaries that can be referenced
+by column name for convenience.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sql</strong> &#8211; either a string containing an SQL query, or a path to an SQL file</li>
+<li><strong>replacement</strong> &#8211; optional argument for SQL files, $REPLACE$ wildcard is replaced with the specified string</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of dictionaries if there were rows returned, otherwise None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmbryoPreprocess.EmbryoPreprocess.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>The run method queries the phenodcc_media.media_file table, identifying those that require pre-processing.</p>
+<p>The method firsts attempts to connect to the database. If this connection fails, an exception is raised and the
+program terminates. If the connection is successful, the program queries phenodcc_media.media_file for media
+submitted for each of the three &#8220;embryo reconstruction&#8221; parameters; IMPC_EOL_001_001 (OPT E9.5),
+IMPC_EMO_001_001 (uCT E14.5/15.5) and IMPC_EMA_001_001 (uCT E18.5).</p>
+<p>For each of the rows returned, its unique URL is used to determine where it has already processed:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>If URL already exists in phenodcc_embryo.preprocessed:</dt>
+<dd><ol class="first last arabic simple">
+<li>Check its status ID and extension ID</li>
+<li>If status_id != 1 (success), add job to the pre-processing list</li>
+<li>Otherwise, update its metadataGroup and measurement_id.</li>
+</ol>
+</dd>
+<dt>Otherwise:</dt>
+<dd><ol class="first last arabic simple">
+<li>Create a new row in the pre-processing table</li>
+<li>Add job to the pre-processing list.</li>
+</ol>
+</dd>
+</dl>
+</div></blockquote>
+<p>Once all of the parameters have been searched against, the process_recons method is called.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Embryo Pre-processing&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="SliceGenerator.html"
+                        title="next chapter">SliceGenerator module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/EmbryoPreprocess.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="SliceGenerator.html" title="SliceGenerator module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Embryo Pre-processing’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, James Brown.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

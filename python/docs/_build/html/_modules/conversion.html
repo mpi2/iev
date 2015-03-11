@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>conversion &mdash; Embryo Pre-processing 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Embryo Pre-processing 0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for conversion</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">nrrd</span>
+<span class="kn">import</span> <span class="nn">bz2</span>
+<span class="kn">import</span> <span class="nn">tifffile</span>
+<span class="kn">from</span> <span class="nn">progressbar</span> <span class="kn">import</span> <span class="n">ProgressBar</span><span class="p">,</span> <span class="n">Percentage</span><span class="p">,</span> <span class="n">Bar</span>
+
+<span class="n">DATA_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;unsigned short&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">,</span> <span class="s">&quot;uint16&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">,</span>
+              <span class="s">&quot;signed short&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="s">&quot;int16&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span>
+              <span class="s">&quot;unsigned byte&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="s">&quot;uint8&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+              <span class="s">&quot;signed byte&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span> <span class="s">&quot;int8&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="nrrd_to_array"><a class="viewcode-back" href="../conversion.html#conversion.nrrd_to_array">[docs]</a><span class="k">def</span> <span class="nf">nrrd_to_array</span><span class="p">(</span><span class="n">nrrd_file</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">nrrd</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nrrd_file</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="minc_to_array"><a class="viewcode-back" href="../conversion.html#conversion.minc_to_array">[docs]</a><span class="k">def</span> <span class="nf">minc_to_array</span><span class="p">(</span><span class="n">input_folder</span><span class="p">,</span> <span class="n">minc_file</span><span class="p">):</span>
+
+    <span class="c"># Open minc file using HDF5 module</span>
+    <span class="k">print</span> <span class="s">&quot;Loading {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minc_file</span><span class="p">)</span>
+    <span class="n">minc</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_folder</span><span class="p">,</span> <span class="n">minc_file</span><span class="p">),</span> <span class="s">&quot;r&quot;</span><span class="p">)[</span><span class="s">&#39;minc-2.0&#39;</span><span class="p">]</span>
+    <span class="c">#volume = np.transpose(minc[&#39;image&#39;][&#39;0&#39;][&#39;image&#39;])</span>
+    <span class="k">return</span> <span class="n">minc</span>
+
+</div>
+<div class="viewcode-block" id="tiffs_to_array"><a class="viewcode-back" href="../conversion.html#conversion.tiffs_to_array">[docs]</a><span class="k">def</span> <span class="nf">tiffs_to_array</span><span class="p">(</span><span class="n">folder_</span><span class="p">,</span> <span class="n">out_path</span><span class="p">):</span>
+
+    <span class="k">print</span> <span class="s">&quot;Loading TIFF files in &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder_</span><span class="p">)</span>
+    <span class="n">tiff_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder_</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;tiff&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;tif&#39;</span><span class="p">)])</span>
+
+    <span class="c"># Get tiff info and create empty NRRD file</span>
+    <span class="n">first_tiff</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">folder_</span> <span class="o">+</span> <span class="n">tiff_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">first_tiff</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tiff_list</span><span class="p">))</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">first_tiff</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tiff_list</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">folder_</span> <span class="o">+</span> <span class="n">file_path</span><span class="p">)</span>
+            <span class="n">volume</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">im</span>
+        <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Error loading &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">return</span> <span class="n">volume</span>
+
+</div>
+<div class="viewcode-block" id="decompress_bz2"><a class="viewcode-back" href="../conversion.html#conversion.decompress_bz2">[docs]</a><span class="k">def</span> <span class="nf">decompress_bz2</span><span class="p">(</span><span class="n">bz2_in</span><span class="p">,</span> <span class="n">decompressed_out</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">bz2_in</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Input file &#39;{}&#39; not found!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bz2_in</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">decompressed_out</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">decom</span><span class="p">,</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">bz2_in</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">com</span><span class="p">:</span>
+            <span class="n">com_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">bz2_in</span><span class="p">)</span>
+            <span class="n">pbar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="n">Percentage</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()],</span> <span class="n">maxval</span><span class="o">=</span><span class="n">com_size</span><span class="p">)</span>
+            <span class="n">bytes_read</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">100000</span> <span class="o">*</span> <span class="mi">1024</span>
+            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">com</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">),</span> <span class="n">b</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+                <span class="n">decom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">bytes_read</span> <span class="o">+=</span> <span class="n">chunk_size</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bytes_read</span><span class="p">)</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Error decompressing &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bz2_in</span><span class="p">),</span> <span class="n">e</span>
+
+</div>
+<div class="viewcode-block" id="write_xtk_nrrd"><a class="viewcode-back" href="../conversion.html#conversion.write_xtk_nrrd">[docs]</a><span class="k">def</span> <span class="nf">write_xtk_nrrd</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">nrrd_out</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;encoding&quot;</span><span class="p">:</span> <span class="s">&quot;gzip&quot;</span><span class="p">,</span>
+                   <span class="s">&quot;space&quot;</span><span class="p">:</span> <span class="s">&quot;left-posterior-superior&quot;</span><span class="p">,</span>
+                   <span class="s">&quot;space directions&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+                   <span class="s">&quot;kinds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;domain&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">],</span>
+                   <span class="s">&quot;space origin&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]}</span>
+        <span class="n">nrrd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">nrrd_out</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Failure writing .nrrd file: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<span class="c"># # Define input raw file parameters</span>
+<span class="c"># fileName = sys.argv[1]</span>
+<span class="c"># dims = (642, 465, 417)</span>
+<span class="c">#</span>
+<span class="c"># # Load raw binary data into numpy array</span>
+<span class="c"># print &quot;Reading raw data...&quot;</span>
+<span class="c"># volume = np.fromfile(fileName, dtype=np.uint8).reshape(dims)</span>
+<span class="c"># im = sitk.GetImageFromArray(volume)</span>
+<span class="c">#</span>
+<span class="c"># # Shrink</span>
+<span class="c"># imShrunk = sitk.Shrink(im, (2,2,2))</span>
+<span class="c">#</span>
+<span class="c"># # Write as nifti</span>
+<span class="c"># outfile = fileName.split(&quot;.raw&quot;)[0] + &quot;.nrrd&quot;</span>
+<span class="c"># print &quot;Writing NRRD data to &quot; + outfile</span>
+<span class="c"># sitk.WriteImage(sitk.Cast(imShrunk, sitk.sitkUInt8), outfile)</span>
+
+<span class="c"># class XTKConverter():</span>
+<span class="c">#</span>
+<span class="c">#     dtype_dict = {&quot;unsigned short&quot;: np.uint16, &quot;signed short&quot;: np.int16,</span>
+<span class="c">#                   &quot;unsigned byte&quot;: np.uint8, &quot;signed byte&quot;: np.int8}</span>
+<span class="c">#</span>
+<span class="c">#     def __init__(self, input_folder, src=&quot;pipeline&quot;):</span>
+<span class="c">#</span>
+<span class="c">#         self.input_folder = input_folder</span>
+<span class="c">#         self.output_folder = os.path.join(self.input_folder, &quot;converted&quot;)</span>
+<span class="c">#</span>
+<span class="c">#         if os.path.isdir(self.output_folder) is False:</span>
+<span class="c">#             os.mkdir(self.output_folder)</span>
+<span class="c">#</span>
+<span class="c">#         if src == &quot;pipeline&quot;:</span>
+<span class="c">#</span>
+<span class="c">#             for file_ in (file_ for file_ in os.listdir(input_folder) if file_.split(&#39;.&#39;)[-1] == &quot;mnc&quot;):</span>
+<span class="c">#                 print &quot;Converting {}...&quot;.format(file_)</span>
+<span class="c">#                 nrrd_out = os.path.join(self.output_folder, file_ + &quot;.nrrd&quot;)</span>
+<span class="c">#                 self.minc_to_nrrd(file_, nrrd_out)</span>
+<span class="c">#</span>
+<span class="c">#                 # return  # REMOVE TO CONTINUE FOR LOOP, REST IS UNREACHABLE</span>
+<span class="c">#</span>
+<span class="c">#         elif src == &quot;harp&quot;:</span>
+<span class="c">#             return</span>
+<span class="c">#         else:</span>
+<span class="c">#             return</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">recon</span> <span class="o">=</span> <span class="s">&#39;/home/james/soft/test.nrrd.bz2&#39;</span>
+    <span class="n">image_parts</span> <span class="o">=</span> <span class="n">recon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">extsep</span><span class="p">)</span>
+
+    <span class="n">decom_out</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">image_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="n">decom_tmp</span> <span class="o">=</span> <span class="n">decompress_bz2</span><span class="p">(</span><span class="n">recon</span><span class="p">,</span> <span class="n">decom_out</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">decom_tmp</span>
+    <span class="c"># tiffs_to_nrrd(&#39;/home/james/tmp/test_tiffs/&#39;, &#39;/home/james/tmp/test.nrrd&#39;)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, James Brown.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

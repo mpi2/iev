@@ -1,8 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bb3ac3f4-db15-43c4-b540-4d15d54127fa" name="Default" comment="">
+    <list default="true" id="bb3ac3f4-db15-43c4-b540-4d15d54127fa" name="Default" comment="Fixed a few minor bugs, and added documentation">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/EmbryoPreprocess.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/SliceGenerator.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/ajax-loader.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/comment-bright.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/comment-close.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/comment.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/conversion.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/down-pressed.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/down.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/environment.pickle" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/file.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/index.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/minus.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/nrrd.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/objects.inv" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/plus.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/resampler.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/test.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/doctrees/tifffile.doctree" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/up-pressed.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/up.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/.buildinfo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/EmbryoPreprocess.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_modules/EmbryoPreprocess.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/EmbryoPreprocess.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/EmbryoPreprocess.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/Makefile" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/SliceGenerator.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_modules/SliceGenerator.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/SliceGenerator.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/SliceGenerator.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/basic.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/conf.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/conversion.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_modules/conversion.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/conversion.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/conversion.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/default.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/doctools.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/genindex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_modules/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/index.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/index.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/jquery.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/make.bat" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/nrrd.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_modules/nrrd.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/nrrd.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/nrrd.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/py-modindex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/pygments.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/resampler.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_modules/resampler.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/resampler.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/resampler.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/search.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/searchindex.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/searchtools.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/sidebar.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/test.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/test.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/test.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/tifffile.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_modules/tifffile.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/tifffile.rst" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_sources/tifffile.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/underscore.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/python/docs/_build/html/_static/websupport.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/python/EmbryoPreprocess.py" afterPath="$PROJECT_DIR$/python/EmbryoPreprocess.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/python/SliceGenerator.py" afterPath="$PROJECT_DIR$/python/SliceGenerator.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/python/conversion.py" afterPath="$PROJECT_DIR$/python/conversion.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/python/nrrd.py" afterPath="$PROJECT_DIR$/python/nrrd.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/python/resampler.py" afterPath="$PROJECT_DIR$/python/resampler.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -27,13 +100,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="EmbryoPreprocess.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="EmbryoPreprocess.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/EmbryoPreprocess.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.3692946" vertical-offset="3314" max-vertical-offset="5382">
-              <caret line="194" column="0" selection-start-line="194" selection-start-column="0" selection-end-line="194" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="5104" max-vertical-offset="7146">
+              <caret line="330" column="23" selection-start-line="330" selection-start-column="23" selection-end-line="330" selection-end-column="23" />
               <folding>
                 <element signature="e#22#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="resampler.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python/resampler.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1811" max-vertical-offset="2952">
+              <caret line="133" column="0" selection-start-line="133" selection-start-column="0" selection-end-line="133" selection-end-column="0" />
+              <folding>
+                <element signature="e#160#171#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -42,30 +127,20 @@
       <file leaf-file-name="conversion.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/conversion.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="915" max-vertical-offset="2376">
-              <caret line="68" column="8" selection-start-line="68" selection-start-column="8" selection-end-line="68" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="resampler.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/python/resampler.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1665" max-vertical-offset="2700">
-              <caret line="104" column="71" selection-start-line="104" selection-start-column="71" selection-end-line="104" selection-end-column="71" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="594" max-vertical-offset="2592">
+              <caret line="68" column="58" selection-start-line="68" selection-start-column="58" selection-end-line="68" selection-end-column="58" />
               <folding>
-                <element signature="e#160#171#0" expanded="true" />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SliceGenerator.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SliceGenerator.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/python/SliceGenerator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3260" max-vertical-offset="3888">
-              <caret line="175" column="23" selection-start-line="175" selection-start-column="23" selection-end-line="175" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.23580787" vertical-offset="0" max-vertical-offset="3906">
+              <caret line="12" column="29" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
               <folding>
                 <element signature="e#22#31#0" expanded="true" />
               </folding>
@@ -73,21 +148,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="nrrd.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/python/nrrd.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3197" max-vertical-offset="5544">
-              <caret line="184" column="12" selection-start-line="184" selection-start-column="12" selection-end-line="184" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="valid_entries.sql" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/sql/valid_entries.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="63" max-vertical-offset="558">
-              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="162" max-vertical-offset="558">
+              <caret line="9" column="19" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -106,7 +171,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/python/nrrd.py" />
         <option value="$PROJECT_DIR$/python/sql/insert_embryo.sql" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/python/sql/all_media.sql" />
@@ -114,18 +178,19 @@
         <option value="$PROJECT_DIR$/main/webapp/index.html" />
         <option value="$PROJECT_DIR$/python/sql/valid_entries.sql" />
         <option value="$PROJECT_DIR$/python/sql/get_status.sql" />
-        <option value="$PROJECT_DIR$/python/resampler.py" />
         <option value="$PROJECT_DIR$/python/sql/update_status.sql" />
-        <option value="$PROJECT_DIR$/python/SliceGenerator.py" />
+        <option value="$PROJECT_DIR$/python/nrrd.py" />
         <option value="$PROJECT_DIR$/python/conversion.py" />
+        <option value="$PROJECT_DIR$/python/resampler.py" />
         <option value="$PROJECT_DIR$/python/EmbryoPreprocess.py" />
+        <option value="$PROJECT_DIR$/python/SliceGenerator.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="121" />
-    <option name="y" value="96" />
-    <option name="width" value="1712" />
+    <option name="y" value="56" />
+    <option name="width" value="1711" />
     <option name="height" value="1067" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -183,24 +248,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="python" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xtk_viewer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="python" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sql" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -552,7 +599,13 @@
       <option name="project" value="LOCAL" />
       <updated>1425658321260</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Added empty function for generating MIP for QC from low res volume">
+      <created>1425659359933</created>
+      <option name="number" value="00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1425659359933</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -576,29 +629,29 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="121" y="96" width="1712" height="1067" extended-state="0" />
+    <frame x="121" y="56" width="1711" height="1067" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44362485" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39962122" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32771337" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25847954" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25863078" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39962122" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32771337" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44362485" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32876712" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -631,36 +684,31 @@
     <MESSAGE value="Changed valid data query" />
     <MESSAGE value="Slice generates for NRRD by default, uses unu subprocess for raw" />
     <MESSAGE value="Lots of changes, script now updates statuses and various other bits in table" />
-    <option name="LAST_COMMIT_MESSAGE" value="Lots of changes, script now updates statuses and various other bits in table" />
+    <MESSAGE value="Added empty function for generating MIP for QC from low res volume" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added empty function for generating MIP for QC from low res volume" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="190" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/python/resampler.py</url>
+          <line>48</line>
+          <option name="timeStamp" value="225" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/python/resampler.py</url>
+          <line>111</line>
+          <option name="timeStamp" value="227" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="228" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/python/EmbryoPreprocess.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="54" max-vertical-offset="2880">
-          <caret line="23" column="49" selection-start-line="23" selection-start-column="49" selection-end-line="23" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/SliceGenerator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1584">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/EmbryoPreprocess.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="54" max-vertical-offset="2880">
-          <caret line="41" column="44" selection-start-line="41" selection-start-column="44" selection-end-line="41" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
@@ -816,13 +864,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/lib/python2.7/dist-packages/numpy/core/memmap.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3327787" vertical-offset="4354" max-vertical-offset="5598">
-          <caret line="253" column="0" selection-start-line="253" selection-start-column="0" selection-end-line="253" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/python/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.38709676" vertical-offset="0" max-vertical-offset="1023">
@@ -926,7 +967,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.47214076" vertical-offset="3513" max-vertical-offset="4536">
           <caret line="222" column="30" selection-start-line="222" selection-start-column="30" selection-end-line="222" selection-end-column="30" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -934,7 +974,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334" vertical-offset="14001" max-vertical-offset="86994">
           <caret line="805" column="0" selection-start-line="805" selection-start-column="0" selection-end-line="805" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -942,41 +981,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="9447" max-vertical-offset="29430">
           <caret line="534" column="0" selection-start-line="534" selection-start-column="0" selection-end-line="534" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/sql/valid_entries.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="63" max-vertical-offset="558">
-          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/nrrd.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3197" max-vertical-offset="5544">
-          <caret line="184" column="12" selection-start-line="184" selection-start-column="12" selection-end-line="184" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/SliceGenerator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3206" max-vertical-offset="3888">
-          <caret line="175" column="23" selection-start-line="175" selection-start-column="23" selection-end-line="175" selection-end-column="23" />
-          <folding>
-            <element signature="e#22#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/conversion.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="915" max-vertical-offset="2376">
-          <caret line="68" column="8" selection-start-line="68" selection-start-column="8" selection-end-line="68" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -984,26 +988,95 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334" vertical-offset="1077" max-vertical-offset="8046">
           <caret line="74" column="0" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
-          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/local/lib/python2.7/dist-packages/ctutils-0.2-py2.7.egg!/ctutils/readers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="1149" max-vertical-offset="4356">
+          <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python2.7/dist-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="8475" max-vertical-offset="52506">
+          <caret line="488" column="0" selection-start-line="488" selection-start-column="0" selection-end-line="488" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python2.7/dist-packages/numpy/core/memmap.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="4389" max-vertical-offset="5598">
+          <caret line="253" column="0" selection-start-line="253" selection-start-column="0" selection-end-line="253" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python2.7/dist-packages/numpy/core/shape_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.74545455" vertical-offset="4599" max-vertical-offset="5094">
+          <caret line="276" column="0" selection-start-line="276" selection-start-column="0" selection-end-line="276" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/nrrd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.0678807" vertical-offset="5901" max-vertical-offset="9126">
+          <caret line="292" column="14" selection-start-line="292" selection-start-column="14" selection-end-line="292" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python2.7/tarfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4060606" vertical-offset="41991" max-vertical-offset="47016">
+          <caret line="2353" column="0" selection-start-line="2353" selection-start-column="0" selection-end-line="2353" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/conversion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1404" max-vertical-offset="2592">
+          <caret line="68" column="58" selection-start-line="68" selection-start-column="58" selection-end-line="68" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/python/resampler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1620" max-vertical-offset="2700">
-          <caret line="104" column="71" selection-start-line="104" selection-start-column="71" selection-end-line="104" selection-end-column="71" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1811" max-vertical-offset="2952">
+          <caret line="133" column="0" selection-start-line="133" selection-start-column="0" selection-end-line="133" selection-end-column="0" />
           <folding>
             <element signature="e#160#171#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/python/sql/valid_entries.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="558">
+          <caret line="9" column="19" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/python/EmbryoPreprocess.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3692946" vertical-offset="3314" max-vertical-offset="5382">
-          <caret line="194" column="0" selection-start-line="194" selection-start-column="0" selection-end-line="194" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="5104" max-vertical-offset="7146">
+          <caret line="330" column="23" selection-start-line="330" selection-start-column="23" selection-end-line="330" selection-end-column="23" />
           <folding>
             <element signature="e#22#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/SliceGenerator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.23580787" vertical-offset="0" max-vertical-offset="3906">
+          <caret line="12" column="29" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
+          <folding>
+            <element signature="e#22#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
