@@ -1,15 +1,21 @@
+"""Resampler for the embryo pre-processing script.
+
+This module performs resampling of images of arbitrary size, using a slice generator and memory mapped raw files.
+
+Requirements
+------------
+* `OpenCV 2.4.9 <http://docs.opencv.org/>`_
+* `Numpy 1.8.2 <http://www.numpy.org>`_
+* `python-progressbar 2.3 <https://code.google.com/p/python-progressbar/>`_
+
+Examples
+--------
+>>> from resampler import resample
+>>> from SliceGenerator import NrrdSliceGenerator
+>>> gen = NrrdSliceGenerator('/path/to/file.nrrd')
+>>> resample(gen, 0.5, '/path/to/rescaled.nrrd')
+
 """
-Resampler for the preprocessing script
-
-What this script will do when finished:
-
-    Get src and dest directories
-
-    make a memory-mapped version
-
-
-"""
-
 
 import nrrd
 import cv2
@@ -25,25 +31,21 @@ else:
 
 
 def resample(slicegen, scale, nrrd_path):
-    """
+    """The resample method takes a slice generator and scaling factor as arguments, resamples the image accordingly,
+    and writes it to disk as an IEV-ready NRRD file.
 
-    :param array: numpy-like array - accepts np.memmap objects and h5py array objects
-    :param scale: scale factor. Should be < 1 for downscaling
-    :param outfile: outfile NRRD containing extension
-    :raises: Make sure to add some error handling
+    :param slicegen: a slice generator that provides xy slices of an image as two-dimensional numpy arrays
+    :param scale: scaling factor for resampling, which should be < 1 for downscaling (e.g. 0.5)
+    :param nrrd_path: outfile NRRD containing extension
     """
 
     temp_xy = tempfile.TemporaryFile(mode='wb+')
-
     temp_xyz = tempfile.TemporaryFile(mode='wb+')
 
-    scaleby_int = True
-
-    #Get dimensions for the memory mapped raw xy file
+    # Get dimensions for the memory mapped raw xy file
     xy_scaled_dims = [slicegen.shape()[2]]
 
     datatype = slicegen.dtype #TODO chage
-
     first = True
 
     pbar = ProgressBar(widgets=["-- scaling in xy: ", Percentage(), Bar()], maxval=xy_scaled_dims[0]).start()
@@ -124,7 +126,11 @@ def resample(slicegen, scale, nrrd_path):
 
 def _droppixels(a, scaley, scalex):
     """
-    Make an array divisible by integar scale factors by dropping pixels from the right and bottom of the image
+    Make an array divisible by integer scale factors by dropping pixels from the right and bottom of the image.
+    :param a: the array to be pixel dropped
+    :param scaley: the scaling factor in Y
+    :param scalex: the scaling factor in X
+    :returns a: the pixel dropped image
     """
 
     #If New dimension not integral factors of original, drop pixels to make it so they are
@@ -136,7 +142,6 @@ def _droppixels(a, scaley, scalex):
     changed = False
 
     # Get the shape of the old array after dropping pixels
-
     dropy = y1 % scaley
     if dropy != 0:
         b = a[0:-dropy]
@@ -151,7 +156,6 @@ def _droppixels(a, scaley, scalex):
         b = a
 
     return b
-
 
 if __name__ == '__main__':
 

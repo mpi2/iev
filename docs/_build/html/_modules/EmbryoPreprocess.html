@@ -47,6 +47,45 @@
           <div class="body">
             
   <h1>Source code for EmbryoPreprocess</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># EmbryoPreprocess.py</span>
+
+<span class="c"># Licensing information to go here</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Search for downloaded embryo media (OPT/uCT) and pre-process it accordingly for viewing in Internet Embryo Viewer (IEV)</span>
+
+<span class="sd">Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),</span>
+<span class="sd">username (USER) and password (PASS) required to connect to the database. This allows for easy switching between</span>
+<span class="sd">&quot;prince&quot; and &quot;live&quot;.</span>
+
+<span class="sd">To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,</span>
+<span class="sd">the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid</span>
+<span class="sd">data is added to a pre-processing list which is subsequently handled by the &quot;process_recons()&quot; method.</span>
+
+<span class="sd">:Author:</span>
+<span class="sd">  `James Brown`</span>
+
+<span class="sd">:Organization:</span>
+<span class="sd">  Medical Research Council (MRC) Harwell, Oxfordshire, UK</span>
+
+<span class="sd">:Version: 0.0.1</span>
+
+<span class="sd">Requirements</span>
+<span class="sd">------------</span>
+<span class="sd">* `Python 2.7 &lt;http://www.python.org&gt;`_</span>
+<span class="sd">* `Numpy 1.8.2 &lt;http://www.numpy.org&gt;`_</span>
+<span class="sd">* `PyYAML 3.11 &lt;http://pyyaml.org/&gt;`_</span>
+<span class="sd">* `MySQLdb 1.2.3 &lt;http://mysql-python.sourceforge.net/MySQLdb.html&gt;`_</span>
+<span class="sd">* `SimpleITK 0.8.1 &lt;http://www.simpleitk.org/&gt;`_</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; ep = EmbryoPreprocess(&#39;/local/folder/IMPC_media&#39;, &#39;phenodcc_embryo.preprocessed&#39;, &#39;db_connect.yaml&#39;)</span>
+<span class="sd">&gt;&gt;&gt; ep.run()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;james&#39;</span>
 
 <span class="kn">import</span> <span class="nn">yaml</span>
@@ -86,16 +125,6 @@
 
 
 <div class="viewcode-block" id="EmbryoPreprocess"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess">[docs]</a><span class="k">class</span> <span class="nc">EmbryoPreprocess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;EmbryoProcess is a object which queries and pre-processes embryo image data (uCT/OPT)</span>
-
-<span class="sd">    Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),</span>
-<span class="sd">    username (USER) and password (PASS) required to connect to the database. This allows for easy switching between</span>
-<span class="sd">    &quot;prince&quot; and &quot;live&quot;.</span>
-
-<span class="sd">    To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,</span>
-<span class="sd">    the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid</span>
-<span class="sd">    data is added to a pre-processing list which is subsequently handled by the &quot;process_recons()&quot; method.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_path</span><span class="p">,</span> <span class="n">embryo_table</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The __init__ initialises a number of class attributes, and parses the .yaml config file.</span>

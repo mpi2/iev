@@ -54,33 +54,45 @@
             
   <div class="section" id="module-resampler">
 <span id="resampler-module"></span><h1>resampler module<a class="headerlink" href="#module-resampler" title="Permalink to this headline">¶</a></h1>
-<p>Resampler for the preprocessing script</p>
-<p>What this script will do when finished:</p>
-<blockquote>
-<div><p>Get src and dest directories</p>
-<p>make a memory-mapped version</p>
-</div></blockquote>
+<p>Resampler for the embryo pre-processing script.</p>
+<p>This module performs resampling of images of arbitrary size, using a slice generator and memory mapped raw files.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://docs.opencv.org/">OpenCV 2.4.9</a></li>
+<li><a class="reference external" href="http://www.numpy.org">Numpy 1.8.2</a></li>
+<li><a class="reference external" href="https://code.google.com/p/python-progressbar/">python-progressbar 2.3</a></li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">resampler</span> <span class="kn">import</span> <span class="n">resample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">SliceGenerator</span> <span class="kn">import</span> <span class="n">NrrdSliceGenerator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">NrrdSliceGenerator</span><span class="p">(</span><span class="s">&#39;/path/to/file.nrrd&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resample</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s">&#39;/path/to/rescaled.nrrd&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="function">
 <dt id="resampler.resample">
 <tt class="descclassname">resampler.</tt><tt class="descname">resample</tt><big>(</big><em>slicegen</em>, <em>scale</em>, <em>nrrd_path</em><big>)</big><a class="reference internal" href="_modules/resampler.html#resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#resampler.resample" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>The resample method takes a slice generator and scaling factor as arguments, resamples the image accordingly,
+and writes it to disk as an IEV-ready NRRD file.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>array</strong> &#8211; numpy-like array - accepts np.memmap objects and h5py array objects</li>
-<li><strong>scale</strong> &#8211; scale factor. Should be &lt; 1 for downscaling</li>
-<li><strong>outfile</strong> &#8211; outfile NRRD containing extension</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>slicegen</strong> &#8211; a slice generator that provides xy slices of an image as two-dimensional numpy arrays</li>
+<li><strong>scale</strong> &#8211; scaling factor for resampling, which should be &lt; 1 for downscaling (e.g. 0.5)</li>
+<li><strong>nrrd_path</strong> &#8211; outfile NRRD containing extension</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">Make sure to add some error handling</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
+</div>
 </div>
 
 
@@ -89,6 +101,15 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">resampler module</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="nrrd.html"
                         title="previous chapter">nrrd module</a></p>

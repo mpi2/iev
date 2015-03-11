@@ -54,17 +54,45 @@
             
   <div class="section" id="module-EmbryoPreprocess">
 <span id="embryopreprocess-module"></span><h1>EmbryoPreprocess module<a class="headerlink" href="#module-EmbryoPreprocess" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="EmbryoPreprocess.EmbryoPreprocess">
-<em class="property">class </em><tt class="descclassname">EmbryoPreprocess.</tt><tt class="descname">EmbryoPreprocess</tt><big>(</big><em>base_path</em>, <em>embryo_table</em>, <em>config_file</em><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>EmbryoProcess is a object which queries and pre-processes embryo image data (uCT/OPT)</p>
+<p>Search for downloaded embryo media (OPT/uCT) and pre-process it accordingly for viewing in Internet Embryo Viewer (IEV)</p>
 <p>Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),
 username (USER) and password (PASS) required to connect to the database. This allows for easy switching between
 &#8220;prince&#8221; and &#8220;live&#8221;.</p>
 <p>To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,
 the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid
 data is added to a pre-processing list which is subsequently handled by the &#8220;process_recons()&#8221; method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body"><cite>James Brown</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Organization:</th><td class="field-body">Medical Research Council (MRC) Harwell, Oxfordshire, UK</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body">0.0.1</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://www.python.org">Python 2.7</a></li>
+<li><a class="reference external" href="http://www.numpy.org">Numpy 1.8.2</a></li>
+<li><a class="reference external" href="http://pyyaml.org/">PyYAML 3.11</a></li>
+<li><a class="reference external" href="http://mysql-python.sourceforge.net/MySQLdb.html">MySQLdb 1.2.3</a></li>
+<li><a class="reference external" href="http://www.simpleitk.org/">SimpleITK 0.8.1</a></li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ep</span> <span class="o">=</span> <span class="n">EmbryoPreprocess</span><span class="p">(</span><span class="s">&#39;/local/folder/IMPC_media&#39;</span><span class="p">,</span> <span class="s">&#39;phenodcc_embryo.preprocessed&#39;</span><span class="p">,</span> <span class="s">&#39;db_connect.yaml&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="EmbryoPreprocess.EmbryoPreprocess">
+<em class="property">class </em><tt class="descclassname">EmbryoPreprocess.</tt><tt class="descname">EmbryoPreprocess</tt><big>(</big><em>base_path</em>, <em>embryo_table</em>, <em>config_file</em><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="method">
 <dt id="EmbryoPreprocess.EmbryoPreprocess.db_connect">
 <tt class="descname">db_connect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/EmbryoPreprocess.html#EmbryoPreprocess.db_connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmbryoPreprocess.EmbryoPreprocess.db_connect" title="Permalink to this definition">¶</a></dt>
@@ -173,6 +201,7 @@ IMPC_EMO_001_001 (uCT E14.5/15.5) and IMPC_EMA_001_001 (uCT E18.5).</p>
 </dd></dl>
 
 </div>
+</div>
 
 
           </div>
@@ -180,6 +209,15 @@ IMPC_EMO_001_001 (uCT E14.5/15.5) and IMPC_EMA_001_001 (uCT E18.5).</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">EmbryoPreprocess module</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to Embryo Pre-processing&#8217;s documentation!</a></p>

@@ -47,18 +47,24 @@
           <div class="body">
             
   <h1>Source code for resampler</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Resampler for the embryo pre-processing script.</span>
+
+<span class="sd">This module performs resampling of images of arbitrary size, using a slice generator and memory mapped raw files.</span>
+
+<span class="sd">Requirements</span>
+<span class="sd">------------</span>
+<span class="sd">* `OpenCV 2.4.9 &lt;http://docs.opencv.org/&gt;`_</span>
+<span class="sd">* `Numpy 1.8.2 &lt;http://www.numpy.org&gt;`_</span>
+<span class="sd">* `python-progressbar 2.3 &lt;https://code.google.com/p/python-progressbar/&gt;`_</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; from resampler import resample</span>
+<span class="sd">&gt;&gt;&gt; from SliceGenerator import NrrdSliceGenerator</span>
+<span class="sd">&gt;&gt;&gt; gen = NrrdSliceGenerator(&#39;/path/to/file.nrrd&#39;)</span>
+<span class="sd">&gt;&gt;&gt; resample(gen, 0.5, &#39;/path/to/rescaled.nrrd&#39;)</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Resampler for the preprocessing script</span>
-
-<span class="sd">What this script will do when finished:</span>
-
-<span class="sd">    Get src and dest directories</span>
-
-<span class="sd">    make a memory-mapped version</span>
-
-
-<span class="sd">&quot;&quot;&quot;</span>
-
 
 <span class="kn">import</span> <span class="nn">nrrd</span>
 <span class="kn">import</span> <span class="nn">cv2</span>
@@ -74,25 +80,21 @@
 
 
 <div class="viewcode-block" id="resample"><a class="viewcode-back" href="../resampler.html#resampler.resample">[docs]</a><span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="n">slicegen</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nrrd_path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;The resample method takes a slice generator and scaling factor as arguments, resamples the image accordingly,</span>
+<span class="sd">    and writes it to disk as an IEV-ready NRRD file.</span>
 
-<span class="sd">    :param array: numpy-like array - accepts np.memmap objects and h5py array objects</span>
-<span class="sd">    :param scale: scale factor. Should be &lt; 1 for downscaling</span>
-<span class="sd">    :param outfile: outfile NRRD containing extension</span>
-<span class="sd">    :raises: Make sure to add some error handling</span>
+<span class="sd">    :param slicegen: a slice generator that provides xy slices of an image as two-dimensional numpy arrays</span>
+<span class="sd">    :param scale: scaling factor for resampling, which should be &lt; 1 for downscaling (e.g. 0.5)</span>
+<span class="sd">    :param nrrd_path: outfile NRRD containing extension</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">temp_xy</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;wb+&#39;</span><span class="p">)</span>
-
     <span class="n">temp_xyz</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;wb+&#39;</span><span class="p">)</span>
 
-    <span class="n">scaleby_int</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="c">#Get dimensions for the memory mapped raw xy file</span>
+    <span class="c"># Get dimensions for the memory mapped raw xy file</span>
     <span class="n">xy_scaled_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">slicegen</span><span class="o">.</span><span class="n">shape</span><span class="p">()[</span><span class="mi">2</span><span class="p">]]</span>
 
     <span class="n">datatype</span> <span class="o">=</span> <span class="n">slicegen</span><span class="o">.</span><span class="n">dtype</span> <span class="c">#TODO chage</span>
-
     <span class="n">first</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="n">pbar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;-- scaling in xy: &quot;</span><span class="p">,</span> <span class="n">Percentage</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()],</span> <span class="n">maxval</span><span class="o">=</span><span class="n">xy_scaled_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -173,7 +175,11 @@
 </div>
 <span class="k">def</span> <span class="nf">_droppixels</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">scaley</span><span class="p">,</span> <span class="n">scalex</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Make an array divisible by integar scale factors by dropping pixels from the right and bottom of the image</span>
+<span class="sd">    Make an array divisible by integer scale factors by dropping pixels from the right and bottom of the image.</span>
+<span class="sd">    :param a: the array to be pixel dropped</span>
+<span class="sd">    :param scaley: the scaling factor in Y</span>
+<span class="sd">    :param scalex: the scaling factor in X</span>
+<span class="sd">    :returns a: the pixel dropped image</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c">#If New dimension not integral factors of original, drop pixels to make it so they are</span>
@@ -185,7 +191,6 @@
     <span class="n">changed</span> <span class="o">=</span> <span class="bp">False</span>
 
     <span class="c"># Get the shape of the old array after dropping pixels</span>
-
     <span class="n">dropy</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">%</span> <span class="n">scaley</span>
     <span class="k">if</span> <span class="n">dropy</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="n">dropy</span><span class="p">]</span>
@@ -200,7 +205,6 @@
         <span class="n">b</span> <span class="o">=</span> <span class="n">a</span>
 
     <span class="k">return</span> <span class="n">b</span>
-
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
 

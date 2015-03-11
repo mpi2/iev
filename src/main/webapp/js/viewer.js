@@ -81,11 +81,13 @@
                   volume.indexX = Math.floor((dims[0] - 1) / 2);
                   volume.indexY = Math.floor((dims[1] - 1) / 2);
                   volume.indexZ = Math.floor((dims[2] - 1) / 2);
+                  xOffset = 0; yOffset = 0; zOffset = 0;
                   $xSlider.slider("value", volume.indexX);
                   $ySlider.slider("value", volume.indexY);
                   $zSlider.slider("value", volume.indexZ);
                   //reset the window level
                   $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+
             }, this));
 
 

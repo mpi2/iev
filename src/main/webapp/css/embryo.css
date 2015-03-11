@@ -19,12 +19,12 @@ body{
 
 
 .sliceWrap{
-    	background-color: #000000;
-	float: left;
-	width: 33%;
-	display: inline-block;
-        position: relative;
-        height: 400px;
+    background-color: #000000;
+    float: left;
+    width: 33.3%;
+    display: inline-block;
+    position: relative;
+    height: 400px;
 }
 
 .sliceView{
@@ -47,9 +47,8 @@ body{
     position: absolute !important;
     bottom: 0;
     width:100%;
-    
-   
-
+    padding: 5px 10px 5px 10px;
+    vertical-align: middle;
 }
 
 .windowLevel{
@@ -71,8 +70,8 @@ body{
 }
 
 .lnkedViewCheck{
-    text-decoration: none;
-   background-image: url("images/Link-icon.svg_grey.png"); 
+   text-decoration: none;
+   background-image: url("images/Link-icon.svg_grey.png");
 }
 
 
@@ -195,23 +194,23 @@ body{
 
 input[type=checkbox].linkCheck {
     display:none;
-  }
+    
+}
 
 .sliceControls input[type="checkbox"]:checked + label{
     background-image:url(../Link-icon.svg.png);
- 
 }
 
 
 .sliceControls input[type="checkbox"] + label{
     display: inline-block;
-    padding-left:10px;
-    
+    cursor: pointer;
     height:15px;
     width: 15px;
     background-image:url(../Link-icon.svg_grey.png);
     background-size: 15px;
     background-repeat: no-repeat;
+    padding-top: 5px;
 }
 
 
@@ -224,7 +223,8 @@ input[type=checkbox].linkCheck {
 .sliceWrap .ui-slider-handle {
     height: 15px !important;
     width: 25px;
-    top: -8px;  
+    top: -7px;
+    cursor: pointer;
 }
 
 
@@ -238,6 +238,7 @@ input[type=checkbox].linkCheck {
     vertical-align: middle; 
     border: none;
     top:15px;
+    cursor: pointer;
 }
 
 
@@ -262,10 +263,9 @@ input[type=checkbox].linkCheck {
     float:right;
 }
 
-#wrap {
-	
-	margin-left: auto;
-	margin-right: auto;
+#wrap {	
+    margin-left: auto;
+    margin-right: auto;
 }
 
 

@@ -1,3 +1,42 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# EmbryoPreprocess.py
+
+# Licensing information to go here
+
+"""
+Search for downloaded embryo media (OPT/uCT) and pre-process it accordingly for viewing in Internet Embryo Viewer (IEV)
+
+Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),
+username (USER) and password (PASS) required to connect to the database. This allows for easy switching between
+"prince" and "live".
+
+To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,
+the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid
+data is added to a pre-processing list which is subsequently handled by the "process_recons()" method.
+
+:Author:
+  `James Brown`
+
+:Organization:
+  Medical Research Council (MRC) Harwell, Oxfordshire, UK
+
+:Version: 0.0.1
+
+Requirements
+------------
+* `Python 2.7 <http://www.python.org>`_
+* `Numpy 1.8.2 <http://www.numpy.org>`_
+* `PyYAML 3.11 <http://pyyaml.org/>`_
+* `MySQLdb 1.2.3 <http://mysql-python.sourceforge.net/MySQLdb.html>`_
+* `SimpleITK 0.8.1 <http://www.simpleitk.org/>`_
+
+Examples
+--------
+>>> ep = EmbryoPreprocess('/local/folder/IMPC_media', 'phenodcc_embryo.preprocessed', 'db_connect.yaml')
+>>> ep.run()
+"""
+
 __author__ = 'james'
 
 import yaml
@@ -37,16 +76,6 @@ UPDATE_STATUS_EXT_PIXEL = 'UPDATE {} SET status_id={}, extension_id={}, pixelsiz
 
 
 class EmbryoPreprocess(object):
-    """The EmbryoPreprocess class is used to query downloaded embryo media (OPT/uCT) and pre-process it accordingly.
-
-    Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),
-    username (USER) and password (PASS) required to connect to the database. This allows for easy switching between
-    "prince" and "live".
-
-    To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,
-    the program queries phenodcc_media.media_file, finding all valid recon media. Subject to certain constraints, valid
-    data is added to a pre-processing list which is subsequently handled by the "process_recons()" method.
-    """
 
     def __init__(self, base_path, embryo_table, config_file):
         """ The __init__ initialises a number of class attributes, and parses the .yaml config file.

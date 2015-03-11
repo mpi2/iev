@@ -57,27 +57,50 @@
 <dl class="function">
 <dt id="conversion.decompress_bz2">
 <tt class="descclassname">conversion.</tt><tt class="descname">decompress_bz2</tt><big>(</big><em>bz2_in</em>, <em>decompressed_out</em><big>)</big><a class="reference internal" href="_modules/conversion.html#decompress_bz2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#conversion.decompress_bz2" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="conversion.minc_to_array">
-<tt class="descclassname">conversion.</tt><tt class="descname">minc_to_array</tt><big>(</big><em>input_folder</em>, <em>minc_file</em><big>)</big><a class="reference internal" href="_modules/conversion.html#minc_to_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#conversion.minc_to_array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="conversion.nrrd_to_array">
-<tt class="descclassname">conversion.</tt><tt class="descname">nrrd_to_array</tt><big>(</big><em>nrrd_file</em><big>)</big><a class="reference internal" href="_modules/conversion.html#nrrd_to_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#conversion.nrrd_to_array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="conversion.tiffs_to_array">
-<tt class="descclassname">conversion.</tt><tt class="descname">tiffs_to_array</tt><big>(</big><em>folder_</em>, <em>out_path</em><big>)</big><a class="reference internal" href="_modules/conversion.html#tiffs_to_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#conversion.tiffs_to_array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The decompress_bz2 method performs sequential decompression of bzipped files on disk.</p>
+<p>If the bz2_in path can be found, the file is open and read in chunks of ~100 Mb at a time. Each chunk is then
+decompressed, and written to the file specified by decompressed_out. A progress bar is used to indicate how the
+decompression is getting on.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bz2_in</strong> &#8211; path to bzipped file to be decompressed</li>
+<li><strong>decompressed_out</strong> &#8211; path to output file, which can already exist</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises IOError:</th><td class="field-body"><p class="first last">the decompressed file could not be found/opened</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="conversion.write_xtk_nrrd">
 <tt class="descclassname">conversion.</tt><tt class="descname">write_xtk_nrrd</tt><big>(</big><em>volume</em>, <em>nrrd_out</em><big>)</big><a class="reference internal" href="_modules/conversion.html#write_xtk_nrrd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#conversion.write_xtk_nrrd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The write_xtk_nrrd method writes numpy arrays as IEV-ready NRRD files. It also works on memory mapped arrays.</p>
+<p>IEV works using the X Toolkit (XTK), which is quite particular about the NRRD files it displays. This method ensures
+that the NRRD headers are written appropriately, using nrrd.py by Maarten Everts
+(<a class="reference external" href="https://github.com/mhe/pynrrd/blob/master/nrrd.py">https://github.com/mhe/pynrrd/blob/master/nrrd.py</a>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>volume</strong> &#8211; a numpy array in memory, or a memory mapped numpy array</li>
+<li><strong>nrrd_out</strong> &#8211; a file path to which the NRRD file is written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises IOError:</th><td class="field-body"><p class="first last">unable to write file to disk</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
