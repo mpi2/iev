@@ -11,24 +11,43 @@ import subprocess as sp
 
 
 class SliceGenerator(object):
+    """The SliceGenerator class is an "abstract" superclass designed to be extended for specific file formats.
+
+    Subclasses should call the super constructor and override the slices() as a generator that yields image slices. The
+    class should also override the dtype() and shape() methods accordingly.
+
+    """
 
     def __init__(self, recon):
         self.recon = recon
         self.slice_index = 0
 
+
     def slices(self):
+        """The slices method should yield xy image slices from a memory mapped numpy array."""
         raise NotImplementedError("Ths method needs overriding")
 
     def dtype(self):
+        """The dtype method should return the datatype of the memory mapped numpy array"""
         raise NotImplementedError("Ths method needs overriding")
 
     def shape(self):
+        """The shape method should return the shape of the memory mapped numpy array in x, y, z order."""
         raise NotImplementedError("Ths method needs overriding")
 
 
 class TiffSliceGenerator(SliceGenerator):
+    """The TiffSliceGenerator class extends SliceGenerator, yielding slices from a folder of TIFFs.
+
+    This class is unlikely to ever be needed, as we should not receive folders of TIFFs from IMPC centres.
+    """
 
     def __init__(self, recon):
+        """The constructor takes a recon path as an argument.
+
+        :param recon:
+        :return:
+        """
 
         super(TiffSliceGenerator, self).__init__(recon)
 

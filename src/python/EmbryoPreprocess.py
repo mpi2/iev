@@ -37,7 +37,7 @@ UPDATE_STATUS_EXT_PIXEL = 'UPDATE {} SET status_id={}, extension_id={}, pixelsiz
 
 
 class EmbryoPreprocess(object):
-    """EmbryoProcess is a object which queries and pre-processes embryo image data (uCT/OPT)
+    """The EmbryoPreprocess class is used to query downloaded embryo media (OPT/uCT) and pre-process it accordingly.
 
     Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),
     username (USER) and password (PASS) required to connect to the database. This allows for easy switching between
