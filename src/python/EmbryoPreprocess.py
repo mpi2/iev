@@ -144,7 +144,7 @@ class EmbryoPreprocess(object):
 
             .. code-block:: mysql
 
-                SELECT * FROM phenodcc_embryo.preprocessed WHERE url = '/the/url/123456.bz2'
+                SELECT * FROM phenodcc_embryo.preprocessed WHERE url = "/the/url/123456.bz2"
 
             If URL already exists in phenodcc_embryo.preprocessed:
                 (1) Check its status ID and extension ID

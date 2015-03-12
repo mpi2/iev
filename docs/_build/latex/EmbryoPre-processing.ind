@@ -1,0 +1,120 @@
+\begin{theindex}
+\def\bigletter#1{{\Large\sffamily#1}\nopagebreak\vspace{1mm}}
+
+  \bigletter A
+  \item asarray() (tifffile.TiffFile method), \hyperpage{22}
+  \item asarray() (tifffile.TiffSequence method), \hyperpage{23}
+
+  \indexspace
+  \bigletter C
+  \item close() (tifffile.TiffFile method), \hyperpage{22}
+  \item close() (tifffile.TiffSequence method), \hyperpage{23}
+  \item conversion (module), \hyperpage{11}
+
+  \indexspace
+  \bigletter D
+  \item db\_connect() (EmbryoPreprocess.EmbryoPreprocess method), \hyperpage{4}
+  \item db\_disconnect() (EmbryoPreprocess.EmbryoPreprocess method), \hyperpage{4}
+  \item decompress\_bz2() (in module conversion), \hyperpage{11}
+  \item dtype() (SliceGenerator.MincSliceGenerator method), \hyperpage{7}
+  \item dtype() (SliceGenerator.NrrdSliceGenerator method), \hyperpage{8}
+  \item dtype() (SliceGenerator.SliceGenerator method), \hyperpage{8}
+  \item dtype() (SliceGenerator.TiffSliceGenerator method), \hyperpage{8}
+  \item dtype() (SliceGenerator.TiffStackSliceGenerator method), \hyperpage{9}
+  \item dtype() (SliceGenerator.TXMSliceGenerator method), \hyperpage{8}
+
+  \indexspace
+  \bigletter E
+  \item EmbryoPreprocess (class in EmbryoPreprocess), \hyperpage{4}
+  \item EmbryoPreprocess (module), \hyperpage{3}
+
+  \indexspace
+  \bigletter F
+  \item fstat (tifffile.TiffFile attribute), \hyperpage{22}
+
+  \indexspace
+  \bigletter G
+  \item get\_mip() (EmbryoPreprocess.EmbryoPreprocess method), \hyperpage{4}
+
+  \indexspace
+  \bigletter I
+  \item imread() (in module tifffile), \hyperpage{21}
+  \item imsave() (in module tifffile), \hyperpage{20}
+  \item imshow() (in module tifffile), \hyperpage{21}
+  \item is\_bigtiff (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_fluoview (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_imagej (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_lsm (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_mdgel (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_mediacy (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_micromanager (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_nih (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_ome (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_palette (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_rgb (tifffile.TiffFile attribute), \hyperpage{22}
+  \item is\_stk (tifffile.TiffFile attribute), \hyperpage{23}
+
+  \indexspace
+  \bigletter M
+  \item MincSliceGenerator (class in SliceGenerator), \hyperpage{7}
+
+  \indexspace
+  \bigletter N
+  \item nrrd (module), \hyperpage{13}
+  \item NrrdError, \hyperpage{13}
+  \item NrrdSliceGenerator (class in SliceGenerator), \hyperpage{7}
+
+  \indexspace
+  \bigletter P
+  \item parse\_header() (SliceGenerator.NrrdSliceGenerator method), \hyperpage{8}
+  \item parse\_nrrdvector() (in module nrrd), \hyperpage{13}
+  \item parse\_optional\_nrrdvector() (in module nrrd), \hyperpage{13}
+  \item process\_recons() (EmbryoPreprocess.EmbryoPreprocess method), \hyperpage{4}
+
+  \indexspace
+  \bigletter Q
+  \item query\_database() (EmbryoPreprocess.EmbryoPreprocess method), \hyperpage{5}
+
+  \indexspace
+  \bigletter R
+  \item read() (in module nrrd), \hyperpage{13}
+  \item read\_data() (in module nrrd), \hyperpage{13}
+  \item read\_header() (in module nrrd), \hyperpage{13}
+  \item resample() (in module resampler), \hyperpage{15}
+  \item resampler (module), \hyperpage{15}
+  \item run() (EmbryoPreprocess.EmbryoPreprocess method), \hyperpage{5}
+
+  \indexspace
+  \bigletter S
+  \item series (tifffile.TiffFile attribute), \hyperpage{23}
+  \item shape() (SliceGenerator.MincSliceGenerator method), \hyperpage{7}
+  \item shape() (SliceGenerator.NrrdSliceGenerator method), \hyperpage{8}
+  \item shape() (SliceGenerator.SliceGenerator method), \hyperpage{8}
+  \item shape() (SliceGenerator.TiffSliceGenerator method), \hyperpage{8}
+  \item shape() (SliceGenerator.TiffStackSliceGenerator method), \hyperpage{9}
+  \item shape() (SliceGenerator.TXMSliceGenerator method), \hyperpage{8}
+  \item SliceGenerator (class in SliceGenerator), \hyperpage{8}
+  \item SliceGenerator (module), \hyperpage{7}
+  \item slices() (SliceGenerator.MincSliceGenerator method), \hyperpage{7}
+  \item slices() (SliceGenerator.NrrdSliceGenerator method), \hyperpage{8}
+  \item slices() (SliceGenerator.SliceGenerator method), \hyperpage{8}
+  \item slices() (SliceGenerator.TiffSliceGenerator method), \hyperpage{9}
+  \item slices() (SliceGenerator.TiffStackSliceGenerator method), \hyperpage{9}
+  \item slices() (SliceGenerator.TXMSliceGenerator method), \hyperpage{8}
+
+  \indexspace
+  \bigletter T
+  \item test (module), \hyperpage{17}
+  \item TiffFile (class in tifffile), \hyperpage{22}
+  \item tifffile (module), \hyperpage{19}
+  \item TiffSequence (class in tifffile), \hyperpage{23}
+  \item TiffSliceGenerator (class in SliceGenerator), \hyperpage{8}
+  \item TiffStackSliceGenerator (class in SliceGenerator), \hyperpage{9}
+  \item TXMSliceGenerator (class in SliceGenerator), \hyperpage{8}
+
+  \indexspace
+  \bigletter W
+  \item write() (in module nrrd), \hyperpage{13}
+  \item write\_xtk\_nrrd() (in module conversion), \hyperpage{11}
+
+\end{theindex}

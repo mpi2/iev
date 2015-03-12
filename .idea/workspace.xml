@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bb3ac3f4-db15-43c4-b540-4d15d54127fa" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/python/sql/insert_embryo.sql" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/python/sql/insert_test_data.sql" afterPath="" />
+    <list default="true" id="bb3ac3f4-db15-43c4-b540-4d15d54127fa" name="Default" comment="Created PDF docs">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.pdf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.aux" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.idx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.ilg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.ind" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.log" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.out" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.tex" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/EmbryoPre-processing.toc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/Makefile" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/fncychap.sty" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/missfont.log" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/python.ist" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/sphinx.sty" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/sphinxhowto.cls" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/sphinxmanual.cls" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/_build/latex/tabulary.sty" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/_build/doctrees/EmbryoPreprocess.doctree" afterPath="$PROJECT_DIR$/docs/_build/doctrees/EmbryoPreprocess.doctree" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/_build/doctrees/environment.pickle" afterPath="$PROJECT_DIR$/docs/_build/doctrees/environment.pickle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/_build/html/objects.inv" afterPath="$PROJECT_DIR$/docs/_build/html/objects.inv" />
@@ -38,8 +53,8 @@
       <file leaf-file-name="EmbryoPreprocess.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/python/EmbryoPreprocess.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.3716216" vertical-offset="4640" max-vertical-offset="8532">
-              <caret line="270" column="128" selection-start-line="270" selection-start-column="128" selection-end-line="270" selection-end-column="128" />
+            <state vertical-scroll-proportion="0.43243244" vertical-offset="2408" max-vertical-offset="8532">
+              <caret line="148" column="62" selection-start-line="148" selection-start-column="62" selection-end-line="148" selection-end-column="62" />
               <folding>
                 <element signature="e#2398#2409#0" expanded="true" />
               </folding>
@@ -256,6 +271,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="sql" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xtk_viewer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xtk_viewer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="docs" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -647,7 +676,13 @@
       <option name="project" value="LOCAL" />
       <updated>1426091687696</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Added SQL queries to docs">
+      <created>1426094120287</created>
+      <option name="number" value="00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1426094120287</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -680,7 +715,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25863078" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25863078" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44362485" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -729,7 +764,8 @@
     <MESSAGE value="Added empty function for generating MIP for QC from low res volume" />
     <MESSAGE value="Fixed a few minor bugs, and added documentation" />
     <MESSAGE value="Updated docstrings and rebuilt docs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated docstrings and rebuilt docs" />
+    <MESSAGE value="Added SQL queries to docs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added SQL queries to docs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -945,8 +981,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/python/EmbryoPreprocess.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3716216" vertical-offset="4640" max-vertical-offset="8532">
-          <caret line="270" column="128" selection-start-line="270" selection-start-column="128" selection-end-line="270" selection-end-column="128" />
+        <state vertical-scroll-proportion="0.43243244" vertical-offset="2408" max-vertical-offset="8532">
+          <caret line="148" column="62" selection-start-line="148" selection-start-column="62" selection-end-line="148" selection-end-column="62" />
           <folding>
             <element signature="e#2398#2409#0" expanded="true" />
           </folding>
