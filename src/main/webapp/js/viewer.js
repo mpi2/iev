@@ -90,8 +90,6 @@
 
             }, this));
 
-
-
             $("#" + zoomIn)
             .button()
             .click($.proxy(function () {
@@ -225,6 +223,12 @@
 
 
         function replaceVolume(volumePath) {
+            
+            // Change background to black
+            if ($("#" + invertColours).is(':checked')) {
+                $("#" + invertColours).trigger('click');
+            }
+            
             //TODO. Memory is not being released wehen we delete renderer
             if (typeof (xRen) !== 'undefined') {
                 xRen.destroy();
@@ -288,7 +292,7 @@
             if (checked) {
                 volume.maxColor = [0, 0, 0];
                 volume.minColor = [1, 1, 1];
-                $("#" + id + "> .sliceView").css("background-color", "#FFFFFF");
+                $("#" + id + "> .sliceWrap").css("background-color", "#FFFFFF");
 
                 volume.indexX++;
                 volume.indexY++;
@@ -298,7 +302,7 @@
 
                 volume.maxColor = [1, 1, 1];
                 volume.minColor = [0, 0, 0];
-                $("#" + id + "> .sliceView").css("background-color", "#000000");
+                $("#" + id + "> .sliceWrap").css("background-color", "#000000");
 
                 // Bodge to get the colours to update
                 volume.indexX--;
@@ -436,6 +440,10 @@
             zRen.interactor.onMouseMove = function (event) {
                 updateSliders(zRen, event);
             }.bind(this);
+            
+            // Set the slice controls to be visible after rendering
+            $(".sliceControls").fadeIn(500);
+            
         };
         
         function setXindex(index){

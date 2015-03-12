@@ -51,15 +51,6 @@ body{
     vertical-align: middle;
 }
 
-.windowLevel{
-    float: left;
-    width: 200px;
-}
-
-/*clear{
-    clear:both;
-}*/
-
 #help_link, #help_form{
     float: left;
 }
@@ -69,42 +60,39 @@ body{
     margin-right: 10px;
 }
 
-.lnkedViewCheck{
-   text-decoration: none;
-   background-image: url("images/Link-icon.svg_grey.png");
-}
-
-
-.nodata{
-    font: 3em arial, sans-serif;
+.nodata {
+    font: 2em arial, sans-serif;
     top: 50%;
     position: relative;
-    background-color: #EBE7B9;
+    background-color: #E6E6E6;
     height: 300px;
     width: 100%;
-}
-
-
-
-/*.wlwrap{
-    position: relative;
-    float: left;
-    height: auto;
-}*/
-
-.windowLevel{
-    float:left;
-    vertical-align: middle; 
-    top:50%;
-    margin-left: 10px;
-    margin-top: 5px;  // Bodge. Need to get it to vertically align automatically*/ 
+    text-align: center;
+    padding: 25px;
 }
 
 .wlwrap{
-    top: 5px;
-    float:left;
-    height: auto;
-    margin: 0 5px;
+    margin-left: 15px;
+    margin-right: 10px;
+    margin-top: 4px;
+    float: left;  
+}
+
+.windowLevel{
+    width: 200px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.wlwrap .ui-slider, #viewHeightSlider.ui-slider {
+    height: 7px;
+    cursor: pointer;
+}
+.wlwrap .ui-slider-handle, #viewHeightSlider .ui-slider-handle {
+    top: -8px;
+    width: 8px;
+    margin-left: -5px;
+    cursor: pointer;
 }
 
 #talkbubble {
@@ -137,12 +125,11 @@ body{
     float:left;
 }
 
-#viewHeightSlider{
+#viewHeightSlider {
     float: right;
     width: 300px;
     top: 5px;
     margin: 0 10px;
-
 }
 
 .ui-selectmenu-text{
@@ -161,18 +148,8 @@ body{
     border-radius: 0px 5px 5px 0px;
 }
 
-/*#checkbox{
-    color:#FFFFFF !important;
-}*/
-
 .controls {
-
-    margin: 3px 0 3px 0;
-   
-}
-
-.controlsButtons{
-   
+    margin: 3px 0 3px 0;   
 }
 
 /*#controls .ui-slider {
@@ -193,14 +170,16 @@ body{
 }*/
 
 input[type=checkbox].linkCheck {
-    display:none;
-    
+    display:none;    
+}
+
+.sliceControls {
+    display: none;
 }
 
 .sliceControls input[type="checkbox"]:checked + label{
     background-image:url(../Link-icon.svg.png);
 }
-
 
 .sliceControls input[type="checkbox"] + label{
     display: inline-block;
@@ -210,7 +189,8 @@ input[type=checkbox].linkCheck {
     background-image:url(../Link-icon.svg_grey.png);
     background-size: 15px;
     background-repeat: no-repeat;
-    padding-top: 5px;
+    margin-top: 3px;
+    margin-left: 15px;
 }
 
 
@@ -219,15 +199,12 @@ input[type=checkbox].linkCheck {
     top: 20px;
 }
 
-
 .sliceWrap .ui-slider-handle {
     height: 15px !important;
     width: 25px;
     top: -7px;
     cursor: pointer;
 }
-
-
 
 .sliceWrap .ui-slider {
     height: 5px;
@@ -241,11 +218,6 @@ input[type=checkbox].linkCheck {
     cursor: pointer;
 }
 
-
-
-
-
-
 #top_bar{
 
     height: 30px;
@@ -253,7 +225,6 @@ input[type=checkbox].linkCheck {
     height: 40px;
     
 }
-
 
 #topleft{
 	float: left;
@@ -281,12 +252,11 @@ input[type=checkbox].linkCheck {
 */
 
 label#X_check_label span {
-background-color: #FF8585;
+    background-color: #FF8585;
 }
-
 label#X_check_label.ui-state-active span {
-background-color: red;
-     color:#DEDEDE;
+    background-color: red;
+    color:#DEDEDE;
 }
 
 label#Y_check_label span{
