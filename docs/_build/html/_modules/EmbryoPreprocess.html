@@ -1,0 +1,561 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>EmbryoPreprocess &mdash; Embryo Pre-processing 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Embryo Pre-processing 0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for EmbryoPreprocess</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># EmbryoPreprocess.py</span>
+
+<span class="c"># Licensing information to go here</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Search for downloaded embryo media (OPT/uCT) and pre-process it accordingly for viewing in Internet Embryo Viewer (IEV)</span>
+
+<span class="sd">Class instances are initialised by passing in a config (.yaml) file, which contains the hostname (HOST),</span>
+<span class="sd">username (USER) and password (PASS) required to connect to the database. This allows for easy switching between</span>
+<span class="sd">&quot;prince&quot; and &quot;live&quot;.</span>
+
+<span class="sd">To begin pre-processing, the run() method must be called. Upon establishing a successful connection to the database,</span>
+<span class="sd">the program queries phenodcc_media.media_file, finding all valid recon media:</span>
+
+<span class="sd">.. code-block:: mysql</span>
+
+<span class="sd">    SELECT cid, lid, gid, sid, pid, qid, genotype.genotype, gene_symbol, measurement_id, url, checksum, extension, metadataGroup</span>
+
+<span class="sd">    FROM phenodcc_media.media_file, phenodcc_overviews.genotype, phenodcc_embryo.file_extension, phenodcc_overviews.measurements_performed</span>
+
+<span class="sd">    WHERE</span>
+
+<span class="sd">    -- get the qid for the recon parameters</span>
+<span class="sd">    -- IMPC_EOL_001_001 OPT E9.5</span>
+<span class="sd">    -- IMPC_EMO_001_001 uCT E14.5/E15.5</span>
+<span class="sd">    -- IMPC_EMA_001_001 uCT E18.5</span>
+<span class="sd">    qid = (select impress.parameter.parameter_id from impress.parameter where parameter.parameter_key = &quot;IMPC_EMO_001_001&quot; )</span>
+
+<span class="sd">    -- join with measurements_performed to get the latest active and valid data</span>
+<span class="sd">    and mid = measurements_performed.measurement_id</span>
+
+<span class="sd">    -- join with genotype to get the colony id and gene_symbol</span>
+<span class="sd">    AND genotype.genotype_id = gid</span>
+
+<span class="sd">    -- join with extension to get the extension</span>
+<span class="sd">    AND extension_id = file_extension.id</span>
+
+<span class="sd">    -- recon has been downloaded and skipped tiling</span>
+<span class="sd">    AND ((phase_id = 2) or (phase_id = 3))</span>
+<span class="sd">    AND checksum IS NOT null</span>
+
+<span class="sd">    LIMIT 10000000</span>
+
+<span class="sd">Subject to certain constraints, valid data is added to a pre-processing list which is subsequently handled by the process_recons() method.</span>
+
+<span class="sd">:Author:</span>
+<span class="sd">  `James Brown`</span>
+
+<span class="sd">:Organization:</span>
+<span class="sd">  Medical Research Council (MRC) Harwell, Oxfordshire, UK</span>
+
+<span class="sd">:Version: 0.0.1</span>
+
+<span class="sd">Requirements</span>
+<span class="sd">------------</span>
+<span class="sd">* `Python 2.7 &lt;http://www.python.org&gt;`_</span>
+<span class="sd">* `Numpy 1.8.2 &lt;http://www.numpy.org&gt;`_</span>
+<span class="sd">* `PyYAML 3.11 &lt;http://pyyaml.org/&gt;`_</span>
+<span class="sd">* `MySQLdb 1.2.3 &lt;http://mysql-python.sourceforge.net/MySQLdb.html&gt;`_</span>
+<span class="sd">* `SimpleITK 0.8.1 &lt;http://www.simpleitk.org/&gt;`_</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; ep = EmbryoPreprocess(&#39;/local/folder/IMPC_media&#39;, &#39;phenodcc_embryo.preprocessed&#39;, &#39;db_connect.yaml&#39;)</span>
+<span class="sd">&gt;&gt;&gt; ep.run()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;james&#39;</span>
+
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">MySQLdb</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">SliceGenerator</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">resampler</span>
+<span class="kn">import</span> <span class="nn">conversion</span> <span class="kn">as</span> <span class="nn">conv</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">nrrd</span>
+<span class="kn">import</span> <span class="nn">SimpleITK</span> <span class="kn">as</span> <span class="nn">sitk</span>
+
+
+<span class="c"># TODO: ensure that these are correct</span>
+<span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;IMPC_EOL_001_001&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span>
+              <span class="s">&#39;IMPC_EMO_001_001&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span>
+              <span class="s">&#39;IMPC_EMA_001_001&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)}</span>
+
+<span class="n">SLICE_GENERATORS</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">SLICE_GENERATORS</span><span class="p">[</span><span class="s">&#39;nrrd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NrrdSliceGenerator</span>
+<span class="n">SLICE_GENERATORS</span><span class="p">[</span><span class="s">&#39;mnc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MincSliceGenerator</span>
+<span class="n">SLICE_GENERATORS</span><span class="p">[</span><span class="s">&#39;tif&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TiffStackSliceGenerator</span>
+<span class="n">SLICE_GENERATORS</span><span class="p">[</span><span class="s">&#39;tiff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TiffStackSliceGenerator</span>
+
+<span class="n">COMPRESSION</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;bz2&#39;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">decompress_bz2</span><span class="p">}</span>  <span class="c"># &#39;zip&#39;: conv.decompress_zip,</span>
+
+<span class="n">EXISTS_BY_URL</span> <span class="o">=</span> <span class="s">&quot;SELECT * FROM {} WHERE url = &#39;{}&#39;&quot;</span>
+<span class="n">INSERT_PRE_PROCESSING_ROW</span> <span class="o">=</span> <span class="s">&#39;INSERT INTO {} (cid, lid, gid, pid, qid, gene_symbol, sid, mid, url, checksum, &#39;</span> \
+                            <span class="s">&#39;metadataGroup, status_id, created) &#39;</span> \
+                            <span class="s">&#39;VALUES ({}, {}, {}, {}, {}, &quot;{}&quot;, {}, {}, &quot;{}&quot;, &quot;{}&quot;, &quot;{}&quot;, {}, Now());&#39;</span>
+<span class="n">UPDATE_MID_META</span> <span class="o">=</span> <span class="s">&#39;UPDATE {} SET mid={}, metadataGroup=&quot;{}&quot; WHERE url=&quot;{}&quot;;&#39;</span>
+<span class="n">GET_EXTENSION_ID</span> <span class="o">=</span> <span class="s">&#39;SELECT * FROM phenodcc_embryo.file_extension WHERE extension=&quot;{}&quot;;&#39;</span>
+<span class="n">GET_EXTENSION_BY_ID</span> <span class="o">=</span> <span class="s">&#39;SELECT * FROM phenodcc_embryo.file_extension WHERE id=&quot;{}&quot;;&#39;</span>
+<span class="n">UPDATE_STATUS_EXT_PIXEL</span> <span class="o">=</span> <span class="s">&#39;UPDATE {} SET status_id={}, extension_id={}, pixelsize={} WHERE url=&quot;{}&quot;;&#39;</span>
+
+
+<div class="viewcode-block" id="EmbryoPreprocess"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess">[docs]</a><span class="k">class</span> <span class="nc">EmbryoPreprocess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The __init__ initialises a number of class attributes, and parses the .yaml config file.</span>
+
+<span class="sd">    :param config_file: path to .yaml containing database connection credentials.</span>
+<span class="sd">    :param base_path: path where the embryo &#39;src&#39; and &#39;emb&#39; directories are located</span>
+<span class="sd">    :param embryo_table: name of the table where embryo pre-processing rows are to be added</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_path</span><span class="p">,</span> <span class="n">embryo_table</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_path</span> <span class="o">=</span> <span class="n">base_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embryo_table</span> <span class="o">=</span> <span class="n">embryo_table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embryo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_path</span><span class="p">,</span> <span class="s">&#39;emb&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_path</span><span class="p">,</span> <span class="s">&#39;src&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orientations</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;sagittal&#39;</span><span class="p">,</span> <span class="s">&#39;coronal&#39;</span><span class="p">,</span> <span class="s">&#39;axial&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">HOST</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PASS</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EmbryoPreprocess.run"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The run method queries the phenodcc_media.media_file table, identifying those that require pre-processing.</span>
+
+<span class="sd">        The method firsts attempts to connect to the database. If this connection fails, an exception is raised and the</span>
+<span class="sd">        program terminates. If the connection is successful, the program queries phenodcc_media.media_file for media</span>
+<span class="sd">        submitted for each of the three &quot;embryo reconstruction&quot; parameters; IMPC_EOL_001_001 (OPT E9.5),</span>
+<span class="sd">        IMPC_EMO_001_001 (uCT E14.5/15.5) and IMPC_EMA_001_001 (uCT E18.5).</span>
+
+<span class="sd">        For each of the rows returned, its unique URL is used to determine where it has already processed:</span>
+
+<span class="sd">            .. code-block:: mysql</span>
+
+<span class="sd">                SELECT * FROM phenodcc_embryo.preprocessed WHERE url = &quot;/the/url/123456.bz2&quot;</span>
+
+<span class="sd">            If URL already exists in phenodcc_embryo.preprocessed:</span>
+<span class="sd">                (1) Check its status ID and extension ID</span>
+<span class="sd">                (2) If status_id != 1 (success), add job to the pre-processing list</span>
+<span class="sd">                (3) Otherwise, update its metadataGroup and measurement_id.</span>
+
+<span class="sd">            Otherwise:</span>
+<span class="sd">                (1) Create a new row in the pre-processing table</span>
+<span class="sd">                (2) Add job to the pre-processing list.</span>
+
+<span class="sd">        Once all of the parameters have been searched against, the process_recons method is called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">start_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;Embryo pre-processing started at &quot;</span> <span class="o">+</span> <span class="n">start_timestamp</span>
+
+        <span class="c"># Connect to database, raises exception and returns None upon failure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connect</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">:</span>
+
+            <span class="c"># Create cursor object</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+            <span class="c"># Loop through relevant parameters and query phenodcc_media</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">PARAMETERS</span><span class="p">:</span>
+
+                <span class="k">print</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s"># Querying media submitted for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+                <span class="n">valid_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="s">&#39;sql/valid_entries.sql&#39;</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="n">param</span><span class="p">)</span>
+
+                <span class="c"># Loop through each row and see if URL exists.</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">valid_rows</span><span class="p">:</span>
+
+                    <span class="c"># Extract URL, extension, measurement_id and metadata</span>
+                    <span class="n">url</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;url&#39;</span><span class="p">]</span>
+                    <span class="n">mid</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;measurement_id&#39;</span><span class="p">]</span>
+                    <span class="n">ext</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;extension&#39;</span><span class="p">]</span>
+                    <span class="n">metadata</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;metadataGroup&#39;</span><span class="p">]</span>
+
+                    <span class="c"># Query embryo table to see if we already have a record for this URL</span>
+                    <span class="n">existing_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="n">EXISTS_BY_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embryo_table</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
+
+                    <span class="c"># If there is no entry, add a record to the database</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">existing_rows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+                        <span class="c"># Status ID should be zero by default (unprocessed)</span>
+                        <span class="n">status_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+                        <span class="c"># Fields for which we can insert data into phenodcc_embryo</span>
+                        <span class="n">embryo_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cid&#39;</span><span class="p">,</span> <span class="s">&#39;lid&#39;</span><span class="p">,</span> <span class="s">&#39;gid&#39;</span><span class="p">,</span> <span class="s">&#39;pid&#39;</span><span class="p">,</span> <span class="s">&#39;qid&#39;</span><span class="p">,</span> <span class="s">&#39;gene_symbol&#39;</span><span class="p">,</span> <span class="s">&#39;sid&#39;</span><span class="p">,</span> <span class="s">&#39;measurement_id&#39;</span><span class="p">,</span>
+                                         <span class="s">&#39;url&#39;</span><span class="p">,</span> <span class="s">&#39;checksum&#39;</span><span class="p">,</span> <span class="s">&#39;metadataGroup&#39;</span><span class="p">]</span>
+
+                        <span class="n">embryo_entries</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">embryo_fields</span><span class="p">]</span>
+                        <span class="n">embryo_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">status_id</span><span class="p">)</span>  <span class="c"># need to add the status ID which will be zero</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="n">INSERT_PRE_PROCESSING_ROW</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embryo_table</span><span class="p">,</span> <span class="o">*</span><span class="n">embryo_entries</span><span class="p">))</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="c"># Otherwise, it&#39;s already in the table so get its status ID and true extensions</span>
+                        <span class="n">status_id</span> <span class="o">=</span> <span class="n">existing_rows</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;status_id&#39;</span><span class="p">]</span>
+                        <span class="n">ext_id</span> <span class="o">=</span> <span class="n">existing_rows</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;extension_id&#39;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">ext_id</span><span class="p">:</span>
+                            <span class="n">decom_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="n">GET_EXTENSION_BY_ID</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ext_id</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;extension&#39;</span><span class="p">]</span>
+
+                    <span class="c"># If the status ID is not 1, then it hasn&#39;t been processed</span>
+                    <span class="k">if</span> <span class="n">status_id</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+
+                        <span class="c"># Directory structure for output files</span>
+                        <span class="n">folder_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cid&#39;</span><span class="p">,</span> <span class="s">&#39;lid&#39;</span><span class="p">,</span> <span class="s">&#39;gid&#39;</span><span class="p">,</span> <span class="s">&#39;sid&#39;</span><span class="p">,</span> <span class="s">&#39;pid&#39;</span><span class="p">,</span> <span class="s">&#39;qid&#39;</span><span class="p">]</span>
+
+                        <span class="n">dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">x</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">folder_ids</span><span class="p">])</span>
+                        <span class="n">src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">src_path</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">mid</span><span class="p">))</span> <span class="o">+</span> <span class="s">&#39;.{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+                        <span class="n">out_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embryo_path</span><span class="p">,</span> <span class="n">dirs</span><span class="p">)</span>
+
+                        <span class="c"># Create dictionary for recon</span>
+                        <span class="n">recon_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;param&#39;</span><span class="p">:</span> <span class="n">param</span><span class="p">,</span> <span class="s">&#39;src&#39;</span><span class="p">:</span> <span class="n">src</span><span class="p">,</span> <span class="s">&#39;out_name&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">mid</span><span class="p">),</span> <span class="s">&#39;out_folder&#39;</span><span class="p">:</span> <span class="n">out_folder</span><span class="p">,</span>
+                                      <span class="s">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">,</span> <span class="s">&#39;decom_ext&#39;</span><span class="p">:</span> <span class="n">decom_ext</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span>
+
+                        <span class="c"># Append to pre-processing list</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recon_dict</span><span class="p">)</span>
+                        <span class="k">print</span> <span class="s">&quot;-- added: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>  <span class="c"># TODO: check if the other columns have changed</span>
+
+                        <span class="c"># The data has already been processed, just update measurement ID and metadata group</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="n">UPDATE_MID_META</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embryo_table</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
+
+            <span class="c"># We&#39;re done, so lets process the reconstructions that were added to the list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_recons</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MySQLdb</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">(</span><span class="s">&quot;Failed to connect to {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HOST</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="EmbryoPreprocess.process_recons"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess.process_recons">[docs]</a>    <span class="k">def</span> <span class="nf">process_recons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The process_recons method loops through the pre-processing list, and attempts to process each recon in turn.</span>
+
+<span class="sd">        For each recon in the pre-processing list, it is first decompressed (if necessary) according to its file</span>
+<span class="sd">        extension. Unfortunately, we do not know what image format the data will be. To overcome this, the program will</span>
+<span class="sd">        attempt to open the file using each of the valid file readers in turn.</span>
+
+<span class="sd">        If the file is successfully opened, the pixel size extracted from the database:</span>
+
+<span class="sd">        .. code-block:: mysql</span>
+
+<span class="sd">            SELECT * FROM phenodcc_overviews.metadata_group_to_values</span>
+<span class="sd">                WHERE metadata_group = &quot;$REPLACE$&quot;</span>
+
+<span class="sd">        The image data is then rescaled to pre-specified image resolutions, writing the results to disk as</span>
+<span class="sd">        NRRD files. In addition to the rescaled images, three orthogonal maximum intensity projection (MIP) are</span>
+<span class="sd">        generated for visual QC purposes (for the moment, these are written to the IMPC_media/emb/... directory)</span>
+
+<span class="sd">        The three possible outcomes of the pre-processing job are as follows:</span>
+
+<span class="sd">            (1) Successfully read and resample image data (status_id 1)</span>
+<span class="sd">            (2) Failed to read image data, presumably due to an invalid file extension (status_id 2)</span>
+<span class="sd">            (3) Error when resampling image data (status_id 3)</span>
+
+<span class="sd">        Finally, the status ID, extension ID and pixel size are updated in the embryo pre-processing table:</span>
+
+<span class="sd">        .. code-block:: mysql</span>
+
+<span class="sd">            UPDATE phenodcc_embryo.preprocessed SET status_id=1, extension_id=12, pixelsize=13.59 WHERE url=&quot;/the/url/123456.bz2&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Loop through pre-processing list</span>
+        <span class="k">for</span> <span class="n">recon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing</span><span class="p">:</span>
+
+            <span class="k">print</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s"># Processing &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;src&#39;</span><span class="p">])</span>
+
+            <span class="c"># Create paths on IMPC_media/emb/ if the directories do not exist yet</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;out_folder&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;out_folder&#39;</span><span class="p">])</span>
+
+            <span class="c"># Is this file compressed?</span>
+            <span class="n">decompressor</span> <span class="o">=</span> <span class="n">COMPRESSION</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;ext&#39;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">decompressor</span><span class="p">:</span>
+
+                <span class="c"># Create a name for the decompressed file</span>
+                <span class="n">file_parts</span> <span class="o">=</span> <span class="n">recon</span><span class="p">[</span><span class="s">&#39;src&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">extsep</span><span class="p">)</span>
+                <span class="n">image_path</span> <span class="o">=</span> <span class="n">file_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># + &#39;.&#39; + recon[&#39;ext&#39;]</span>
+
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                    <span class="c"># Decompress the file</span>
+                    <span class="k">print</span> <span class="s">&quot;-- decompressing {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;ext&#39;</span><span class="p">])</span>
+                    <span class="n">decompressor</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;src&#39;</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;out_folder&#39;</span><span class="p">],</span> <span class="n">image_path</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image_path</span> <span class="o">=</span> <span class="n">recon</span><span class="p">[</span><span class="s">&#39;src&#39;</span><span class="p">]</span>
+
+            <span class="c"># Go through all the slice generators and attempt to open the recon, starting with NRRD</span>
+            <span class="c"># Todo check extension ID, as it may have been set before</span>
+            <span class="n">valid_file_type</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">rescaling_success</span> <span class="o">=</span> <span class="bp">False</span>
+
+            <span class="k">for</span> <span class="n">gen_type</span> <span class="ow">in</span> <span class="n">SLICE_GENERATORS</span><span class="p">:</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">slice_gen</span> <span class="o">=</span> <span class="n">SLICE_GENERATORS</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">gen_type</span><span class="p">,</span> <span class="bp">None</span><span class="p">)(</span><span class="n">image_path</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">slice_gen</span> <span class="o">=</span> <span class="bp">None</span>
+
+                <span class="c"># If the slice generator returns a non-None value, we&#39;re good to go</span>
+                <span class="k">if</span> <span class="n">slice_gen</span><span class="p">:</span>
+
+                    <span class="n">valid_file_type</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">print</span> <span class="s">&quot;-- successfully opened file as .{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gen_type</span><span class="p">)</span>
+
+                    <span class="c"># Get extension ID for storing later</span>
+                    <span class="n">ext_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="n">GET_EXTENSION_ID</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">slice_gen</span><span class="o">.</span><span class="n">ext</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+                    <span class="c"># Get metadata group, extract and parse JSON string for pixel size</span>
+                    <span class="n">meta_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="s">&#39;sql/get_pixel_sizes.sql&#39;</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;metadata&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">json_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="s">&#39;{&#39;</span> <span class="o">+</span> <span class="n">meta_group</span><span class="p">[</span><span class="s">&#39;metadata_json&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;}&#39;</span><span class="p">)</span>
+                    <span class="n">pixel_size</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">json_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&#39;Image Pixel Size&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+                    <span class="k">print</span> <span class="s">&quot;-- pixel size: {} um&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pixel_size</span><span class="p">)</span>
+
+                    <span class="c"># Get scaling factors</span>
+                    <span class="n">scaling</span> <span class="o">=</span> <span class="n">PARAMETERS</span><span class="p">[</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;param&#39;</span><span class="p">]]</span>
+
+                    <span class="c"># Go through all scaling factors</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scaling</span><span class="p">:</span>
+
+                            <span class="k">print</span> <span class="s">&quot;-- rescaling at {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+                            <span class="n">rescaled_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s">&#39;out_folder&#39;</span><span class="p">],</span> <span class="n">recon</span><span class="p">[</span><span class="s">&#39;out_name&#39;</span><span class="p">])</span>
+                            <span class="n">rescaled_path</span> <span class="o">+=</span> <span class="s">&#39;_{}.{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">scale</span><span class="p">,</span> <span class="n">gen_type</span><span class="p">)</span>  <span class="c"># append scaling factor and path</span>
+
+                            <span class="k">if</span> <span class="n">scale</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                                <span class="n">mip_path</span> <span class="o">=</span> <span class="n">rescaled_path</span>
+
+                            <span class="n">resampler</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">slice_gen</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">rescaled_path</span><span class="p">)</span>  <span class="c"># process the recon</span>
+
+                        <span class="n">rescaling_success</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="s">&quot;-- error rescaling: &quot;</span><span class="p">,</span> <span class="n">e</span>
+                        <span class="k">break</span>  <span class="c"># might as well stop if any of them break</span>
+
+                    <span class="c"># We&#39;re done, so break out of for loop</span>
+                    <span class="k">break</span>
+
+            <span class="c"># Set status ID according to what went on</span>
+            <span class="k">if</span> <span class="n">valid_file_type</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="n">status_id</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c"># we couldn&#39;t find a valid slice generator</span>
+            <span class="k">elif</span> <span class="n">rescaling_success</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="n">status_id</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c"># we tried to rescale, but something broke</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">status_id</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c"># everything went fine</span>
+                <span class="k">print</span> <span class="s">&quot;-- generating QC MIP&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_mip</span><span class="p">(</span><span class="n">mip_path</span><span class="p">,</span> <span class="n">recon</span><span class="p">[</span><span class="s">&#39;out_folder&#39;</span><span class="p">])</span>
+
+            <span class="c"># Update the pre-processed table</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">recon</span><span class="p">[</span><span class="s">&#39;url&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">query_database</span><span class="p">(</span><span class="n">UPDATE_STATUS_EXT_PIXEL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embryo_table</span><span class="p">,</span> <span class="n">status_id</span><span class="p">,</span> <span class="n">ext_id</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
+
+        <span class="c"># We&#39;re all done, so close connection to database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_disconnect</span><span class="p">()</span>
+
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">end_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Embryo pre-processing finished at &quot;</span> <span class="o">+</span> <span class="n">end_timestamp</span>
+
+        <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;Time taken: </span><span class="si">%d</span><span class="s">:</span><span class="si">%02d</span><span class="s">:</span><span class="si">%02d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EmbryoPreprocess.get_mip"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess.get_mip">[docs]</a>    <span class="k">def</span> <span class="nf">get_mip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_path</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The get_mip method generates three maximum intensity projections (MIP) for visual QC purposes.</span>
+
+<span class="sd">        MIPs are generated from the downscaled image data, so the whole image can be loaded into memory for ease. The</span>
+<span class="sd">        resulting images are written to disk in .png format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">volume</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">nrrd</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">in_path</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">view</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orientations</span><span class="p">):</span>
+            <span class="n">mip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+            <span class="n">sitk</span><span class="o">.</span><span class="n">WriteImage</span><span class="p">(</span><span class="n">sitk</span><span class="o">.</span><span class="n">GetImageFromArray</span><span class="p">(</span><span class="n">mip</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&#39;mip_{}.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">view</span><span class="p">)))</span>
+</div>
+<div class="viewcode-block" id="EmbryoPreprocess.query_database"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess.query_database">[docs]</a>    <span class="k">def</span> <span class="nf">query_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The query_database method executes arbitrary queries and returns any results as dictionary lists.</span>
+
+<span class="sd">        Input queries can be either strings or SQL files. If a replacement is specified, the $REPLACE$ wildcard will be</span>
+<span class="sd">        replaced with it. The query is then executed and committed, raising an exception upon failure. If there are rows</span>
+<span class="sd">        to be returned, the resulting data is parsed and returned as a list of dictionaries that can be referenced</span>
+<span class="sd">        by column name for convenience.</span>
+
+<span class="sd">        :param sql: either a string containing an SQL query, or a path to an SQL file</span>
+<span class="sd">        :param replacement: optional argument for SQL files, $REPLACE$ wildcard is replaced with the specified string</span>
+<span class="sd">        :return: a list of dictionaries if there were rows returned, otherwise None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">sql</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.sql&#39;</span><span class="p">):</span>
+            <span class="n">sql</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">sql</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">sql</span>
+
+        <span class="k">if</span> <span class="n">replacement</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;$REPLACE$&#39;</span><span class="p">,</span> <span class="n">replacement</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">MySQLdb</span><span class="o">.</span><span class="n">MySQLError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Error querying database!&quot;</span><span class="p">,</span> <span class="n">e</span>
+
+        <span class="c"># If this was an INSERT, there will be no description</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+
+            <span class="n">field_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+
+                <span class="n">field_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">field_names</span><span class="p">):</span>
+                    <span class="n">field_dict</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_dict</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="EmbryoPreprocess.db_connect"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess.db_connect">[docs]</a>    <span class="k">def</span> <span class="nf">db_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The db_connect method attempts to connect to a database using the credentials in the specified .yaml file.</span>
+
+<span class="sd">        :return: MySQLdb connect object if successful, or None if connection fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">MySQLdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">HOST</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PASS</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&#39;Connect status: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MySQLdb</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Error connecting to &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HOST</span><span class="p">),</span> <span class="n">e</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="n">conn</span>
+</div>
+<div class="viewcode-block" id="EmbryoPreprocess.db_disconnect"><a class="viewcode-back" href="../EmbryoPreprocess.html#EmbryoPreprocess.EmbryoPreprocess.db_disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">db_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The db_disconnect method attempts to disconnect from the database, and is called at the end of processing.</span>
+<span class="sd">        Raises an exception upon failure (i.e. if the connection has already been closed).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">print</span> <span class="s">&#39;Connect status: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MySQLdb</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Error disconnecting from &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HOST</span><span class="p">),</span> <span class="n">e</span>
+
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">ep</span> <span class="o">=</span> <span class="n">EmbryoPreprocess</span><span class="p">(</span><span class="s">&#39;/media/sf_siah/IMPC_pipeline&#39;</span><span class="p">,</span> <span class="s">&#39;phenodcc_embryo.preprocessed_test&#39;</span><span class="p">,</span> <span class="s">&#39;db_connect.yaml&#39;</span><span class="p">)</span>
+    <span class="n">ep</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, James Brown.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

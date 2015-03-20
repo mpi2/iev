@@ -51,15 +51,6 @@ body{
     vertical-align: middle;
 }
 
-.windowLevel{
-    float: left;
-    width: 200px;
-}
-
-/*clear{
-    clear:both;
-}*/
-
 #help_link, #help_form{
     float: left;
 }
@@ -139,7 +130,6 @@ body{
     width: 300px;
     top: 5px;
     margin: 0 10px;
-
 }
 
 .ui-selectmenu-text{
@@ -157,10 +147,6 @@ body{
     margin-left: -250px;
     border-radius: 0px 5px 5px 0px;
 }
-
-/*#checkbox{
-    color:#FFFFFF !important;
-}*/
 
 .controls {
     margin: 3px 0 3px 0;   
@@ -193,12 +179,14 @@ input[type=checkbox].linkCheck {
 
 .sliceControls input[type="checkbox"]:checked + label{
     background-image:url(../Link-icon.svg.png);
- 
 }
-
 
 .sliceControls input[type="checkbox"] + label{
     display: inline-block;
+<<<<<<< HEAD
+    padding-left:10px;
+=======
+>>>>>>> 2a8df3f8ce5e246b0ae1d80f2945c0ade2d00181
     cursor: pointer;
     height:15px;
     width: 15px;
@@ -210,11 +198,10 @@ input[type=checkbox].linkCheck {
 }
 
 
-.linkViews{
-    float: left;
+.linkCheck{
+    float: right;
     top: 20px;
 }
-
 
 .sliceWrap .ui-slider-handle {
     height: 15px !important;
@@ -222,8 +209,6 @@ input[type=checkbox].linkCheck {
     top: -7px;
     cursor: pointer;
 }
-
-
 
 .sliceWrap .ui-slider {
     height: 5px;
@@ -237,11 +222,6 @@ input[type=checkbox].linkCheck {
     cursor: pointer;
 }
 
-
-
-
-
-
 #top_bar{
 
     height: 30px;
@@ -249,7 +229,6 @@ input[type=checkbox].linkCheck {
     height: 40px;
     
 }
-
 
 #topleft{
 	float: left;
@@ -279,7 +258,6 @@ input[type=checkbox].linkCheck {
 label#X_check_label span {
     background-color: #FF8585;
 }
-
 label#X_check_label.ui-state-active span {
     background-color: red;
     color:#DEDEDE;

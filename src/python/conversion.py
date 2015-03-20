@@ -1,11 +1,8 @@
 import numpy as np
 import os
-import h5py
 import nrrd
-import SimpleITK as sitk
 import bz2
-import tifffile
-import tempfile
+from progressbar import ProgressBar, Percentage, Bar
 
 DATA_TYPES = {"unsigned short": np.uint16, "uint16": np.uint16,
               "signed short": np.int16, "int16": np.int16,
@@ -13,58 +10,47 @@ DATA_TYPES = {"unsigned short": np.uint16, "uint16": np.uint16,
               "signed byte": np.int8, "int8": np.int8}
 
 
-def nrrd_to_array(nrrd_file):
-    return nrrd.read(nrrd_file)
-
-
-def minc_to_array(input_folder, minc_file):
-
-    # Open minc file using HDF5 module
-    print "Loading {}".format(minc_file)
-    minc = h5py.File(os.path.join(input_folder, minc_file), "r")['minc-2.0']
-    #volume = np.transpose(minc['image']['0']['image'])
-    return minc
-
-
-def tiffs_to_array(folder_, out_path):
-
-    print "Loading TIFF files in '{}'".format(folder_)
-    tiff_list = sorted([f for f in os.listdir(folder_) if f.lower().endswith('tiff') or f.lower().endswith('tif')])
-
-    # Get tiff info and create empty NRRD file
-    first_tiff = tifffile.imread(folder_ + tiff_list[0])
-    dims = list(first_tiff.shape)
-    dims.append(len(tiff_list))
-    dims = tuple(dims)
-    volume = np.ndarray(shape=dims, dtype=first_tiff.dtype)
-
-    for index, file_path in enumerate(tiff_list):
-
-        try:
-            im = tifffile.imread(folder_ + file_path)
-            volume[:, :, index] = im
-        except IOError as e:
-            print "Error loading '{}'".format(file_path)
-            return None
-
-    return volume
-
-
 def decompress_bz2(bz2_in, decompressed_out):
+    """The decompress_bz2 method performs sequential decompression of bzipped files on disk.
+
+    If the bz2_in path can be found, the file is open and read in chunks of ~100 Mb at a time. Each chunk is then
+    decompressed, and written to the file specified by decompressed_out. A progress bar is used to indicate how the
+    decompression is getting on.
+
+    :param bz2_in: path to bzipped file to be decompressed
+    :param decompressed_out: path to output file, which can already exist
+    :raises IOError: the decompressed file could not be found/opened
+    """
 
     if os.path.isfile(bz2_in) is False:
         raise IOError("Input file '{}' not found!".format(bz2_in))
-        return None
 
     try:
         with open(decompressed_out, 'wb') as decom, bz2.BZ2File(bz2_in, 'rb') as com:
-            for data in iter(lambda: com.read(1000 * 1024), b''):
+            com_size = os.path.getsize(bz2_in)
+            pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=com_size)
+            bytes_read = 0
+            chunk_size = 100000 * 1024
+            for data in iter(lambda: com.read(chunk_size), b''):
                 decom.write(data)
+                bytes_read += chunk_size
+                pbar.update(bytes_read)
+            pbar.finish()
     except IOError as e:
         print "Error decompressing '{}'".format(bz2_in), e
 
 
 def write_xtk_nrrd(volume, nrrd_out):
+    """The write_xtk_nrrd method writes numpy arrays as IEV-ready NRRD files. It also works on memory mapped arrays.
+
+    IEV works using the X Toolkit (XTK), which is quite particular about the NRRD files it displays. This method ensures
+    that the NRRD headers are written appropriately, using nrrd.py by Maarten Everts
+    (https://github.com/mhe/pynrrd/blob/master/nrrd.py)
+
+    :param volume: a numpy array in memory, or a memory mapped numpy array
+    :param nrrd_out: a file path to which the NRRD file is written
+    :raises IOError: unable to write file to disk
+    """
 
     try:
         options = {"encoding": "gzip",
@@ -75,51 +61,6 @@ def write_xtk_nrrd(volume, nrrd_out):
         nrrd.write(nrrd_out, volume, options)
     except IOError as e:
         print "Failure writing .nrrd file: {}".format(e)
-
-
-# # Define input raw file parameters
-# fileName = sys.argv[1]
-# dims = (642, 465, 417)
-#
-# # Load raw binary data into numpy array
-# print "Reading raw data..."
-# volume = np.fromfile(fileName, dtype=np.uint8).reshape(dims)
-# im = sitk.GetImageFromArray(volume)
-#
-# # Shrink
-# imShrunk = sitk.Shrink(im, (2,2,2))
-#
-# # Write as nifti
-# outfile = fileName.split(".raw")[0] + ".nrrd"
-# print "Writing NRRD data to " + outfile
-# sitk.WriteImage(sitk.Cast(imShrunk, sitk.sitkUInt8), outfile)
-
-# class XTKConverter():
-#
-#     dtype_dict = {"unsigned short": np.uint16, "signed short": np.int16,
-#                   "unsigned byte": np.uint8, "signed byte": np.int8}
-#
-#     def __init__(self, input_folder, src="pipeline"):
-#
-#         self.input_folder = input_folder
-#         self.output_folder = os.path.join(self.input_folder, "converted")
-#
-#         if os.path.isdir(self.output_folder) is False:
-#             os.mkdir(self.output_folder)
-#
-#         if src == "pipeline":
-#
-#             for file_ in (file_ for file_ in os.listdir(input_folder) if file_.split('.')[-1] == "mnc"):
-#                 print "Converting {}...".format(file_)
-#                 nrrd_out = os.path.join(self.output_folder, file_ + ".nrrd")
-#                 self.minc_to_nrrd(file_, nrrd_out)
-#
-#                 # return  # REMOVE TO CONTINUE FOR LOOP, REST IS UNREACHABLE
-#
-#         elif src == "harp":
-#             return
-#         else:
-#             return
 
 
 if __name__ == "__main__":

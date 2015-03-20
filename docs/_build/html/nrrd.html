@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nrrd module &mdash; Embryo Pre-processing 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Embryo Pre-processing 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="resampler module" href="resampler.html" />
+    <link rel="prev" title="conversion module" href="conversion.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resampler.html" title="resampler module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="conversion.html" title="conversion module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-nrrd">
+<span id="nrrd-module"></span><h1>nrrd module<a class="headerlink" href="#module-nrrd" title="Permalink to this headline">¶</a></h1>
+<p>nrrd.py
+An all-python (and numpy) implementation for reading and writing nrrd files.
+See <a class="reference external" href="http://teem.sourceforge.net/nrrd/format.html">http://teem.sourceforge.net/nrrd/format.html</a> for the specification.</p>
+<p>Copyright (c) 2011 Maarten Everts and David Hammond. See LICENSE.</p>
+<dl class="exception">
+<dt id="nrrd.NrrdError">
+<em class="property">exception </em><tt class="descclassname">nrrd.</tt><tt class="descname">NrrdError</tt><a class="reference internal" href="_modules/nrrd.html#NrrdError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nrrd.NrrdError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Exceptions for Nrrd class.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nrrd.parse_nrrdvector">
+<tt class="descclassname">nrrd.</tt><tt class="descname">parse_nrrdvector</tt><big>(</big><em>inp</em><big>)</big><a class="reference internal" href="_modules/nrrd.html#parse_nrrdvector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nrrd.parse_nrrdvector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a vector from a nrrd header, return a list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nrrd.parse_optional_nrrdvector">
+<tt class="descclassname">nrrd.</tt><tt class="descname">parse_optional_nrrdvector</tt><big>(</big><em>inp</em><big>)</big><a class="reference internal" href="_modules/nrrd.html#parse_optional_nrrdvector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nrrd.parse_optional_nrrdvector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a vector from a nrrd header that can also be none.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nrrd.read">
+<tt class="descclassname">nrrd.</tt><tt class="descname">read</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/nrrd.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nrrd.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a nrrd file and return a tuple (data, header).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nrrd.read_data">
+<tt class="descclassname">nrrd.</tt><tt class="descname">read_data</tt><big>(</big><em>fields</em>, <em>filehandle</em>, <em>filename=None</em><big>)</big><a class="reference internal" href="_modules/nrrd.html#read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nrrd.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the actual data into a numpy structure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nrrd.read_header">
+<tt class="descclassname">nrrd.</tt><tt class="descname">read_header</tt><big>(</big><em>nrrdfile</em><big>)</big><a class="reference internal" href="_modules/nrrd.html#read_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nrrd.read_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the fields in the nrrd header</p>
+<p>nrrdfile can be any object which supports the iterator protocol and
+returns a string each time its next() method is called — file objects and
+list objects are both suitable. If csvfile is a file object, it must be
+opened with the ‘b’ flag on platforms where that makes a difference
+(e.g. Windows)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">read_header</span><span class="p">((</span><span class="s">&quot;NRRD0005&quot;</span><span class="p">,</span> <span class="s">&quot;type: float&quot;</span><span class="p">,</span> <span class="s">&quot;dimension: 3&quot;</span><span class="p">))</span>
+<span class="go">{&#39;type&#39;: &#39;float&#39;, &#39;dimension&#39;: 3, &#39;keyvaluepairs&#39;: {}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">read_header</span><span class="p">((</span><span class="s">&quot;NRRD0005&quot;</span><span class="p">,</span> <span class="s">&quot;my extra info:=my : colon-separated : values&quot;</span><span class="p">))</span>
+<span class="go">{&#39;keyvaluepairs&#39;: {&#39;my extra info&#39;: &#39;my : colon-separated : values&#39;}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nrrd.write">
+<tt class="descclassname">nrrd.</tt><tt class="descname">write</tt><big>(</big><em>filename</em>, <em>data</em>, <em>options={}</em>, <em>separate_header=False</em><big>)</big><a class="reference internal" href="_modules/nrrd.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nrrd.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the numpy data to a nrrd file. The nrrd header values to use are
+inferred from from the data. Additional options can be passed in the
+options dictionary. See the read() function for the structure of this
+dictionary.</p>
+<p>To set data samplings, use e.g. <cite>options[&#8216;spacings&#8217;] = [s1, s2, s3]</cite> for
+3d data with sampling deltas <cite>s1</cite>, <cite>s2</cite>, and <cite>s3</cite> in each dimension.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="conversion.html"
+                        title="previous chapter">conversion module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="resampler.html"
+                        title="next chapter">resampler module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/nrrd.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resampler.html" title="resampler module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="conversion.html" title="conversion module"
+             >previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, James Brown.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

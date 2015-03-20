@@ -1,3 +1,7 @@
+"""
+This file is a testing suite for resampling the various image formats.
+"""
+
 import SliceGenerator
 import resampler
 
@@ -8,7 +12,6 @@ INPUT_MINC = '/home/neil/work/test_volumes/NXN_K1029-1_KO.mnc'
 OUT_MINC = 'test_rescaler_minc.nrrd'
 INPUT_TIFF = '/home/neil/work/test_volumes/20140515_KLHDC2_E14.5_21.1h_WT_XX_REC_14.tif'
 OUT_TIFF = 'test_rescaler_tif.nrrd'
-
 
 def test_NRRD():
     slicegen = SliceGenerator.NrrdSliceGenerator(INPUT_NRRD)

@@ -95,7 +95,13 @@ limitations under the License.
     
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
-    <div id="controls_{{id}}"class="controls clear">
+        <div id="controls_{{id}}"class="controls clear">
+            <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
+            <select id="{{vselectorId}}" class ="selectmenu"></select>
+        </div>
+        <div class="wlwrap">
+            <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
+        </div>
         <span id="{{controlsButtonsId}}" class="controlsButtons">
             <input type="checkbox" id="{{invertColoursId}}" class="button">
             <label for="{{invertColoursId}}">Invert colours</label>
@@ -103,12 +109,6 @@ limitations under the License.
             <a id="{{zoomOutId}}" href="#" class="button">-</a>
             <a id ="{{resetId}}" href="#" class="button">Reset</a>
         </span>
-        <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
-            <select id="{{vselectorId}}" class ="selectmenu"></select>
-        </div>
-        <div class="wlwrap">
-            <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
-        </div>
     </div>
     </script>
     
@@ -136,7 +136,7 @@ limitations under the License.
     <!--No data template-->
     <script id="no_data_template" type="text/x-handlebars-template">
     <div class="nodata">
-    <p>There is no data available for {{colonyId}}</p>
+    <p>There are no data currently available for colony ID "{{colonyId}}".</p>
     </div>
     </script>
 </html>

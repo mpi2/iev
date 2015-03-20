@@ -98,14 +98,14 @@
                   volume.indexX = Math.floor((dims[0] - 1) / 2);
                   volume.indexY = Math.floor((dims[1] - 1) / 2);
                   volume.indexZ = Math.floor((dims[2] - 1) / 2);
+                  xOffset = 0; yOffset = 0; zOffset = 0;
                   $xSlider.slider("value", volume.indexX);
                   $ySlider.slider("value", volume.indexY);
                   $zSlider.slider("value", volume.indexZ);
                   //reset the window level
                   $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+
             }, this));
-
-
 
             $("#" + zoomIn)
             .button()
@@ -252,6 +252,7 @@
 
 
         function replaceVolume(volumePath) {
+<<<<<<< HEAD
             /**
              * Replace current specimen volume with another.
              * Destroys current object (not sure is necessary) add new path and call setupoRenderers
@@ -259,6 +260,15 @@
              * @method replaceVolume
              * @param {String} VolumePath path to new volume to load into viewer
              */
+=======
+            
+            // Change background to black
+            if ($("#" + invertColours).is(':checked')) {
+                $("#" + invertColours).trigger('click');
+            }
+            
+            //TODO. Memory is not being released wehen we delete renderer
+>>>>>>> 2a8df3f8ce5e246b0ae1d80f2945c0ade2d00181
             if (typeof (xRen) !== 'undefined') {
                 xRen.destroy();
                 delete xRen;
@@ -332,7 +342,7 @@
             if (checked) {
                 volume.maxColor = [0, 0, 0];
                 volume.minColor = [1, 1, 1];
-                $("#" + id + "> .sliceView").css("background-color", "#FFFFFF");
+                $("#" + id + "> .sliceWrap").css("background-color", "#FFFFFF");
 
                 volume.indexX++;
                 volume.indexY++;
@@ -342,7 +352,7 @@
 
                 volume.maxColor = [1, 1, 1];
                 volume.minColor = [0, 0, 0];
-                $("#" + id + "> .sliceView").css("background-color", "#000000");
+                $("#" + id + "> .sliceWrap").css("background-color", "#000000");
 
                 // Bodge to get the colours to update
                 volume.indexX--;
@@ -368,17 +378,7 @@
           
 
 
-        function updateSliders(renderer) {
-            /**
-             * Update the slice index or contrast sliders.
-             * If the shift key is down, we want to move the other orthogonal views index correspondingly
-             * If the left mouse button is down, we are changing the contrast, so update the contrast sliders
-             * 
-             *  @method updateSliders
-             *  @param {X.renderer2D} renderer The renderer from which the event came from. Contains the event
-             *  @param {type} name description 
-             * 
-             */
+        function updateSliders(renderer, event) {
  
             if (renderer.interactor.mousemoveEvent.shiftKey) {  
                 //Cross-hair navigating///////////////////
@@ -400,12 +400,9 @@
 
 
         function xtk_showtime() {
-            /**
-             * Gets executed after all files were fully loaded and just before the first rendering attempt.
-             * Sets up: Volumes and their index to view, index sliders, and mouse whell events
-             * 
-             * @method xtk_showtime
-             */
+            //
+            // the onShowtime method gets executed after all files were fully loaded and
+            // just before the first rendering attempt
 
             yRen.add(volume);
             yRen.render();
@@ -499,58 +496,34 @@
             zRen.interactor.onMouseMove = function (event) {
                 updateSliders(zRen, event);
             }.bind(this);
+            
+            // Set the slice controls to be visible after rendering
+            $(".sliceControls").fadeIn(500);
+            
         };
         
         function setXindex(index){
-            /**
-             * Set the volume index for the X orientation
-             * Apply the offset used in linking orthogonal views across SpecimenViews
-             * @method setIndex
-             * @param {int} index The new slice index to set
-             */
              volume.indexX = index -xOffset;
              $xSlider.slider("value", volume.indexX);
         }
         
         function setYindex(index){
-            /**
-             * Set the volume index for the Y orientation
-             * Apply the offset used in linking orthogonal views across SpecimenViews
-             * @method setIndex
-             * @param {int} index The new slice index to set
-             */
              volume.indexY = index - yOffset;
              $ySlider.slider("value", volume.indexY);
         }
         
         function setZindex(index){
-            /**
-             * Set the volume index for the Z orientation
-             * Apply the offset used in linking orthogonal views across SpecimenViews
-             * @method setIndex
-             * @param {int} index The new slice index to set
-             */
              volume.indexZ = index - zOffset;
              $zSlider.slider("value", volume.indexZ);
         }
         
         function getIndex(ortho){
-            /**
-             * Get the index of the current slice for a orthogonal view
-             * @method getIndex
-             * @param {String} ortho Orthogonal view ('x', 'Y' or 'Z')
-             */
             if (ortho === 'X') return volume.indexX;
             if (ortho === 'Y') return volume.indexY;
             if (ortho === 'Z') return volume.indexZ;
         }
        
         function setIdxOffset(ortho, offset){
-            /**
-             * Set the index offset for a specific orthogonal view.
-             * The offset defines how much the slice index differs compared to the corresponding slice in the
-             * other view
-             */
             if (ortho === 'X') xOffset = offset;
             if (ortho === 'Y') yOffset = offset;
             if (ortho === 'Z') zOffset = offset;
@@ -560,14 +533,11 @@
 
 
         function setVisibleViews(viewList, count, horizontalView) {
-            /**
-             * Set which orthogonal views should be visible. Change the container width
-             * to take up the full width of the outer container.
-             * If orientation in vertical, slice width should always be 100%
-             * @method setVisibleViews
-             * @param {Hash} viewsList Info on which orthogonal view is visible
-             * @param {int} count How many views should be visible
-             */
+            //ViewList: Hash
+            //var slice_view_width = String(100 / total_visible);
+            //Calcualte new with of each orthogonal view
+            
+            //If orientation in vertial, slice width should always be 100%
      
             var slice_view_width;
             
@@ -605,22 +575,13 @@
 
 
         function basename(path) {
-            /**
-             * Extract the basename from a path
-             * @method basename
-             * @param {String} path File path
-             */
             return path.split(/[\\/]/).pop();
         };
 
 
         var public_interface = {
-            /**
-             * The public interface for this class.
-             * refernce public methods in here
-             * @type {Object}
-             */
             setVisibleViews: setVisibleViews,
+            //linkOrthoView: linkOrthoView,
             setXindex: setXindex,
             setYindex: setYindex,
             setZindex: setZindex,

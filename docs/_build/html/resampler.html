@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>resampler module &mdash; Embryo Pre-processing 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Embryo Pre-processing 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="test module" href="test.html" />
+    <link rel="prev" title="nrrd module" href="nrrd.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="test.html" title="test module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nrrd.html" title="nrrd module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-resampler">
+<span id="resampler-module"></span><h1>resampler module<a class="headerlink" href="#module-resampler" title="Permalink to this headline">¶</a></h1>
+<p>Resampler for the embryo pre-processing script.</p>
+<p>This module performs resampling of images of arbitrary size, using a slice generator and memory mapped raw files.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://docs.opencv.org/">OpenCV 2.4.9</a></li>
+<li><a class="reference external" href="http://www.numpy.org">Numpy 1.8.2</a></li>
+<li><a class="reference external" href="https://code.google.com/p/python-progressbar/">python-progressbar 2.3</a></li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">resampler</span> <span class="kn">import</span> <span class="n">resample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">SliceGenerator</span> <span class="kn">import</span> <span class="n">NrrdSliceGenerator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">NrrdSliceGenerator</span><span class="p">(</span><span class="s">&#39;/path/to/file.nrrd&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resample</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s">&#39;/path/to/rescaled.nrrd&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="resampler.resample">
+<tt class="descclassname">resampler.</tt><tt class="descname">resample</tt><big>(</big><em>slicegen</em>, <em>scale</em>, <em>nrrd_path</em><big>)</big><a class="reference internal" href="_modules/resampler.html#resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#resampler.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>The resample method takes a slice generator and scaling factor as arguments, resamples the image accordingly,
+and writes it to disk as an IEV-ready NRRD file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>slicegen</strong> &#8211; a slice generator that provides xy slices of an image as two-dimensional numpy arrays</li>
+<li><strong>scale</strong> &#8211; scaling factor for resampling, which should be &lt; 1 for downscaling (e.g. 0.5)</li>
+<li><strong>nrrd_path</strong> &#8211; outfile NRRD containing extension</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">resampler module</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nrrd.html"
+                        title="previous chapter">nrrd module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test.html"
+                        title="next chapter">test module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/resampler.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="test.html" title="test module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nrrd.html" title="nrrd module"
+             >previous</a> |</li>
+        <li><a href="index.html">Embryo Pre-processing 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, James Brown.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
