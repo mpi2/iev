@@ -35,8 +35,6 @@
     if (typeof dcc === 'undefined')
         dcc = {};
     
-   
- 
      dcc.EmbryoViewer = function(data, div, queryColonyId) {
          /**
           * @class EmbryoViewer
@@ -50,6 +48,11 @@
         var queryColonyId = queryColonyId;
         var horizontalView = undefined;
      
+        
+        /**
+         * Seperate out the baseline data and the mutant data.
+         * If data is not available, load an error message
+         */
         if (data['success']){
             // Get the baselines and the mutant paths
             for(var i = 0; i < data.volumes.length; i++) {
@@ -76,25 +79,43 @@
         var container = div;
         var views = [];
         
+        
+        /**
+         * 
+         * @type {Object} ortho
+         * Visible: for the orthogonal views buttons
+         * Linked: are the corresponding ortho views from the different specimens linked
+         * Max dimensions for each orthogonal view
+         */
         var ortho = {
-            // Visible: for the orthogonal views buttons
-            // Linked: are the corresponding ortho views from the different specimens linked
             'X': {
                 visible: true,
                 linked: true,
+                maxHeight: 0,
+                maxWidth: 0
             },
             'Y': {
                 visible: true,
                 linked: true,
+                maxHeight: 0,
+                maxWidth: 0
             },
             'Z': {
                 visible: true,
                 linked: true,
+                maxHeight: 0,
+                maxWidth: 0
             }
         };
     
     
         function buildUrl(data){
+            /**
+             * Create a url from the data returned by querying database for a colonyID
+             * URL should point us towards the correct place on the image server
+             * @method buildUrl
+             * @param {json} data Data for colonyID 
+             */
             url = IMAGE_SERVER + data.cid + '/' 
                     + data.lid + '/' 
                     + data.gid + '/' 
@@ -105,19 +126,68 @@
 
             return url;
         }
+        
+        
+        function setLargestDimesions(dims){
+            /**
+             * Set the largest extent for each of the dimensions
+             *@method setLargestDimesions
+             *@param {Object} dims X Y and Z height and widths
+             */
+           
+            if (ortho.X.maxHeight > dims.X.height){
+                ortho.X.maxHeight = dims.X.height;
+            }
+            if (ortho.X.maxWidth > dims.X.width){
+                ortho.X.maxWidth = dims.X.width;
+            }
+            if (ortho.Y.maxHeight > dims.Y.height){
+                ortho.Y.maxHeight = dims.Y.height;
+            }
+            if (ortho.Y.maxWidth > dims.Y.width){
+                ortho.Y.maxWidth = dims.Y.width;
+            }
+            if (ortho.Z.maxHeight > dims.Z.height){
+                ortho.Z.maxHeight = dims.Z.height;
+            }
+            if (ortho.Z.maxWidth > dims.Z.width){
+                ortho.Z.maxWidth = dims.Z.width;
+            };
+            console.log(ortho);
+                
+        
+        }
+            
+        
     
     
         function loadViewers(container) {
-
-            views.push(dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, sliceChange));
-            views.push(dcc.SpecimenView(mutants, 'mut', container, queryColonyId, sliceChange));
+            /**
+             * Create instances of SpecimenView and append to views[]. 
+             * Get the dimensions of the loaded volumes
+             * @method loadViewers
+             * @param {String} container HTML element to put the specimen viewer in to
+             */
+            var wtView = dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, 
+                            sliceChange, setLargestDimesions);
+            views.push(wtView);
+            
+            var mutView = dcc.SpecimenView(mutants, 'mut', container, queryColonyId, 
+                            sliceChange, setLargestDimesions);
+            views.push(mutView);
         };
         
         
         
         function sliceChange(id, orientation, index) {
-            //Listens to the slice change events from the viewers, and calls the
-            // other specimen view if required
+            /**
+             * Callback for the slice change events from the SpecimenViews.
+             * Calls the other SpecimenViews with index change if required
+             * @method sliceChange
+             * @param {String} id ID ofd the calling SpecimenView
+             * @param {String} orientation ('X', 'Y', 'Z')
+             * @param {int} index Slice index
+             */
 
             for (var i = 0; i < views.length; i++) {
                 if (views[i].id === id) continue; //this is the views that changed
@@ -136,10 +206,13 @@
         
         
         function linkViews(orthoView, isLink){
-            //OrthoView -> 'X', 'Y', or 'Z'
-            
-            // Change check or uncheck the correpsonding views checkboxes
-            // And work out the offset, if any
+            /**
+             *Match the slice indices between the SpecimenViews
+             *@method linkViews
+             *@param {String} orthoView('X', 'Y' or 'Z')
+             *@param {bool} isLink Are these orthogonal viewsd linked?
+             * 
+             */
             var wtIdx;
             var mutIdx;
          
@@ -165,6 +238,9 @@
         
 
         function attachEvents() {
+            /**
+             * 
+             */
       
             $(".linkCheck").change(function(e){
               

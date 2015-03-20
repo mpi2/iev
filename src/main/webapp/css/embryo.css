@@ -187,9 +187,7 @@ input[type=checkbox].linkCheck {
     display:none;    
 }
 
-.sliceControls {
-    display: none;
-}
+
 
 .sliceControls input[type="checkbox"]:checked + label{
     background-image:url(../Link-icon.svg.png);
