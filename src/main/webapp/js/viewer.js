@@ -7,7 +7,18 @@
         dcc = {};
 
 
-    function Slices(volumePaths, id, container, queryColonyId, indexCallback) {
+    function SpecimenView(volumePaths, id, container, queryColonyId, indexCallback) {
+        /**
+         * This class holds the three orthogonal views from a single specimen and 
+         * allows for loading in of differnt specimens of the same genenotype/colonyID
+         * 
+         * @class SpcimenView
+         * @param {Array} VolumePaths volumes paths for a specific mutant/baseline
+         * @param {int} id unique id for this view
+         * @param {String} container html element to place this view
+         * @param {String} queryColonyId The colonyId of this specimen
+         * @param {function} indexCallBack called when slice index changes
+         */
 
         var id = id;
         var viewContainer = container;
@@ -40,6 +51,12 @@
 
 
         function createEventHandlers() {
+            /**
+             * Create event handler for controlling the specimen view
+             * 
+             * @method createEventHandlers
+             * 
+             */
    
             // Invert the color map 
             $("#" + invertColours).change($.proxy(function (e) {
@@ -129,7 +146,13 @@
 
 
         function createHTML () {
-            // Create the html for this specimen orthogonal views. 
+            /**
+             * Creates the html needed for the specimen view to live in.
+             * Uses handlebar.js to generate from templates
+             * 
+             * @method createHtml
+             * 
+             */
 
             var $viewsContainer = $("#" + viewContainer);
             
@@ -158,6 +181,10 @@
         
         
         function createSliceView(orient){
+            /**
+             * 
+             * @param {String} orient Orientation (X, Y or Z)
+             */
             
             var data = {
                 sliceWrapId: 'sliceWrap_' + orient + '_' + id,
@@ -175,20 +202,15 @@
             return template(data);
         }
         
-        
-//        function linkOrthoView(orthoView, isLink){
-//            //Chek/uncheck the link buttons
-//    
-//            
-//           $('.' + orthoView).button("option", { 
-//                icons: { primary: e.currentTarget.checked ? 'ui-icon-check' : 'ui-icon-closethick' }
-//                });
-//        }
-//        
-        
+           
         
         function jQuerySelectors(){
-            // Todo: should not have to define these IDs twice
+            /**
+             * Get Jquery handles on elements that need to be accessed multiple times
+             * Should speed things up not having to query the DOM all the time
+             * 
+             * @method jQuerySelectors
+             */
             $xContainer =  $('#X_' + id);
             $yContainer =  $('#Y_' + id);
             $zContainer =  $('#Z_' + id);
@@ -203,6 +225,13 @@
         
 
         function controls_tab() {
+            /**
+             * Use handlebars.js to the controls tab HTML for the specimen view
+             * Controls tab contains zoom buttons contrst slider etc.
+             * 
+             * @method controls_tab
+             * 
+             */
    
             var data = {
                 id: id,
@@ -223,7 +252,13 @@
 
 
         function replaceVolume(volumePath) {
-            //TODO. Memory is not being released wehen we delete renderer
+            /**
+             * Replace current specimen volume with another.
+             * Destroys current object (not sure is necessary) add new path and call setupoRenderers
+             * 
+             * @method replaceVolume
+             * @param {String} VolumePath path to new volume to load into viewer
+             */
             if (typeof (xRen) !== 'undefined') {
                 xRen.destroy();
                 delete xRen;
@@ -242,6 +277,11 @@
 
 
         function setupRenderers() {
+            /**
+             * Call the XTK functions that are required to get our volume rendered in 2D
+             * 
+             * @method setupRenderers
+             */
 
             if (volumePaths.length < 1) return;
             
@@ -279,6 +319,12 @@
 
 
         function invertColour(checked) {
+            /**
+             * Responds to invert color checkbox, and inverts the lookup table
+             * 
+             * @method invertColour
+             * @param {bool} checked Is the checkbox active
+             */
 
             if (!volume)
                 return;
@@ -308,7 +354,13 @@
         
         
        function sliceChange(id, ortho, index){
-           //Update the outside world when slice indicies change
+           /**
+            * Called when the slice index is changed either from the slider of the mouse scroll button
+            * 
+            * @method sliceChange
+            * @param {int} id The ID of the this SpecimenView class
+            * @param {String} ortho The orthogonal view that was changed ('X', 'Y', or 'Z')
+            */
             if (ortho === 'X') indexCallback(id, ortho, index + xOffset );
             if (ortho === 'Y') indexCallback(id, ortho, index + yOffset );
             if (ortho === 'Z') indexCallback(id, ortho, index + zOffset );
@@ -532,5 +584,5 @@
         return public_interface;
     }
 
-    dcc.SpecimenView = Slices;
+    dcc.SpecimenView = SpecimenView;
 })();

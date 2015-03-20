@@ -206,7 +206,7 @@ input[type=checkbox].linkCheck {
 .sliceControls input[type="checkbox"] + label{
     display: inline-block;
     padding-left:10px;
-    
+    cursor: pointer;
     height:15px;
     width: 15px;
     background-image:url(../Link-icon.svg_grey.png);
@@ -215,8 +215,8 @@ input[type=checkbox].linkCheck {
 }
 
 
-.linkViews{
-    float: left;
+.linkCheck{
+    float: right;
     top: 20px;
 }
 

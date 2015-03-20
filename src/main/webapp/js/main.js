@@ -38,6 +38,10 @@
    
  
      dcc.EmbryoViewer = function(data, div, queryColonyId) {
+         /**
+          * @class EmbryoViewer
+          * @type String
+          */
         
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         var WILDTYPE_COLONYID = 'baseline';
