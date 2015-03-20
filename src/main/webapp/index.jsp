@@ -122,7 +122,7 @@ limitations under the License.
     <!--Slice view template-->
     <script id="slice_view_template" type="text/x-handlebars-template">
     <div class="sliceWrap" id="{{sliceWrapId}}">
-        <div id="{{sliceContainerID}}" class ="{{viewSiceClass}} sliceView"></div>
+        <div id="{{sliceContainerID}}" class ="sliceView"></div>
         <div class="sliceControls">
             <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
             <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>

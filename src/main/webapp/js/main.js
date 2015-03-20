@@ -134,28 +134,25 @@
              *@method setLargestDimesions
              *@param {Object} dims X Y and Z height and widths
              */
-           
-            if (ortho.X.maxHeight > dims.X.height){
+          
+            if (ortho.X.maxHeight < dims.X.height){
                 ortho.X.maxHeight = dims.X.height;
             }
-            if (ortho.X.maxWidth > dims.X.width){
+            if (ortho.X.maxWidth < dims.X.width){
                 ortho.X.maxWidth = dims.X.width;
             }
-            if (ortho.Y.maxHeight > dims.Y.height){
+            if (ortho.Y.maxHeight < dims.Y.height){
                 ortho.Y.maxHeight = dims.Y.height;
             }
-            if (ortho.Y.maxWidth > dims.Y.width){
+            if (ortho.Y.maxWidth < dims.Y.width){
                 ortho.Y.maxWidth = dims.Y.width;
             }
-            if (ortho.Z.maxHeight > dims.Z.height){
+            if (ortho.Z.maxHeight < dims.Z.height){
                 ortho.Z.maxHeight = dims.Z.height;
             }
-            if (ortho.Z.maxWidth > dims.Z.width){
+            if (ortho.Z.maxWidth < dims.Z.width){
                 ortho.Z.maxWidth = dims.Z.width;
-            };
-            console.log(ortho);
-                
-        
+            }; 
         }
             
         
@@ -283,14 +280,8 @@
             
 
             $(".button").button();
+         
             
-
-
-            
-            $("#viewHeightSlider").tooltip({
-                content: "Modify slice viewer height",
-                 show: {delay: 1200 }
-            });
 
             $("#viewHeightSlider")
                     .slider({
@@ -303,7 +294,12 @@
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);
                         }, this)
+                    })
+                    .tooltip({
+                        content: "Modify slice viewer height",
+                        show: {delay: 1200 }
                     });
+                    
 
             $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
                  show: {delay: 1200 }

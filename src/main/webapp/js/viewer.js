@@ -40,6 +40,7 @@
         var yRen;
         var zRen;
         var volume;
+        var viewSliceClasss;
         var invertColours = 'invert_colours_' + id;
         var windowLevel = 'windowLevel_' + id;
         var reset = 'reset_' + id;
@@ -77,6 +78,7 @@
              * @method createEventHandlers
              * @TODO: Min and max slider level to be set dynamically
              */
+            
    
             // Invert the color map 
             $("#" + invertColours).change($.proxy(function (e) {
@@ -204,10 +206,12 @@
              * @param {String} orient Orientation (X, Y or Z)
              */
             
+            viewSliceClass = 'slice' + orient;
+            
             var data = {
                 sliceWrapId: 'sliceWrap_' + orient + '_' + id,
                 sliceContainerID: orient + '_' + id,
-                viewSliceClasss: 'slice' + orient,
+                viewSliceClasss: viewSliceClass,
                 sliderId: 'slider_' + orient + '_'+ id,
                 sliderClass: 'slider' + orient,
                 orientation: orient,
@@ -215,7 +219,7 @@
                
             };
             
-            var source   = $("#slice_view_template").html();
+            var source = $("#slice_view_template").html();
             var template = Handlebars.compile(source);
             return template(data);
         }
