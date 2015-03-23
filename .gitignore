@@ -4,8 +4,9 @@ chrome/
 *.nrrd
 *.tif*
 *.bmp
-X/
 target/
 *.pyc
 *.idea
 X/
+!X/objects
+!X/core

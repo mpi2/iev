@@ -1,6 +1,3 @@
-//goog.require('X.labelmap');
-
-
 (function () {
     if (typeof dcc === 'undefined')
         dcc = {};
@@ -17,6 +14,8 @@
         var mutants = [];
         var queryColonyId = queryColonyId;
         var horizontalView = undefined;
+        var NUM_VIEWERS = 2;
+        var viewers_loaded = 0;
      
         
         /**
@@ -60,23 +59,19 @@
         var ortho = {
             'X': {
                 visible: true,
-                linked: true,
-                maxHeight: 1,
-                maxWidth: 0
+                linked: true
             },
             'Y': {
                 visible: true,
-                linked: true,
-                maxHeight: 1,
-                maxWidth: 0
+                linked: true
             },
             'Z': {
                 visible: true,
-                linked: true,
-                maxHeight: 1,
-                maxWidth: 0
+                linked: true
             }
         };
+        
+        
     
     
         function buildUrl(data){
@@ -98,42 +93,48 @@
         }
         
         
-        function setLargestDimesions(dims, id){
+        function scaleOrthogonalViews(){
             /**
              * Set the largest extent for each of the dimensions
              *@method setLargestDimesions
-             *@param {Array} dims XYZ
-             *@param {String} id ID of the SecimenView
              */
-            
-            if (ortho.X.maxHeight < dims[2]){
-                // X and y have same slice height
-                ortho.X.maxHeight = dims[2];
-                for (var i =0; i < views.length; ++i){
-                    if (views[i].id === id){
-                        views[i].largestXY = true;
-                    }else{
-                        views[i].largestXY = false;
-                    }   
-                }
-            }
-            if (ortho.Z.maxHeight < dims[1]){
-                ortho.Z.maxHeight = dims[1];
-                for (var i =0; i < views.length; ++i){
-                    if (views[i].id === id){
-                        views[i].largestZ = true;
-                    }else{
-                        views[i].largestZ = false;
-                    }   
-                }
-            }
-            for (var i=0; i < views.length; ++i){
-               
-               views[i].setProportionalSize(ortho);
-           }
-           window.dispatchEvent(new Event('resize')); 
+        
+            var maxXY = 0;
+            var maxZ = 0;
+            var maxXYid;
+            var maxZid;
            
+            
+            for (var i=0; i < views.length; ++i){
+               var vol_dims = views[i].getDimensions();
+         
+               
+               if (vol_dims[2] > maxXY){
+                   maxXY = vol_dims[2];
+                   maxXYid = views[i].id;
+               }
+               
+               if (vol_dims[1] > maxZ){
+                   maxZ = vol_dims[1];
+                   maxZid = views[i].id;
+               }
+               
+            }
+     
+            // Set the proportional views
+            for (var i=0; i < views.length; ++i){
+                if (maxXYid === views[i].id) continue;
+                views[i].setXYproportional(maxXY);
+                
+//                if (maxZid === views[i].id){
+//                    views[i].setProportionalSize('Z', maxXY);
+//                } 
+           }
+           
+           window.dispatchEvent(new Event('resize')); 
         }
+        
+        
             
         
     
@@ -146,19 +147,31 @@
              * @param {String} container HTML element to put the specimen viewer in to
              */
             var wtView = dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, 
-                            sliceChange, setLargestDimesions);
+                            sliceChange, views, onViewLoaded);
             views.push(wtView);
             
             var mutView = dcc.SpecimenView(mutants, 'mut', container, queryColonyId, 
-                            sliceChange, setLargestDimesions);
+                            sliceChange, views, onViewLoaded);
             views.push(mutView);
             
             /* volumes are loaded. Now make the correposnding orthogonal views
              proportial sizes to each other. eg saggital slice from each view
             should be sized propotional to their real size
             */
-           
         };
+        
+        function onViewLoaded(id){
+            /**
+             * Called when each SpecimenView has loaded, so that we can do stuff like determining
+             * which views need rescaling to show relational sizes.
+             * @todo we need to decrement viewers_loaded when we delete a SpecimenView
+             * @param {type} id
+             */
+            viewers_loaded += 1;
+            if (viewers_loaded === NUM_VIEWERS){
+                scaleOrthogonalViews();
+            }
+        }
         
         
         
@@ -276,6 +289,7 @@
                         values: [500],
                         slide: $.proxy(function (event, ui) {
                             $('.sliceWrap').css('height', ui.value);
+                            scaleOrthogonalViews();
                             var evt = document.createEvent('UIEvents');
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);

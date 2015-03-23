@@ -1,5 +1,5 @@
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+goog.require('X.renderer2D');
+goog.require('X.interactor2D');
 
 
 (function () {
@@ -7,7 +7,7 @@
         dcc = {};
 
 
-    function SpecimenView(volumePaths, id, container, queryColonyId, indexCB, dimsCB) {
+    function SpecimenView(volumePaths, id, container, queryColonyId, indexCB, viewsList, onLoaded) {
         /**
          * This class holds the three orthogonal views from a single specimen and 
          * allows for loading in of differnt specimens of the same genenotype/colonyID
@@ -17,8 +17,9 @@
          * @param {String} id unique id for this view
          * @param {String} container html element to place this view
          * @param {String} queryColonyId The colonyId of this specimen
-         * @param {function} indexCB called when slice index changes@
-         * @param {function} dimsCB called when a new volume is loaded
+         * @param {function} indexCB called when slice index changes
+         * @param {Array<SpecimenViews>} viewsList Access info from other views here
+         * @param {Function} onLoaded Called when all the XTK stuff has loaded
          */
 
         var id = id;
@@ -51,9 +52,6 @@
         var yOffset = 0;
         var zOffset = 0;
         
-        // These set whether a orientation is the largest amongst all the SpecimenViews
-        var largestXY = false;
-        var largestZ = false;
  
         
         /**
@@ -279,7 +277,7 @@
         };
         
         
-        function setProportionalSize(info){
+        function setXYproportional(maxHeight){
             /**
              * Set the orthogonal view proportial size by chnaging size of the
              * view wrapper
@@ -289,30 +287,35 @@
              */
             var $xWrapper = $('#X_' + id);
             var $yWrapper = $('#Y_' + id);
-            var $zWrapper = $('#Z_' + id);
+            
+            
             
             
             /**
              * Height should always be larger than width, This will not work
              * otherwise
              */
+
             
-            if (! largestXY){
-               
-              
-                var heightRatio = $xWrapper.height() /info.X.maxHeight;
-               
-                var newHeight = $xWrapper.height() / heightRatio;
-                console.log('nh ', newHeight);
-                console.log('h ' + $xWrapper.height());
-                var xPad = (info.X.maxHeight - newHeight) / 2;
-                $xWrapper.css('height', newHeight);
-                $xWrapper.css('top', xPad);
-    //            $xWrapper.css('padding-bottom', xPad);
-            }
+            var heightRatio = volume.dimensions[2] / maxHeight; // Does this affect wrapper height ?
+            
+            var wrapperNewHeight = $xWrapper.height() * heightRatio;
+
+            var xyPad = ($xWrapper.height() - wrapperNewHeight) / 2;
+            $xWrapper.css('height', wrapperNewHeight);
+            $xWrapper.css('top', xyPad);
+            console.log('xy pad', xyPad);
+
             
         }
+        
 
+        
+        function getVolume(){
+            return volume;
+        }
+        
+        
 
         function replaceVolume(volumePath) {
             /**
@@ -474,7 +477,6 @@
            
             
             // Let main know of the new dimensions of the orthogonal views
-            dimsCB(volume.dimensions);
 
             // It appears that dimensoins are in yxz order. At least with nii loading
             volume.indexX = Math.floor((dims[0] - 1) / 2);
@@ -561,6 +563,9 @@
             zRen.interactor.onMouseMove = function (event) {
                 updateSliders(zRen, event);
             }.bind(this);
+            
+            
+            onLoaded(id);
         };
         
         
@@ -705,12 +710,8 @@
             id: id,
             setIdxOffset: setIdxOffset,
             getDimensions: getDimensions,
-            setProportionalSize: setProportionalSize,
-            largestXY: largestXY,
-            largestZ: largestZ
-          
-
-
+            setXYproportional: setXYproportional,
+            getVolume: getVolume
         };
         
         createHTML();
