@@ -1,35 +1,5 @@
 //goog.require('X.labelmap');
 
-//The initail script that creates the views
-
-//TODO: sync zooming
-//
-
-
-
-//window.addEventListener('load', function() {
-//               
-//    return;  // Remove for testing on local chrome app
-//    
-//    // So we can just use index.html instead of deploying the web app
-//    var CHROME_ID = 'dndfpjnjfpbnpoeocbdgimhfcombnfhj';
-//    var IMAGE_SERVER = 'chrome-extension://' + CHROME_ID; 
-//
-//    var wildtypes = 
-//            ['20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
-//             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd',
-//             '/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd'];
-//    var mutants = 
-//            ['/20140128_SMOC1_18.2_c_wt_rec_28um.nrrd',
-//             '/20131206_MLLT3_15.3_d_WT_rec_28um.nrrd',
-//             '/20140121RIC8B_15.4_b_wt_rec_28um.nrrd'];
-//
-//
-//    var div = 'viewer' // For developing outside of web app
-//    dcc.EmbryoViewer(wildtypes, mutants, div, IMAGE_SERVER);
-//
-//});
-
 
 (function () {
     if (typeof dcc === 'undefined')
@@ -91,19 +61,19 @@
             'X': {
                 visible: true,
                 linked: true,
-                maxHeight: 0,
+                maxHeight: 1,
                 maxWidth: 0
             },
             'Y': {
                 visible: true,
                 linked: true,
-                maxHeight: 0,
+                maxHeight: 1,
                 maxWidth: 0
             },
             'Z': {
                 visible: true,
                 linked: true,
-                maxHeight: 0,
+                maxHeight: 1,
                 maxWidth: 0
             }
         };
@@ -128,31 +98,41 @@
         }
         
         
-        function setLargestDimesions(dims){
+        function setLargestDimesions(dims, id){
             /**
              * Set the largest extent for each of the dimensions
              *@method setLargestDimesions
-             *@param {Object} dims X Y and Z height and widths
+             *@param {Array} dims XYZ
+             *@param {String} id ID of the SecimenView
              */
-          
-            if (ortho.X.maxHeight < dims.X.height){
-                ortho.X.maxHeight = dims.X.height;
+            
+            if (ortho.X.maxHeight < dims[2]){
+                // X and y have same slice height
+                ortho.X.maxHeight = dims[2];
+                for (var i =0; i < views.length; ++i){
+                    if (views[i].id === id){
+                        views[i].largestXY = true;
+                    }else{
+                        views[i].largestXY = false;
+                    }   
+                }
             }
-            if (ortho.X.maxWidth < dims.X.width){
-                ortho.X.maxWidth = dims.X.width;
+            if (ortho.Z.maxHeight < dims[1]){
+                ortho.Z.maxHeight = dims[1];
+                for (var i =0; i < views.length; ++i){
+                    if (views[i].id === id){
+                        views[i].largestZ = true;
+                    }else{
+                        views[i].largestZ = false;
+                    }   
+                }
             }
-            if (ortho.Y.maxHeight < dims.Y.height){
-                ortho.Y.maxHeight = dims.Y.height;
-            }
-            if (ortho.Y.maxWidth < dims.Y.width){
-                ortho.Y.maxWidth = dims.Y.width;
-            }
-            if (ortho.Z.maxHeight < dims.Z.height){
-                ortho.Z.maxHeight = dims.Z.height;
-            }
-            if (ortho.Z.maxWidth < dims.Z.width){
-                ortho.Z.maxWidth = dims.Z.width;
-            }; 
+            for (var i=0; i < views.length; ++i){
+               
+               views[i].setProportionalSize(ortho);
+           }
+           window.dispatchEvent(new Event('resize')); 
+           
         }
             
         
@@ -172,6 +152,12 @@
             var mutView = dcc.SpecimenView(mutants, 'mut', container, queryColonyId, 
                             sliceChange, setLargestDimesions);
             views.push(mutView);
+            
+            /* volumes are loaded. Now make the correposnding orthogonal views
+             proportial sizes to each other. eg saggital slice from each view
+            should be sized propotional to their real size
+            */
+           
         };
         
         

@@ -51,6 +51,11 @@
         var yOffset = 0;
         var zOffset = 0;
         
+        // These set whether a orientation is the largest amongst all the SpecimenViews
+        var largestXY = false;
+        var largestZ = false;
+ 
+        
         /**
          * The XY dimensions of the X slice
          * @property xDims
@@ -70,7 +75,7 @@
          */
         var zDims;
         
-
+        
 
         function createEventHandlers() {
             /**
@@ -202,7 +207,7 @@
         
         function createSliceView(orient){
             /**
-             * 
+             * Create the HTML for the elements containing the slice view
              * @param {String} orient Orientation (X, Y or Z)
              */
             
@@ -272,6 +277,41 @@
             var template = Handlebars.compile(source);
             return template(data);
         };
+        
+        
+        function setProportionalSize(info){
+            /**
+             * Set the orthogonal view proportial size by chnaging size of the
+             * view wrapper
+             * @method setProportionalSize
+             * @param {object} viewInfo Hash with max sizes for each orthogonal
+             * view
+             */
+            var $xWrapper = $('#X_' + id);
+            var $yWrapper = $('#Y_' + id);
+            var $zWrapper = $('#Z_' + id);
+            
+            
+            /**
+             * Height should always be larger than width, This will not work
+             * otherwise
+             */
+            
+            if (! largestXY){
+               
+              
+                var heightRatio = $xWrapper.height() /info.X.maxHeight;
+               
+                var newHeight = $xWrapper.height() / heightRatio;
+                console.log('nh ', newHeight);
+                console.log('h ' + $xWrapper.height());
+                var xPad = (info.X.maxHeight - newHeight) / 2;
+                $xWrapper.css('height', newHeight);
+                $xWrapper.css('top', xPad);
+    //            $xWrapper.css('padding-bottom', xPad);
+            }
+            
+        }
 
 
         function replaceVolume(volumePath) {
@@ -431,13 +471,10 @@
             zRen.render();
 
             var dims = volume.dimensions;
+           
             
             // Let main know of the new dimensions of the orthogonal views
-            dimsCB({'X': {'width': dims[1], 'height': dims[2]}, 
-                    'Y': {'width': dims[0], 'height': dims[2]},
-                    'Z': {'width': dims[0], 'height': dims[1]}
-                    }
-                );
+            dimsCB(volume.dimensions);
 
             // It appears that dimensoins are in yxz order. At least with nii loading
             volume.indexX = Math.floor((dims[0] - 1) / 2);
@@ -667,7 +704,12 @@
             getIndex: getIndex,
             id: id,
             setIdxOffset: setIdxOffset,
-            getDimensions: getDimensions
+            getDimensions: getDimensions,
+            setProportionalSize: setProportionalSize,
+            largestXY: largestXY,
+            largestZ: largestZ
+          
+
 
         };
         
