@@ -763,6 +763,15 @@ X.renderer2D.prototype.update_ = function(object) {
  * Adjust the zoom (scale) to best fit the current slice.
  */
 X.renderer2D.prototype.autoScale_ = function() {
+    /*Neil Horner: This is a bodge as the sagittal widths are getting mixed up somwhere*/
+     if (this._orientationIndex == 0) {
+      
+      var h = this._sliceHeight;
+      var w = this._sliceWidth;
+      this._sliceWidth = h;
+      this._sliceHeight = w;
+  }
+  /* NH */
 
   // let's auto scale for best fit
   var _wScale = this._width / (this._sliceWidth * this._sliceWidthSpacing);
@@ -834,8 +843,9 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
     this._orientationColors[1] = 'rgba(0,0,255,.3)';
 
     var _buf = _sliceWidth;
-    _sliceWidth = _sliceHeight;
-    _sliceHeight = _buf;
+    //Neil Horner: Is this the cause of thesaggital scaling problem?
+//    _sliceWidth = _sliceHeight;
+//    _sliceHeight = _buf;
   }
 
   // padding offsets
@@ -874,9 +884,10 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
       // then invert x and y to compensate camera +90d rotation
       _x = _sliceWidth - _x;
 
-      var _buf = _x;
-      _x = _y;
-      _y = _buf;
+       // Neil Horner: Saggitaql scaling problem
+//      var _buf = _x;
+//      _x = _y;
+//      _y = _buf;
 
     }
     else if (this._orientation == "Y") {
@@ -1264,10 +1275,11 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
   if(this._orientation == "X") {
 
     this._context.rotate(Math.PI * 0.5);
-
-    var _buf = _x;
-    _x = _y;
-    _y = -_buf;
+    
+    //neil Horner: Siggital p0roblem?
+//    var _buf = _x;
+//    _x = _y;
+//    _y = -_buf;
 
   }
 

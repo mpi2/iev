@@ -284,27 +284,31 @@ goog.require('X.interactor2D');
              * @method setProportionalSize
              * @param {object} viewInfo Hash with max sizes for each orthogonal
              * view
+             * 
+             * 
              */
+            
+            console.log('setXY', $('#X_mut').height(), $('.sliceWrap').height());
+            
             var $xWrapper = $('#X_' + id);
             var $yWrapper = $('#Y_' + id);
-            
-            
-            
-            
+           
             /**
              * Height should always be larger than width, This will not work
              * otherwise
              */
-
+            var heightRatio = volume.dimensions[2] / maxHeight; //Always the same for a volume
             
-            var heightRatio = volume.dimensions[2] / maxHeight; // Does this affect wrapper height ?
+            var wrapperNewHeight = $('.sliceView').height() * heightRatio;
+  
             
-            var wrapperNewHeight = $xWrapper.height() * heightRatio;
 
-            var xyPad = ($xWrapper.height() - wrapperNewHeight) / 2;
+            var xyPad = ($('.sliceView').height() - wrapperNewHeight) / 2;
             $xWrapper.css('height', wrapperNewHeight);
+            $yWrapper.css('height', wrapperNewHeight);
             $xWrapper.css('top', xyPad);
-            console.log('xy pad', xyPad);
+            $yWrapper.css('top', xyPad);
+            
 
             
         }

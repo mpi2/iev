@@ -93,12 +93,23 @@
         }
         
         
+        
+        function onHeightSlider(sliderValue){
+            /**
+             * 
+             * @return {undefined}
+             */
+             $('.sliceWrap').css('height', ui.value);
+             console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
+        }
+        
+        
         function scaleOrthogonalViews(){
             /**
              * Set the largest extent for each of the dimensions
              *@method setLargestDimesions
              */
-        
+            
             var maxXY = 0;
             var maxZ = 0;
             var maxXYid;
@@ -288,8 +299,16 @@
                         max: 1920,
                         values: [500],
                         slide: $.proxy(function (event, ui) {
+                            console.log('before slider', $('#X_mut').height(), $('.sliceWrap').height());
                             $('.sliceWrap').css('height', ui.value);
-                            scaleOrthogonalViews();
+                            $('#X_mut').resize();
+                           
+                            console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
+                            scaleOrthogonalViews()
+                       
+                            console.log('after scaling', $('#X_mut').height());
+                            
+
                             var evt = document.createEvent('UIEvents');
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);
@@ -299,7 +318,11 @@
                         content: "Modify slice viewer height",
                         show: {delay: 1200 }
                     });
-                    
+            
+            
+            
+            
+            
 
             $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
                  show: {delay: 1200 }
@@ -346,6 +369,7 @@
                 $('#horizontal_check').prop('checked', true).button("refresh");
                 window.dispatchEvent(new Event('resize')); 
         }.bind(this));
+        
         
         $('#horizontal_check')
                 .click(function (event) {
