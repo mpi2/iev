@@ -288,7 +288,7 @@ goog.require('X.interactor2D');
              * 
              */
             
-            console.log('setXY', $('#X_mut').height(), $('.sliceWrap').height());
+            return; // For now until I fix the saggital 
             
             var $xWrapper = $('#X_' + id);
             var $yWrapper = $('#Y_' + id);
@@ -300,17 +300,11 @@ goog.require('X.interactor2D');
             var heightRatio = volume.dimensions[2] / maxHeight; //Always the same for a volume
             
             var wrapperNewHeight = $('.sliceView').height() * heightRatio;
-  
-            
-
             var xyPad = ($('.sliceView').height() - wrapperNewHeight) / 2;
             $xWrapper.css('height', wrapperNewHeight);
             $yWrapper.css('height', wrapperNewHeight);
             $xWrapper.css('top', xyPad);
-            $yWrapper.css('top', xyPad);
-            
-
-            
+            $yWrapper.css('top', xyPad);   
         }
         
 
@@ -592,9 +586,10 @@ goog.require('X.interactor2D');
              * @method setIndex
              * @param {int} index The new slice index to set
              */
+          
              volume.indexY = index - yOffset;
              $ySlider.slider("value", volume.indexY);
-        }
+        };
         
         function setZindex(index){
             /**
@@ -603,6 +598,7 @@ goog.require('X.interactor2D');
              * @method setIndex
              * @param {int} index The new slice index to set
              */
+            
              volume.indexZ = index - zOffset;
              $zSlider.slider("value", volume.indexZ);
         }
@@ -639,7 +635,7 @@ goog.require('X.interactor2D');
              * @method getDimensions
              * @return {Array<int>} XYZ dimensions of the current volume
              */
-            return volume.dimensions
+            return volume.dimensions;
         }
         
 
@@ -687,7 +683,7 @@ goog.require('X.interactor2D');
             } else {
                 $zWrap.hide();
             }
-        };
+        }
 
 
         function basename(path) {

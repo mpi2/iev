@@ -577,6 +577,9 @@ X.parser.intersectionBBoxLine = function(_bbox, _sliceOrigin, _sliceNormal){
  */
 X.parser.intersectionBBoxPlane = function(_bbox, _sliceOrigin, _sliceNormal){
 
+  if(_sliceNormal[0] === 1){
+      
+  }
   var _solutionsIn = new Array();
   var _solutionsOut = new Array();
 
@@ -702,7 +705,9 @@ X.parser.xyBBox = function(_solutionsXY){
    Number.MAX_VALUE, -Number.MAX_VALUE,
    Number.MAX_VALUE, -Number.MAX_VALUE];
   var i = 0;
-  for (i = 0; i < _solutionsXY.length; ++i) {
+  
+  // Neil: seems to be just checking whether any of the bounding box parts are larger than the largest number available in JS
+  for (i = 0; i < _solutionsXY.length; ++i) { //Neil:  Length of 2
 
     if(_solutionsXY[i][0] < _xyBBox[0]) {
 
@@ -761,7 +766,10 @@ X.parser.xyBBox = function(_solutionsXY){
  */
 X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, _IJKVolume, object, hasLabelMap, colorTable){
 
+  console.log(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, hasLabelMap, colorTable);
   var sliceXY = new X.slice();
+  
+  // NEil: At this point, the box is the same for all 3 orthogonal views
 
   // normalize slice normal (just in case)
   goog.vec.Vec3.normalize(_sliceNormal, _sliceNormal);
@@ -804,6 +812,17 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
 
   // get XY bounding box!
   var _xyBBox = X.parser.xyBBox(_solutionsXY);
+  
+  
+  //Neil
+  if (_color[0] === 1){
+      _xyBBox = [-211, 0, -350, 0, -106, -106];
+  }
+  
+  
+  
+  //Neil Somewhere between top of this function and here, the orientations of the saggital _xyBBox get mixed up
+  
 
   var _xyCenter = goog.vec.Vec4.createFloat32FromValues(_xyBBox[0] + (_xyBBox[1] - _xyBBox[0])/2,_xyBBox[2] + (_xyBBox[3] - _xyBBox[2])/2, _xyBBox[4] + (_xyBBox[5] - _xyBBox[4])/2,0);
   var _RASCenter = goog.vec.Vec4.createFloat32();
@@ -871,6 +890,18 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
   var _iHeight = 0;
   var j = _hmin;
   var i = _wmin;
+  
+  //neil: Works a bit but the head is cut off
+//    if (_color[0] === 1){
+//      console.log('is saggital');
+//      var t = _wmin;
+//      _wmin = _hmin;
+//      _hmin = t;
+//      
+//      var u = _we;
+//      _we = _he;
+//      _he = u;
+//  }
 
   for (j = _hmin; j <= _he; j+=_resY) {
 

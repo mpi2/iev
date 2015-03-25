@@ -484,7 +484,6 @@ X.renderer2D.prototype.init = function() {
   this._context.fillStyle = "rgba(50,50,50,0)";
 
   // .. and size
-  //console.log(this._orientation, this._canvas.width, this._canvas.height) neil: fine
   this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
   // create an invisible canvas as a framebuffer
@@ -713,7 +712,7 @@ X.renderer2D.prototype.update_ = function(object) {
 
   var _currentSlice = null;
   if (this._orientationIndex == 0) {
-    
+
     _currentSlice = object['indexX'];
 
   } else if (this._orientationIndex == 1) {
@@ -728,6 +727,10 @@ X.renderer2D.prototype.update_ = function(object) {
 
   var _width = object._children[this._orientationIndex]._children[_currentSlice]._iWidth;
   var _height = object._children[this._orientationIndex]._children[_currentSlice]._iHeight;
+  
+ 
+  //console.log('renderer2 line: 732', this._orientationIndex, _height );
+   
   // spacing
   this._sliceWidthSpacing = object._children[this._orientationIndex]._children[_currentSlice]._widthSpacing;
   this._sliceHeightSpacing = object._children[this._orientationIndex]._children[_currentSlice]._heightSpacing;
@@ -735,7 +738,6 @@ X.renderer2D.prototype.update_ = function(object) {
   // .. and store the dimensions
   this._sliceWidth = _width;
   this._sliceHeight = _height;
-  
 
   // update the invisible canvas to store the current slice
   var _frameBuffer = this._frameBuffer;
@@ -745,9 +747,6 @@ X.renderer2D.prototype.update_ = function(object) {
   var _frameBuffer2 = this._labelFrameBuffer;
   _frameBuffer2.width = _width;
   _frameBuffer2.height = _height;
-  
-    console.log(this._orientation, this._sliceHeight, this._sliceWidth); //Neil: looks good
-
 
   // .. and the context
   this._frameBufferContext = _frameBuffer.getContext('2d');
@@ -769,26 +768,20 @@ X.renderer2D.prototype.update_ = function(object) {
  */
 X.renderer2D.prototype.autoScale_ = function() {
 
-      // let's auto scale for best fit
+
 //   if (this._orientationIndex == 0) {
 //      //Neil Horner: This is a bodge as the sagittal widths are getting mixed up
 //      // somwhere
-//      
-//      // WTF |_sliceHeight
 //      var h = this._sliceHeight;
 //      var w = this._sliceWidth;
 //      this._sliceWidth = h;
 //      this._sliceHeight = w;
 //  }
-  
-  //Check canvas size
-  // let's auto scale for best fit. Check spacing
+  // let's auto scale for best fit
   var _wScale = this._width / (this._sliceWidth * this._sliceWidthSpacing);
   var _hScale = this._height / (this._sliceHeight * this._sliceHeightSpacing);
-  
-  console.log('as', _wScale, _hScale, this._orientation);
 
-  var _autoScale = Math.min(_wScale, _hScale); //Neil: Looks OK
+  var _autoScale = Math.min(_wScale, _hScale);
 
   // propagate scale (zoom) to the camera
   var _view = this._camera._view;
@@ -854,10 +847,10 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
     this._orientationColors[1] = 'rgba(0,0,255,.3)';
 
     var _buf = _sliceWidth;
+    console.log('850', _sliceWidth);
     _sliceWidth = _sliceHeight;
     _sliceHeight = _buf;
-    console.log("Called xy2ijk");
-    // Neil: This is never called
+    console.log('853', _sliceWidth);
   }
 
   // padding offsets
@@ -895,7 +888,7 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
       // invert cols
       // then invert x and y to compensate camera +90d rotation
       _x = _sliceWidth - _x;
-      //Neil: this is never called
+
       var _buf = _x;
       _x = _y;
       _y = _buf;
@@ -1012,10 +1005,24 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
     _currentSlice = _volume['indexZ'];
 
   }
+
   
   //if slice do not exist yet, we have to set slice dimensions
   var _width2 = this._slices[parseInt(_currentSlice, 10)]._iWidth;
   var _height2 = this._slices[parseInt(_currentSlice, 10)]._iHeight;
+  
+//  if (this._orientationIndex == 0) {
+//      //Neil Horner: This is a bodge as the sagittal widths are getting mixed up
+//      // somwhere
+//      var h = _height2;
+//      var w = _width2;
+//      _height2 = w;
+//      _width2 = h;
+//     
+//     var p = 'p';
+//  }
+//  
+
   // spacing
   this._sliceWidthSpacing = this._slices[parseInt(_currentSlice, 10)]._widthSpacing;
   this._sliceHeightSpacing = this._slices[parseInt(_currentSlice, 10)]._heightSpacing;
@@ -1023,33 +1030,13 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
   // .. and store the dimensions
   this._sliceWidth = _width2;
   this._sliceHeight = _height2;
-  
-    if (this._orientationIndex == 0) {
-        //console.log('sh', this._sliceHeight);
-    }
-  
-
   //
   // grab the camera settings
-  
 
   //
   // viewport size
   var _width = this._width;
   var _height = this._height;
-  
-  //console.log('height ', this._height, this._orientation); Neil:fine
-  
-  
-  //Neil 
-//      if (this._orientationIndex == 0) {
-//
-//  var buf = this._sliceWidth;
-//  this._sliceHeight = this._sliceWidth;
-//  this._sliceWidth = buf;
-//  
-//
-//    }
 
   // first grab the view matrix which is 4x4 in favor of the 3D renderer
   var _view = this._camera._view;
@@ -1094,9 +1081,10 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
   }
 
+  //nh
   var _sliceWidth = this._sliceWidth;
   var _sliceHeight = this._sliceHeight;
-  //console.log(_sliceHeight);
+
   //
   // FRAME BUFFERING
   //
@@ -1306,15 +1294,10 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
   if(this._orientation == "X") {
 
     this._context.rotate(Math.PI * 0.5);
-    
-//    var _buf = _x;
-//    _x = _y;
-//    _y = -_buf;
-//neilfbuf
-//    var buf = _sliceWidth;
-//    _sliceWidth = _sliceHeight; 
-//    _sliceHeight = buf;
-// 
+
+    var _buf = _x;
+    _x = _y;
+    _y = -_buf;
 
   }
 

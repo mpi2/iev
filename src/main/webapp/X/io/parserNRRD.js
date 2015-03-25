@@ -136,6 +136,7 @@ X.parserNRRD.prototype.parse = function(container, object, data, flag) {
   var _spaceY = 1;
   var _spaceZ = 1;
 
+// this will flip 2 
   if (this.space == "left-posterior-superior") {
   
     _spaceX = -1;

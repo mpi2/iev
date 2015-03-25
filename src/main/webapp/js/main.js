@@ -299,14 +299,14 @@
                         max: 1920,
                         values: [500],
                         slide: $.proxy(function (event, ui) {
-                            console.log('before slider', $('#X_mut').height(), $('.sliceWrap').height());
+                            //console.log('before slider', $('#X_mut').height(), $('.sliceWrap').height());
                             $('.sliceWrap').css('height', ui.value);
-                            $('#X_mut').resize();
+                            
                            
-                            console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
-                            scaleOrthogonalViews()
+                            //console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
+                            //scaleOrthogonalViews()
                        
-                            console.log('after scaling', $('#X_mut').height());
+                            //console.log('after scaling', $('#X_mut').height());
                             
 
                             var evt = document.createEvent('UIEvents');
