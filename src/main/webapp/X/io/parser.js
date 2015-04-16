@@ -815,10 +815,10 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
   
   
   //Neil
-  if (_color[0] === 1){
-      _xyBBox = [-211, 0, -350, 0, -106, -106];
-  }
-  
+//  if (_color[0] === 1){
+//      _xyBBox = [-211, 0, -350, 0, -106, -106];
+//  }
+//  
   
   
   //Neil Somewhere between top of this function and here, the orientations of the saggital _xyBBox get mixed up
