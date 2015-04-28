@@ -766,7 +766,7 @@ X.parser.xyBBox = function(_solutionsXY){
  */
 X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, _IJKVolume, object, hasLabelMap, colorTable){
 
-  console.log(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, hasLabelMap, colorTable);
+  // neil console.log(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, hasLabelMap, colorTable);
   var sliceXY = new X.slice();
   
   // NEil: At this point, the box is the same for all 3 orthogonal views
@@ -780,6 +780,7 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
 
   //_bbox is only this slice bounding box
   var _solutions = X.parser.intersectionBBoxPlane(_bbox,_sliceOrigin, _sliceNormal);
+ 
   var _solutionsIn = _solutions[0];
 
   // ------------------------------------------
@@ -812,6 +813,16 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
 
   // get XY bounding box!
   var _xyBBox = X.parser.xyBBox(_solutionsXY);
+  
+    //Neil: Ends up chopping off the head of the sagittal view. Scales better though
+    //It is having an effect. this gives the correct _sliceHeight and _sliceWidth in renderer2D.
+    // Are there any other side effects from xyBBox before I change it here
+  if (_color[0] === 1){
+    var temp0 = _xyBBox[0];
+    var temp2 = _xyBBox[2];
+    _xyBBox[0] = temp2;
+    _xyBBox[2] = temp0;
+  }
   
   
   //Neil

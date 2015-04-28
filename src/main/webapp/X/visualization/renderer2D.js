@@ -1022,6 +1022,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
   // first grab the view matrix which is 4x4 in favor of the 3D renderer
   var _view = this._camera._view;
+  //console.log(this._orientation);
 
   // clear the canvas
   this._context.save();

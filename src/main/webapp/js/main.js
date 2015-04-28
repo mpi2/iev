@@ -29,7 +29,7 @@
                 var obj = data.volumes[i];
 
                  if (obj.colonyId === WILDTYPE_COLONYID){
-                    wildtypes.push(buildUrl(obj));
+                    //wildtypes.push(buildUrl(obj));
 
                 }else{
                     mutants.push(buildUrl(obj));   
