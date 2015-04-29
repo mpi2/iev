@@ -45,14 +45,21 @@ limitations under the License.
                     <form action="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"  id="help_form">
                         <input type="submit" value="?" id="help_link" >
                     </form>
-
-                    <input type="checkbox" id="X_check" class='toggle_slice' checked>
-                    <label for="X_check" id='X_check_label'>Sagittal</label>
-                    <input type="checkbox" id="Y_check" class='toggle_slice' checked>
-                    <label for="Y_check" id='Y_check_label'>Coronal</label>
-                    <input type="checkbox" id="Z_check" class='toggle_slice' checked>
-                    <label for="Z_check" id='Z_check_label'>Axial</label>
+                    <form>
+                        <fieldset>
+                            <legend>Orthogonal views</legend>
+                            <div id="orthogonal_views_buttons">
+                            <input type="checkbox" id="X_check" class='toggle_slice' checked>
+                            <label for="X_check" id='X_check_label'>Sagittal</label>
+                            <input type="checkbox" id="Y_check" class='toggle_slice' checked>
+                            <label for="Y_check" id='Y_check_label'>Coronal</label>
+                            <input type="checkbox" id="Z_check" class='toggle_slice' checked>
+                            <label for="Z_check" id='Z_check_label'>Axial</label>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
+
                 <div id='topright'>
                     <!--<button type="submit" id="fullscreen"><img src="fullscreen.png" height="20px"></button>-->
                     <span id="orientation_radio">
@@ -62,6 +69,7 @@ limitations under the License.
                         <label for="horizontal_check" id='horizontal_check_label'>Horizontal</label>
                     </span>
                 </div>
+
                 <form>
                     <fieldset>
                         <legend>Modality stage selection</legend>

@@ -72,6 +72,14 @@ body{
     margin-right: 10px;
 }
 
+#orthogonal_views_buttons{
+    width: 400px;
+}
+
+#modality_stage{
+    width: 200px;
+}
+
 .nodata {
     font: 2em arial, sans-serif;
     top: 50%;

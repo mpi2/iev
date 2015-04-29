@@ -437,7 +437,7 @@
 
     $(function () {
        
-        $(".toggle_slice").button();
+        $("#orthogonal_views_buttons").buttonset();
         
                 
         $( "#help_link" ).button({
