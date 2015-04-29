@@ -817,12 +817,12 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
     //Neil: Ends up chopping off the head of the sagittal view. Scales better though
     //It is having an effect. this gives the correct _sliceHeight and _sliceWidth in renderer2D.
     // Are there any other side effects from xyBBox before I change it here
-  if (_color[0] === 1){
-    var temp0 = _xyBBox[0];
-    var temp2 = _xyBBox[2];
-    _xyBBox[0] = temp2;
-    _xyBBox[2] = temp0;
-  }
+//  if (_color[0] === 1){
+//    var temp0 = _xyBBox[0];
+//    var temp2 = _xyBBox[2];
+//    _xyBBox[0] = temp2;
+//    _xyBBox[2] = temp0;
+//  }
   
   
   //Neil

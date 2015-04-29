@@ -769,10 +769,10 @@ X.renderer2D.prototype.autoScale_ = function() {
       // somwhere
       
       // WTF |_sliceHeight
-      var h = this._sliceHeight;
-      var w = this._sliceWidth;
-      this._sliceWidth = h;
-      this._sliceHeight = w;  
+//      var h = this._sliceHeight;
+//      var w = this._sliceWidth;
+//      this._sliceWidth = h;
+//      this._sliceHeight = w;  
   }
 
   // let's auto scale for best fit
@@ -1022,7 +1022,6 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
   // first grab the view matrix which is 4x4 in favor of the 3D renderer
   var _view = this._camera._view;
-  //console.log(this._orientation);
 
   // clear the canvas
   this._context.save();
@@ -1402,7 +1401,13 @@ else{
     this._canvas.style.cursor = "default";
   }
   }
-
+  
+  //Neil: Bodge to fix sagittal scaling bug
+    if (this._orientationIndex == 0) {
+        var buf = this._sliceWidth;
+        this._sliceWidth = this._sliceHeight;
+        this._sliceHeight = buf;
+    }
 };
 
 // export symbols (required for advanced compilation)

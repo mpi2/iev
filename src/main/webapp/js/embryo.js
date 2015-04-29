@@ -26,9 +26,7 @@
     dcc.embryo = function(colonyId) {   
         dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
             function(data) {   
-                dcc.EmbryoViewer(data, 'viewer', colonyId)
-           
-               
+                dcc.EmbryoViewer(data, 'viewer', colonyId)     
         });
     };
 

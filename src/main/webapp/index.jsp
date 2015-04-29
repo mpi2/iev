@@ -30,22 +30,22 @@ limitations under the License.
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
         <script type="text/javascript" src="X/xtk-deps.js"></script>
         <!--<script type="text/javascript" src="js/xtk.js"></script>-->
-        
+
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
         <script type="text/javascript" src="js/viewer.js"></script>
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
-        </head>
-        <body>
+    </head>
+    <body>
         <div id='wrap'>
             <div id='top_bar'>
                 <div id='topleft'>
                     <!--<a href="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"><span id="help_link" class="ui-icon  ui-icon-help"</span></a>-->
-                      
+
                     <form action="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"  id="help_form">
                         <input type="submit" value="?" id="help_link" >
                     </form>
-                    
+
                     <input type="checkbox" id="X_check" class='toggle_slice' checked>
                     <label for="X_check" id='X_check_label'>Sagittal</label>
                     <input type="checkbox" id="Y_check" class='toggle_slice' checked>
@@ -56,87 +56,103 @@ limitations under the License.
                 <div id='topright'>
                     <!--<button type="submit" id="fullscreen"><img src="fullscreen.png" height="20px"></button>-->
                     <span id="orientation_radio">
-                    <input type="radio" id="vertical_check" name="radio" checked="checked">
-                    <label for="vertical_check" id='vertical_check_label'>Vertical</label>
-                    <input type="radio" id="horizontal_check" name="radio">
-                    <label for="horizontal_check" id='horizontal_check_label'>Horizontal</label>
+                        <input type="radio" id="vertical_check" name="radio" checked="checked">
+                        <label for="vertical_check" id='vertical_check_label'>Vertical</label>
+                        <input type="radio" id="horizontal_check" name="radio">
+                        <label for="horizontal_check" id='horizontal_check_label'>Horizontal</label>
                     </span>
                 </div>
+                <form>
+                    <fieldset>
+                        <legend>Modality stage selection</legend>
+                        <div id="modality_stage">
+                            <input type="radio" id="ct_14-15.5" name="project">
+                            <label for="ct_14-15.5">uCT E14/E15.5</label>
+
+                            <input type="radio" id="ct_18.15" name="project" checked="checked">
+                            <label for="ct_18.15">uCT E18.5</label>
+
+                            <input type="radio" id="OPT_12.5" name="project">
+                            <label for="OPT_12.5">OPT E12.5</label>
+                        </div>
+                    </fieldset>
+                </form>
                 <div id="viewHeightSlider" title="test"></div>
             </div>
-            </div>
-            <div id="viewer"></div>
-           <script>
-   
-    
-    
-    
-    window.addEventListener('load', function() {
-                dcc.embryo("<%= request.getParameter("colony_id")%>");                
-            });
-    </script>
-    <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                    m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+        </div>
+        <div id="viewer"></div>
+        <script>
 
-        ga('create', 'UA-23433997-1', 'https://www.mousephenotype.org/embryo');
-        ga('send', 'pageview');
-    </script>  
+
+
+
+            window.addEventListener('load', function () {
+                dcc.embryo("<%= request.getParameter("colony_id")%>");
+            });
+        </script>
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', 'UA-23433997-1', 'https://www.mousephenotype.org/embryo');
+            ga('send', 'pageview');
+        </script>  
     </body>
-    
-    
+
+
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
         <div id="controls_{{id}}"class="controls clear">
-            <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
-            <select id="{{vselectorId}}" class ="selectmenu"></select>
+        <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
+        <select id="{{vselectorId}}" class ="selectmenu"></select>
         </div>
         <div class="wlwrap">
-            <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
+        <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
         </div>
         <span id="{{controlsButtonsId}}" class="controlsButtons">
-            <input type="checkbox" id="{{invertColoursId}}" class="button">
-            <label for="{{invertColoursId}}">Invert colours</label>
-            <a id="{{zoomInId}}" href="#" class="button">+</a>
-            <a id="{{zoomOutId}}" href="#" class="button">-</a>
-            <a id ="{{resetId}}" href="#" class="button">Reset</a>
+        <input type="checkbox" id="{{invertColoursId}}" class="button">
+        <label for="{{invertColoursId}}">Invert colours</label>
+        <a id="{{zoomInId}}" href="#" class="button">+</a>
+        <a id="{{zoomOutId}}" href="#" class="button">-</a>
+        <a id ="{{resetId}}" href="#" class="button">Reset</a>
         </span>
-    </div>
+        </div>
     </script>
-    
-    
+
+
     <!--Specimen view template-->
     <script id="specimen_view_template" type="text/x-handlebars-template">  
-    <div id="{{id}}" class='specimen_view'></div>"    
+        <div id="{{id}}" class='specimen_view'></div>"    
     </script>
 
-    
+
     <!--Slice view template-->
     <script id="slice_view_template" type="text/x-handlebars-template">
-    <div class="sliceWrap" id="{{sliceWrapId}}">
+        <div class="sliceWrap" id="{{sliceWrapId}}">
         <div id="{{sliceContainerID}}" class ="sliceView"></div>
         <div class="sliceControls">
-            <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
-            <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
-            <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
+        <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
+        <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
+        <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
 
         </div>
-    </div>
+        </div>
     </script>
-    
-    
+
+
     <!--No data template-->
     <script id="no_data_template" type="text/x-handlebars-template">
-    <div class="nodata">
-    <p>There are no data currently available for colony ID "{{colonyId}}".</p>
-    </div>
+        <div class="nodata">
+        <p>There are no data currently available for colony ID "{{colonyId}}".</p>
+        </div>
     </script>
 </html>

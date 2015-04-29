@@ -16,6 +16,32 @@
         var horizontalView = undefined;
         var NUM_VIEWERS = 2;
         var viewers_loaded = 0;
+        
+        /**
+         * 
+         * @type {object} modality_stage_pids
+         * A mapping of procedure ids and imaging modality/stage key
+         */
+        var modality_stage_pids = {
+            203: 'CT E14.5/15.5',
+            204: 'CT E18.5',
+            202: 'OPT E12.5'
+        };
+        
+        var modality_stage_data = {
+            'wildtypes':{
+                'CT E14.5/15.5': [],
+                'CT E18.5': [],
+                'OPT E12.5': []
+            },
+            'mutants':{
+                'CT E14.5/15.5': [],
+                'CT E18.5': [],
+                'OPT E12.5': []
+            }    
+        };
+            
+
      
         
         /**
@@ -29,10 +55,12 @@
                 var obj = data.volumes[i];
 
                  if (obj.colonyId === WILDTYPE_COLONYID){
-                    //wildtypes.push(buildUrl(obj));
+                    var modality_stage = modality_stage_pids[obj.pid];
+                    modality_stage_data['wildtypes'][modality_stage].push(buildUrl(obj));
 
                 }else{
-                    mutants.push(buildUrl(obj));   
+                    var modality_stage = modality_stage_pids[obj.pid];
+                    modality_stage_data['mutants'][modality_stage].push(buildUrl(obj));
                 }
             }
             
@@ -44,7 +72,7 @@
             $('#' + div).append(template(data));
         }
        
-    
+
         var container = div;
         var views = [];
         
@@ -72,7 +100,8 @@
         };
         
         
-    
+
+        
     
         function buildUrl(data){
             /**
@@ -157,11 +186,11 @@
              * @method loadViewers
              * @param {String} container HTML element to put the specimen viewer in to
              */
-            var wtView = dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, 
+            var wtView = dcc.SpecimenView(modality_stage_data.wildtypes, 'wt', container, WILDTYPE_COLONYID, 
                             sliceChange, views, onViewLoaded);
             views.push(wtView);
             
-            var mutView = dcc.SpecimenView(mutants, 'mut', container, queryColonyId, 
+            var mutView = dcc.SpecimenView(modality_stage_data.mutants, 'mut', container, queryColonyId, 
                             sliceChange, views, onViewLoaded);
             views.push(mutView);
             
@@ -169,6 +198,7 @@
              proportial sizes to each other. eg saggital slice from each view
             should be sized propotional to their real size
             */
+          
         };
         
         function onViewLoaded(id){
@@ -180,8 +210,8 @@
              */
             viewers_loaded += 1;
             if (viewers_loaded === NUM_VIEWERS){
-                scaleOrthogonalViews();
-            }
+                scaleOrthogonalViews();  
+            }  
         }
         
         
@@ -344,6 +374,7 @@
     
     
     function setupOrientationControls(){
+                $( "#modality_stage" ).buttonset();
                 
             // No orientation controls for single specimen view  
             if (wildtypes.length < 1 || mutants.length < 1){
@@ -351,7 +382,7 @@
                  return;
             }
          
-            $("#orientation_radio" ).buttonset();
+            //$("#orientation_radio" ).buttonset();
            
         
             $("#vertical_check")
@@ -394,7 +425,12 @@
                 
            
         }.bind(this));
-        }
+    }
+    
+    
+    function setupModalityStageButtons(){
+        
+    }
   
 
     // Style the control buttons
@@ -411,6 +447,8 @@
         }).click(function(){
             //Get link to the docs
         }).css({width: '30'});
+        
+
     });
 
 //    $('body').bind('beforeunload', function () {
@@ -420,6 +458,8 @@
     loadViewers(container);
     attachEvents();
     setupOrientationControls();
+    setupModalityStageButtons();
+    
     }//EmbryoViewer
      
    

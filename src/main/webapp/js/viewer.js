@@ -25,7 +25,6 @@ goog.require('X.interactor2D');
         var id = id;
         var viewContainer = container;
         var volumePaths = volumePaths;
-        var currentVolumePath = volumePaths[0];
 
         var $xContainer;
         var $yContainer;
@@ -74,7 +73,23 @@ goog.require('X.interactor2D');
         var zDims;
         
         
+        /*
+         * 
+         * Loop over the volume paths objects and choose the first modality/stage that has data
+         */
+        var curentStageModalityVolumes;
+        
+        for (var stage_modality in volumePaths){
+            if (volumePaths[stage_modality].length > 1){
+                curentStageModalityVolumes = volumePaths[stage_modality];
+                break
+            }
+        }
+        
+        var currentVolumePath = curentStageModalityVolumes[0];
 
+
+        
         function createEventHandlers() {
             /**
              * Create event handler for controlling the specimen view
@@ -150,8 +165,8 @@ goog.require('X.interactor2D');
 
             // Add the volume options
             var options = [];
-            for (i = 0; i < volumePaths.length; i++) {
-                options.push("<option value='" + volumePaths[i] + "'>" + basename(volumePaths[i]) + "</option>");
+            for (i = 0; i < curentStageModalityVolumes.length; i++) {
+                options.push("<option value='" + curentStageModalityVolumes[i] + "'>" + basename(curentStageModalityVolumes[i]) + "</option>");
             }
             
 
@@ -179,7 +194,7 @@ goog.require('X.interactor2D');
 
             var $viewsContainer = $("#" + viewContainer);
             
-            if (volumePaths.length < 1 && queryColonyId !==  null){
+            if (curentStageModalityVolumes.length < 1 && queryColonyId !==  null){
                     return;
             }
             
@@ -288,7 +303,7 @@ goog.require('X.interactor2D');
              * 
              */
             
-            return; // For now until I fix the saggital 
+            //return; // For now until I fix the saggital 
             
             var $xWrapper = $('#X_' + id);
             var $yWrapper = $('#Y_' + id);
@@ -347,7 +362,7 @@ goog.require('X.interactor2D');
              * @method setupRenderers
              */
 
-            if (volumePaths.length < 1) return;
+            if (curentStageModalityVolumes.length < 1) return;
             
             xRen = new X.renderer2D();
             xRen.container = $xContainer.get(0);
@@ -371,6 +386,7 @@ goog.require('X.interactor2D');
             xRen.add(volume);
 
             xRen.render();
+            
 
             xRen.onShowtime = xtk_showtime;
 
