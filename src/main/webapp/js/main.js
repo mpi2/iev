@@ -16,6 +16,8 @@
         var horizontalView = undefined;
         var NUM_VIEWERS = 2;
         var viewers_loaded = 0;
+        var wtView;
+        var mutView;
         
         /**
          * 
@@ -43,7 +45,6 @@
             
 
      
-        
         /**
          * Seperate out the baseline data and the mutant data.
          * If data is not available, load an error message
@@ -176,9 +177,6 @@
         
         
             
-        
-    
-    
         function loadViewers(container) {
             /**
              * Create instances of SpecimenView and append to views[]. 
@@ -186,11 +184,21 @@
              * @method loadViewers
              * @param {String} container HTML element to put the specimen viewer in to
              */
-            var wtView = dcc.SpecimenView(modality_stage_data.wildtypes, 'wt', container, WILDTYPE_COLONYID, 
+            
+            //Detmermine which of the stage/modalities has mutant data. Choose the first one
+            for (var i in modality_stage_data.mutants){
+                if (modality_stage_data.mutants[i].length > 1){
+                    var wildtypeData = modality_stage_data.wildtypes[i];
+                    var mutantData = modality_stage_data.mutants[i];
+                    break
+                }
+            }
+            
+            wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, 
                             sliceChange, views, onViewLoaded);
             views.push(wtView);
             
-            var mutView = dcc.SpecimenView(modality_stage_data.mutants, 'mut', container, queryColonyId, 
+            mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
                             sliceChange, views, onViewLoaded);
             views.push(mutView);
             
@@ -200,6 +208,27 @@
             */
           
         };
+        
+        
+        function setStageModality(pid){
+            /*
+             * 
+             * @param {string} 
+             */
+            var stageModalityID = modality_stage_pids[pid];
+            
+            if (typeof wtView !== 'undefined'){
+                var wtVolumes = modality_stage_data.wildtypes[stageModalityID];
+                console.log(wtView);
+                wtView.updateData(wtVolumes);
+            }
+            if (typeof mutView !== 'undefined'){
+                var mutVolumes = modality_stage_data.mutants[stageModalityID];
+                mutView.updateData(wtVolumes);
+            }
+                
+        }
+        
         
         function onViewLoaded(id){
             /**
@@ -316,6 +345,13 @@
                 }
                 window.dispatchEvent(new Event('resize')); 
 
+            });
+            
+            
+            
+            $('.modality_button').change(function (ev) {
+                var checkedStageModality = ev.currentTarget.id;
+                setStageModality(checkedStageModality);
             });
             
 

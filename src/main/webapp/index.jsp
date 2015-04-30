@@ -46,7 +46,8 @@ limitations under the License.
                         <input type="submit" value="?" id="help_link" >
                     </form>
                     <form>
-                        <fieldset>
+                    </div>
+                        <fieldset id="orthogonal_views_buttons_fieldset">
                             <legend>Orthogonal views</legend>
                             <div id="orthogonal_views_buttons">
                             <input type="checkbox" id="X_check" class='toggle_slice' checked>
@@ -58,7 +59,7 @@ limitations under the License.
                             </div>
                         </fieldset>
                     </form>
-                </div>
+                
 
                 <div id='topright'>
                     <!--<button type="submit" id="fullscreen"><img src="fullscreen.png" height="20px"></button>-->
@@ -71,23 +72,24 @@ limitations under the License.
                 </div>
 
                 <form>
-                    <fieldset>
-                        <legend>Modality stage selection</legend>
+                    <fieldset id="modality_stage_fieldset">
+                        <legend>Modality/stage selection</legend>
                         <div id="modality_stage">
-                            <input type="radio" id="ct_14-15.5" name="project">
-                            <label for="ct_14-15.5">uCT E14/E15.5</label>
+                            <input type="radio" id="203" name="project" class="modality_button">
+                            <label for="203">uCT E14/E15.5</label>
 
-                            <input type="radio" id="ct_18.15" name="project" checked="checked">
-                            <label for="ct_18.15">uCT E18.5</label>
+                            <input type="radio" id="204" name="project" class="modality_button">
+                            <label for="204">uCT E18.5</label>
 
-                            <input type="radio" id="OPT_12.5" name="project">
-                            <label for="OPT_12.5">OPT E12.5</label>
+                            <input type="radio" id="202" class="modality_button" name="project">
+                            <label for="202">OPT E12.5</label>
                         </div>
                     </fieldset>
                 </form>
                 <div id="viewHeightSlider" title="test"></div>
             </div>
         </div>
+        <div class="clear"></div>
         <div id="viewer"></div>
         <script>
 

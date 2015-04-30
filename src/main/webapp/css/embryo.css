@@ -59,9 +59,13 @@ body{
     width: 200px;
 }
 
-/*clear{
+.clear{
     clear:both;
-}*/
+}
+
+fieldset{
+    padding: 2px;
+}
 
 #help_link, #help_form{
     float: left;
@@ -72,12 +76,16 @@ body{
     margin-right: 10px;
 }
 
-#orthogonal_views_buttons{
-    width: 400px;
+
+#orthogonal_views_buttons_fieldset{
+    width: 200px;
+    float: left;
 }
 
-#modality_stage{
-    width: 200px;
+
+#modality_stage_fieldset{
+    float: left;
+    width: 300px;
 }
 
 .nodata {

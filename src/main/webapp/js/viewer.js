@@ -77,18 +77,18 @@ goog.require('X.interactor2D');
          * 
          * Loop over the volume paths objects and choose the first modality/stage that has data
          */
-        var curentStageModalityVolumes;
+
+        var currentVolumePath = volumePaths[0];
+
         
-        for (var stage_modality in volumePaths){
-            if (volumePaths[stage_modality].length > 1){
-                curentStageModalityVolumes = volumePaths[stage_modality];
-                break
-            }
+        function updateData(volumes){
+            /*
+             * Chnage the current stage/modality being viewed
+             * 
+             */
+            volumePaths = volumes;
+            replaceVolume(volumePaths[0])
         }
-        
-        var currentVolumePath = curentStageModalityVolumes[0];
-
-
         
         function createEventHandlers() {
             /**
@@ -165,8 +165,8 @@ goog.require('X.interactor2D');
 
             // Add the volume options
             var options = [];
-            for (i = 0; i < curentStageModalityVolumes.length; i++) {
-                options.push("<option value='" + curentStageModalityVolumes[i] + "'>" + basename(curentStageModalityVolumes[i]) + "</option>");
+            for (i = 0; i < volumePaths.length; i++) {
+                options.push("<option value='" + volumePaths[i] + "'>" + basename(volumePaths[i]) + "</option>");
             }
             
 
@@ -194,7 +194,7 @@ goog.require('X.interactor2D');
 
             var $viewsContainer = $("#" + viewContainer);
             
-            if (curentStageModalityVolumes.length < 1 && queryColonyId !==  null){
+            if (volumePaths.length < 1 && queryColonyId !==  null){
                     return;
             }
             
@@ -362,7 +362,7 @@ goog.require('X.interactor2D');
              * @method setupRenderers
              */
 
-            if (curentStageModalityVolumes.length < 1) return;
+            if (volumePaths.length < 1) return;
             
             xRen = new X.renderer2D();
             xRen.container = $xContainer.get(0);
@@ -727,7 +727,8 @@ goog.require('X.interactor2D');
             setIdxOffset: setIdxOffset,
             getDimensions: getDimensions,
             setXYproportional: setXYproportional,
-            getVolume: getVolume
+            getVolume: getVolume,
+            updateData: updateData
         };
         
         createHTML();
