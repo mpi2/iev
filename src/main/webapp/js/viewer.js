@@ -90,6 +90,27 @@ goog.require('X.interactor2D');
             replaceVolume(volumePaths[0])
         }
         
+        
+        
+        function updateVolumeSelector(){
+            // Add the volume options
+            var options = [];
+            for (i = 0; i < volumePaths.length; i++) {
+                options.push("<option value='" + volumePaths[i] + "'>" + basename(volumePaths[i]) + "</option>");
+            }
+            
+            $('#' + vselector)
+            .append(options.join(""))
+            .selectmenu({
+                width: 200,
+                height: 20,
+                change: $.proxy(function (event, ui) {
+                    replaceVolume(ui.item.value);
+                }, this)
+            });
+        }
+        
+        
         function createEventHandlers() {
             /**
              * Create event handler for controlling the specimen view
@@ -161,24 +182,6 @@ goog.require('X.interactor2D');
                 yRen.camera.zoomOut(false);
                 zRen.camera.zoomOut(false);
             }, this));
-            
-
-            // Add the volume options
-            var options = [];
-            for (i = 0; i < volumePaths.length; i++) {
-                options.push("<option value='" + volumePaths[i] + "'>" + basename(volumePaths[i]) + "</option>");
-            }
-            
-
-            $('#' + vselector)
-            .append(options.join(""))
-            .selectmenu({
-                width: 200,
-                height: 20,
-                change: $.proxy(function (event, ui) {
-                    replaceVolume(ui.item.value);
-                }, this)
-            });
         }; 
 
 
@@ -732,6 +735,7 @@ goog.require('X.interactor2D');
         };
         
         createHTML();
+        updateVolumeSelector();
         jQuerySelectors();
         setupRenderers();
         createEventHandlers();

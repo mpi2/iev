@@ -71,7 +71,7 @@ fieldset{
   -webkit-border-radius: 10px;
     margin: 5px;
     padding: 2px 7px 2px 7px;
-    border-color:#DEDEDE;
+    border-color:white;
     border-style: solid;
     height: 45px;
  
@@ -100,7 +100,7 @@ fieldset{
 }
 
 #modality_stage_fieldset{
-    float: left;
+    float: right;
 }
 
 #heightslider_fieldset{
@@ -132,8 +132,9 @@ fieldset{
 }
 
 .wlwrap .ui-slider, #viewHeightSlider.ui-slider {
-    height: 2px;
+    height: 4px;
     cursor: pointer;
+ 
 }
 .wlwrap .ui-slider-handle, #viewHeightSlider .ui-slider-handle {
     top: -8px;
@@ -173,9 +174,10 @@ fieldset{
 }
 
 #viewHeightSlider {
+    
     float: right;
-    width: 300px;
-    top: 5px;
+    width: 200px;
+    top: 12px;
     margin: 0 10px;
 
 }
@@ -280,9 +282,11 @@ input[type=checkbox].linkCheck {
 
 #top_bar{
 
-    height: 30px;
-    border-bottom: 1px solid #EEE;
-    height: 40px;
+
+    border-bottom: 1px solid #9E9E9E;
+    //height: 40px;
+    background-color: #E0E0E0;
+    margin-bottom: 5px;
     
 }
 

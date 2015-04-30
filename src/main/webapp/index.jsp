@@ -45,53 +45,54 @@ limitations under the License.
                     <form action="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"  id="help_form">
                         <input type="submit" value="?" id="help_link" >
                     </form>
-                    <form>
+
+                </div>
+                <fieldset id="orthogonal_views_buttons_fieldset">
+                    <legend>Orthogonal views</legend>
+                    <div id="orthogonal_views_buttons">
+                        <input type="checkbox" id="X_check" class='toggle_slice' checked>
+                        <label for="X_check" id='X_check_label'>Sagittal</label>
+                        <input type="checkbox" id="Y_check" class='toggle_slice' checked>
+                        <label for="Y_check" id='Y_check_label'>Coronal</label>
+                        <input type="checkbox" id="Z_check" class='toggle_slice' checked>
+                        <label for="Z_check" id='Z_check_label'>Axial</label>
                     </div>
-                        <fieldset id="orthogonal_views_buttons_fieldset">
-                            <legend>Orthogonal views</legend>
-                            <div id="orthogonal_views_buttons">
-                            <input type="checkbox" id="X_check" class='toggle_slice' checked>
-                            <label for="X_check" id='X_check_label'>Sagittal</label>
-                            <input type="checkbox" id="Y_check" class='toggle_slice' checked>
-                            <label for="Y_check" id='Y_check_label'>Coronal</label>
-                            <input type="checkbox" id="Z_check" class='toggle_slice' checked>
-                            <label for="Z_check" id='Z_check_label'>Axial</label>
-                            </div>
-                        </fieldset>
-                    </form>
-                
-                    <form>
-                        <fieldset id="orientation_fieldset">
-                            <legend>Orientation</legend>
-                            <div id='orientation_buttons'>
-                                <input type="radio" id="vertical" name="radio" class="orientation_button">
-                                <label for="vertical" id='vertical_label' class="button_label">Vertical</label>
-                                <input type="radio" id="horizontal" name="radio" class="orientation_button" checked="checked">
-                                <label for="horizontal" id='horizontal_label' class="button_label">Horizontal</label>
-                            </div>
-                        </fieldset>
-                    </form>
+                </fieldset>
 
-                <form>
-                    <fieldset id="modality_stage_fieldset">
-                        <legend>Modality/stage selection</legend>
-                        <div id="modality_stage">
-                            <input type="radio" id="203" name="project" class="modality_button">
-                            <label for="203" class="button_label">uCT E14/E15.5</label>
 
-                            <input type="radio" id="204" name="project" class="modality_button">
-                            <label for="204" class="button_label">uCT E18.5</label>
 
-                            <input type="radio" id="202" class="modality_button" name="project">
-                            <label for="202" class="button_label">OPT E9.5</label>
-                        </div>
-                    </fieldset>
-                </form>
-                    
-                    <fieldset id="heightslider_fieldset">
-                        <legend>View height</legend>
-                <div id="viewHeightSlider" title="test"></div>
-                    </fieldset>
+                <fieldset id="orientation_fieldset">
+                    <legend>Orientation</legend>
+                    <div id='orientation_buttons'>
+                        <input type="radio" id="vertical" name="radio" class="orientation_button">
+                        <label for="vertical" id='vertical_label' class="button_label">Vertical</label>
+                        <input type="radio" id="horizontal" name="radio" class="orientation_button" checked="checked">
+                        <label for="horizontal" id='horizontal_label' class="button_label">Horizontal</label>
+                    </div>
+                </fieldset>
+
+
+                <fieldset id="heightslider_fieldset">
+                    <legend>View height</legend>
+                    <div id="viewHeightSlider" title="test"></div>
+                </fieldset>
+
+
+                <fieldset id="modality_stage_fieldset">
+                    <legend>Modality/stage selection</legend>
+                    <div id="modality_stage">
+                        <input type="radio" id="203" name="project" class="modality_button">
+                        <label for="203" class="button_label">&#956;CT E14/E15.5</label>
+
+                        <input type="radio" id="204" name="project" class="modality_button">
+                        <label for="204" class="button_label">&#956;CT E18.5</label>
+
+                        <input type="radio" id="202" class="modality_button" name="project">
+                        <label for="202" class="button_label">OPT E9.5</label>
+                    </div>
+                </fieldset>
+
+
             </div>
         </div>
         <div class="clear"></div>

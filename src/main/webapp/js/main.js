@@ -403,25 +403,16 @@
                             window.dispatchEvent(evt);
                         }, this)
                     })
-                    .tooltip({
-                        content: "Modify slice viewer height",
-                        show: {delay: 1200 }
-                    });
-            
-            
-            
-            
-            
-
-            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
-                 show: {delay: 1200 }
-             });
-             
-            $("#selectorWrap_wt").tooltip({content: "Select WT embryo to view",
-             show: {delay: 1200 }});
-         
-            $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
-             show: {delay: 1200 }});
+                
+//            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
+//                 show: {delay: 1200 }
+//             });
+//             
+//            $("#selectorWrap_wt").tooltip({content: "Select WT embryo to view",
+//             show: {delay: 1200 }});
+//         
+//            $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
+//             show: {delay: 1200 }});
          
          
   
