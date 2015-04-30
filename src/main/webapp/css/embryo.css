@@ -1,5 +1,6 @@
 body{
     min-width: 800px;
+    font-family: Source Sans Pro, Arial, Helvetica, sans-serif;
 }
 
 #viewer {
@@ -64,7 +65,18 @@ body{
 }
 
 fieldset{
-    padding: 2px;
+    display:inline;
+  -moz-border-radius:10px;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+    margin: 5px;
+    padding: 2px 7px 2px 7px;
+    border-color:#DEDEDE;
+    border-style: solid;
+    height: 45px;
+ 
+   
+  
 }
 
 #help_link, #help_form{
@@ -78,14 +90,21 @@ fieldset{
 
 
 #orthogonal_views_buttons_fieldset{
-    width: 200px;
+  
     float: left;
 }
 
+#orientation_fieldset{
+    float: left;
+  
+}
 
 #modality_stage_fieldset{
     float: left;
-    width: 300px;
+}
+
+#heightslider_fieldset{
+
 }
 
 .nodata {
@@ -113,7 +132,7 @@ fieldset{
 }
 
 .wlwrap .ui-slider, #viewHeightSlider.ui-slider {
-    height: 7px;
+    height: 2px;
     cursor: pointer;
 }
 .wlwrap .ui-slider-handle, #viewHeightSlider .ui-slider-handle {
@@ -321,20 +340,20 @@ label#Z_check_label.ui-state-active span{
 
 /* The orientation buttons *****************************************************
 */
-label#vertical_check_label.ui-state-active span {
-background-color: #DEDEDE;
-}
-label#vertical_check_label span {
+/*label#vertical_label.ui-state-active span, label#horizontal_label.ui-state-active span  {
 background-color: #FFB64F;
 }
-
-label#horizontal_check_label.ui-state-active span {
+label#vertical_label span, label#horizontal_label span {
 background-color: #DEDEDE;
-}
-label#horizontal_check_label span {
-background-color: #FFB64F;
+}*/
+
+.button_label span{
+    background-color: #DEDEDE;
 }
 
+.button_label.ui-state-active span{
+    background-color: #FFB64F;
+}
 .ui-tooltip{
     font-size: 8pt;
 }

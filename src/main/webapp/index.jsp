@@ -60,33 +60,38 @@ limitations under the License.
                         </fieldset>
                     </form>
                 
-
-                <div id='topright'>
-                    <!--<button type="submit" id="fullscreen"><img src="fullscreen.png" height="20px"></button>-->
-                    <span id="orientation_radio">
-                        <input type="radio" id="vertical_check" name="radio" checked="checked">
-                        <label for="vertical_check" id='vertical_check_label'>Vertical</label>
-                        <input type="radio" id="horizontal_check" name="radio">
-                        <label for="horizontal_check" id='horizontal_check_label'>Horizontal</label>
-                    </span>
-                </div>
+                    <form>
+                        <fieldset id="orientation_fieldset">
+                            <legend>Orientation</legend>
+                            <div id='orientation_buttons'>
+                                <input type="radio" id="vertical" name="radio" class="orientation_button">
+                                <label for="vertical" id='vertical_label' class="button_label">Vertical</label>
+                                <input type="radio" id="horizontal" name="radio" class="orientation_button" checked="checked">
+                                <label for="horizontal" id='horizontal_label' class="button_label">Horizontal</label>
+                            </div>
+                        </fieldset>
+                    </form>
 
                 <form>
                     <fieldset id="modality_stage_fieldset">
                         <legend>Modality/stage selection</legend>
                         <div id="modality_stage">
                             <input type="radio" id="203" name="project" class="modality_button">
-                            <label for="203">uCT E14/E15.5</label>
+                            <label for="203" class="button_label">uCT E14/E15.5</label>
 
                             <input type="radio" id="204" name="project" class="modality_button">
-                            <label for="204">uCT E18.5</label>
+                            <label for="204" class="button_label">uCT E18.5</label>
 
                             <input type="radio" id="202" class="modality_button" name="project">
-                            <label for="202">OPT E12.5</label>
+                            <label for="202" class="button_label">OPT E9.5</label>
                         </div>
                     </fieldset>
                 </form>
+                    
+                    <fieldset id="heightslider_fieldset">
+                        <legend>View height</legend>
                 <div id="viewHeightSlider" title="test"></div>
+                    </fieldset>
             </div>
         </div>
         <div class="clear"></div>

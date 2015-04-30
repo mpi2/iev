@@ -24,25 +24,31 @@
          * @type {object} modality_stage_pids
          * A mapping of procedure ids and imaging modality/stage key
          */
-        var modality_stage_pids = {
-            203: 'CT E14.5/15.5',
-            204: 'CT E18.5',
-            202: 'OPT E12.5'
+        var modalityData = {
+            203: {
+                'id': 'CT E14.5/15.5',
+                'vols': {
+                    'mutant': [],
+                    'wildtype': []
+                }
+            },
+            204: {
+                'id': 'CT E18.5',
+                'vols':{
+                    'mutant': [],
+                    'wildtype': []
+                }
+            },
+            202:{
+                'id': 'OPT 9.5',
+                'vols':{
+                    'mutant': [],
+                    'wildtype': []
+                }
+            }
         };
         
-        var modality_stage_data = {
-            'wildtypes':{
-                'CT E14.5/15.5': [],
-                'CT E18.5': [],
-                'OPT E12.5': []
-            },
-            'mutants':{
-                'CT E14.5/15.5': [],
-                'CT E18.5': [],
-                'OPT E12.5': []
-            }    
-        };
-            
+      
 
      
         /**
@@ -56,12 +62,10 @@
                 var obj = data.volumes[i];
 
                  if (obj.colonyId === WILDTYPE_COLONYID){
-                    var modality_stage = modality_stage_pids[obj.pid];
-                    modality_stage_data['wildtypes'][modality_stage].push(buildUrl(obj));
+                    modalityData[obj.pid]['vols']['wildtype'].push(buildUrl(obj));
 
                 }else{
-                    var modality_stage = modality_stage_pids[obj.pid];
-                    modality_stage_data['mutants'][modality_stage].push(buildUrl(obj));
+                    modalityData[obj.pid]['vols']['mutant'].push(buildUrl(obj));
                 }
             }
             
@@ -101,7 +105,17 @@
         };
         
         
-
+        function setActiveModalityButtons(){
+            /*
+             * Chaeck which modalities we have data for and inactivate buttons for which we have no data
+             */
+            for (var pid in modalityData){
+                if (modalityData[pid]['vols']['mutant'].length < 1){
+                    $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled',true);
+                }
+            }
+              
+        }
         
     
         function buildUrl(data){
@@ -130,7 +144,7 @@
              * @return {undefined}
              */
              $('.sliceWrap').css('height', ui.value);
-             console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
+             //console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
         }
         
         
@@ -186,13 +200,16 @@
              */
             
             //Detmermine which of the stage/modalities has mutant data. Choose the first one
-            for (var i in modality_stage_data.mutants){
-                if (modality_stage_data.mutants[i].length > 1){
-                    var wildtypeData = modality_stage_data.wildtypes[i];
-                    var mutantData = modality_stage_data.mutants[i];
+            for (var pid in modalityData){
+                if (modalityData[pid]['vols']['mutant'].length > 1){
+                    var wildtypeData = modalityData[pid]['vols']['wildtype'];
+                    var mutantData = modalityData[pid]['vols']['mutant'];
                     break
                 }
             }
+            
+            //Check the modality button
+            $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
             
             wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, 
                             sliceChange, views, onViewLoaded);
@@ -215,16 +232,14 @@
              * 
              * @param {string} 
              */
-            var stageModalityID = modality_stage_pids[pid];
             
             if (typeof wtView !== 'undefined'){
-                var wtVolumes = modality_stage_data.wildtypes[stageModalityID];
-                console.log(wtView);
+                var wtVolumes = modalityData[pid]['vols'].wildtype;
                 wtView.updateData(wtVolumes);
             }
             if (typeof mutView !== 'undefined'){
-                var mutVolumes = modality_stage_data.mutants[stageModalityID];
-                mutView.updateData(wtVolumes);
+                var mutVolumes = modalityData[pid]['vols'].mutant;
+                mutView.updateData(mutVolumes);
             }
                 
         }
@@ -307,6 +322,9 @@
             /**
              * 
              */
+            $("#modality_stage" ).buttonset();
+            $("#orientation_buttons" ).buttonset();
+            $("#orthogonal_views_buttons").buttonset();
       
             $(".linkCheck").change(function(e){
               
@@ -352,6 +370,11 @@
             $('.modality_button').change(function (ev) {
                 var checkedStageModality = ev.currentTarget.id;
                 setStageModality(checkedStageModality);
+            });
+            
+            $('.orientation_button').change(function (ev) {
+              var orientation = ev.currentTarget.id;
+                setViewOrientation(orientation);
             });
             
 
@@ -409,25 +432,20 @@
 
     
     
-    function setupOrientationControls(){
-                $( "#modality_stage" ).buttonset();
-                
-            // No orientation controls for single specimen view  
-            if (wildtypes.length < 1 || mutants.length < 1){
-                 $("#orientation_radio" ).hide();
-                 return;
-            }
-         
-            //$("#orientation_radio" ).buttonset();
-           
-        
-            $("#vertical_check")
-                .click(function (event) {
-                    horizontalView = true;
-                   $('.specimen_view').css({
-                       float: 'left',
-                       width: '48%',
-                       clear: 'none'
+    function setViewOrientation(orientation){
+                     
+//            // No orientation controls for single specimen view  
+//            if (wildtypes.length < 1 || mutants.length < 1){
+//                 $("#orientation_radio" ).hide();
+//                 return;
+//            }
+           console.log(orientation);
+         if (orientation === 'vertical'){
+            horizontalView = true;
+            $('.specimen_view').css({
+                float: 'left',
+                width: '48%',
+                clear: 'none'
                        
                 });
                 $('.sliceWrap').css({
@@ -435,46 +453,35 @@
                 });
                 $('#horizontal_check').prop('checked', true).button("refresh");
                 window.dispatchEvent(new Event('resize')); 
-        }.bind(this));
-        
-        
-        $('#horizontal_check')
-                .click(function (event) {
-                    horizontalView = false;
-                    var numVisible = 0;
-                    for(var item in ortho){
-                        if(ortho[item].visible) ++ numVisible;
-                    }
+       
+         }
+         if (orientation === 'horizontal'){
+             
+            horizontalView = false;
+            var numVisible = 0;
+            for(var item in ortho){
+                if(ortho[item].visible) ++ numVisible;
+            }
                       
-                $('.specimen_view').css({
-                       float: 'none',
-                       width: '100%',
-                       clear: 'both'
-                       
-                });
-                $('.sliceWrap').css({
-                       width: String(100 / numVisible) + '%'
-                      
-                });
-                $('#vertical_check').prop('checked', true).button("refresh");
-                window.dispatchEvent(new Event('resize')); 
-                
-           
-        }.bind(this));
+            $('.specimen_view').css({
+                   float: 'none',
+                   width: '100%',
+                   clear: 'both'
+
+            });
+            $('.sliceWrap').css({
+                   width: String(100 / numVisible) + '%'
+
+            });
+            $('#vertical_check').prop('checked', true).button("refresh");
+            window.dispatchEvent(new Event('resize'));      
+         }
     }
     
-    
-    function setupModalityStageButtons(){
-        
-    }
-  
 
     // Style the control buttons
 
     $(function () {
-       
-        $("#orthogonal_views_buttons").buttonset();
-        
                 
         $( "#help_link" ).button({
              icons: {
@@ -490,11 +497,11 @@
 //    $('body').bind('beforeunload', function () {
 //        console.log('bye');
 //    });
-    
+    setActiveModalityButtons();
     loadViewers(container);
     attachEvents();
     setupOrientationControls();
-    setupModalityStageButtons();
+    
     
     }//EmbryoViewer
      
