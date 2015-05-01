@@ -351,19 +351,19 @@
                 for (var pid in modalityData){
                     var vols = modalityData[pid]['vols'];
                     for (var vol in vols['mutant']){
-                            $("#download_table tbody").append("<tr>" +
-                                    "<td>" + basename(vols['mutant'][vol]) + "</td>" +
-//                                    "<td>" + email.val() + "</td>" +
+                         var path = vols['mutant'][vol];
+                         $("#download_table tbody").append("<tr>" +
+                                    "<td>" + basename(path) + "</td>" +
+                                    "<td>" + "<a href='"+ path + "'>Download</a></td>" +
                                     "</tr>");
                     }
                     for (var vol in vols['wildtype']){
+                        var path = vols['wildtype'][vol];
                          $("#download_table tbody").append("<tr>" +
-                                    "<td>" + basename(vols['wildtype'][vol]) + "</td>" +
-//                                    "<td>" + email.val() + "</td>" +
+                                    "<td>" + basename(path) + "</td>" +
+                                    "<td>" + "<a href='"+ path + "'>Download</a></td>" +
                                     "</tr>");
-                    }
-                    
-                    
+                    }  
                 }
                     
                 
