@@ -1,5 +1,5 @@
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 
 (function () {
@@ -7,7 +7,8 @@ goog.require('X.interactor2D');
         dcc = {};
 
 
-    function SpecimenView(volumePaths, id, container, queryColonyId, indexCB, viewsList, onLoaded) {
+    function SpecimenView(volumePaths, id, container, 
+             queryColonyId, indexCB, onLoaded, scaleOrthogonalViews) {
         /**
          * This class holds the three orthogonal views from a single specimen and 
          * allows for loading in of differnt specimens of the same genenotype/colonyID
@@ -18,8 +19,8 @@ goog.require('X.interactor2D');
          * @param {String} container html element to place this view
          * @param {String} queryColonyId The colonyId of this specimen
          * @param {function} indexCB called when slice index changes
-         * @param {Array<SpecimenViews>} viewsList Access info from other views here
          * @param {Function} onLoaded Called when all the XTK stuff has loaded
+         * @param {Function} scaleOrthogonalViews callback when volumes are changed
          */
 
         var id = id;
@@ -87,7 +88,8 @@ goog.require('X.interactor2D');
              * 
              */
             volumePaths = volumes;
-            replaceVolume(volumePaths[0])
+            replaceVolume(volumePaths[0]);
+            updateVolumeSelector();
         }
         
         
@@ -295,7 +297,7 @@ goog.require('X.interactor2D');
         };
         
         
-        function setXYproportional(maxHeight){
+        function setProportional(dim, maxHeight){
             /**
              * Set the orthogonal view proportial size by chnaging size of the
              * view wrapper
@@ -305,24 +307,39 @@ goog.require('X.interactor2D');
              * 
              * 
              */
-            
+
             //return; // For now until I fix the saggital 
             
-            var $xWrapper = $('#X_' + id);
-            var $yWrapper = $('#Y_' + id);
-           
-            /**
-             * Height should always be larger than width, This will not work
-             * otherwise
-             */
-            var heightRatio = volume.dimensions[2] / maxHeight; //Always the same for a volume
+            if (dim === 'Z'){
+                
+                var $xWrapper = $('#X_' + id);
+                var $yWrapper = $('#Y_' + id);
+
+                /**
+                 * Height should always be larger than width, This will not work
+                 * otherwise
+                 */
+                var heightRatio = volume.dimensions[2] / maxHeight; //Always the same for a volume
+
+                var wrapperNewHeight = $('.sliceView').height() * heightRatio;
+                var xyPad = ($('.sliceView').height() - wrapperNewHeight) / 2;
+                $xWrapper.css('height', wrapperNewHeight);
+                $yWrapper.css('height', wrapperNewHeight);
+                $xWrapper.css('top', xyPad);
+                $yWrapper.css('top', xyPad);   
+            }
+            else if (dim === 'Y'){
+                
+                var $zWrapper = $('#Z_' + id);
+                // The y dimension is the height of the axial (Z) slice
+                var heightRatio = volume.dimensions[1] / maxHeight; //Always the same for a volume
+
+                var wrapperNewHeight = $('.sliceView').height() * heightRatio;
+                var zPad = ($('.sliceView').height() - wrapperNewHeight) / 2;
+                $zWrapper.css('height', wrapperNewHeight);
+                $zWrapper.css('top', zPad);
+            }
             
-            var wrapperNewHeight = $('.sliceView').height() * heightRatio;
-            var xyPad = ($('.sliceView').height() - wrapperNewHeight) / 2;
-            $xWrapper.css('height', wrapperNewHeight);
-            $yWrapper.css('height', wrapperNewHeight);
-            $xWrapper.css('top', xyPad);
-            $yWrapper.css('top', xyPad);   
         }
         
 
@@ -409,6 +426,7 @@ goog.require('X.interactor2D');
             
 
             xRen.onShowtime = xtk_showtime;
+            
 
            
         };
@@ -600,6 +618,7 @@ goog.require('X.interactor2D');
             
             
             onLoaded(id);
+            scaleOrthogonalViews();
         };
         
         
@@ -746,7 +765,7 @@ goog.require('X.interactor2D');
             id: id,
             setIdxOffset: setIdxOffset,
             getDimensions: getDimensions,
-            setXYproportional: setXYproportional,
+            setProportional: setProportional,
             getVolume: getVolume,
             updateData: updateData
         };

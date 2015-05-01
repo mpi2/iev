@@ -154,36 +154,42 @@
              *@method setLargestDimesions
              */
             
-            var maxXY = 0;
+            //TODO: check what happens if specimens have iddentical dimensions
+            
+            var maxY = 0;
             var maxZ = 0;
-            var maxXYid;
+            var maxYid;
             var maxZid;
            
             
             for (var i=0; i < views.length; ++i){
                var vol_dims = views[i].getDimensions();
+               //console.log(views[i].getDimensions());
          
-               
-               if (vol_dims[2] > maxXY){
-                   maxXY = vol_dims[2];
-                   maxXYid = views[i].id;
-               }
-               
-               if (vol_dims[1] > maxZ){
-                   maxZ = vol_dims[1];
+               // Set the max height for both sagittal and coronal, as they have height of Z in the viewer
+               if (vol_dims[2] > maxZ){
+                   maxZ = vol_dims[2];
                    maxZid = views[i].id;
                }
                
+               // Set the max hight of the axial slice - Y
+               if (vol_dims[1] > maxY){
+                   maxY = vol_dims[1];
+                   maxYid = views[i].id;
+               } 
             }
-     
+          
             // Set the proportional views
             for (var i=0; i < views.length; ++i){
-                if (maxXYid === views[i].id) continue;
-                views[i].setXYproportional(maxXY);
+                // Don't set on the largest
+                if (maxZid !== views[i].id){
+                //Set on the others
+                    views[i].setProportional('Z', maxZ);
+                }
+                if (maxYid !== views[i].id){
+                    views[i].setProportional('Y', maxY);
+                }
                 
-//                if (maxZid === views[i].id){
-//                    views[i].setProportionalSize('Z', maxXY);
-//                } 
            }
            
            window.dispatchEvent(new Event('resize')); 
@@ -212,11 +218,11 @@
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
             
             wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, 
-                            sliceChange, views, onViewLoaded);
+                            sliceChange, onViewLoaded, scaleOrthogonalViews);
             views.push(wtView);
             
             mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
-                            sliceChange, views, onViewLoaded);
+                            sliceChange, onViewLoaded, scaleOrthogonalViews);
             views.push(mutView);
             
             /* volumes are loaded. Now make the correposnding orthogonal views
@@ -322,6 +328,51 @@
             /**
              * 
              */
+            
+            /*
+             * When the download button is clicked, create a file download dislaog
+             */
+            
+            var dlg = $('#download_dialog').dialog({
+                title: 'Select volumes for download',
+                resizable: true,
+                autoOpen: false,
+                modal: true,
+                hide: 'fade',
+                width: 500,
+                height: 450
+            });
+
+
+            $('#download').click(function (e) {
+                e.preventDefault();
+                dlg.load('download_dialog.html', function () {
+                    
+                for (var pid in modalityData){
+                    var vols = modalityData[pid]['vols'];
+                    for (var vol in vols['mutant']){
+                            $("#download_table tbody").append("<tr>" +
+                                    "<td>" + basename(vols['mutant'][vol]) + "</td>" +
+//                                    "<td>" + email.val() + "</td>" +
+                                    "</tr>");
+                    }
+                    for (var vol in vols['wildtype']){
+                         $("#download_table tbody").append("<tr>" +
+                                    "<td>" + basename(vols['wildtype'][vol]) + "</td>" +
+//                                    "<td>" + email.val() + "</td>" +
+                                    "</tr>");
+                    }
+                    
+                    
+                }
+                    
+                
+                    dlg.dialog('open');
+                }.bind(this));
+            }); 
+           
+    
+            
             $("#modality_stage" ).buttonset();
             $("#orientation_buttons" ).buttonset();
             $("#orthogonal_views_buttons").buttonset();
@@ -391,13 +442,10 @@
                             //console.log('before slider', $('#X_mut').height(), $('.sliceWrap').height());
                             $('.sliceWrap').css('height', ui.value);
                             
-                           
                             //console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
-                            //scaleOrthogonalViews()
+                            scaleOrthogonalViews();
                        
                             //console.log('after scaling', $('#X_mut').height());
-                            
-
                             var evt = document.createEvent('UIEvents');
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);
@@ -421,7 +469,15 @@
     
     
 
-    
+        function basename(path) {
+            /**
+             * Extract the basename from a path
+             * @method basename
+             * @param {String} path File path
+             */
+            return path.split(/[\\/]/).pop();
+        }
+        ;
     
     function setViewOrientation(orientation){
                      
@@ -430,7 +486,7 @@
 //                 $("#orientation_radio" ).hide();
 //                 return;
 //            }
-           console.log(orientation);
+          
          if (orientation === 'vertical'){
             horizontalView = true;
             $('.specimen_view').css({

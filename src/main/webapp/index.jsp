@@ -27,9 +27,9 @@ limitations under the License.
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="js/handlebars.min.js"></script>
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <!--<script type="text/javascript" src="js/xtk.js"></script>-->
+<!--        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
+        <script type="text/javascript" src="X/xtk-deps.js"></script>-->
+        <script type="text/javascript" src="js/xtk.js"></script>
 
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
@@ -40,11 +40,15 @@ limitations under the License.
         <div id='wrap'>
             <div id='top_bar'>
                 <div id='topleft'>
-                    <!--<a href="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"><span id="help_link" class="ui-icon  ui-icon-help"</span></a>-->
-
+                   
+                    <div>
                     <form action="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"  id="help_form">
                         <input type="submit" value="?" id="help_link" >
                     </form>
+                        <div>
+                       <img src="images/download.png" height="25" id="download">
+                       </div>
+                    </div>
 
                 </div>
                 <fieldset id="orthogonal_views_buttons_fieldset">
@@ -122,6 +126,8 @@ limitations under the License.
             ga('create', 'UA-23433997-1', 'https://www.mousephenotype.org/embryo');
             ga('send', 'pageview');
         </script>  
+        <!-- This is where the download dialog goes -->
+        <div id="download_dialog"><div>
     </body>
 
 
