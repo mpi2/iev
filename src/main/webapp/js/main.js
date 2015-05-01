@@ -491,7 +491,7 @@
     setActiveModalityButtons();
     loadViewers(container);
     attachEvents();
-    setupOrientationControls();
+    
     
     
     }//EmbryoViewer

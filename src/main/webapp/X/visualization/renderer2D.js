@@ -764,17 +764,6 @@ X.renderer2D.prototype.update_ = function(object) {
  */
 X.renderer2D.prototype.autoScale_ = function() {
     
-       if (this._orientationIndex == 0) {
-      //Neil Horner: This is a bodge as the sagittal widths are getting mixed up
-      // somwhere
-      
-      // WTF |_sliceHeight
-//      var h = this._sliceHeight;
-//      var w = this._sliceWidth;
-//      this._sliceWidth = h;
-//      this._sliceHeight = w;  
-  }
-
   // let's auto scale for best fit
   var _wScale = this._width / (this._sliceWidth * this._sliceWidthSpacing);
   var _hScale = this._height / (this._sliceHeight * this._sliceHeightSpacing);
@@ -1403,7 +1392,7 @@ else{
   }
   
   //Neil: Bodge to fix sagittal scaling bug
-    if (this._orientationIndex == 0) {
+    if (this._orientationIndex === 0) {
         var buf = this._sliceWidth;
         this._sliceWidth = this._sliceHeight;
         this._sliceHeight = buf;

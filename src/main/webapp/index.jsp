@@ -137,13 +137,13 @@ limitations under the License.
         <span id="{{controlsButtonsId}}" class="controlsButtons">
         <input type="checkbox" id="{{invertColoursId}}" class="button">
         <label for="{{invertColoursId}}">Invert colours</label>
-        <a id="{{zoomInId}}" href="#" class="button">+</a>
-        <a id="{{zoomOutId}}" href="#" class="button">-</a>
+        
         <a id ="{{resetId}}" href="#" class="button">Reset</a>
         </span>
         </div>
     </script>
-
+<!--<a id="{{zoomInId}}" href="#" class="button">+</a>
+        <a id="{{zoomOutId}}" href="#" class="button">-</a>-->
 
     <!--Specimen view template-->
     <script id="specimen_view_template" type="text/x-handlebars-template">  

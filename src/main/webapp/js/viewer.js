@@ -368,6 +368,23 @@ goog.require('X.interactor2D');
             if (volumePaths.length < 1) return;
             
             xRen = new X.renderer2D();
+            
+            /*
+             * Sagittal scaling bug fix
+             */ 
+            xRen.firstRender = true;
+            xRen.afterRender = function(){
+                    
+                if (this.firstRender){
+                   xRen.resetViewAndRender();
+                }
+                this.alreadyRendered = true;
+            };
+        
+            /*
+             * 
+             */
+            
             xRen.container = $xContainer.get(0);
             xRen.orientation = 'X';
             xRen.init();
