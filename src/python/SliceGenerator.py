@@ -30,6 +30,8 @@ import numpy as np
 import h5py
 from ctutils import readers
 import subprocess as sp
+import nrrd
+import tempfile
 
 
 class SliceGenerator(object):
@@ -101,7 +103,7 @@ class TiffStackSliceGenerator(SliceGenerator):
     """The TiffStackSliceGenerator class extends SliceGenerator, yielding slices from a single TIFF stack.
 
     In the unlikely event that we receive a TIFF stack from an IMPC centre, this generator will slice it for resampling.
-    At present, TIFF stacks CANNOT be memory mampped, and will ne loaded into memory. The method uses the tifffile.py
+    At present, TIFF stacks CANNOT be memory mapped, and will be loaded into memory. The method uses the tifffile.py
     module, created by Christoph Gohlke.
     """
 
@@ -138,8 +140,8 @@ class TiffStackSliceGenerator(SliceGenerator):
 class TXMSliceGenerator(SliceGenerator):
     """The TXMSliceGenerator class extends SliceGenerator, yielding slices from TXM file (Transmission X-ray Microscopy).
 
-    This generator has not been tested comprehensively, as we only have access to one TXM file for testing. It makes use
-    of the ctutils module (https://github.com/waveform80/ctutils)
+    This generator has not been tested comprehensively, as we only have access to one example file for testing. It makes
+     use of the ctutils module (https://github.com/waveform80/ctutils)
     """
 
     def __init__(self, recon):
@@ -150,12 +152,12 @@ class TXMSliceGenerator(SliceGenerator):
 
         super(TXMSliceGenerator, self).__init__(recon)
         self.ext = 'txm'
-        self.txm = readers.open_scan(recon)
+        self.txm = readers.TxmScanReader(recon)
 
     def slices(self, start=0):
         """Slices are yielded one slice at a time from the TXM file.
         """
-        for i in self.txm:
+        for i in reversed(self.txm.keys):
             yield np.reshape(self.txm[i], tuple([self.txm.height, self.txm.width]))
 
     def dtype(self):
@@ -187,42 +189,24 @@ class NrrdSliceGenerator(SliceGenerator):
         :param recon: a path to a NRRD file.
         """
         super(NrrdSliceGenerator, self).__init__(recon)
-        # self.raw, self.header = nrrd.read(recon)
         self.ext = 'nrrd'
-        self.dims = None
-        self.datatype = None
-        self.encoding = None
-
-        nrrd_hdr = recon + '.hdr'
-        raw_offset = 0
 
         if os.path.exists(recon):
-            try:
-                sp.check_call(['unu', 'head', recon], stdout=open(nrrd_hdr, 'wb'))
-                raw_offset = os.path.getsize(nrrd_hdr)
-            except sp.CalledProcessError as cpe:
-                print "Error extracting raw data from NRRD using 'unu': ", cpe
+
+            # Parse the header using nrrd.py
+            with open(recon, 'rb') as f:
+                self.header = nrrd.read_header(f)
+                self.dims = self.header['sizes']
+                self.datatype = self.header['type']
+
+            # Pipe the raw data to a separate file using "unu data"
+            raw_data = tempfile.TemporaryFile(mode='wb+')
+            sp.check_call(['unu', 'data', recon], stdout=raw_data)
+
         else:
             raise IOError("Failed to locate '{}'".format(recon))
 
-        self.parse_header(nrrd_hdr)
-        self.raw = np.memmap(recon, dtype=self.datatype, offset=raw_offset, mode='r', shape=self.dims,
-                             order='F')
-
-    def parse_header(self, hdr):
-        """The parse_header method reads a NRRD header and extracts the data type, shape and encoding of the data.
-
-        :param hdr: path to a header (.hdr) file
-        """
-
-        with open(hdr, 'rb') as f:
-            for line in f:
-                if line.startswith('type'):
-                    self.datatype = line.split(':')[1].strip()
-                elif line.startswith('sizes'):
-                    self.dims = tuple([int(d) for d in line.split(':')[1].split()])
-                elif line.startswith('encoding'):
-                    self.encoding = line.split(':')[1].strip()
+        self.raw = np.memmap(raw_data, dtype=self.datatype, mode='r', shape=tuple(self.dims), order='F')
 
     def slices(self, start=0):
         """Slices are yielded one slice at a time from the memory mapped NRRD file.
@@ -233,12 +217,12 @@ class NrrdSliceGenerator(SliceGenerator):
     def dtype(self):
         """Overrides the superclass to return the data type of the NRRD file i.e. 8 bit/16 bit.
         """
-        return self.datatype
+        return self.header['type']
 
     def shape(self):
         """Overrides the superclass to return the shape of the NRRD file.
         """
-        return self.dims
+        return self.header['sizes']
 
 
 class MincSliceGenerator(SliceGenerator):
@@ -264,7 +248,7 @@ class MincSliceGenerator(SliceGenerator):
         """Slices are yielded one slice at a time from the memory mapped numpy array
         """
         # TODO check not transposed
-        for i in reversed(range(self.volume.shape[0])):
+        for i in range(self.volume.shape[0]):
             yield self.volume[i, :, :]
 
     def dtype(self):
@@ -292,3 +276,6 @@ if __name__ == "__main__":
 
     print gen.dtype()
     print gen.shape()
+    print gen.txm.pixel_size
+    print gen.txm.current
+    print gen.txm.voltage
