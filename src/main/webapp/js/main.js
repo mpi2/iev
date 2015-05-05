@@ -187,46 +187,13 @@
              * Set the largest extent for each of the dimensions
              *@method setLargestDimesions
              */
-            
-            //TODO: check what happens if specimens have iddentical dimensions
-           
-            var maxY = 0;
-            var maxZ = 0;
-            var maxYid;
-            var maxZid;
-           
-            
-            for (var i=0; i < views.length; ++i){
-               var vol_dims = views[i].getDimensions();
-               //console.log(views[i].getDimensions());
-         
-               // Set the max height for both sagittal and coronal, as they have height of Z in the viewer
-               if (vol_dims[2] > maxZ){
-                   maxZ = vol_dims[2];
-                   maxZid = views[i].id;
-               }
-               
-               // Set the max hight of the axial slice - Y
-               if (vol_dims[1] > maxY){
-                   maxY = vol_dims[1];
-                   maxYid = views[i].id;
-               } 
-            }
           
             // Set the proportional views
             for (var i=0; i < views.length; ++i){
-                // Don't set on the largest
-                if (maxZid !== views[i].id){
-                //Set on the others
-                    views[i].setProportional();
-                }
-                if (maxYid !== views[i].id){
-                    views[i].setProportional();
-                }
-                
-           }
+                views[i].rescale();   
+            }
            
-           window.dispatchEvent(new Event('resize')); 
+            window.dispatchEvent(new Event('resize')); 
         }
         
         
@@ -252,11 +219,11 @@
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
             
             wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, 
-                            sliceChange, onViewLoaded, scaleOrthogonalViews, config);
+                            sliceChange, onViewLoaded, config);
             views.push(wtView);
             
             mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
-                            sliceChange, onViewLoaded, scaleOrthogonalViews, config);
+                            sliceChange, onViewLoaded, config);
             views.push(mutView);
             
             /* volumes are loaded. Now make the correposnding orthogonal views
@@ -481,14 +448,23 @@
             });
             
             
+            
+            
             // Scale bar visiblity
             $('#scale_visible').change(function (ev) {
                 if( $(ev.currentTarget).is(':checked') ){
                     scaleVisible = true;
+                    
                     $('#scale_select').selectmenu("enable");
+                    $('.scale_outer').css(
+                        {'visibility': 'visible'}
+                     );
                 }else{
                     scaleVisible = false;
                      $('#scale_select').selectmenu("disable");
+                      $('.scale_outer').css(
+                        {'visibility': 'hidden'}
+                     );
                 }
                 for (var i = 0; i < views.length; i++) {
                     views[i].setScaleVisibility(scaleVisible);

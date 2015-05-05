@@ -1,6 +1,11 @@
 body{
     min-width: 800px;
     font-family: Source Sans Pro, Arial, Helvetica, sans-serif;
+    
+    //Prevent elements being highlighted
+    -webkit-user-select: none; /* Chrome/Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
 }
 
 #viewer {
@@ -182,7 +187,7 @@ fieldset{
 #viewHeightSlider {
     
     float: right;
-    width: 145px;
+    width: 115px;
     top: 12px;
     margin: 0 10px;
 

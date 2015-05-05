@@ -8,7 +8,7 @@
 
 
     function SpecimenView(volumePaths, id, container, 
-             queryColonyId, indexCB, onLoaded, scaleOrthogonalViews, config) {
+             queryColonyId, indexCB, onLoaded, config) {
         /**
          * This class holds the three orthogonal views from a single specimen and 
          * allows for loading in of differnt specimens of the same genenotype/colonyID
@@ -20,7 +20,6 @@
          * @param {String} queryColonyId The colonyId of this specimen
          * @param {function} indexCB called when slice index changes
          * @param {Function} onLoaded Called when all the XTK stuff has loaded
-         * @param {Function} scaleOrthogonalViews callback when volumes are changed
          */
 
         var id = id;
@@ -278,54 +277,62 @@
         
         
         function zoomIn(){
+           console.log('before', zRen.normalizedScale);
            xRen.camera.zoomIn(false);
            yRen.camera.zoomIn(false);
-           zRen.camera.zoomIn(false); 
+           zRen.camera.zoomIn(false);
+           // Need to make sure render_() has been called to get the updated normalizedScale value
+           // Try sleep to see if that is actually the problemk
+           console.log('after', zRen.normalizedScale);
            drawScaleBar();
         }
         
         function zoomOut(){
-           xRen.camera.zoomOut(false);
-           yRen.camera.zoomOut(false);
-           zRen.camera.zoomOut(false); 
-           drawScaleBar();        }
+            //Prevent over out-zooming
+            if (xRen.normalizedScale < 1.0 || yRen.normalizedScale < 1.0 || zRen.normalizedScale < 1.0){
+               return;
+            }
+            xRen.camera.zoomOut(false);
+            yRen.camera.zoomOut(false);
+            zRen.camera.zoomOut(false);
+            drawScaleBar();        
+        }
         
         
         function drawScaleBar() {
- 
-            if (!scaleBarVisible){
-                $('.scale_outer').css(
-                   {'visibility': 'hidden'}
-                 );
-                return;
-            }
+            
             
             $('.scale_outer').css(
-               {'visibility': 'visible',
+               {
                 'height': '100%', 
                 'width': '20px',
                 'position': 'relative',
                 'left': '20px',
                 'z-index': 998
-            }); 
+                });
+                
+            // After resizing the window or doing a zoomIn or zoomOut, we need to wait for renderer2D to call
+            // render_(). Otherwose normalizScale will not have been set
+             setTimeout(function () {
+                console.log('after after', zRen.normalizedScale);
+                drawScale(xRen, 'scale_' + 'X' + id, 'scaletext_' + 'X' + id );
+                drawScale(yRen, 'scale_' + 'Y' + id, 'scaletext_' + 'Y' + id);
+                drawScale(zRen, 'scale_' + 'Z' + id, 'scaletext_' + 'Z' + id);
+            }, 20);
             
-            drawScale(xRen, 'scale_' + 'X' + id );
-            drawScale(yRen, 'scale_' + 'Y' + id);
-            drawScale(zRen, 'scale_' + 'Z' + id);
+           
+            
+           
         }
         
-        function setScaleVisibility(visible){
             
-            scaleBarVisible = visible; 
-        }
-         
-            
-        function drawScale(ren, scaleId){
+        function drawScale(ren, scaleId, scaleTextId){
             //TODO: need to add div height into the calculatoin
+            console.log(ren.normalizedScale);
             var pixel_size = 28.0; //for now hard code
-            var heightRatio =  ren.canvasHeight / ren.sliceHeight;
-            var scale = heightRatio * ren.normalizedScale;
-            var bar_size_pixels = (config.scaleBarSize / pixel_size) * scale;
+            // Bug: Ren.zoomin/out is called just before drawScale.
+            // normnalizedscale only gets updated each render_() so we might be out of sync
+            var bar_size_pixels = (config.scaleBarSize / pixel_size) * ren.normalizedScale;
             //console.log('bar size', bar_size_pixels);
             
             var outer_height = $('.scale_outer').height();
@@ -338,7 +345,7 @@
                 'position': 'absolute',
                 'top': top
             });
-            $('.scale_text').css(
+            $('#' +scaleTextId).css(
                  {
                 
                 'color': 'white',
@@ -349,7 +356,7 @@
         }      
         
               
-        function setProportional(){
+        function rescale(){
             
             drawScaleBar();
         }
@@ -640,7 +647,7 @@
             
             
             onLoaded(id);
-            scaleOrthogonalViews();
+         
         };
         
         
@@ -787,13 +794,12 @@
             id: id,
             setIdxOffset: setIdxOffset,
             getDimensions: getDimensions,
-            setProportional: setProportional,
+            rescale: rescale,
             getVolume: getVolume,
             updateData: updateData,
             zoomIn: zoomIn,
-            zoomOut: zoomOut,
-            setScaleVisibility: setScaleVisibility,
- 
+            zoomOut: zoomOut
+          
         };
         
         createHTML();
