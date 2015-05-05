@@ -17,6 +17,7 @@
         var horizontalView = undefined;
         var NUM_VIEWERS = 2;
         var viewers_loaded = 0;
+        var scaleVisible = true;
         var wtView;
         var mutView;
         
@@ -50,7 +51,34 @@
             }
         };
         
-      
+        
+        /*
+         * Map micrometer scale bar sizes to labels
+         */
+        var scaleOptions = {
+            '200&#956;m': 200,
+            '400&#956;m': 400,
+            '600&#956;m': 600,
+            '1mm': 1000,
+            '2mm': 2000,
+            '4mm': 4000,
+            '6mm': 6000
+        }
+            
+        
+        var scaleLabels = function(){
+            var options = [];
+            for (var key in scaleOptions){
+           
+                options.push("<option value='" + scaleOptions[key]  + "'>" + key + "</option>");
+            }
+            return options;
+        }
+        
+        
+        var config = { //remove hardcoding
+            scaleBarSize: 600,
+        }
 
      
         /**
@@ -161,7 +189,7 @@
              */
             
             //TODO: check what happens if specimens have iddentical dimensions
-            console.log('sov');
+           
             var maxY = 0;
             var maxZ = 0;
             var maxYid;
@@ -190,10 +218,10 @@
                 // Don't set on the largest
                 if (maxZid !== views[i].id){
                 //Set on the others
-                    views[i].setProportional('Z', maxZ);
+                    views[i].setProportional();
                 }
                 if (maxYid !== views[i].id){
-                    views[i].setProportional('Y', maxY);
+                    views[i].setProportional();
                 }
                 
            }
@@ -224,11 +252,11 @@
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
             
             wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, 
-                            sliceChange, onViewLoaded, scaleOrthogonalViews);
+                            sliceChange, onViewLoaded, scaleOrthogonalViews, config);
             views.push(wtView);
             
             mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
-                            sliceChange, onViewLoaded, scaleOrthogonalViews);
+                            sliceChange, onViewLoaded, scaleOrthogonalViews, config);
             views.push(mutView);
             
             /* volumes are loaded. Now make the correposnding orthogonal views
@@ -346,7 +374,7 @@
 //         
 //            
 
-            //$('#wrap').draggable();
+            $('.scale_outer').draggable();
             
             
             $("#zoomIn")
@@ -385,6 +413,7 @@
                     
                 for (var pid in modalityData){
                     var vols = modalityData[pid]['vols'];
+                    
                     for (var vol in vols['mutant']){
                          var path = vols['mutant'][vol];
                          $("#download_table tbody").append("<tr>" +
@@ -452,6 +481,44 @@
             });
             
             
+            // Scale bar visiblity
+            $('#scale_visible').change(function (ev) {
+                if( $(ev.currentTarget).is(':checked') ){
+                    scaleVisible = true;
+                    $('#scale_select').selectmenu("enable");
+                }else{
+                    scaleVisible = false;
+                     $('#scale_select').selectmenu("disable");
+                }
+                for (var i = 0; i < views.length; i++) {
+                    views[i].setScaleVisibility(scaleVisible);
+                }
+                scaleOrthogonalViews();
+            }.bind(this));
+            
+           
+            
+            $('#scale_select')
+                .append(scaleLabels().join(""))
+                .selectmenu({
+                    width: 80,
+                    height: 20,
+                    change: $.proxy(function (event, ui) { 
+                        config.scaleBarSize = ui.item.value;
+                        $('.scale_text').text(ui.item.label);
+                        scaleOrthogonalViews();
+                        
+                    }, this)
+                });
+                
+            $('#scale_select').val(600).selectmenu('refresh');
+            $('.scale_text').text($('#scale_select').find(":selected").text());
+           
+            
+            
+        
+            
+       
             
             $('.modality_button').change(function (ev) {
                 var checkedStageModality = ev.currentTarget.id;
@@ -498,7 +565,7 @@
 //             show: {delay: 1200 }});
          
          
-  
+            scaleOrthogonalViews();
         
     }//AttachEvents
     

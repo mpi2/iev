@@ -1,5 +1,5 @@
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 
 (function () {
@@ -8,7 +8,7 @@ goog.require('X.interactor2D');
 
 
     function SpecimenView(volumePaths, id, container, 
-             queryColonyId, indexCB, onLoaded, scaleOrthogonalViews) {
+             queryColonyId, indexCB, onLoaded, scaleOrthogonalViews, config) {
         /**
          * This class holds the three orthogonal views from a single specimen and 
          * allows for loading in of differnt specimens of the same genenotype/colonyID
@@ -48,6 +48,8 @@ goog.require('X.interactor2D');
         var xOffset = 0;
         var yOffset = 0;
         var zOffset = 0;
+        var scaleBarVisible = true;
+        
         
  
         
@@ -218,7 +220,8 @@ goog.require('X.interactor2D');
                 sliderClass: 'slider' + orient,
                 orientation: orient,
                 id: id,
-                scaleId: 'scale_' + orient + id
+                scaleId: 'scale_' + orient + id,
+                scaleTextId: 'scaletext_' + orient + id
                
             };
             
@@ -289,28 +292,41 @@ goog.require('X.interactor2D');
         
         
         function drawScaleBar() {
+ 
+            if (!scaleBarVisible){
+                $('.scale_outer').css(
+                   {'visibility': 'hidden'}
+                 );
+                return;
+            }
+            
             $('.scale_outer').css(
-               {'height': '100%', 
+               {'visibility': 'visible',
+                'height': '100%', 
+                'width': '20px',
                 'position': 'relative',
                 'left': '20px',
-                'z-index': 999
+                'z-index': 998
             }); 
             
-            drawSagittalScale(xRen, 'scale_' + 'X' + id );
-            drawAxialScale(yRen, 'scale_' + 'Y' + id);
-            drawCoronalScale(zRen, 'scale_' + 'Z' + id);
+            drawScale(xRen, 'scale_' + 'X' + id );
+            drawScale(yRen, 'scale_' + 'Y' + id);
+            drawScale(zRen, 'scale_' + 'Z' + id);
         }
+        
+        function setScaleVisibility(visible){
             
+            scaleBarVisible = visible; 
+        }
+         
             
         function drawScale(ren, scaleId){
             //TODO: need to add div height into the calculatoin
             var pixel_size = 28.0; //for now hard code
             var heightRatio =  ren.canvasHeight / ren.sliceHeight;
             var scale = heightRatio * ren.normalizedScale;
-            var bar_size_um = 500;
-            var bar_size_pixels = (bar_size_um / pixel_size) * scale;
-            console.log('bar size', bar_size_pixels);
-            
+            var bar_size_pixels = (config.scaleBarSize / pixel_size) * scale;
+            //console.log('bar size', bar_size_pixels);
             
             var outer_height = $('.scale_outer').height();
             var top = (outer_height - bar_size_pixels) / 2;
@@ -332,69 +348,13 @@ goog.require('X.interactor2D');
             });
         }      
         
-        
-    
+              
+        function setProportional(){
             
-        
-        function setProportional(dim, maxHeight){
-            console.log('draw scale bar');
             drawScaleBar();
-            return;
-            if (dim === 'Z'){
-                console.log(volume.dimensions[2], maxHeight);
-                var scale = volume.dimensions[2] / maxHeight;
-                xRen.camera.zoomIn(scale);
-            }       
         }
         
-        function BackupsetProportional(dim, maxHeight){
-           
-            /**
-             * Set the orthogonal view proportial size by chnaging size of the
-             * view wrapper
-             * @method setProportionalSize
-             * @param {object} viewInfo Hash with max sizes for each orthogonal
-             * view
-             * 
-             * 
-             */
-
-            //return; // For now until I fix the saggital 
-            
-            if (dim === 'Z'){
-                
-                var $xWrapper = $('#X_' + id);
-                var $yWrapper = $('#Y_' + id);
-
-                /**
-                 * Height should always be larger than width, This will not work
-                 * otherwise
-                 */
-                var heightRatio = volume.dimensions[2] / maxHeight; //Always the same for a volume
-
-                var wrapperNewHeight = $('.sliceView').height() * heightRatio;
-                var xyPad = ($('.sliceView').height() - wrapperNewHeight) / 2;
-                $xWrapper.css('height', wrapperNewHeight);
-                $yWrapper.css('height', wrapperNewHeight);
-                $xWrapper.css('top', xyPad);
-                $yWrapper.css('top', xyPad);   
-            }
-            else if (dim === 'Y'){
-                
-                var $zWrapper = $('#Z_' + id);
-                // The y dimension is the height of the axial (Z) slice
-                var heightRatio = volume.dimensions[1] / maxHeight; //Always the same for a volume
-
-                var wrapperNewHeight = $('.sliceView').height() * heightRatio;
-                var zPad = ($('.sliceView').height() - wrapperNewHeight) / 2;
-                $zWrapper.css('height', wrapperNewHeight);
-                $zWrapper.css('top', zPad);
-            }
-            
-        }
-        
-
-        
+         
         function getVolume(){
             return volume;
         }
@@ -468,10 +428,10 @@ goog.require('X.interactor2D');
             zRen.init();
             
             // Monkey-patch the zoom functions to be able to zoom by specified amounts
-            xRen.camera.zoomIn = function (scale) {
-                this._view[14] = scale;
-                console.log('monkey', scale);
-            };
+//            xRen.camera.zoomIn = function (scale) {
+//                this._view[14] = scale;
+//                console.log('monkey', scale);
+//            };
 
             // create a X.volume
             volume = new X.volume();
@@ -669,6 +629,15 @@ goog.require('X.interactor2D');
                 updateSliders(zRen, event);
             }.bind(this);
             
+            //overload right click zoom. Do not want
+            yRen.interactor.rightButtonDown = function () {
+
+                console.log('jadhfjash0');
+                
+
+            };
+            
+            
             
             onLoaded(id);
             scaleOrthogonalViews();
@@ -822,7 +791,9 @@ goog.require('X.interactor2D');
             getVolume: getVolume,
             updateData: updateData,
             zoomIn: zoomIn,
-            zoomOut: zoomOut
+            zoomOut: zoomOut,
+            setScaleVisibility: setScaleVisibility,
+ 
         };
         
         createHTML();

@@ -28,9 +28,9 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="js/handlebars.min.js"></script>
        
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <!--<script type="text/javascript" src="js/xtk.js"></script>-->
+<!--        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
+        <script type="text/javascript" src="X/xtk-deps.js"></script>-->
+        <script type="text/javascript" src="js/xtk.js"></script>
 
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
@@ -80,9 +80,19 @@ limitations under the License.
                     <legend>Zoom</legend>
                   
                     <span class="button" id="zoomIn">+</span>
-                    <span class="button" id ="zoomOut">-</span>
-                    
+                    <span class="button" id ="zoomOut">-</span>   
                 </fieldset>
+                
+            <fieldset>
+                <legend>Scale bar
+                <input type="checkbox" id="scale_visible" name="radio" checked="checked">
+<!--                <label for="scale_visible" id='scale_visible_label' class="button_label">Visible</label>-->
+                </legend>
+                    <select name="scale_select" id="scale_select">
+                    </select>
+                
+            </fieldset>
+            
 
 
                 <fieldset id="heightslider_fieldset">
@@ -174,7 +184,7 @@ limitations under the License.
             <div class='scale_outer'>
                 <div class="scale" id="{{scaleId}}">
                 </div>
-                <div class='scale_text'>500&#956;m</div>
+                <div class='scale_text' id="{{scaleTextId}}"></div>
             </div>
            
         <div id="{{sliceContainerID}}" class ="sliceView"></div>
