@@ -1,5 +1,5 @@
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+goog.require('X.renderer2D');
+goog.require('X.interactor2D');
 
 
 (function () {
@@ -44,9 +44,6 @@
         var viewSliceClasss;
         var invertColours = 'invert_colours_' + id;
         var windowLevel = 'windowLevel_' + id;
-        var reset = 'reset_' + id;
-        var zoomIn = 'zoomIn_' + id;
-        var zoomOut = 'zoomOut_' + id;
         var vselector = 'volumeSelector_' + id;
         var xOffset = 0;
         var yOffset = 0;
@@ -142,49 +139,31 @@
                     volume.modified(true);
                 }, this)
             });
-
-            $('#windowLevel_mut').tooltip({content: "gjdfhs",
-                 show: {delay: 1000 }
-             });
-
-            $("#" + reset)
-            .button()
-            .click($.proxy(function () {
-                  //reset the zoom
-                  xRen.resetViewAndRender();
-                  yRen.resetViewAndRender();
-                  zRen.resetViewAndRender();
-                  //Reset the slider position
-                  var dims = volume.dimensions;
-                  volume.indexX = Math.floor((dims[0] - 1) / 2);
-                  volume.indexY = Math.floor((dims[1] - 1) / 2);
-                  volume.indexZ = Math.floor((dims[2] - 1) / 2);
-                  $xSlider.slider("value", volume.indexX);
-                  $ySlider.slider("value", volume.indexY);
-                  $zSlider.slider("value", volume.indexZ);
-                  //reset the window level
-                  $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
-            }, this));
-
-
-
-            $("#" + zoomIn)
-            .button()
-            .click($.proxy(function () {
-                xRen.camera.zoomIn(false);
-                yRen.camera.zoomIn(false);
-                zRen.camera.zoomIn(false);
-            }, this));
-
-
-            $("#" + zoomOut)
-            .button()
-            .click($.proxy(function () {
-                xRen.camera.zoomOut(false);
-                yRen.camera.zoomOut(false);
-                zRen.camera.zoomOut(false);
-            }, this));
+            
         }; 
+
+
+//            $("#" + reset)
+//            .button()
+//            .click($.proxy(function () {
+//                  //reset the zoom
+//                  xRen.resetViewAndRender();
+//                  yRen.resetViewAndRender();
+//                  zRen.resetViewAndRender();
+//                  //Reset the slider position
+//                  var dims = volume.dimensions;
+//                  volume.indexX = Math.floor((dims[0] - 1) / 2);
+//                  volume.indexY = Math.floor((dims[1] - 1) / 2);
+//                  volume.indexZ = Math.floor((dims[2] - 1) / 2);
+//                  $xSlider.slider("value", volume.indexX);
+//                  $ySlider.slider("value", volume.indexY);
+//                  $zSlider.slider("value", volume.indexZ);
+//                  //reset the window level
+//                  $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+//            }, this));
+
+
+
 
 
 
@@ -238,7 +217,8 @@
                 sliderId: 'slider_' + orient + '_'+ id,
                 sliderClass: 'slider' + orient,
                 orientation: orient,
-                id: id
+                id: id,
+                scaleId: 'scale_' + orient + id
                
             };
             
@@ -283,9 +263,6 @@
                 id: id,
                 controlsButtonsId: "controlsButtons_" + id,
                 invertColoursId: invertColours,
-                zoomInId: zoomIn,
-                zoomOutId: zoomOut,
-                resetId: reset,
                 selectorWrapId: "selectorWrap_" + id,
                 vselectorId: vselector,
                 windowLevelId: windowLevel 
@@ -297,7 +274,81 @@
         };
         
         
+        function zoomIn(){
+           xRen.camera.zoomIn(false);
+           yRen.camera.zoomIn(false);
+           zRen.camera.zoomIn(false); 
+           drawScaleBar();
+        }
+        
+        function zoomOut(){
+           xRen.camera.zoomOut(false);
+           yRen.camera.zoomOut(false);
+           zRen.camera.zoomOut(false); 
+           drawScaleBar();        }
+        
+        
+        function drawScaleBar() {
+            $('.scale_outer').css(
+               {'height': '100%', 
+                'position': 'relative',
+                'left': '20px',
+                'z-index': 999
+            }); 
+            
+            drawSagittalScale(xRen, 'scale_' + 'X' + id );
+            drawAxialScale(yRen, 'scale_' + 'Y' + id);
+            drawCoronalScale(zRen, 'scale_' + 'Z' + id);
+        }
+            
+            
+        function drawScale(ren, scaleId){
+            //TODO: need to add div height into the calculatoin
+            var pixel_size = 28.0; //for now hard code
+            var heightRatio =  ren.canvasHeight / ren.sliceHeight;
+            var scale = heightRatio * ren.normalizedScale;
+            var bar_size_um = 500;
+            var bar_size_pixels = (bar_size_um / pixel_size) * scale;
+            console.log('bar size', bar_size_pixels);
+            
+            
+            var outer_height = $('.scale_outer').height();
+            var top = (outer_height - bar_size_pixels) / 2;
+          
+            $('#'+ scaleId).css(
+               {'height': bar_size_pixels, 
+                'width': '2px',
+                'background-color': 'white',
+                'position': 'absolute',
+                'top': top
+            });
+            $('.scale_text').css(
+                 {
+                
+                'color': 'white',
+                'position': 'absolute',
+                'top': top - 20,
+                'font-size': '10px'
+            });
+        }      
+        
+        
+    
+            
+        
         function setProportional(dim, maxHeight){
+            console.log('draw scale bar');
+            drawScaleBar();
+            return;
+            if (dim === 'Z'){
+                console.log(volume.dimensions[2], maxHeight);
+                var scale = volume.dimensions[2] / maxHeight;
+                xRen.camera.zoomIn(scale);
+            }       
+        }
+        
+        function BackupsetProportional(dim, maxHeight){
+           
             /**
              * Set the orthogonal view proportial size by chnaging size of the
              * view wrapper
@@ -385,17 +436,17 @@
             if (volumePaths.length < 1) return;
             
             xRen = new X.renderer2D();
-            
             /*
              * Sagittal scaling bug fix
              */ 
             xRen.firstRender = true;
-            xRen.afterRender = function(){
-                    
+            
+            xRen.afterRender = function(){   
                 if (this.firstRender){
                    xRen.resetViewAndRender();
+                   this.firstRender = false;
                 }
-                this.alreadyRendered = true;
+          
             };
         
             /*
@@ -415,6 +466,12 @@
             zRen.container = $zContainer.get(0);
             zRen.orientation = 'Z';
             zRen.init();
+            
+            // Monkey-patch the zoom functions to be able to zoom by specified amounts
+            xRen.camera.zoomIn = function (scale) {
+                this._view[14] = scale;
+                console.log('monkey', scale);
+            };
 
             // create a X.volume
             volume = new X.volume();
@@ -424,11 +481,7 @@
 
             xRen.render();
             
-
-            xRen.onShowtime = xtk_showtime;
-            
-
-           
+            xRen.onShowtime = xtk_showtime;  
         };
 
 
@@ -476,8 +529,8 @@
             * @param {String} ortho The orthogonal view that was changed ('X', 'Y', or 'Z')
             */
             if (ortho === 'X') indexCB(id, ortho, index + xOffset );
-            if (ortho === 'Y') indexCB(id, ortho, index + yOffset );
-            if (ortho === 'Z') indexCB(id, ortho, index + zOffset );
+            else if (ortho === 'Y') indexCB(id, ortho, index + yOffset );
+            else if (ortho === 'Z') indexCB(id, ortho, index + zOffset );
        }
           
 
@@ -767,7 +820,9 @@
             getDimensions: getDimensions,
             setProportional: setProportional,
             getVolume: getVolume,
-            updateData: updateData
+            updateData: updateData,
+            zoomIn: zoomIn,
+            zoomOut: zoomOut
         };
         
         createHTML();
@@ -775,6 +830,7 @@
         jQuerySelectors();
         setupRenderers();
         createEventHandlers();
+        drawScaleBar();
         return public_interface;
     }
 

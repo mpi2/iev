@@ -27,9 +27,10 @@ limitations under the License.
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="js/handlebars.min.js"></script>
-<!--        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>-->
-        <script type="text/javascript" src="js/xtk.js"></script>
+       
+        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
+        <script type="text/javascript" src="X/xtk-deps.js"></script>
+        <!--<script type="text/javascript" src="js/xtk.js"></script>-->
 
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
@@ -74,12 +75,22 @@ limitations under the License.
                         <label for="horizontal" id='horizontal_label' class="button_label">Horizontal</label>
                     </div>
                 </fieldset>
+                
+                <fieldset id="zoom_fieldset">
+                    <legend>Zoom</legend>
+                  
+                    <span class="button" id="zoomIn">+</span>
+                    <span class="button" id ="zoomOut">-</span>
+                    
+                </fieldset>
 
 
                 <fieldset id="heightslider_fieldset">
                     <legend>View height</legend>
                     <div id="viewHeightSlider" title="test"></div>
                 </fieldset>
+                
+
 
 
                 <fieldset id="modality_stage_fieldset">
@@ -110,7 +121,7 @@ limitations under the License.
                 dcc.embryo("<%= request.getParameter("colony_id")%>");
             });
         </script>
-        <script>
+<!--        <script>
             (function (i, s, o, g, r, a, m) {
                 i['GoogleAnalyticsObject'] = r;
                 i[r] = i[r] || function () {
@@ -125,7 +136,7 @@ limitations under the License.
 
             ga('create', 'UA-23433997-1', 'https://www.mousephenotype.org/embryo');
             ga('send', 'pageview');
-        </script>  
+        </script>  -->
         <!-- This is where the download dialog goes -->
         <div id="download_dialog"><div>
     </body>
@@ -153,18 +164,24 @@ limitations under the License.
 
     <!--Specimen view template-->
     <script id="specimen_view_template" type="text/x-handlebars-template">  
-        <div id="{{id}}" class='specimen_view'></div>"    
+        <div id="{{id}}" class='specimen_view'></div>"  
     </script>
 
 
     <!--Slice view template-->
     <script id="slice_view_template" type="text/x-handlebars-template">
         <div class="sliceWrap" id="{{sliceWrapId}}">
+            <div class='scale_outer'>
+                <div class="scale" id="{{scaleId}}">
+                </div>
+                <div class='scale_text'>500&#956;m</div>
+            </div>
+           
         <div id="{{sliceContainerID}}" class ="sliceView"></div>
         <div class="sliceControls">
-        <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
-        <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
-        <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
+            <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
+                <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
+                <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
 
         </div>
         </div>

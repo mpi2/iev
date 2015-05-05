@@ -74,6 +74,7 @@ fieldset{
     border-color:white;
     border-style: solid;
     height: 45px;
+    font-size: 12px;
  
    
   
@@ -105,8 +106,12 @@ fieldset{
 }
 
 #heightslider_fieldset{
-
+    float:left;
 }
+
+/*#zoom_fieldset{
+    float: left;
+}*/
 
 .nodata {
     font: 2em arial, sans-serif;
@@ -288,6 +293,7 @@ input[type=checkbox].linkCheck {
     //height: 40px;
     background-color: #E0E0E0;
     margin-bottom: 5px;
+    display:none;// Hide until we have successfully got some vol paths
     
 }
 
@@ -393,4 +399,12 @@ background-color: #DEDEDE;
 
 .sliderZ .ui-slider-range{
     background: blue;
+}
+
+
+////////// Scale bar //////////////
+#scale {
+    left: 20px;
+    font-size: 0.6em;
+    position: absolute;
 }

@@ -8,7 +8,8 @@
           * @type String
           */
         
-        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var wildtypes = [];
         var mutants = [];
@@ -18,6 +19,7 @@
         var viewers_loaded = 0;
         var wtView;
         var mutView;
+        
         
         /**
          * 
@@ -56,6 +58,10 @@
          * If data is not available, load an error message
          */
         if (data['success']){
+            
+            //Display the top control bar
+            $('#top_bar').show();
+            
             // Get the baselines and the mutant paths
             for(var i = 0; i < data.volumes.length; i++) {
 
@@ -155,7 +161,7 @@
              */
             
             //TODO: check what happens if specimens have iddentical dimensions
-            
+            console.log('sov');
             var maxY = 0;
             var maxZ = 0;
             var maxYid;
@@ -332,6 +338,34 @@
             /*
              * When the download button is clicked, create a file download dislaog
              */
+//            $(document.body).on('click', '#download_all' ,function(event){
+//                event.preventDefault();
+//                $('.down_all').multiDownload();
+//            });
+//            
+//         
+//            
+
+            //$('#wrap').draggable();
+            
+            
+            $("#zoomIn")
+                .button()
+                .click($.proxy(function () {
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].zoomIn();
+                    }
+                }, this));
+
+
+            $("#zoomOut")
+                .button()
+                .click($.proxy(function () {
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].zoomOut();
+                    }
+                }, this));
+       
             
             var dlg = $('#download_dialog').dialog({
                 title: 'Select volumes for download',
@@ -344,6 +378,7 @@
             });
 
 
+            // Set up the table for available downloads
             $('#download').click(function (e) {
                 e.preventDefault();
                 dlg.load('download_dialog.html', function () {
@@ -354,7 +389,7 @@
                          var path = vols['mutant'][vol];
                          $("#download_table tbody").append("<tr>" +
                                     "<td>" + basename(path) + "</td>" +
-                                    "<td>" + "<a href='"+ path + "'>Download</a></td>" +
+                                    "<td>" + "<a href='"+ path + "' class='down_all'>Download</a></td>" +
                                     "</tr>");
                     }
                     for (var vol in vols['wildtype']){

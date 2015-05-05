@@ -121,6 +121,7 @@ X.camera2D.prototype.zoomIn = function(fast) {
 };
 
 
+
 /**
  * @inheritDoc
  */

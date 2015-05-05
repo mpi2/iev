@@ -1019,7 +1019,11 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
   // transform the canvas according to the view matrix
   // .. this includes zoom
+  
+  // Neil: To change scaling, we need to set it here
+  //console.log('ren view[14]', _view[14]);
   this._normalizedScale = Math.max(_view[14], 0.0001);
+  
 
   this._context.setTransform(this._normalizedScale, 0, 0, this._normalizedScale, 0, 0);
 
