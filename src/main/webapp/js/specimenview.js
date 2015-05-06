@@ -94,6 +94,12 @@
         
         
         function updateVolumeSelector(){
+            //remove any current options
+            $('#' + vselector)
+                .find('option')
+                .remove()
+                .end();
+
             // Add the volume options
             var options = [];
             for (i = 0; i < volumePaths.length; i++) {
@@ -109,6 +115,10 @@
                     replaceVolume(ui.item.value);
                 }, this)
             });
+            
+                             
+            $('#' + vselector)
+                .selectmenu("refresh");
         }
         
         
@@ -119,13 +129,6 @@
              * @TODO: Min and max slider level to be set dynamically
              */
             
-   
-            // Invert the color map 
-            $("#" + invertColours).change($.proxy(function (e) {
-                invertColour(e.target.checked);
-            }, this));
-
-           
             $windowLevel.slider({
                 range: true,
 //                min: parseInt(volume.windowLow),
@@ -161,6 +164,7 @@
             $zSlider.slider("value", volume.indexZ);
             //reset the window level
             $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+            drawScaleBar();
             
         }
 
@@ -261,7 +265,6 @@
             var data = {
                 id: id,
                 controlsButtonsId: "controlsButtons_" + id,
-                invertColoursId: invertColours,
                 selectorWrapId: "selectorWrap_" + id,
                 vselectorId: vselector,
                 windowLevelId: windowLevel 
@@ -316,12 +319,9 @@
             
         function drawScale(ren, scaleId, scaleTextId){
             //TODO: need to add div height into the calculatoin
-            console.log(ren.normalizedScale);
             var pixel_size = 28.0; //for now hard code
-            // Bug: Ren.zoomin/out is called just before drawScale.
-            // normnalizedscale only gets updated each render_() so we might be out of sync
             var bar_size_pixels = (config.scaleBarSize / pixel_size) * ren.normalizedScale;
-            //console.log('bar size', bar_size_pixels);
+            
             
             var outer_height = $('.scale_outer').height();
             var top = (outer_height - bar_size_pixels) / 2;
@@ -329,14 +329,11 @@
             $('#'+ scaleId).css(
                {'height': bar_size_pixels, 
                 'width': '2px',
-                'background-color': 'white',
                 'position': 'absolute',
                 'top': top
             });
             $('#' +scaleTextId).css(
-                 {
-                
-                'color': 'white',
+                {
                 'position': 'absolute',
                 'top': top - 20,
                 'font-size': '10px'
@@ -627,7 +624,7 @@
             //overload right click zoom. Do not want
             yRen.interactor.rightButtonDown = function () {
 
-                console.log('jadhfjash0');
+            
                 
 
             };
@@ -787,7 +784,8 @@
             updateData: updateData,
             zoomIn: zoomIn,
             zoomOut: zoomOut,
-            reset: reset
+            reset: reset,
+            invertColour: invertColour
           
         };
         

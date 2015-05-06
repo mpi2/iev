@@ -100,11 +100,12 @@ limitations under the License.
                 </fieldset>
                 
                 <fieldset id="color_fieldset">
-                    <legend>Colour</legend>
+                    <legend>Other</legend>
                     <input type="checkbox" id="invertColours">
                     <label for="invertColours">Invert colours</label>
-
-                    <a id ="reset" href="#" class="button">Reset</a>
+                    <input type="button" id="reset">
+                    <label for="reset">reset</label>
+                    
                 </fieldset>
 
 

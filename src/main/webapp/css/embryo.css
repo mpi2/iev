@@ -219,7 +219,7 @@ fieldset{
 
 .controls {
     margin: 3px 0 3px 0;   
-    height: 25px;
+    height: 30px;
 }
 
 /*#controls .ui-slider {
@@ -242,6 +242,18 @@ fieldset{
 input[type=checkbox].linkCheck {
     display:none;    
 }
+
+.linkCheck{
+    z-index: 999;
+}
+
+ .scale_text{
+     color: #FFFFFF;
+ }
+  .scale{
+     background-color:#FFFFFF;
+ }
+                     
 
 
 

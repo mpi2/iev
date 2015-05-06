@@ -353,6 +353,28 @@
                 }, this));
                 
                 
+            $("#invertColours")
+                .button()
+                .click($.proxy(function (e) {
+                    //First change the background colors and scale colors
+                    var checked = e.target.checked;
+                    if (checked) {
+                        $(".sliceView").css("background-color", "#FFFFFF");
+                        $('.scale_text').css("color", "#000000");
+                        $('.scale').css("background-color", "#000000");
+                    } else {
+                        $(".sliceView").css("background-color", "#000000");
+                        $('.scale_text').css("color", "#FFFFFF");
+                        $('.scale').css("background-color", "#FFFFFF");
+                    }
+                    //Now get the SpecimenViews to reset
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].invertColour(checked);
+                    }
+
+                }, this));
+                
+                
             $('.scale_outer').draggable();
             
             
@@ -485,7 +507,9 @@
             }.bind(this));
             
            
-            
+            /*
+             * The selectmenu for the scale bar sizes
+             */
             $('#scale_select')
                 .append(scaleLabels().join(""))
                 .selectmenu({
