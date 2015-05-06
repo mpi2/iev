@@ -34,7 +34,8 @@ limitations under the License.
 
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
-        <script type="text/javascript" src="js/viewer.js"></script>
+        <script type="text/javascript" src="js/specimenview.js"></script>
+        <script type="text/javascript" src="js/sliceview.js"></script>
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
     </head>
     <body>
@@ -76,30 +77,35 @@ limitations under the License.
                     </div>
                 </fieldset>
                 
-                <fieldset id="zoom_fieldset">
+            <fieldset id="scale_fieldset">
+                <legend>Scale bar
+                <input type="checkbox" id="scale_visible" name="radio" checked="checked">
+<!--                <label for="scale_visible" id='scale_visible_label' class="button_label">Visible</label>-->
+                </legend>
+                    <select name="scale_select" id="scale_select">
+                    </select>  
+            </fieldset>
+               
+            
+                <fieldset id="heightslider_fieldset">
+                    <legend>View height</legend>
+                    <div id="viewHeightSlider"></div>
+                </fieldset>
+            
+                 <fieldset id="zoom_fieldset">
                     <legend>Zoom</legend>
                   
                     <span class="button" id="zoomIn">+</span>
                     <span class="button" id ="zoomOut">-</span>   
                 </fieldset>
                 
-            <fieldset>
-                <legend>Scale bar
-                <input type="checkbox" id="scale_visible" name="radio" checked="checked">
-<!--                <label for="scale_visible" id='scale_visible_label' class="button_label">Visible</label>-->
-                </legend>
-                    <select name="scale_select" id="scale_select">
-                    </select>
-                
-            </fieldset>
-            
+                <fieldset id="color_fieldset">
+                    <legend>Colour</legend>
+                    <input type="checkbox" id="invertColours">
+                    <label for="invertColours">Invert colours</label>
 
-
-                <fieldset id="heightslider_fieldset">
-                    <legend>View height</legend>
-                    <div id="viewHeightSlider" title="test"></div>
+                    <a id ="reset" href="#" class="button">Reset</a>
                 </fieldset>
-                
 
 
 
@@ -161,16 +167,8 @@ limitations under the License.
         <div class="wlwrap">
         <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
         </div>
-        <span id="{{controlsButtonsId}}" class="controlsButtons">
-        <input type="checkbox" id="{{invertColoursId}}" class="button">
-        <label for="{{invertColoursId}}">Invert colours</label>
-        
-        <a id ="{{resetId}}" href="#" class="button">Reset</a>
-        </span>
         </div>
     </script>
-<!--<a id="{{zoomInId}}" href="#" class="button">+</a>
-        <a id="{{zoomOutId}}" href="#" class="button">-</a>-->
 
     <!--Specimen view template-->
     <script id="specimen_view_template" type="text/x-handlebars-template">  

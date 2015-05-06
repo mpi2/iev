@@ -114,9 +114,13 @@ fieldset{
     float:left;
 }
 
-/*#zoom_fieldset{
+#zoom_fieldset{
     float: left;
-}*/
+}
+
+#scale_fieldset{
+    float: left;
+}
 
 .nodata {
     font: 2em arial, sans-serif;
@@ -215,6 +219,7 @@ fieldset{
 
 .controls {
     margin: 3px 0 3px 0;   
+    height: 25px;
 }
 
 /*#controls .ui-slider {

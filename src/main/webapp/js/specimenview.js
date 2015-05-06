@@ -25,7 +25,8 @@
         var id = id;
         var viewContainer = container;
         var volumePaths = volumePaths;
-
+        
+        var sliceViews = [];
         var $xContainer;
         var $yContainer;
         var $zContainer;
@@ -144,31 +145,27 @@
         }; 
 
 
-//            $("#" + reset)
-//            .button()
-//            .click($.proxy(function () {
-//                  //reset the zoom
-//                  xRen.resetViewAndRender();
-//                  yRen.resetViewAndRender();
-//                  zRen.resetViewAndRender();
-//                  //Reset the slider position
-//                  var dims = volume.dimensions;
-//                  volume.indexX = Math.floor((dims[0] - 1) / 2);
-//                  volume.indexY = Math.floor((dims[1] - 1) / 2);
-//                  volume.indexZ = Math.floor((dims[2] - 1) / 2);
-//                  $xSlider.slider("value", volume.indexX);
-//                  $ySlider.slider("value", volume.indexY);
-//                  $zSlider.slider("value", volume.indexZ);
-//                  //reset the window level
-//                  $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
-//            }, this));
+
+        function reset(){
+            //reset the zoom
+            xRen.resetViewAndRender();
+            yRen.resetViewAndRender();
+            zRen.resetViewAndRender();
+            //Reset the slider position
+            var dims = volume.dimensions;
+            volume.indexX = Math.floor((dims[0] - 1) / 2);
+            volume.indexY = Math.floor((dims[1] - 1) / 2);
+            volume.indexZ = Math.floor((dims[2] - 1) / 2);
+            $xSlider.slider("value", volume.indexX);
+            $ySlider.slider("value", volume.indexY);
+            $zSlider.slider("value", volume.indexZ);
+            //reset the window level
+            $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+            
+        }
 
 
-
-
-
-
-        function createHTML () {
+        function createHTML() {
             /**
              * Creates the html needed for the specimen view to live in.
              * Uses handlebar.js to generate from templates
@@ -277,13 +274,9 @@
         
         
         function zoomIn(){
-           console.log('before', zRen.normalizedScale);
            xRen.camera.zoomIn(false);
            yRen.camera.zoomIn(false);
            zRen.camera.zoomIn(false);
-           // Need to make sure render_() has been called to get the updated normalizedScale value
-           // Try sleep to see if that is actually the problemk
-           console.log('after', zRen.normalizedScale);
            drawScaleBar();
         }
         
@@ -314,15 +307,10 @@
             // After resizing the window or doing a zoomIn or zoomOut, we need to wait for renderer2D to call
             // render_(). Otherwose normalizScale will not have been set
              setTimeout(function () {
-                console.log('after after', zRen.normalizedScale);
                 drawScale(xRen, 'scale_' + 'X' + id, 'scaletext_' + 'X' + id );
                 drawScale(yRen, 'scale_' + 'Y' + id, 'scaletext_' + 'Y' + id);
                 drawScale(zRen, 'scale_' + 'Z' + id, 'scaletext_' + 'Z' + id);
-            }, 20);
-            
-           
-            
-           
+            }, 20);  
         }
         
             
@@ -798,7 +786,8 @@
             getVolume: getVolume,
             updateData: updateData,
             zoomIn: zoomIn,
-            zoomOut: zoomOut
+            zoomOut: zoomOut,
+            reset: reset
           
         };
         
