@@ -23,11 +23,22 @@
         request.send(null);
     }
 
-    dcc.embryo = function(colonyId) {   
+    dcc.getVolumesByColonyId = function(colonyId) {   
+        console.log('colony_id',colonyId);
         dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
             function(data) {   
                 dcc.EmbryoViewer(data, 'viewer', colonyId);     
         });
     };
+    
+    
+    dcc.getVolumesByGeneSymbol = function(geneSymbol) {   
+        console.log('geneSymbol', geneSymbol);
+        dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
+            function(data) {   
+                dcc.EmbryoViewer(data, 'viewer', geneSymbol);     
+        });
+    };
+
 
 })();

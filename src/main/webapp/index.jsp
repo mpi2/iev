@@ -54,14 +54,14 @@ limitations under the License.
 
                 </div>
                 <fieldset id="orthogonal_views_buttons_fieldset">
-                    <legend>Orthogonal views</legend>
+                    <legend>views</legend>
                     <div id="orthogonal_views_buttons">
                         <input type="checkbox" id="X_check" class='toggle_slice' checked>
-                        <label for="X_check" id='X_check_label'>Sagittal</label>
+                        <label for="X_check" id='X_check_label'>S</label>
                         <input type="checkbox" id="Y_check" class='toggle_slice' checked>
-                        <label for="Y_check" id='Y_check_label'>Coronal</label>
+                        <label for="Y_check" id='Y_check_label'>C</label>
                         <input type="checkbox" id="Z_check" class='toggle_slice' checked>
-                        <label for="Z_check" id='Z_check_label'>Axial</label>
+                        <label for="Z_check" id='Z_check_label'>A</label>
                     </div>
                 </fieldset>
 
@@ -135,7 +135,18 @@ limitations under the License.
 
 
             window.addEventListener('load', function () {
-                dcc.embryo("<%= request.getParameter("colony_id")%>");
+                var geneSymbol = "<%= request.getParameter("gene_symbol")%>";
+                var colonyId = "<%= request.getParameter("colony_id")%>";
+                
+                if (colonyId !== 'null'){
+                    console.log('got cid');
+                    dcc.getVolumesByColonyId(colonyId);
+                }
+                else if (geneSymbol !== 'null') {
+                    console.log('got gid');
+                    dcc.getVolumesByGeneSymbol(geneSymbol);
+                }
+               
             });
         </script>
 <!--        <script>

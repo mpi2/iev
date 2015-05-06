@@ -136,12 +136,12 @@ fieldset{
 .wlwrap{
     margin-left: 15px;
     margin-right: 10px;
-    margin-top: 4px;
+    margin-top: 10px;
     float: left;  
 }
 
 .windowLevel{
-    width: 200px;
+    width: 130px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -152,7 +152,7 @@ fieldset{
  
 }
 .wlwrap .ui-slider-handle, #viewHeightSlider .ui-slider-handle {
-    top: -8px;
+    top: -10px;
     width: 8px;
     margin-left: -5px;
     cursor: pointer;
@@ -191,7 +191,7 @@ fieldset{
 #viewHeightSlider {
     
     float: right;
-    width: 115px;
+    width: 75px;
     top: 12px;
     margin: 0 10px;
 

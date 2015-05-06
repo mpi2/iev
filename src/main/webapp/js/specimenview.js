@@ -300,7 +300,8 @@
             
             $('.scale_outer').css(
                {
-                'height': '100%', 
+                'height': '100%',
+                'bottom': '30px',
                 'width': '20px',
                 'position': 'relative',
                 'left': '20px',

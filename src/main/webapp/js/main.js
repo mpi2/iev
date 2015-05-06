@@ -8,8 +8,8 @@
           * @type String
           */
         
-        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var wildtypes = [];
         var mutants = [];
