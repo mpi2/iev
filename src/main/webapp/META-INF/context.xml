@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" cachingAllowed="false" path="/embryo-viewer"/>
+<Context antiJARLocking="false" antiResourceLocking="false" 
+         cachingAllowed="false" path="/embryo-viewer" reloadable="true"/>
 
 <!--Remove the cachingAllowed="false" when deploying to "live"-->
+<!--<Context className="org.apache.catalina.core.StandardContext"
+                 cachingAllowed="false"
+                 charsetMapperClass="org.apache.catalina.util.CharsetMapper"
+                 cookies="true" 
+                 reloadable="false" 
+                 wrapperClass="org.apache.catalina.core.StandardWrapper"
+                 antiResourceLocking="false"
+                 path="/embryo-viewer">
+</Context>-->
 

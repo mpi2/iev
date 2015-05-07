@@ -139,11 +139,9 @@ limitations under the License.
                 var colonyId = "<%= request.getParameter("colony_id")%>";
                 
                 if (colonyId !== 'null'){
-                    console.log('got cid');
                     dcc.getVolumesByColonyId(colonyId);
                 }
                 else if (geneSymbol !== 'null') {
-                    console.log('got gid');
                     dcc.getVolumesByGeneSymbol(geneSymbol);
                 }
                

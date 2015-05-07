@@ -8,8 +8,9 @@
           * @type String
           */
         
-        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+   
+        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var wildtypes = [];
         var mutants = [];
@@ -31,22 +32,22 @@
             203: {
                 'id': 'CT E14.5/15.5',
                 'vols': {
-                    'mutant': [],
-                    'wildtype': []
+                    'mutant': {},
+                    'wildtype': {}
                 }
             },
             204: {
                 'id': 'CT E18.5',
                 'vols':{
-                    'mutant': [],
-                    'wildtype': []
+                    'mutant': {},
+                    'wildtype': {}
                 }
             },
             202:{
                 'id': 'OPT 9.5',
                 'vols':{
-                    'mutant': [],
-                    'wildtype': []
+                    'mutant': {},
+                    'wildtype': {}
                 }
             }
         };
@@ -91,15 +92,17 @@
             $('#top_bar').show();
             
             // Get the baselines and the mutant paths
-            for(var i = 0; i < data.volumes.length; i++) {
+            for(var i = 0; i < objSize(data.volumes); i++) {
 
                 var obj = data.volumes[i];
-
-                 if (obj.colonyId === WILDTYPE_COLONYID){
-                    modalityData[obj.pid]['vols']['wildtype'].push(buildUrl(obj));
+                
+                buildUrl(obj);
+                
+                if (obj.colonyId === WILDTYPE_COLONYID){
+                    modalityData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
 
                 }else{
-                    modalityData[obj.pid]['vols']['mutant'].push(buildUrl(obj));
+                    modalityData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
                 }
             }
             
@@ -144,30 +147,32 @@
              * Chaeck which modalities we have data for and inactivate buttons for which we have no data
              */
             for (var pid in modalityData){
-                if (modalityData[pid]['vols']['mutant'].length < 1){
+                if (objSize(modalityData[pid]['vols']['mutant']) < 1){
                     $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled',true);
                 }
-            }
-              
+            }  
         }
         
     
         function buildUrl(data){
             /**
              * Create a url from the data returned by querying database for a colonyID
-             * URL should point us towards the correct place on the image server
+             * URL should point us towards the correct place on the image server.
+             * add the URL to the data object
              * @method buildUrl
              * @param {json} data Data for colonyID 
              */
-            url = IMAGE_SERVER + data.cid + '/' 
+            var url = IMAGE_SERVER + data.cid + '/' 
                     + data.lid + '/' 
                     + data.gid + '/' 
                     + data.sid + '/' 
                     + data.pid + '/' 
                     + data.qid + '/' 
                     + data.url;
+            
+            data['volume_url'] = url
 
-            return url;
+            return data;
         }
         
         
@@ -208,10 +213,10 @@
             
             //Detmermine which of the stage/modalities has mutant data. Choose the first one
             for (var pid in modalityData){
-                if (modalityData[pid]['vols']['mutant'].length > 1){
+                if (objSize(modalityData[pid]['vols']['mutant']) > 1){ // !!!! Don't forget to switch off once I work out how to load ct by default
                     var wildtypeData = modalityData[pid]['vols']['wildtype'];
                     var mutantData = modalityData[pid]['vols']['mutant'];
-                    break
+                    break;
                 }
             }
             
@@ -259,10 +264,10 @@
              * @todo we need to decrement viewers_loaded when we delete a SpecimenView
              * @param {type} id
              */
-            viewers_loaded += 1;
-            if (viewers_loaded === NUM_VIEWERS){
-                scaleOrthogonalViews();  
-            }  
+//            viewers_loaded += 1;
+//            if (viewers_loaded === NUM_VIEWERS){
+//                scaleOrthogonalViews();  
+//            }  
         }
         
         
@@ -528,10 +533,6 @@
            
             
             
-        
-            
-       
-            
             $('.modality_button').change(function (ev) {
                 var checkedStageModality = ev.currentTarget.id;
                 setStageModality(checkedStageModality);
@@ -591,7 +592,19 @@
              */
             return path.split(/[\\/]/).pop();
         }
-        ;
+        
+        
+        function objSize(obj) {
+            var count = 0;
+            var i;
+
+            for (i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    count++;
+                }
+            }
+            return count;
+        }
     
     function setViewOrientation(orientation){
                      

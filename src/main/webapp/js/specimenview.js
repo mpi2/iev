@@ -7,7 +7,7 @@
         dcc = {};
 
 
-    function SpecimenView(volumePaths, id, container, 
+    function SpecimenView(volumeData, id, container, 
              queryColonyId, indexCB, onLoaded, config) {
         /**
          * This class holds the three orthogonal views from a single specimen and 
@@ -21,10 +21,14 @@
          * @param {function} indexCB called when slice index changes
          * @param {Function} onLoaded Called when all the XTK stuff has loaded
          */
-
+ 
         var id = id;
         var viewContainer = container;
-        var volumePaths = volumePaths;
+        var volumeData = volumeData;
+        
+        // Load up the first volume
+        var currentVolume = volumeData[Object.keys(volumeData)[0]];
+       
         
         var sliceViews = [];
         var $xContainer;
@@ -78,7 +82,6 @@
          * Loop over the volume paths objects and choose the first modality/stage that has data
          */
 
-        var currentVolumePath = volumePaths[0];
 
         
         function updateData(volumes){
@@ -86,8 +89,10 @@
              * Chnage the current stage/modality being viewed
              * 
              */
-            volumePaths = volumes;
-            replaceVolume(volumePaths[0]);
+            
+            volumeData = volumes;
+            
+            replaceVolume(volumeData[Object.keys(volumeData)[0]]['volume_url']);
             updateVolumeSelector();
         }
         
@@ -102,8 +107,9 @@
 
             // Add the volume options
             var options = [];
-            for (i = 0; i < volumePaths.length; i++) {
-                options.push("<option value='" + volumePaths[i] + "'>" + basename(volumePaths[i]) + "</option>");
+            for (var i in volumeData) {
+                var url = volumeData[i]['volume_url'];
+                options.push("<option value='" + url + "'>" + basename(url) + "</option>");
             }
             
             $('#' + vselector)
@@ -164,6 +170,19 @@
             $zSlider.slider("value", volume.indexZ);
             //reset the window level
             $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+            
+            
+            // Put scale bars back in place            
+            $('.scale_outer').css(
+               {
+                'height': '100%',
+                'bottom': '30px',
+                'width': '20px',
+                'position': 'relative',
+                'left': '20px',
+                'z-index': 998
+                });
+                
             drawScaleBar();
             
         }
@@ -180,7 +199,7 @@
 
             var $viewsContainer = $("#" + viewContainer);
             
-            if (volumePaths.length < 1 && queryColonyId !==  null){
+            if (objSize(volumeData) < 1 && queryColonyId !==  null){
                     return;
             }
             
@@ -295,25 +314,13 @@
         }
         
         
-        function drawScaleBar() {
-            
-            
-            $('.scale_outer').css(
-               {
-                'height': '100%',
-                'bottom': '30px',
-                'width': '20px',
-                'position': 'relative',
-                'left': '20px',
-                'z-index': 998
-                });
-                
+        function drawScaleBar() {   
             // After resizing the window or doing a zoomIn or zoomOut, we need to wait for renderer2D to call
             // render_(). Otherwose normalizScale will not have been set
              setTimeout(function () {
-                drawScale(xRen, 'scale_' + 'X' + id, 'scaletext_' + 'X' + id );
                 drawScale(yRen, 'scale_' + 'Y' + id, 'scaletext_' + 'Y' + id);
                 drawScale(zRen, 'scale_' + 'Z' + id, 'scaletext_' + 'Z' + id);
+                drawScale(xRen, 'scale_' + 'X' + id, 'scaletext_' + 'X' + id );
             }, 20);  
         }
         
@@ -322,8 +329,7 @@
             //TODO: need to add div height into the calculatoin
             var pixel_size = 28.0; //for now hard code
             var bar_size_pixels = (config.scaleBarSize / pixel_size) * ren.normalizedScale;
-            
-            
+           
             var outer_height = $('.scale_outer').height();
             var top = (outer_height - bar_size_pixels) / 2;
           
@@ -333,7 +339,7 @@
                 'position': 'absolute',
                 'top': top
             });
-            $('#' +scaleTextId).css(
+            $('#' + scaleTextId).css(
                 {
                 'position': 'absolute',
                 'top': top - 20,
@@ -374,7 +380,8 @@
                 zRen.destroy();
                 delete zRen;
             }
-            currentVolumePath = volumePath;
+            
+            currentVolume = volumeData[volumePath];
             setupRenderers();
         };
 
@@ -386,18 +393,23 @@
              * @method setupRenderers
              */
 
-            if (volumePaths.length < 1) return;
+            if (objSize(volumeData) < 1) return;
             
             xRen = new X.renderer2D();
             /*
              * Sagittal scaling bug fix
              */ 
+            
+            
+            
+            // Part of the fix for the sagittal rescaling bug in XTK
             xRen.firstRender = true;
             
             xRen.afterRender = function(){   
                 if (this.firstRender){
                    xRen.resetViewAndRender();
                    this.firstRender = false;
+                   xtk_showtime();
                 }
           
             };
@@ -428,13 +440,11 @@
 
             // create a X.volume
             volume = new X.volume();
-            volume.file = currentVolumePath;
+            volume.file = currentVolume['volume_url'];
 
             xRen.add(volume);
 
-            xRen.render();
-            
-            xRen.onShowtime = xtk_showtime;  
+            xRen.render(); 
         };
 
 
@@ -536,7 +546,7 @@
             
             // Let main know of the new dimensions of the orthogonal views
 
-            // It appears that dimensoins are in yxz order. At least with nii loading
+            // It appears that dimensins are in yxz order. At least with nii loading
             volume.indexX = Math.floor((dims[0] - 1) / 2);
             volume.indexY = Math.floor((dims[1] - 1) / 2);
             volume.indexZ = Math.floor((dims[2] - 1) / 2);
@@ -624,14 +634,10 @@
             
             //overload right click zoom. Do not want
             yRen.interactor.rightButtonDown = function () {
-
-            
-                
-
             };
             
             
-            
+            drawScaleBar();
             onLoaded(id);
          
         };
@@ -764,6 +770,18 @@
              */
             return path.split(/[\\/]/).pop();
         };
+        
+        function objSize(obj) {
+            var count = 0;
+            var i;
+
+            for (i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    count++;
+                }
+            }
+            return count;
+        }
 
 
         var public_interface = {

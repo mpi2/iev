@@ -6,6 +6,8 @@ body{
     -webkit-user-select: none; /* Chrome/Safari */        
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+ */
+    -o-user-select: none;
+    
 }
 
 #viewer {
@@ -253,7 +255,17 @@ input[type=checkbox].linkCheck {
   .scale{
      background-color:#FFFFFF;
  }
-                     
+ 
+             
+.scale_outer{
+    height: 100%;
+    bottom: 30px;
+    width: 20px;
+    position: relative;
+    left: 20px;
+    z-index: 998;
+    }
+
 
 
 
