@@ -9,8 +9,8 @@
           */
         
    
-        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var wildtypes = [];
         var mutants = [];
@@ -392,14 +392,15 @@
                     var vols = modalityData[pid]['vols'];
                     
                     for (var vol in vols['mutant']){
-                         var path = vols['mutant'][vol];
+                         var path = vols['mutant'][vol]['volume_url'];
+                         console.log(path);
                          $("#download_table tbody").append("<tr>" +
                                     "<td>" + basename(path) + "</td>" +
                                     "<td>" + "<a href='"+ path + "' class='down_all'>Download</a></td>" +
                                     "</tr>");
                     }
                     for (var vol in vols['wildtype']){
-                        var path = vols['wildtype'][vol];
+                        var path = vols['wildtype'][vol]['volume_url'];
                          $("#download_table tbody").append("<tr>" +
                                     "<td>" + basename(path) + "</td>" +
                                     "<td>" + "<a href='"+ path + "'>Download</a></td>" +
@@ -415,8 +416,13 @@
     
             
             $("#modality_stage" ).buttonset();
-            $("#orientation_buttons" ).buttonset();
+
             $("#orthogonal_views_buttons").buttonset();
+            
+            
+            $("#vertical" ).button({
+                icons: {primary: 'ui-icon-vertical', secondary: null}
+            });
       
             $(".linkCheck").change(function(e){
               

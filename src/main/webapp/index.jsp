@@ -47,7 +47,7 @@ limitations under the License.
                     <form action="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"  id="help_form">
                         <input type="submit" value="?" id="help_link" >
                     </form>
-                        <div>
+                        <div id="download_button">
                        <img src="images/download.png" height="25" id="download">
                        </div>
                     </div>
@@ -194,7 +194,7 @@ limitations under the License.
     <!--Slice view template-->
     <script id="slice_view_template" type="text/x-handlebars-template">
         <div class="sliceWrap" id="{{sliceWrapId}}">
-            <div class='scale_outer'>
+            <div class='scale_outer scale_outer_{{id}}' >
                 <div class="scale" id="{{scaleId}}">
                 </div>
                 <div class='scale_text' id="{{scaleTextId}}"></div>

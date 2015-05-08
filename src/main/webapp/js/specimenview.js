@@ -205,7 +205,7 @@
                 'width': '20px',
                 'position': 'relative',
                 'left': '20px',
-                'z-index': 998
+                'z-index': 900
                 });
                 
             update();
@@ -350,7 +350,16 @@
         
             
         function drawScale(ren, scaleId, scaleTextId){
-            //TODO: need to add div height into the calculatoin
+            
+            console.log(currentVolume["pixelsize"]);
+            var $scaleouter =  $('.scale_outer_' + id);
+            
+            if (currentVolume["pixelsize"] == null ||  currentVolume["pixelsize"] == 0){
+                $scaleouter.hide();
+                return;
+            }
+            $scaleouter.show();
+            
             var pixel_size = 28.0; //for now hard code
             var bar_size_pixels = (config.scaleBarSize / pixel_size) * ren.normalizedScale;
            
