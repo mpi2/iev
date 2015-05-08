@@ -48,11 +48,6 @@ body{
   
 }
 
-.slider{
-
- 
-}
-
 .sliceControls{
     height: 25px !important;
     position: absolute !important;
@@ -64,8 +59,41 @@ body{
 
 .windowLevel{
     float: left;
-    width: 200px;
+  
 }
+
+
+.metadata{
+    float: right;
+    width: 300px;
+    height: 100%;
+    /*background-color: #E6E3DA;*/
+    margin-right: 20px;
+    font-size: 10px;
+}
+
+.metadata_c1, .metadata_c2{
+    width: 37%;
+    float: left;
+    margin-left: 8px;
+  
+}
+.centre_logo{
+    position: relative;
+    /*bottom: 3px;*/
+    width: 10%;
+    float: left;
+    margin-right: 10px
+}
+
+.logo_img{
+    height: 30px;
+}
+
+.centre_logo{
+    padding-bottom: 5px;
+}
+
 
 .clear{
     clear:both;
@@ -139,11 +167,12 @@ fieldset{
     margin-left: 15px;
     margin-right: 10px;
     margin-top: 10px;
-    float: left;  
+    float: left; 
+    width: 110;
 }
 
 .windowLevel{
-    width: 130px;
+    width: 100px;
     display: inline-block;
     vertical-align: middle;
 }

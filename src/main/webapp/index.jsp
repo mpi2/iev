@@ -171,12 +171,17 @@ limitations under the License.
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
         <div id="controls_{{id}}"class="controls clear">
-        <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
-        <select id="{{vselectorId}}" class ="selectmenu"></select>
-        </div>
-        <div class="wlwrap">
-        <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
-        </div>
+            <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
+                <select id="{{vselectorId}}" class ="selectmenu"></select>
+            </div>
+            <div class="wlwrap">
+                <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
+            </div>
+            <div class="metadata" id="metadata_{{id}}">
+                <div class="centre_logo" id="centre_logo_{{id}}"></div>
+                <div class="metadata_c1" id="metadata_c1_{{id}}"></div>
+                <div class="metadata_c2" id="metadata_c2_{{id}}"></div>
+            <div>
         </div>
     </script>
 

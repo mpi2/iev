@@ -168,6 +168,7 @@
                     + data.sid + '/' 
                     + data.pid + '/' 
                     + data.qid + '/' 
+                    // image_for_display
                     + data.url;
             
             data['volume_url'] = url
@@ -175,18 +176,8 @@
             return data;
         }
         
-        
-        
-        function onHeightSlider(sliderValue){
-            /**
-             * 
-             * @return {undefined}
-             */
-             $('.sliceWrap').css('height', ui.value);
-             //console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
-        }
-        
-        
+
+
         function scaleOrthogonalViews(){
             /**
              * Set the largest extent for each of the dimensions
@@ -224,18 +215,12 @@
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
             
             wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, 
-                            sliceChange, onViewLoaded, config);
+                            sliceChange, config);
             views.push(wtView);
             
             mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
-                            sliceChange, onViewLoaded, config);
-            views.push(mutView);
-            
-            /* volumes are loaded. Now make the correposnding orthogonal views
-             proportial sizes to each other. eg saggital slice from each view
-            should be sized propotional to their real size
-            */
-          
+                            sliceChange, config);
+            views.push(mutView);   
         };
         
         
@@ -256,21 +241,7 @@
                 
         }
         
-        
-        function onViewLoaded(id){
-            /**
-             * Called when each SpecimenView has loaded, so that we can do stuff like determining
-             * which views need rescaling to show relational sizes.
-             * @todo we need to decrement viewers_loaded when we delete a SpecimenView
-             * @param {type} id
-             */
-//            viewers_loaded += 1;
-//            if (viewers_loaded === NUM_VIEWERS){
-//                scaleOrthogonalViews();  
-//            }  
-        }
-        
-        
+
         
         function sliceChange(id, orientation, index) {
             /**

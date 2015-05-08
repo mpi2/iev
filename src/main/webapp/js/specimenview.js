@@ -8,7 +8,7 @@
 
 
     function SpecimenView(volumeData, id, container, 
-             queryColonyId, indexCB, onLoaded, config) {
+             queryColonyId, indexCB, config) {
         /**
          * This class holds the three orthogonal views from a single specimen and 
          * allows for loading in of differnt specimens of the same genenotype/colonyID
@@ -19,7 +19,6 @@
          * @param {String} container html element to place this view
          * @param {String} queryColonyId The colonyId of this specimen
          * @param {function} indexCB called when slice index changes
-         * @param {Function} onLoaded Called when all the XTK stuff has loaded
          */
  
         var id = id;
@@ -29,8 +28,6 @@
         // Load up the first volume
         var currentVolume = volumeData[Object.keys(volumeData)[0]];
        
-        
-        var sliceViews = [];
         var $xContainer;
         var $yContainer;
         var $zContainer;
@@ -45,44 +42,36 @@
         var yRen;
         var zRen;
         var volume;
-        var viewSliceClasss;
-        var invertColours = 'invert_colours_' + id;
         var windowLevel = 'windowLevel_' + id;
         var vselector = 'volumeSelector_' + id;
         var xOffset = 0;
         var yOffset = 0;
         var zOffset = 0;
-        var scaleBarVisible = true;
-        
-        
- 
-        
-        /**
-         * The XY dimensions of the X slice
-         * @property xDims
-         * @type {Array<int>}
-         */
-        var xDims;
-        /**
-         * The XY dimensions of the Y slice
-         * @property xDims
-         * @type {Array<int>}
-         */
-        var yDims;
-        /**
-         * The XY dimensions of the Z slice
-         * @property xDims
-         * @type {Array<int>}
-         */
-        var zDims;
         
         
         /*
          * 
-         * Loop over the volume paths objects and choose the first modality/stage that has data
+         * A temporary fix to map cid to centre logo icon
          */
-
-
+        var iconsDir = "images/centre_icons/"
+        
+        var centreIcons ={
+            1: "logo_Bcm.png",
+            3: "logo_Gmc.png",
+            4: "logo_H.png",
+            6: "logo_Ics.png",
+            7: "logo_J.png",
+            8: "logo_Tcp.png",
+            9: "logo_Ning.png",
+            10: "logo_Rbrc.png",
+            11: "logo_Ucd.png",
+            12: "logo_Wtsi.png"
+        }
+        
+        var monthNames = ["Jan", "Feb", "Mar", "April", "May", "June",
+            "July", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        
         
         function updateData(volumes){
             /*
@@ -91,11 +80,15 @@
              */
             
             volumeData = volumes;
-            
             replaceVolume(volumeData[Object.keys(volumeData)[0]]['volume_url']);
             updateVolumeSelector();
         }
         
+        
+        function update(){
+            drawScaleBar();
+            showMetadata();
+        }
         
         
         function updateVolumeSelector(){
@@ -115,7 +108,7 @@
             $('#' + vselector)
             .append(options.join(""))
             .selectmenu({
-                width: 200,
+                width: 100,
                 height: 20,
                 change: $.proxy(function (event, ui) {
                     replaceVolume(ui.item.value);
@@ -125,6 +118,32 @@
                              
             $('#' + vselector)
                 .selectmenu("refresh");
+        }
+        
+        
+        function showMetadata(){
+            
+            //Add the text elements
+            var $col1 = $("#metadata_c1_" + id);
+            var $col2 = $("#metadata_c2_" + id);
+            
+            var date = new Date(currentVolume.experimentDate)
+       
+            var displayDate = monthNames[date.getMonth()];
+       
+            displayDate += " " + date.getDate();
+            displayDate += " " + date.getFullYear();
+            
+            $('<div>Animal: ' + currentVolume.animalName + '</div>').appendTo($col1);
+            $('<div>Scan date: ' + displayDate + '</div>').appendTo($col1);
+            $('<div>sex: ' + currentVolume.sex + '</div>').appendTo($col2);
+            $('<div>zygosity: ' + currentVolume.zygosity + '</div>').appendTo($col2);
+            
+            // Show the centre icon
+            if (centreIcons.hasOwnProperty(currentVolume.cid)){
+                var iconPath = iconsDir + centreIcons[3]
+                $('#centre_logo_' + id).prepend('<img class="logo_img" src="' + iconPath + '"/>')
+            }
         }
         
         
@@ -156,7 +175,14 @@
 
 
         function reset(){
-            //reset the zoom
+            /*
+             * Resets:
+             *  Renderer: undoes the zoom
+             *  Set the slice index to the mid-slice
+             *  contrast
+             *  The scale bar are put back in original place, and redrawn
+             *  @method reset
+             */
             xRen.resetViewAndRender();
             yRen.resetViewAndRender();
             zRen.resetViewAndRender();
@@ -171,7 +197,6 @@
             //reset the window level
             $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
             
-            
             // Put scale bars back in place            
             $('.scale_outer').css(
                {
@@ -183,8 +208,7 @@
                 'z-index': 998
                 });
                 
-            drawScaleBar();
-            
+            update();
         }
 
 
@@ -355,6 +379,7 @@
         
          
         function getVolume(){
+            
             return volume;
         }
         
@@ -396,13 +421,11 @@
             if (objSize(volumeData) < 1) return;
             
             xRen = new X.renderer2D();
+            
             /*
-             * Sagittal scaling bug fix
+             * Sagittal scaling bug fix.
+             * also see fix in X.renderer2D.render_
              */ 
-            
-            
-            
-            // Part of the fix for the sagittal rescaling bug in XTK
             xRen.firstRender = true;
             
             xRen.afterRender = function(){   
@@ -411,7 +434,6 @@
                    this.firstRender = false;
                    xtk_showtime();
                 }
-          
             };
         
             /*
@@ -421,31 +443,37 @@
             xRen.container = $xContainer.get(0);
             xRen.orientation = 'X';
             xRen.init();
+            overrideRightMouse(xRen);
 
             yRen = new X.renderer2D();
             yRen.container = $yContainer.get(0);
             yRen.orientation = 'Y';
             yRen.init();
+            overrideRightMouse(yRen);
 
             zRen = new X.renderer2D();
             zRen.container = $zContainer.get(0);
             zRen.orientation = 'Z';
             zRen.init();
+            overrideRightMouse(zRen);
             
-            // Monkey-patch the zoom functions to be able to zoom by specified amounts
-//            xRen.camera.zoomIn = function (scale) {
-//                this._view[14] = scale;
-//                console.log('monkey', scale);
-//            };
-
             // create a X.volume
             volume = new X.volume();
             volume.file = currentVolume['volume_url'];
 
+            // First we render X. Then X.afterRender() calls the loading and rendering of the others
             xRen.add(volume);
-
             xRen.render(); 
         };
+        
+        // Attempting to stop the right mouse zoom functionality
+        function overrideRightMouse(ren){
+            ren.interactor.onMouseDown = function(left, middle, right) {
+                if (right) {
+                    console.log('we have a right mouse click');
+                }
+            }
+        }
 
 
         function invertColour(checked) {
@@ -636,9 +664,7 @@
             yRen.interactor.rightButtonDown = function () {
             };
             
-            
-            drawScaleBar();
-            onLoaded(id);
+            update();
          
         };
         
@@ -772,6 +798,10 @@
         };
         
         function objSize(obj) {
+            /*
+             * Get the size of an object (associative array)
+             * @method objSize
+             */
             var count = 0;
             var i;
 
