@@ -26,7 +26,7 @@
     dcc.getVolumesByColonyId = function(colonyId) {   
         dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
             function(data) {   
-                dcc.EmbryoViewer(data, 'viewer', colonyId);     
+                dcc.EmbryoViewer(data, 'viewer', 'colony ID', colonyId);     
         });
     };
     
@@ -34,7 +34,7 @@
     dcc.getVolumesByGeneSymbol = function(geneSymbol) {   
         dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
             function(data) {   
-                dcc.EmbryoViewer(data, 'viewer', geneSymbol);     
+                dcc.EmbryoViewer(data, 'viewer', 'gene symbol', geneSymbol);     
         });
     };
 

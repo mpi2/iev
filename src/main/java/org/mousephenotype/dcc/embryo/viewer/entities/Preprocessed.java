@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author neil
  */
 @Entity
+//@Table(name = "preprocessed", catalog = "phenodcc_embryo", schema = "")
 @Table(name = "preprocessed_dev", catalog = "phenodcc_embryo", schema = "")
 @XmlRootElement
 @NamedQueries({
@@ -148,11 +149,10 @@ public class Preprocessed implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(nullable = false)
-    private Boolean qc;
+    private int qc;
     @Basic(optional = false)
     @NotNull
     @Column(nullable = false)
-    @Size(min = 1, max = 45)
     private String mgi;
     @Basic(optional = false)
     @NotNull
@@ -182,7 +182,7 @@ public class Preprocessed implements Serializable {
             int statusId, String url, String checksum, String extensionId, 
             long pixelsize, Date created, Date lastUpdate, int touched, 
             String metadataGroup, String animalName, String imageForDisplay,
-            Boolean qc, String mgi, String zygosity, String sex, Date experimentDate) {
+            int qc, String mgi, String zygosity, String sex, Date experimentDate) {
         
         this.id = id;
         this.cid = cid;
@@ -372,7 +372,7 @@ public class Preprocessed implements Serializable {
         return imageForDisplay;
     }
 
-    public Boolean getQc() {
+    public int getQc() {
         return qc;
     }
 

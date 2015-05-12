@@ -145,6 +145,12 @@ fieldset{
   
 }
 
+#orientation_buttons{
+    float: right;
+    margin-left: 10px;
+    padding-top: 2px;
+}
+
 #modality_stage_fieldset{
     float: right;
 }
@@ -178,6 +184,7 @@ fieldset{
     margin-top: 10px;
     float: left; 
     width: 110;
+    height: auto;
 }
 
 .windowLevel{
@@ -192,7 +199,7 @@ fieldset{
  
 }
 .wlwrap .ui-slider-handle, #viewHeightSlider .ui-slider-handle {
-    top: -10px;
+    top: -7px;
     width: 8px;
     margin-left: -5px;
     cursor: pointer;
@@ -302,9 +309,12 @@ input[type=checkbox].linkCheck {
     position: relative;
     left: 20px;
     z-index: 998;
-    }
+    cursor: pointer;
+ }
 
-
+#scale_visible{
+        margin-top: 0;
+}
 
 
 .sliceControls input[type="checkbox"]:checked + label{
@@ -430,10 +440,32 @@ label#vertical_label span, label#horizontal_label span {
 background-color: #DEDEDE;
 }*/
 
+/*input[type=checkbox].hide_default_check{ display: none; }*/
 
-.ui-icon-vertical { 
-    background-image: url(../images/vertical.png); 
+.orientation{
+    float: left;
+    cursor: pointer;
+    
 }
+
+.orientation{
+    height: 30px;
+    width: 30px;
+    padding-top: 5px;
+}
+
+#orientation_button.vertical{
+   background: transparent url(../images/vertical_small.png) no-repeat;
+   background-size: 27px;
+}
+
+#orientation_button.horizontal{
+    
+   background: transparent url(../images/horizontal_small.png) no-repeat;
+   background-size: 27px;
+}
+
+
 
 .button_label span{
     background-color: #DEDEDE;

@@ -2,7 +2,7 @@
     if (typeof dcc === 'undefined')
         dcc = {};
     
-     dcc.EmbryoViewer = function(data, div, queryColonyId) {
+     dcc.EmbryoViewer = function(data, div, queryType, queryColonyId) {
          /**
           * @class EmbryoViewer
           * @type String
@@ -12,12 +12,8 @@
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
-        var wildtypes = [];
-        var mutants = [];
         var queryColonyId = queryColonyId;
         var horizontalView = undefined;
-        var NUM_VIEWERS = 2;
-        var viewers_loaded = 0;
         var scaleVisible = true;
         var wtView;
         var mutView;
@@ -108,7 +104,11 @@
             
         }else{
             //Just display a message informing no data
-            var data = {colonyId: queryColonyId};
+            var data = {
+                colonyId: queryColonyId,
+                queryType: queryType
+            };
+            
             var source   = $("#no_data_template").html();
             var template = Handlebars.compile(source);
             $('#' + div).append(template(data));
@@ -162,14 +162,15 @@
              * @method buildUrl
              * @param {json} data Data for colonyID 
              */
+
             var url = IMAGE_SERVER + data.cid + '/' 
                     + data.lid + '/' 
                     + data.gid + '/' 
                     + data.sid + '/' 
                     + data.pid + '/' 
                     + data.qid + '/' 
-                    // image_for_display
-                    + data.url;
+                    + data.imageForDisplay;
+                    //+ data.url;
             
             data['volume_url'] = url
 
@@ -204,7 +205,7 @@
             
             //Detmermine which of the stage/modalities has mutant data. Choose the first one
             for (var pid in modalityData){
-                if (objSize(modalityData[pid]['vols']['mutant']) > 1){ // !!!! Don't forget to switch off once I work out how to load ct by default
+                if (objSize(modalityData[pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
                     var wildtypeData = modalityData[pid]['vols']['wildtype'];
                     var mutantData = modalityData[pid]['vols']['mutant'];
                     break;
@@ -214,10 +215,11 @@
             //Check the modality button
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
             
-            wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, 
-                            sliceChange, config);
-            views.push(wtView);
-            
+            // only load if baseline data available
+            if (objSize(wildtypeData) > 0){
+                wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, sliceChange, config);
+                views.push(wtView);
+            }
             mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
                             sliceChange, config);
             views.push(mutView);   
@@ -253,6 +255,7 @@
              * @param {int} index Slice index
              */
 
+            
             for (var i = 0; i < views.length; i++) {
                 if (views[i].id === id) continue; //this is the views that changed
                 
@@ -300,23 +303,26 @@
         }
         
         
+        function setLowPowerState(state){
+            /*
+             * Switches the low poer option on or off
+             */
+
+            for (var i = 0; i < views.length; i++) {
+                views[i].setLowPowerState(state);
+            } 
+        }
+        
 
         function attachEvents() {
             /**
              * 
              */
             
-            /*
-             * When the download button is clicked, create a file download dislaog
-             */
-//            $(document.body).on('click', '#download_all' ,function(event){
-//                event.preventDefault();
-//                $('.down_all').multiDownload();
-//            });
-//            
-//         
-//            
-
+          
+            $('#low_power_check').click(function(e){
+                setLowPowerState(e.currentTarget.checked);
+            }.bind(this));
 
 
             $("#reset")
@@ -325,7 +331,6 @@
                    for (var i = 0; i < views.length; i++) {
                         views[i].reset();
                     } 
-                    
                 }, this));
                 
                 
@@ -393,7 +398,7 @@
                     
                     for (var vol in vols['mutant']){
                          var path = vols['mutant'][vol]['volume_url'];
-                         console.log(path);
+                  
                          $("#download_table tbody").append("<tr>" +
                                     "<td>" + basename(path) + "</td>" +
                                     "<td>" + "<a href='"+ path + "' class='down_all'>Download</a></td>" +
@@ -416,13 +421,33 @@
     
             
             $("#modality_stage" ).buttonset();
-
             $("#orthogonal_views_buttons").buttonset();
+
+
+
             
             
-            $("#vertical" ).button({
-                icons: {primary: 'ui-icon-vertical', secondary: null}
+            /*
+             * Orientation buttons *************************
+             */
+            
+            $("#orientation_button").click(function(){
+                if ($(this).hasClass('vertical')){
+                    $(this).removeClass('vertical');
+                    $(this).addClass('horizontal');
+                    setViewOrientation('horizontal');
+                }
+                else{
+                    $(this).removeClass('horizontal');
+                    $(this).addClass('vertical');
+                    setViewOrientation('vertical');
+                }
             });
+            
+            /*
+             * ********************************************
+             */
+
       
             $(".linkCheck").change(function(e){
               
@@ -515,10 +540,7 @@
                 setStageModality(checkedStageModality);
             });
             
-            $('.orientation_button').change(function (ev) {
-              var orientation = ev.currentTarget.id;
-                setViewOrientation(orientation);
-            });
+
             
 
             $(".button").button();
@@ -602,7 +624,6 @@
                 $('.sliceWrap').css({
                        width: '100%'
                 });
-                $('#horizontal_check').prop('checked', true).button("refresh");
                 window.dispatchEvent(new Event('resize')); 
        
          }
@@ -624,7 +645,7 @@
                    width: String(100 / numVisible) + '%'
 
             });
-            $('#vertical_check').prop('checked', true).button("refresh");
+           
             window.dispatchEvent(new Event('resize'));      
          }
     }

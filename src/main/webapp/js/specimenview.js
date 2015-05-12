@@ -20,7 +20,7 @@
          * @param {String} queryColonyId The colonyId of this specimen
          * @param {function} indexCB called when slice index changes
          */
- 
+
         var id = id;
         var viewContainer = container;
         var volumeData = volumeData;
@@ -42,6 +42,7 @@
         var yRen;
         var zRen;
         var volume;
+        var lowPower = false
         var windowLevel = 'windowLevel_' + id;
         var vselector = 'volumeSelector_' + id;
         var xOffset = 0;
@@ -127,6 +128,11 @@
             var $col1 = $("#metadata_c1_" + id);
             var $col2 = $("#metadata_c2_" + id);
             
+            $col1.empty();
+            $col2.empty();
+            $('#centre_logo_' + id).empty();
+            
+            
             var date = new Date(currentVolume.experimentDate)
        
             var displayDate = monthNames[date.getMonth()];
@@ -136,12 +142,12 @@
             
             $('<div>Animal: ' + currentVolume.animalName + '</div>').appendTo($col1);
             $('<div>Scan date: ' + displayDate + '</div>').appendTo($col1);
-            $('<div>sex: ' + currentVolume.sex + '</div>').appendTo($col2);
-            $('<div>zygosity: ' + currentVolume.zygosity + '</div>').appendTo($col2);
+            $('<div>Sex: ' + currentVolume.sex + '</div>').appendTo($col2);
+            $('<div>Zygosity: ' + currentVolume.zygosity + '</div>').appendTo($col2);
             
             // Show the centre icon
             if (centreIcons.hasOwnProperty(currentVolume.cid)){
-                var iconPath = iconsDir + centreIcons[3]
+                var iconPath = iconsDir + centreIcons[currentVolume.cid];
                 $('#centre_logo_' + id).prepend('<img class="logo_img" src="' + iconPath + '"/>')
             }
         }
@@ -350,8 +356,7 @@
         
             
         function drawScale(ren, scaleId, scaleTextId){
-            
-            console.log(currentVolume["pixelsize"]);
+
             var $scaleouter =  $('.scale_outer_' + id);
             
             if (currentVolume["pixelsize"] == null ||  currentVolume["pixelsize"] == 0){
@@ -395,6 +400,7 @@
         
 
         function replaceVolume(volumePath) {
+            console.log(volumePath);
             /**
              * Replace current specimen volume with another.
              * Destroys current object (not sure is necessary) add new path and call setupoRenderers
@@ -479,7 +485,7 @@
         function overrideRightMouse(ren){
             ren.interactor.onMouseDown = function(left, middle, right) {
                 if (right) {
-                    console.log('we have a right mouse click');
+                   
                 }
             }
         }
@@ -532,6 +538,14 @@
             else if (ortho === 'Y') indexCB(id, ortho, index + yOffset );
             else if (ortho === 'Z') indexCB(id, ortho, index + zOffset );
        }
+       
+       
+       function setLowPowerState(state){
+           /*
+            * @param {bool} state. Wheter low power should be turned on or off
+            */
+           lowPower = state;
+       }
           
 
 
@@ -546,7 +560,7 @@
              *  @param {type} name description 
              * 
              */
- 
+
             if (renderer.interactor.mousemoveEvent.shiftKey) {  
                 //Cross-hair navigating///////////////////
                 
@@ -598,11 +612,15 @@
                 max: dims[0] - 1,
                 value: volume.indexX,
                 slide: function (event, ui) {
-                    if (!volume) {
-                        return;
-                    }
+                    if (!volume || lowPower) return;
                     volume.indexX = ui.value;
                     sliceChange(id, 'X', volume.indexX);
+                }.bind(this),
+                stop: function (event, ui){
+                    if (volume && lowPower){
+                        volume.indexX = ui.value;
+                        sliceChange(id, 'X', volume.indexX);
+                    }
                 }.bind(this)
             });
 
@@ -614,11 +632,15 @@
                 max: dims[1] - 1,
                 value: volume.indexY,
                 slide: function (event, ui) {
-                    if (!volume) {
-                        return;
-                    }
+                    if (!volume || lowPower) return;
                     volume.indexY = ui.value;
                     sliceChange(id, 'Y', volume.indexY);
+                }.bind(this),
+                stop: function (event, ui){
+                    if (volume && lowPower){
+                        volume.indexY = ui.value;
+                        sliceChange(id, 'Y', volume.indexY);
+                    }
                 }.bind(this)
             });
 
@@ -630,13 +652,20 @@
                 max: dims[2] - 1,
                 value: volume.indexZ,
                 slide: function (event, ui) {
-                    if (!volume) {
-                        return;
-                    }
+                    if (!volume || lowPower) return;
                     volume.indexZ = ui.value;
                     sliceChange(id, 'Z', volume.indexZ);
+                }.bind(this),
+                stop: function (event, ui){
+                    if (volume && lowPower){
+                        volume.indexZ = ui.value;
+                        sliceChange(id, 'Z', volume.indexZ);
+                    }
                 }.bind(this)
             });
+            
+            
+           
 
             // Overload onMouseWheel event to control slice sliders
             xRen.interactor.onMouseWheel = function (event) {
@@ -654,6 +683,7 @@
                 sliceChange(id, 'Z', volume.indexZ);
             }.bind(this);
 
+             /// Ar the following slowing things doen. As they are called on every mouse move
             // Overload sliceX mouse moved
             xRen.interactor.onMouseMove = function (event) {
                 updateSliders(xRen, event);
@@ -843,7 +873,8 @@
             zoomIn: zoomIn,
             zoomOut: zoomOut,
             reset: reset,
-            invertColour: invertColour
+            invertColour: invertColour,
+            setLowPowerState: setLowPowerState
           
         };
         

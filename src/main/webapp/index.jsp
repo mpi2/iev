@@ -54,7 +54,7 @@ limitations under the License.
 
                 </div>
                 <fieldset id="orthogonal_views_buttons_fieldset">
-                    <legend>views</legend>
+                    <legend>Views</legend>
                     <div id="orthogonal_views_buttons">
                         <input type="checkbox" id="X_check" class='toggle_slice' checked>
                         <label for="X_check" id='X_check_label'>S</label>
@@ -62,25 +62,15 @@ limitations under the License.
                         <label for="Y_check" id='Y_check_label'>C</label>
                         <input type="checkbox" id="Z_check" class='toggle_slice' checked>
                         <label for="Z_check" id='Z_check_label'>A</label>
-                    </div>
-                </fieldset>
-
-
-
-                <fieldset id="orientation_fieldset">
-                    <legend>Orientation</legend>
-                    <div id='orientation_buttons'>
-                        <input type="radio" id="vertical" name="radio" class="orientation_button">
-                        <label for="vertical" id='vertical_label' class="button_label">Vertical</label>
-                        <input type="radio" id="horizontal" name="radio" class="orientation_button" checked="checked">
-                        <label for="horizontal" id='horizontal_label' class="button_label">Horizontal</label>
-                    </div>
+                   
+                         <div id='orientation_buttons'>
+                        <div id="orientation_button" class="orientation horizontal"></div>
+                 
                 </fieldset>
                 
             <fieldset id="scale_fieldset">
                 <legend>Scale bar
                 <input type="checkbox" id="scale_visible" name="radio" checked="checked">
-<!--                <label for="scale_visible" id='scale_visible_label' class="button_label">Visible</label>-->
                 </legend>
                     <select name="scale_select" id="scale_select">
                     </select>  
@@ -103,8 +93,10 @@ limitations under the License.
                     <legend>Other</legend>
                     <input type="checkbox" id="invertColours">
                     <label for="invertColours">Invert colours</label>
-                    <input type="button" id="reset">
-                    <label for="reset">reset</label>
+                    <button id="reset">Reset</button>
+                    <input type="checkbox" id="low_power_check" class='toggle_slice'>
+                    <label for="low_power_check" id='low_power_check_label'>cpu</label>
+                   
                     
                 </fieldset>
 
@@ -214,7 +206,7 @@ limitations under the License.
     <!--No data template-->
     <script id="no_data_template" type="text/x-handlebars-template">
         <div class="nodata">
-        <p>There are no data currently available for colony ID "{{colonyId}}".</p>
+        <p>There are no data currently available for {{queryType}}: {{colonyId}}</p>
         </div>
     </script>
 </html>
