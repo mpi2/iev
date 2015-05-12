@@ -95,7 +95,7 @@ limitations under the License.
                     <label for="invertColours">Invert colours</label>
                     <button id="reset">Reset</button>
                     <input type="checkbox" id="low_power_check" class='toggle_slice'>
-                    <label for="low_power_check" id='low_power_check_label'>cpu</label>
+                    <label for="low_power_check" id='low_power_check_label'>low cpu</label>
                    
                     
                 </fieldset>

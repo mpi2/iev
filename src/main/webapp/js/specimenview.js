@@ -576,7 +576,7 @@
             else if(renderer.interactor.leftButtonDown){
                   $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
             }
-    }
+        }
 
 
 
@@ -683,7 +683,11 @@
                 sliceChange(id, 'Z', volume.indexZ);
             }.bind(this);
 
-             /// Ar the following slowing things doen. As they are called on every mouse move
+             
+            /*
+             * Link the cross-hairs between the spacimen views
+             */
+             
             // Overload sliceX mouse moved
             xRen.interactor.onMouseMove = function (event) {
                 updateSliders(xRen, event);
@@ -699,7 +703,7 @@
                 updateSliders(zRen, event);
             }.bind(this);
             
-            //overload right click zoom. Do not want
+            //TODO: overload right click zoom. Do not want
             yRen.interactor.rightButtonDown = function () {
             };
             
