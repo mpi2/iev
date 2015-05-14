@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author neil
  */
 @Entity
-//@Table(name = "preprocessed", catalog = "phenodcc_embryo", schema = "")
-@Table(name = "preprocessed_dev", catalog = "phenodcc_embryo", schema = "")
+//@Table(name = "preprocessed_dev", catalog = "phenodcc_embryo", schema = "")
+@Table(name = "preprocessed", catalog = "phenodcc_embryo", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Preprocessed.findAll", query = "SELECT p FROM Preprocessed p"),

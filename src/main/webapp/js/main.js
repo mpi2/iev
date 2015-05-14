@@ -19,6 +19,17 @@
         var mutView;
         
         
+        //Give users a warning about using the deprecated colony_id=test url
+//        if (queryType === 'colony ID' && queryColonyId === 'test'){
+//            var source   = $("#redirect_test_template").html();
+//            var template = Handlebars.compile(source);
+//            $('#' + div).append(template());
+//            return;
+//        }
+      
+
+        
+        
         /**
          * 
          * @type {object} modality_stage_pids
@@ -48,6 +59,8 @@
             }
         };
         
+         var volorder = [203, 204, 202]; //At startup, search in this order for modality data to display first
+        
         
         /*
          * Map micrometer scale bar sizes to labels
@@ -75,7 +88,7 @@
         
         var config = { //remove hardcoding
             scaleBarSize: 600,
-        }
+        };
 
      
         /**
@@ -146,7 +159,7 @@
             /*
              * Chaeck which modalities we have data for and inactivate buttons for which we have no data
              */
-            for (var pid in modalityData){
+            for (var pid in modalityData ){
                 if (objSize(modalityData[pid]['vols']['mutant']) < 1){
                     $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled',true);
                 }
@@ -203,14 +216,18 @@
              * @param {String} container HTML element to put the specimen viewer in to
              */
             
-            //Detmermine which of the stage/modalities has mutant data. Choose the first one
-            for (var pid in modalityData){
+            
+            // Find first lot of data to use. loop over PIDs in reverse to try CT before OPT
+         
+            for (var i in volorder){
+                var pid = volorder[i];
                 if (objSize(modalityData[pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
                     var wildtypeData = modalityData[pid]['vols']['wildtype'];
                     var mutantData = modalityData[pid]['vols']['mutant'];
                     break;
                 }
             }
+            
             
             //Check the modality button
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
@@ -392,7 +409,8 @@
             $('#download').click(function (e) {
                 e.preventDefault();
                 dlg.load('download_dialog.html', function () {
-                    
+                  
+                
                 for (var pid in modalityData){
                     var vols = modalityData[pid]['vols'];
                     
@@ -659,8 +677,7 @@
              icons: {
                  primary: 'ui-icon-help'
              }
-        }).click(function(){
-            //Get link to the docs
+     
         }).css({width: '30'});
         
 

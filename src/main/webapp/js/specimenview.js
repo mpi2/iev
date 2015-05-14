@@ -1,5 +1,7 @@
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+//
+//    goog.require('X.renderer2D');
+//    goog.require('X.interactor2D');
+//
 
 
 (function () {
@@ -20,7 +22,7 @@
          * @param {String} queryColonyId The colonyId of this specimen
          * @param {function} indexCB called when slice index changes
          */
-
+        //This is s atest vomment
         var id = id;
         var viewContainer = container;
         var volumeData = volumeData;
@@ -400,7 +402,6 @@
         
 
         function replaceVolume(volumePath) {
-            console.log(volumePath);
             /**
              * Replace current specimen volume with another.
              * Destroys current object (not sure is necessary) add new path and call setupoRenderers
@@ -420,10 +421,16 @@
                 zRen.destroy();
                 delete zRen;
             }
+            if (typeof (volume) !== 'undefined') {
+                volume.destroy();
+                delete volume;
+            }
             
             currentVolume = volumeData[volumePath];
             setupRenderers();
         };
+        
+
 
 
         function setupRenderers() {
@@ -445,7 +452,7 @@
             
             xRen.afterRender = function(){   
                 if (this.firstRender){
-                   xRen.resetViewAndRender();
+                   this.resetViewAndRender();
                    this.firstRender = false;
                    xtk_showtime();
                 }
@@ -670,6 +677,7 @@
             // Overload onMouseWheel event to control slice sliders
             xRen.interactor.onMouseWheel = function (event) {
                 $xSlider.slider({value: volume.indexX});
+
                 sliceChange(id, 'X', volume.indexX);
             }.bind(this);
 

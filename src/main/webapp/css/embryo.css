@@ -65,7 +65,7 @@ body{
 
 .metadata{
     float: right;
-    width: 300px;
+    width: 350px;
     height: 100%;
     /*background-color: #E6E3DA;*/
     margin-right: 20px;
@@ -98,10 +98,12 @@ body{
 .ui-dialog { z-index: 1000 !important;
 }
 
-#download_button{
-    position: relative;
+#download{
+   
     top: 5px;
     padding: 5px;
+    height: 20px;
+    cursor: pointer;
 }
 
 .clear{
@@ -134,6 +136,9 @@ fieldset{
     margin-right: 10px;
 }
 
+#help{
+    height: 30px;
+}
 
 #orthogonal_views_buttons_fieldset{
   
@@ -445,10 +450,6 @@ background-color: #DEDEDE;
 .orientation{
     float: left;
     cursor: pointer;
-    
-}
-
-.orientation{
     height: 30px;
     width: 30px;
     padding-top: 5px;

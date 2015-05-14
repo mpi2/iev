@@ -44,12 +44,14 @@ limitations under the License.
                 <div id='topleft'>
                    
                     <div>
-                    <form action="https://dev.mousephenotype.org/sites/dev.mousephenotype.org/files/mousephenotype_files/Internet%20Embryo%20Viewer.pdf" target="_blank"  id="help_form">
-                        <input type="submit" value="?" id="help_link" >
-                    </form>
-                        <div id="download_button">
-                       <img src="images/download.png" height="25" id="download">
-                       </div>
+                        <div id="help">
+                            <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">
+                                <input type="submit" value="?" id="help_link" >
+                            </form>
+                        </div>
+                            <div id="download">
+                                <img src="images/download.png" height="25" id="download_img">
+                            </div>
                     </div>
 
                 </div>
@@ -209,4 +211,13 @@ limitations under the License.
         <p>There are no data currently available for {{queryType}}: {{colonyId}}</p>
         </div>
     </script>
+    
+   
+        <!--redirect from test template-->
+    <script id="redirect_test_template" type="text/x-handlebars-template">
+        <div class="nodata">
+        <p>This test no longer works. Try this one:<br> <a href="http://dev.mousephenotype.org/embryoviewer/?gene_symbol=gene1">dev.mousephenotype.org/embryoviewer/?gene_symbol=gene1</a></p>
+        </div>
+    </script>
+    
 </html>
