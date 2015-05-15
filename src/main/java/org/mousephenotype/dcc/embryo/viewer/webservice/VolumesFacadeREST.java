@@ -15,6 +15,7 @@
  */
 package org.mousephenotype.dcc.embryo.viewer.webservice;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -37,32 +38,55 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public VolumesPack all(
-            @QueryParam("colony_id") String colonyId
-            
-    ) {
+            @QueryParam("colony_id") String colonyId, 
+            @QueryParam("gene_symbol") String geneSymbol) {
         
-        // Get the centreId of the first volume found by colonyId
-        EntityManager emcid = getEntityManager();
-        TypedQuery<Preprocessed> qcid = emcid.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
-        qcid.setParameter("colonyId", colonyId);
-        List<Preprocessed> p = qcid.getResultList();
-        if (p.size() < 1){
-            VolumesPack vp = new VolumesPack();
-            return vp;
-            
-        }
-        int centreId = p.get(0).getCid();
-    
-            
-        // Get data for all mutants with colonyId and all baseslines from the same centre
         VolumesPack vp = new VolumesPack();
+        
+        if (colonyId == null && geneSymbol == null){
+            return vp;
+        }
+  
+        EntityManager emcid = getEntityManager();
         EntityManager em = getEntityManager();
-        TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyIdAndWt", Preprocessed.class);
-        q.setParameter("colonyId", colonyId);
-        q.setParameter("centreId", centreId);
-        List<Preprocessed> v = q.getResultList();
-        em.close();
-        vp.setDataSet(v);
+        TypedQuery<Preprocessed> qcid;
+        List<Preprocessed> p = new ArrayList<Preprocessed>();
+     
+        if (colonyId != null){
+            
+            qcid = emcid.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
+            qcid.setParameter("colonyId", colonyId);
+            p = qcid.getResultList();
+            if (p.size() < 1) return vp;
+          
+            int centreId = p.get(0).getCid();
+           
+            TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyIdAndWt", Preprocessed.class);
+            q.setParameter("colonyId", colonyId);
+            q.setParameter("centreId", centreId);
+            List<Preprocessed> v = q.getResultList();
+           
+            em.close();
+            vp.setDataSet(v);
+        }
+        
+        else if (geneSymbol != null){
+           
+            qcid = emcid.createNamedQuery("Preprocessed.findByGeneSymbol", Preprocessed.class);
+            qcid.setParameter("geneSymbol", geneSymbol);
+            p = qcid.getResultList();
+            if (p.size() < 1) return vp;
+            
+            int centreId = p.get(0).getCid();
+            System.out.println("centre id " + centreId);
+            TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByGeneSymbolAndWt", Preprocessed.class);
+            q.setParameter("geneSymbol", geneSymbol);
+            q.setParameter("centreId", centreId);
+            List<Preprocessed> v = q.getResultList();
+            em.close();
+            vp.setDataSet(v);
+        } 
+ 
         return vp;
     }
 }

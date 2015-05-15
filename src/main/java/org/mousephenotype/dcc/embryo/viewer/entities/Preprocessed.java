@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author neil
  */
 @Entity
+//@Table(name = "preprocessed_dev", catalog = "phenodcc_embryo", schema = "")
 @Table(name = "preprocessed", catalog = "phenodcc_embryo", schema = "")
 @XmlRootElement
 @NamedQueries({
@@ -34,7 +35,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Preprocessed.findByLid", query = "SELECT p FROM Preprocessed p WHERE p.lid = :lid"),
     @NamedQuery(name = "Preprocessed.findByGid", query = "SELECT p FROM Preprocessed p WHERE p.gid = :gid"),
     @NamedQuery(name = "Preprocessed.findByColonyId", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId"),
-    @NamedQuery(name = "Preprocessed.findByColonyIdAndWt", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId OR (p.colonyId = 'baseline' AND p.cid = :centreId)"),
+    @NamedQuery(name = "Preprocessed.findByGeneSymbol", query = "SELECT p FROM Preprocessed p WHERE p.geneSymbol = :geneSymbol"),
+    @NamedQuery(name = "Preprocessed.findByGeneSymbolAndWt", query = "SELECT p FROM Preprocessed p WHERE p.geneSymbol = :geneSymbol OR (p.colonyId = 'baseline' AND p.cid = :centreId) AND p.statusId = 1"),
+    @NamedQuery(name = "Preprocessed.findByColonyIdAndWt", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId OR (p.colonyId = 'baseline' AND p.cid = :centreId) AND p.statusId = 1"),
     @NamedQuery(name = "Preprocessed.findBySid", query = "SELECT p FROM Preprocessed p WHERE p.sid = :sid"),
     @NamedQuery(name = "Preprocessed.findByMid", query = "SELECT p FROM Preprocessed p WHERE p.mid = :mid"),
     @NamedQuery(name = "Preprocessed.findByStatusId", query = "SELECT p FROM Preprocessed p WHERE p.statusId = :statusId"),
@@ -133,6 +136,39 @@ public class Preprocessed implements Serializable {
     @NotNull
     @Column(nullable = false)
     private String metadataGroup;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "animal_name", nullable = false, length = 100)
+    private String animalName;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "image_for_display", nullable = false, length = 100)
+    private String imageForDisplay;
+    @Basic(optional = false)
+    @NotNull
+    @Column(nullable = false)
+    private int qc;
+    @Basic(optional = false)
+    @NotNull
+    @Column(nullable = false)
+    private String mgi;
+    @Basic(optional = false)
+    @NotNull
+    @Column(nullable = false)
+    @Size(min = 1, max = 45)
+    private String zygosity;
+    @Basic(optional = false)
+    @NotNull
+    @Column(nullable = false)
+    @Size(min = 1, max = 45)
+    private String sex;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "experiment_date")
+    @Temporal(TemporalType.DATE)
+    private Date experimentDate;
 
     public Preprocessed() {
     }
@@ -141,7 +177,13 @@ public class Preprocessed implements Serializable {
         this.id = id;
     }
 
-    public Preprocessed(Integer id, int cid, int lid, int gid, int pid, int qid, String geneSymbol, String colonyId, int sid, String mid, int statusId, String url, String checksum, String extensionId, long pixelsize, Date created, Date lastUpdate, int touched, String metadataGroup) {
+    public Preprocessed(Integer id, int cid, int lid, int gid, int pid, int qid, 
+            String geneSymbol, String colonyId, int sid, String mid, 
+            int statusId, String url, String checksum, String extensionId, 
+            long pixelsize, Date created, Date lastUpdate, int touched, 
+            String metadataGroup, String animalName, String imageForDisplay,
+            int qc, String mgi, String zygosity, String sex, Date experimentDate) {
+        
         this.id = id;
         this.cid = cid;
         this.lid = lid;
@@ -159,7 +201,15 @@ public class Preprocessed implements Serializable {
         this.lastUpdate = lastUpdate;
         this.touched = touched;
         this.metadataGroup = metadataGroup;
+        this.animalName = animalName;
+        this.imageForDisplay = imageForDisplay;
+        this.qc = qc;
+        this.mgi = mgi;
+        this.zygosity = zygosity;
+        this.sex = sex;
+        this.experimentDate = experimentDate;
     }
+
 
     public Integer getId() {
         return id;
@@ -310,9 +360,69 @@ public class Preprocessed implements Serializable {
         return metadataGroup;
     }
 
-    public void setTouc(String metadataGroup) {
+    public void setTouched(String metadataGroup) {
         this.metadataGroup = metadataGroup;
     }
+    
+    public String getAnimalName() {
+        return animalName;
+    }
+
+    public String getImageForDisplay() {
+        return imageForDisplay;
+    }
+
+    public int getQc() {
+        return qc;
+    }
+
+    public String getMgi() {
+        return mgi;
+    }
+    
+    public void setMetadataGroup(String metadataGroup) {
+        this.metadataGroup = metadataGroup;
+    }
+
+    public void setAnimalName(String animalName) {
+        this.animalName = animalName;
+    }
+
+    public void setImageForDisplay(String imageForDisplay) {
+        this.imageForDisplay = imageForDisplay;
+    }
+
+    public void setMgi(String mgi) {
+        this.mgi = mgi;
+    }
+    
+    public String getZygosity() {
+        return zygosity;
+    }
+
+    public void setZygosity(String zygosity) {
+        this.zygosity = zygosity;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public Date getExperimentDate() {
+        return experimentDate;
+    }
+
+    public void setExperimentDate(Date experimentDate) {
+        this.experimentDate = experimentDate;
+    }
+
+    
+    
+    
 
     @Override
     public int hashCode() {
@@ -337,6 +447,8 @@ public class Preprocessed implements Serializable {
     @Override
     public String toString() {
         return "org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed[ id=" + id + " ]";
-    }
     
+    }
+
+
 }
