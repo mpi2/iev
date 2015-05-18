@@ -251,11 +251,26 @@
             
             if (typeof wtView !== 'undefined'){
                 var wtVolumes = modalityData[pid]['vols'].wildtype;
-                wtView.updateData(wtVolumes);
+                
+                if (Object.keys(wtVolumes).length > 0) {
+                    $("#wt").show();
+                    wtView.updateData(wtVolumes);
+                    wtView.reset();
+                } else {
+                    $("#wt").hide();                    
+                }
             }
             if (typeof mutView !== 'undefined'){
                 var mutVolumes = modalityData[pid]['vols'].mutant;
-                mutView.updateData(mutVolumes);
+
+                if (Object.keys(mutVolumes).length > 0) {
+                    $("#mut").show();
+                    mutView.updateData(mutVolumes);
+                    mutView.reset();
+                } else {
+                    $("#mut").hide();
+                }
+                
             }
                 
         }
