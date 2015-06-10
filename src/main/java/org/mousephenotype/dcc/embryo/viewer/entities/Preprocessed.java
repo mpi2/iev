@@ -116,7 +116,7 @@ public class Preprocessed implements Serializable {
     private String extensionId;
     @Basic(optional = false)
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "pixel_size", nullable = false)
     private long pixelsize;
     @Basic(optional = false)
     @NotNull
@@ -132,10 +132,10 @@ public class Preprocessed implements Serializable {
     @NotNull
     @Column(nullable = false)
     private int touched;
-    @Basic(optional = false)
-    @NotNull
-    @Column(nullable = false)
-    private String metadataGroup;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(nullable = false)
+//    private String metadataGroup;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -181,7 +181,7 @@ public class Preprocessed implements Serializable {
             String geneSymbol, String colonyId, int sid, String mid, 
             int statusId, String url, String checksum, String extensionId, 
             long pixelsize, Date created, Date lastUpdate, int touched, 
-            String metadataGroup, String animalName, String imageForDisplay,
+            String animalName, String imageForDisplay,
             int qc, String mgi, String zygosity, String sex, Date experimentDate) {
         
         this.id = id;
@@ -200,7 +200,6 @@ public class Preprocessed implements Serializable {
         this.created = created;
         this.lastUpdate = lastUpdate;
         this.touched = touched;
-        this.metadataGroup = metadataGroup;
         this.animalName = animalName;
         this.imageForDisplay = imageForDisplay;
         this.qc = qc;
@@ -355,15 +354,7 @@ public class Preprocessed implements Serializable {
     public void setTouched(int touched) {
         this.touched = touched;
     }
-    
-    String getMetadataGroup() {
-        return metadataGroup;
-    }
-
-    public void setTouched(String metadataGroup) {
-        this.metadataGroup = metadataGroup;
-    }
-    
+        
     public String getAnimalName() {
         return animalName;
     }
@@ -378,10 +369,6 @@ public class Preprocessed implements Serializable {
 
     public String getMgi() {
         return mgi;
-    }
-    
-    public void setMetadataGroup(String metadataGroup) {
-        this.metadataGroup = metadataGroup;
     }
 
     public void setAnimalName(String animalName) {
