@@ -167,10 +167,10 @@
 //                min: parseInt(volume.windowLow),
 //                max: parseInt(volume.windowHigh),
                 min: 0, // TODO: remove hard coding
-                max: 256,
-                step: 1,
+                max: 65535,
+                step: 100,
                 //values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
-                values: [0, 200],
+                values: [0, 65535],
                 slide: $.proxy(function (event, ui) {
                     volume.windowLow = ui.values[0];
                     volume.windowHigh = ui.values[1];

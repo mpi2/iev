@@ -104,7 +104,7 @@
             for(var i = 0; i < objSize(data.volumes); i++) {
 
                 var obj = data.volumes[i];
-                
+                               
                 buildUrl(obj);
                 
                 if (obj.colonyId === WILDTYPE_COLONYID){

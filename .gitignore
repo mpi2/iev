@@ -16,3 +16,6 @@ X/utils
 X/X.js
 logs/
 phenodcc_backup/
+*.sql
+*.html
+*.pdf
