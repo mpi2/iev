@@ -10,7 +10,7 @@
 
 
     function SpecimenView(volumeData, id, container, 
-             queryColonyId, indexCB, config) {
+             queryColonyId, indexCB, config, readyCB) {
         /**
          * This class holds the three orthogonal views from a single specimen and 
          * allows for loading in of differnt specimens of the same genenotype/colonyID
@@ -50,6 +50,7 @@
         var xOffset = 0;
         var yOffset = 0;
         var zOffset = 0;
+        var ready = false;
         
         
         /*
@@ -176,9 +177,6 @@
                     volume.modified(true);
                 }, this)
             });
-            console.log('hello 4');
-            console.log('mm', volume.min);
-            console.log('ma', volume.max);
         }; 
 
 
@@ -440,7 +438,8 @@
              * 
              * @method setupRenderers
              */
-
+            ready = false;
+            
             if (objSize(volumeData) < 1) return;
             
             xRen = new X.renderer2D();
@@ -463,6 +462,10 @@
                 // we have to wait before volumes have fully loaded before we
                 // can extract intesity information
                 setContrastSlider();
+                console.log('r', ready);
+                setReady();
+                console.log('p', ready);
+                readyCB();
                 };
         
             /*
@@ -486,6 +489,7 @@
             zRen.init();
             overrideRightMouse(zRen);
             
+            
             // create a X.volume
             volume = new X.volume();
             volume.file = currentVolume['volume_url'];
@@ -503,6 +507,14 @@
                    
                 }
             }
+        }
+        
+        function setReady(){
+            ready = true;
+        }
+        
+        function isReady(){
+            return ready;
         }
 
 
@@ -894,7 +906,8 @@
             zoomOut: zoomOut,
             reset: reset,
             invertColour: invertColour,
-            setLowPowerState: setLowPowerState
+            setLowPowerState: setLowPowerState,
+            isReady: isReady
           
         };
         

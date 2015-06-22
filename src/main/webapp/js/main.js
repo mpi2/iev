@@ -19,6 +19,13 @@
         var mutView;
         var currentModality;
         
+        /*
+         * Set to true when any loading is occuring.
+         */
+        var volumesLoading = true;
+        
+        
+        
         
         //Give users a warning about using the deprecated colony_id=test url
 //        if (queryType === 'colony ID' && queryColonyId === 'test'){
@@ -208,6 +215,31 @@
         }
         
         
+        function loadedCb(){
+            /*
+             * called when each specimenView has finished loading
+             * @param {type} container
+             * @return {undefined}
+             */
+            for (var i = 0; i < views.length; i++){
+                if (!views[i].isReady()) return;
+            }
+            onReady();
+        }
+        
+        function beforeReady(){
+            $('#modality_stage :input').prop("disabled", true); 
+            $("#modality_stage").buttonset('refresh');
+        }
+        
+        function onReady(){
+            console.log('is enabled');
+            $('#modality_stage :input').prop('disabled', false);
+            $("#modality_stage").buttonset('refresh');
+            
+        }
+        
+        
             
         function loadViewers(container) {
             /**
@@ -236,13 +268,15 @@
             
             // only load if baseline data available
             if (objSize(wildtypeData) > 0){
-                wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, sliceChange, config);
+                wtView = dcc.SpecimenView(wildtypeData, 'wt', container, 
+                WILDTYPE_COLONYID, sliceChange, config, loadedCb);
                 views.push(wtView);
             }
-            mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
-                            sliceChange, config);
+            mutView = dcc.SpecimenView(mutantData, 'mut', container, 
+            queryColonyId, sliceChange, config, loadedCb);
             views.push(mutView);   
         };
+        
         
         
         function setStageModality(pid){
@@ -250,7 +284,7 @@
              * 
              * @param {string} 
              */
-            
+            beforeReady();
             currentModality = pid;
             
             if (typeof wtView !== 'undefined'){
@@ -703,8 +737,11 @@
 //        console.log('bye');
 //    });
     setActiveModalityButtons();
+
+
     loadViewers(container);
     attachEvents();
+    beforeReady();
     
     
     
