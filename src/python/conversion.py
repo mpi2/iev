@@ -2,7 +2,7 @@ import numpy as np
 import os
 import nrrd
 import bz2
-from progressbar import ProgressBar, Percentage, Bar
+import subprocess as sp
 
 DATA_TYPES = {"unsigned short": np.uint16, "uint16": np.uint16,
               "signed short": np.int16, "int16": np.int16,
@@ -23,19 +23,13 @@ def decompress_bz2(bz2_in, decompressed_out):
     """
 
     if os.path.isfile(bz2_in) is False:
-        raise IOError("Input file '{}' not found!".format(bz2_in))
+        raise IOError("Input file '{}' not found".format(bz2_in))
 
     try:
         with open(decompressed_out, 'wb') as decom, bz2.BZ2File(bz2_in, 'rb') as com:
-            com_size = os.path.getsize(bz2_in)
-            pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=com_size)
-            bytes_read = 0
             chunk_size = 100000 * 1024
             for data in iter(lambda: com.read(chunk_size), b''):
                 decom.write(data)
-                bytes_read += chunk_size
-                pbar.update(bytes_read)
-            pbar.finish()
     except IOError as e:
         print "Error decompressing '{}'".format(bz2_in), e
 

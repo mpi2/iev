@@ -2,49 +2,132 @@
     if (typeof dcc === 'undefined')
         dcc = {};
     
-     dcc.EmbryoViewer = function(data, div, queryColonyId) {
+     dcc.EmbryoViewer = function(data, div, queryType, queryColonyId) {
          /**
           * @class EmbryoViewer
           * @type String
           */
         
+   
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
-        var wildtypes = [];
-        var mutants = [];
         var queryColonyId = queryColonyId;
         var horizontalView = undefined;
-        var NUM_VIEWERS = 2;
-        var viewers_loaded = 0;
-     
+        var scaleVisible = true;
+        var wtView;
+        var mutView;
         
+        
+        //Give users a warning about using the deprecated colony_id=test url
+//        if (queryType === 'colony ID' && queryColonyId === 'test'){
+//            var source   = $("#redirect_test_template").html();
+//            var template = Handlebars.compile(source);
+//            $('#' + div).append(template());
+//            return;
+//        }
+      
+
+        
+        
+        /**
+         * 
+         * @type {object} modality_stage_pids
+         * A mapping of procedure ids and imaging modality/stage key
+         */
+        var modalityData = {
+            203: {
+                'id': 'CT E14.5/15.5',
+                'vols': {
+                    'mutant': {},
+                    'wildtype': {}
+                }
+            },
+            204: {
+                'id': 'CT E18.5',
+                'vols':{
+                    'mutant': {},
+                    'wildtype': {}
+                }
+            },
+            202:{
+                'id': 'OPT 9.5',
+                'vols':{
+                    'mutant': {},
+                    'wildtype': {}
+                }
+            }
+        };
+        
+         var volorder = [203, 204, 202]; //At startup, search in this order for modality data to display first
+        
+        
+        /*
+         * Map micrometer scale bar sizes to labels
+         */
+        var scaleOptions = {
+            '200&#956;m': 200,
+            '400&#956;m': 400,
+            '600&#956;m': 600,
+            '1mm': 1000,
+            '2mm': 2000,
+            '4mm': 4000,
+            '6mm': 6000
+        }
+            
+        
+        var scaleLabels = function(){
+            var options = [];
+            for (var key in scaleOptions){
+           
+                options.push("<option value='" + scaleOptions[key]  + "'>" + key + "</option>");
+            }
+            return options;
+        }
+        
+        
+        var config = { //remove hardcoding
+            scaleBarSize: 600,
+        };
+
+     
         /**
          * Seperate out the baseline data and the mutant data.
          * If data is not available, load an error message
          */
         if (data['success']){
+            
+            //Display the top control bar
+            $('#top_bar').show();
+            
             // Get the baselines and the mutant paths
-            for(var i = 0; i < data.volumes.length; i++) {
+            for(var i = 0; i < objSize(data.volumes); i++) {
 
                 var obj = data.volumes[i];
-
-                 if (obj.colonyId === WILDTYPE_COLONYID){
-                    wildtypes.push(buildUrl(obj));
+                               
+                buildUrl(obj);
+                
+                if (obj.colonyId === WILDTYPE_COLONYID){
+                    modalityData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
 
                 }else{
-                    mutants.push(buildUrl(obj));   
+                    modalityData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
                 }
             }
             
         }else{
             //Just display a message informing no data
-            var data = {colonyId: queryColonyId};
+            var data = {
+                colonyId: queryColonyId,
+                queryType: queryType
+            };
+            
             var source   = $("#no_data_template").html();
             var template = Handlebars.compile(source);
             $('#' + div).append(template(data));
         }
        
-    
+
         var container = div;
         var views = [];
         
@@ -72,84 +155,59 @@
         };
         
         
-    
+        function setActiveModalityButtons(){
+            /*
+             * Chaeck which modalities we have data for and inactivate buttons for which we have no data
+             */
+            for (var pid in modalityData ){
+                if (objSize(modalityData[pid]['vols']['mutant']) < 1){
+                    $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled',true);
+                }
+            }  
+        }
+        
     
         function buildUrl(data){
             /**
              * Create a url from the data returned by querying database for a colonyID
-             * URL should point us towards the correct place on the image server
+             * URL should point us towards the correct place on the image server.
+             * add the URL to the data object
              * @method buildUrl
              * @param {json} data Data for colonyID 
              */
-            url = IMAGE_SERVER + data.cid + '/' 
+
+            var url = IMAGE_SERVER + data.cid + '/' 
                     + data.lid + '/' 
                     + data.gid + '/' 
                     + data.sid + '/' 
                     + data.pid + '/' 
                     + data.qid + '/' 
-                    + data.url;
+                    + data.imageForDisplay;
+                    //+ data.url;
+            
+            data['volume_url'] = url
 
-            return url;
+            return data;
         }
         
-        
-        
-        function onHeightSlider(sliderValue){
-            /**
-             * 
-             * @return {undefined}
-             */
-             $('.sliceWrap').css('height', ui.value);
-             console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
-        }
-        
-        
+
+
         function scaleOrthogonalViews(){
             /**
              * Set the largest extent for each of the dimensions
              *@method setLargestDimesions
              */
-            
-            var maxXY = 0;
-            var maxZ = 0;
-            var maxXYid;
-            var maxZid;
-           
-            
-            for (var i=0; i < views.length; ++i){
-               var vol_dims = views[i].getDimensions();
-         
-               
-               if (vol_dims[2] > maxXY){
-                   maxXY = vol_dims[2];
-                   maxXYid = views[i].id;
-               }
-               
-               if (vol_dims[1] > maxZ){
-                   maxZ = vol_dims[1];
-                   maxZid = views[i].id;
-               }
-               
-            }
-     
+          
             // Set the proportional views
             for (var i=0; i < views.length; ++i){
-                if (maxXYid === views[i].id) continue;
-                views[i].setXYproportional(maxXY);
-                
-//                if (maxZid === views[i].id){
-//                    views[i].setProportionalSize('Z', maxXY);
-//                } 
-           }
+                views[i].rescale();   
+            }
            
-           window.dispatchEvent(new Event('resize')); 
+            window.dispatchEvent(new Event('resize')); 
         }
         
         
             
-        
-    
-    
         function loadViewers(container) {
             /**
              * Create instances of SpecimenView and append to views[]. 
@@ -157,34 +215,67 @@
              * @method loadViewers
              * @param {String} container HTML element to put the specimen viewer in to
              */
-            var wtView = dcc.SpecimenView(wildtypes, 'wt', container, WILDTYPE_COLONYID, 
-                            sliceChange, views, onViewLoaded);
-            views.push(wtView);
             
-            var mutView = dcc.SpecimenView(mutants, 'mut', container, queryColonyId, 
-                            sliceChange, views, onViewLoaded);
-            views.push(mutView);
             
-            /* volumes are loaded. Now make the correposnding orthogonal views
-             proportial sizes to each other. eg saggital slice from each view
-            should be sized propotional to their real size
-            */
+            // Find first lot of data to use. loop over PIDs in reverse to try CT before OPT
+         
+            for (var i in volorder){
+                var pid = volorder[i];
+                if (objSize(modalityData[pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
+                    var wildtypeData = modalityData[pid]['vols']['wildtype'];
+                    var mutantData = modalityData[pid]['vols']['mutant'];
+                    break;
+                }
+            }
+            
+            
+            //Check the modality button
+            $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
+            
+            // only load if baseline data available
+            if (objSize(wildtypeData) > 0){
+                wtView = dcc.SpecimenView(wildtypeData, 'wt', container, WILDTYPE_COLONYID, sliceChange, config);
+                views.push(wtView);
+            }
+            mutView = dcc.SpecimenView(mutantData, 'mut', container, queryColonyId, 
+                            sliceChange, config);
+            views.push(mutView);   
         };
         
-        function onViewLoaded(id){
-            /**
-             * Called when each SpecimenView has loaded, so that we can do stuff like determining
-             * which views need rescaling to show relational sizes.
-             * @todo we need to decrement viewers_loaded when we delete a SpecimenView
-             * @param {type} id
+        
+        function setStageModality(pid){
+            /*
+             * 
+             * @param {string} 
              */
-            viewers_loaded += 1;
-            if (viewers_loaded === NUM_VIEWERS){
-                scaleOrthogonalViews();
+            
+            if (typeof wtView !== 'undefined'){
+                var wtVolumes = modalityData[pid]['vols'].wildtype;
+                
+                if (Object.keys(wtVolumes).length > 0) {
+                    $("#wt").show();
+                    wtView.updateData(wtVolumes);
+                    wtView.reset();
+                } else {
+                    $("#wt").hide();                    
+                }
             }
+            if (typeof mutView !== 'undefined'){
+                var mutVolumes = modalityData[pid]['vols'].mutant;
+
+                if (Object.keys(mutVolumes).length > 0) {
+                    $("#mut").show();
+                    mutView.updateData(mutVolumes);
+                    mutView.reset();
+                } else {
+                    $("#mut").hide();
+                }
+                
+            }
+                
         }
         
-        
+
         
         function sliceChange(id, orientation, index) {
             /**
@@ -196,6 +287,7 @@
              * @param {int} index Slice index
              */
 
+            
             for (var i = 0; i < views.length; i++) {
                 if (views[i].id === id) continue; //this is the views that changed
                 
@@ -243,11 +335,152 @@
         }
         
         
+        function setLowPowerState(state){
+            /*
+             * Switches the low poer option on or off
+             */
+
+            for (var i = 0; i < views.length; i++) {
+                views[i].setLowPowerState(state);
+            } 
+        }
+        
 
         function attachEvents() {
             /**
              * 
              */
+            
+          
+            $('#low_power_check').click(function(e){
+                setLowPowerState(e.currentTarget.checked);
+            }.bind(this));
+
+
+            $("#reset")
+                .button()
+                .click($.proxy(function () {
+                   for (var i = 0; i < views.length; i++) {
+                        views[i].reset();
+                    } 
+                }, this));
+                
+                
+            $("#invertColours")
+                .button()
+                .click($.proxy(function (e) {
+                    //First change the background colors and scale colors
+                    var checked = e.target.checked;
+                    if (checked) {
+                        $(".sliceView").css("background-color", "#FFFFFF");
+                        $('.scale_text').css("color", "#000000");
+                        $('.scale').css("background-color", "#000000");
+                    } else {
+                        $(".sliceView").css("background-color", "#000000");
+                        $('.scale_text').css("color", "#FFFFFF");
+                        $('.scale').css("background-color", "#FFFFFF");
+                    }
+                    //Now get the SpecimenViews to reset
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].invertColour(checked);
+                    }
+
+                }, this));
+                
+                
+            $('.scale_outer').draggable();
+            
+            
+            $("#zoomIn")
+                .button()
+                .click($.proxy(function () {
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].zoomIn();
+                    }
+                }, this));
+
+
+            $("#zoomOut")
+                .button()
+                .click($.proxy(function () {
+                    for (var i = 0; i < views.length; i++) {
+                        views[i].zoomOut();
+                    }
+                }, this));
+       
+            
+            var dlg = $('#download_dialog').dialog({
+                title: 'Select volumes for download',
+                resizable: true,
+                autoOpen: false,
+                modal: true,
+                hide: 'fade',
+                width: 500,
+                height: 450
+            });
+
+
+            // Set up the table for available downloads
+            $('#download').click(function (e) {
+                e.preventDefault();
+                dlg.load('download_dialog.html', function () {
+                  
+                
+                for (var pid in modalityData){
+                    var vols = modalityData[pid]['vols'];
+                    
+                    for (var vol in vols['mutant']){
+                         var path = vols['mutant'][vol]['volume_url'];
+                  
+                         $("#download_table tbody").append("<tr>" +
+                                    "<td>" + basename(path) + "</td>" +
+                                    "<td>" + "<a href='"+ path + "' class='down_all'>Download</a></td>" +
+                                    "</tr>");
+                    }
+                    for (var vol in vols['wildtype']){
+                        var path = vols['wildtype'][vol]['volume_url'];
+                         $("#download_table tbody").append("<tr>" +
+                                    "<td>" + basename(path) + "</td>" +
+                                    "<td>" + "<a href='"+ path + "'>Download</a></td>" +
+                                    "</tr>");
+                    }  
+                }
+                    
+                
+                    dlg.dialog('open');
+                }.bind(this));
+            }); 
+           
+    
+            
+            $("#modality_stage" ).buttonset();
+            $("#orthogonal_views_buttons").buttonset();
+
+
+
+            
+            
+            /*
+             * Orientation buttons *************************
+             */
+            
+            $("#orientation_button").click(function(){
+                if ($(this).hasClass('vertical')){
+                    $(this).removeClass('vertical');
+                    $(this).addClass('horizontal');
+                    setViewOrientation('horizontal');
+                }
+                else{
+                    $(this).removeClass('horizontal');
+                    $(this).addClass('vertical');
+                    setViewOrientation('vertical');
+                }
+            });
+            
+            /*
+             * ********************************************
+             */
+
       
             $(".linkCheck").change(function(e){
               
@@ -288,6 +521,60 @@
 
             });
             
+            
+            
+            
+            // Scale bar visiblity
+            $('#scale_visible').change(function (ev) {
+                if( $(ev.currentTarget).is(':checked') ){
+                    scaleVisible = true;
+                    
+                    $('#scale_select').selectmenu("enable");
+                    $('.scale_outer').css(
+                        {'visibility': 'visible'}
+                     );
+                }else{
+                    scaleVisible = false;
+                     $('#scale_select').selectmenu("disable");
+                      $('.scale_outer').css(
+                        {'visibility': 'hidden'}
+                     );
+                }
+                for (var i = 0; i < views.length; i++) {
+                    views[i].setScaleVisibility(scaleVisible);
+                }
+                scaleOrthogonalViews();
+            }.bind(this));
+            
+           
+            /*
+             * The selectmenu for the scale bar sizes
+             */
+            $('#scale_select')
+                .append(scaleLabels().join(""))
+                .selectmenu({
+                    width: 80,
+                    height: 20,
+                    change: $.proxy(function (event, ui) { 
+                        config.scaleBarSize = ui.item.value;
+                        $('.scale_text').text(ui.item.label);
+                        scaleOrthogonalViews();
+                        
+                    }, this)
+                });
+                
+            $('#scale_select').val(600).selectmenu('refresh');
+            $('.scale_text').text($('#scale_select').find(":selected").text());
+           
+            
+            
+            $('.modality_button').change(function (ev) {
+                var checkedStageModality = ev.currentTarget.id;
+                setStageModality(checkedStageModality);
+            });
+            
+
+            
 
             $(".button").button();
          
@@ -302,124 +589,124 @@
                             //console.log('before slider', $('#X_mut').height(), $('.sliceWrap').height());
                             $('.sliceWrap').css('height', ui.value);
                             
-                           
                             //console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
-                            //scaleOrthogonalViews()
+                            scaleOrthogonalViews();
                        
                             //console.log('after scaling', $('#X_mut').height());
-                            
-
                             var evt = document.createEvent('UIEvents');
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);
                         }, this)
                     })
-                    .tooltip({
-                        content: "Modify slice viewer height",
-                        show: {delay: 1200 }
-                    });
-            
-            
-            
-            
-            
-
-            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
-                 show: {delay: 1200 }
-             });
-             
-            $("#selectorWrap_wt").tooltip({content: "Select WT embryo to view",
-             show: {delay: 1200 }});
-         
-            $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
-             show: {delay: 1200 }});
+                
+//            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
+//                 show: {delay: 1200 }
+//             });
+//             
+//            $("#selectorWrap_wt").tooltip({content: "Select WT embryo to view",
+//             show: {delay: 1200 }});
+//         
+//            $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
+//             show: {delay: 1200 }});
          
          
-  
+            scaleOrthogonalViews();
         
     }//AttachEvents
     
     
 
-    
-    
-    function setupOrientationControls(){
-                
-            // No orientation controls for single specimen view  
-            if (wildtypes.length < 1 || mutants.length < 1){
-                 $("#orientation_radio" ).hide();
-                 return;
-            }
-         
-            $("#orientation_radio" ).buttonset();
-           
+        function basename(path) {
+            /**
+             * Extract the basename from a path
+             * @method basename
+             * @param {String} path File path
+             */
+            return path.split(/[\\/]/).pop();
+        }
         
-            $("#vertical_check")
-                .click(function (event) {
-                    horizontalView = true;
-                   $('.specimen_view').css({
-                       float: 'left',
-                       width: '48%',
-                       clear: 'none'
+        
+        function objSize(obj) {
+            var count = 0;
+            var i;
+
+            for (i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+    
+    function setViewOrientation(orientation){
+                     
+//            // No orientation controls for single specimen view  
+//            if (wildtypes.length < 1 || mutants.length < 1){
+//                 $("#orientation_radio" ).hide();
+//                 return;
+//            }
+          
+         if (orientation === 'vertical'){
+            horizontalView = true;
+            $('.specimen_view').css({
+                float: 'left',
+                width: '48%',
+                clear: 'none'
                        
                 });
                 $('.sliceWrap').css({
                        width: '100%'
                 });
-                $('#horizontal_check').prop('checked', true).button("refresh");
                 window.dispatchEvent(new Event('resize')); 
-        }.bind(this));
-        
-        
-        $('#horizontal_check')
-                .click(function (event) {
-                    horizontalView = false;
-                    var numVisible = 0;
-                    for(var item in ortho){
-                        if(ortho[item].visible) ++ numVisible;
-                    }
+       
+         }
+         if (orientation === 'horizontal'){
+             
+            horizontalView = false;
+            var numVisible = 0;
+            for(var item in ortho){
+                if(ortho[item].visible) ++ numVisible;
+            }
                       
-                $('.specimen_view').css({
-                       float: 'none',
-                       width: '100%',
-                       clear: 'both'
-                       
-                });
-                $('.sliceWrap').css({
-                       width: String(100 / numVisible) + '%'
-                      
-                });
-                $('#vertical_check').prop('checked', true).button("refresh");
-                window.dispatchEvent(new Event('resize')); 
-                
+            $('.specimen_view').css({
+                   float: 'none',
+                   width: '100%',
+                   clear: 'both'
+
+            });
+            $('.sliceWrap').css({
+                   width: String(100 / numVisible) + '%'
+
+            });
            
-        }.bind(this));
-        }
-  
+            window.dispatchEvent(new Event('resize'));      
+         }
+    }
+    
 
     // Style the control buttons
 
     $(function () {
-       
-        $(".toggle_slice").button();
-        
                 
         $( "#help_link" ).button({
              icons: {
                  primary: 'ui-icon-help'
              }
-        }).click(function(){
-            //Get link to the docs
+     
         }).css({width: '30'});
+        
+
     });
 
 //    $('body').bind('beforeunload', function () {
 //        console.log('bye');
 //    });
-    
+    setActiveModalityButtons();
     loadViewers(container);
     attachEvents();
-    setupOrientationControls();
+    
+    
+    
     }//EmbryoViewer
      
    

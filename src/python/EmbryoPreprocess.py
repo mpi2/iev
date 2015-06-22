@@ -63,13 +63,15 @@ Requirements
 
 Examples
 --------
->>> ep = EmbryoPreprocess('/local/folder/IMPC_media', 'phenodcc_embryo.preprocessed', 'db_connect.yaml')
+>>> ep = EmbryoPreprocess('/local/folder/IMPC_media', 'phenodcc_embryo.preprocessed', db_prince.yaml
 >>> ep.run()
 
 """
 
 __author__ = 'james'
 
+import sys
+import logging
 import yaml
 import MySQLdb
 import json
@@ -78,28 +80,26 @@ import resampler
 import conversion as conv
 from collections import OrderedDict
 import time
-import datetime
 import nrrd
 import SimpleITK as sitk
 
-
-# TODO: ensure that these are correct
-PARAMETERS = {'IMPC_EOL_001_001': (0.5, 0.25),
-              'IMPC_EMO_001_001': (0.5, 0.25),
-              'IMPC_EMA_001_001': (0.5, 0.25)}
+PARAMETERS = {'IMPC_EOL_001_001': (None, 0.5, 0.25),
+              'IMPC_EMO_001_001': (None, 0.5, 0.25),
+              'IMPC_EMA_001_001': (None, 0.5, 0.2)}
 
 SLICE_GENERATORS = OrderedDict()
 SLICE_GENERATORS['nrrd'] = NrrdSliceGenerator
 SLICE_GENERATORS['mnc'] = MincSliceGenerator
 SLICE_GENERATORS['tif'] = TiffStackSliceGenerator
 SLICE_GENERATORS['tiff'] = TiffStackSliceGenerator
+SLICE_GENERATORS['txm'] = TXMSliceGenerator
 
 COMPRESSION = {'bz2': conv.decompress_bz2}  # 'zip': conv.decompress_zip,
 
 EXISTS_BY_URL = "SELECT * FROM {} WHERE url = '{}'"
 INSERT_PRE_PROCESSING_ROW = 'INSERT INTO {} (cid, lid, gid, pid, qid, gene_symbol, sid, mid, url, checksum, ' \
-                            'metadataGroup, status_id, created) ' \
-                            'VALUES ({}, {}, {}, {}, {}, "{}", {}, {}, "{}", "{}", "{}", {}, Now());'
+                            'metadataGroup, animal_name, status_id, created) ' \
+                            'VALUES ({}, {}, {}, {}, {}, "{}", {}, {}, "{}", "{}", "{}", "{}", {}, Now());'
 UPDATE_MID_META = 'UPDATE {} SET mid={}, metadataGroup="{}" WHERE url="{}";'
 GET_EXTENSION_ID = 'SELECT * FROM phenodcc_embryo.file_extension WHERE extension="{}";'
 GET_EXTENSION_BY_ID = 'SELECT * FROM phenodcc_embryo.file_extension WHERE id="{}";'
@@ -116,8 +116,7 @@ class EmbryoPreprocess(object):
 
     """
 
-    def __init__(self, base_path, embryo_table, config_file):
-
+    def __init__(self, base_path, embryo_table, config_file, debug=False, dump=True):
 
         self.base_path = base_path
         self.embryo_table = embryo_table
@@ -127,10 +126,27 @@ class EmbryoPreprocess(object):
         self.cursor = None
         self.preprocessing = []
         self.orientations = ['sagittal', 'coronal', 'axial']
-        self.start_time = time.time()
 
+        # Extract credentials from yaml file
         with open(config_file) as f:
             self.HOST, self.USER, self.PASS = yaml.load(f)
+
+        # Set up log file
+        self.start_time = time.time()
+        self.log = logging.basicConfig(filename='logs/embryo_preprocess_{}.log'.format(self.start_time), level=logging.DEBUG,
+                            format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %I:%M:%S %p')
+        logging.info("Embryo pre-processing started")
+
+        if debug:  # redirects logging to stdout as well
+            stdout_log = logging.StreamHandler(sys.stdout)
+            logging.getLogger().addHandler(stdout_log)
+
+        if dump:  # dumps the whole database to disk
+            dump_path = 'phenodcc_backup/phenodcc_media_{}.sql.gz'.format(self.start_time)
+            self.dump_database(dump_path)
+            logging.info('phenodcc_backup created: {}'.format(dump_path))
+
+        self.run()
 
     def run(self):
         """The run method queries the phenodcc_media.media_file table, identifying those that require pre-processing.
@@ -146,6 +162,8 @@ class EmbryoPreprocess(object):
 
                 SELECT * FROM phenodcc_embryo.preprocessed WHERE url = "/the/url/123456.bz2"
 
+            Note: when testing, it is necessary to include a row in measurements_performed as well!
+
             If URL already exists in phenodcc_embryo.preprocessed:
                 (1) Check its status ID and extension ID
                 (2) If status_id != 1 (success), add job to the pre-processing list
@@ -158,9 +176,6 @@ class EmbryoPreprocess(object):
         Once all of the parameters have been searched against, the process_recons method is called.
         """
 
-        start_timestamp = datetime.datetime.fromtimestamp(self.start_time).strftime('%Y-%m-%d %H:%M:%S')
-        print "Embryo pre-processing started at " + start_timestamp
-
         # Connect to database, raises exception and returns None upon failure
         self.conn = self.db_connect()
 
@@ -169,10 +184,10 @@ class EmbryoPreprocess(object):
             # Create cursor object
             self.cursor = self.conn.cursor()
 
+            logging.info("Querying phenodcc_media.media_file")
+
             # Loop through relevant parameters and query phenodcc_media
             for param in PARAMETERS:
-
-                print "\n# Querying media submitted for {}".format(param)
 
                 valid_rows = self.query_database('sql/valid_entries.sql', replacement=param)
 
@@ -196,7 +211,7 @@ class EmbryoPreprocess(object):
 
                         # Fields for which we can insert data into phenodcc_embryo
                         embryo_fields = ['cid', 'lid', 'gid', 'pid', 'qid', 'gene_symbol', 'sid', 'measurement_id',
-                                         'url', 'checksum', 'metadataGroup']
+                                         'url', 'checksum', 'metadataGroup', 'animal_name']
 
                         embryo_entries = [row[x] for x in embryo_fields]
                         embryo_entries.append(status_id)  # need to add the status ID which will be zero
@@ -227,7 +242,7 @@ class EmbryoPreprocess(object):
 
                         # Append to pre-processing list
                         self.preprocessing.append(recon_dict)
-                        print "-- added: {}".format(url)
+                        logging.info("Added file: {}".format(url))
 
                     else:  # TODO: check if the other columns have changed
 
@@ -275,7 +290,7 @@ class EmbryoPreprocess(object):
         # Loop through pre-processing list
         for recon in self.preprocessing:
 
-            print "\n# Processing '{}'".format(recon['src'])
+            logging.info("Processing {}".format(recon['src']))
 
             # Create paths on IMPC_media/emb/ if the directories do not exist yet
             if os.path.exists(recon['out_folder']) is False:
@@ -292,14 +307,22 @@ class EmbryoPreprocess(object):
 
                 if os.path.exists(image_path) is False:
                     # Decompress the file
-                    print "-- decompressing {}".format(recon['ext'])
-                    decompressor(recon['src'], os.path.join(recon['out_folder'], image_path))
+                    logging.info("Decompressing {}".format(recon['ext']))
+
+                    try:
+                        decompressor(recon['src'], os.path.join(recon['out_folder'], image_path))
+                    except IOError as e:
+                        logging.error(e)
+                        continue
+                else:
+                    logging.info("Decompressed file already exists")
 
             else:
                 image_path = recon['src']
 
             # Go through all the slice generators and attempt to open the recon, starting with NRRD
-            # Todo check extension ID, as it may have been set before
+            ext_id = None  # TODO check extension ID, as it may have been set on a previous run that failed
+            pixel_size = None
             valid_file_type = False
             rescaling_success = False
 
@@ -307,14 +330,15 @@ class EmbryoPreprocess(object):
 
                 try:
                     slice_gen = SLICE_GENERATORS.setdefault(gen_type, None)(image_path)
-                except Exception:
+                except Exception as e:
+                    logging.warning(e)
                     slice_gen = None
 
                 # If the slice generator returns a non-None value, we're good to go
                 if slice_gen:
 
                     valid_file_type = True
-                    print "-- successfully opened file as .{}".format(gen_type)
+                    logging.info("Successfully opened file as {}".format(gen_type))
 
                     # Get extension ID for storing later
                     ext_id = self.query_database(GET_EXTENSION_ID.format(slice_gen.ext))[0]['id']
@@ -322,8 +346,8 @@ class EmbryoPreprocess(object):
                     # Get metadata group, extract and parse JSON string for pixel size
                     meta_group = self.query_database('sql/get_pixel_sizes.sql', replacement=recon['metadata'])[0]
                     json_dict = json.loads('{' + meta_group['metadata_json'] + '}')
-                    pixel_size = float(json_dict.setdefault('Image Pixel Size', None))
-                    print "-- pixel size: {} um".format(pixel_size)
+                    pixel_size = float(json_dict.setdefault('Image Pixel Size', 'nan'))
+                    logging.info("Pixel size: {} um".format(pixel_size))
 
                     # Get scaling factors
                     scaling = PARAMETERS[recon['param']]
@@ -332,19 +356,25 @@ class EmbryoPreprocess(object):
                     try:
                         for scale in scaling:
 
-                            print "-- rescaling at {}".format(scale)
+                            logging.info("Rescaling at {}".format(scale))
                             rescaled_path = os.path.join(recon['out_folder'], recon['out_name'])
-                            rescaled_path += '_{}.{}'.format(1.0/scale, gen_type)  # append scaling factor and path
 
-                            if scale < 0.5:
-                                mip_path = rescaled_path
+                            if scale:
+                                rescaled_path += '_{}.nrrd'.format(1.0/scale)  # append scaling factor
+                            else:
+                                rescaled_path += '_download.nrrd'.format(gen_type)
 
-                            resampler.resample(slice_gen, scale, rescaled_path)  # process the recon
+                            if scale:
+                                resampler.resample(slice_gen, scale, rescaled_path)  # process the recon
+                                if 0 < scale < 0.5:
+                                    mip_path = rescaled_path
+                            else:
+                                resampler.internally_compressed_nrrd(slice_gen, rescaled_path)
 
                         rescaling_success = True
-                    except Exception as e:
-                        print "-- error rescaling: ", e
-                        break  # might as well stop if any of them break
+
+                    except Exception:
+                        logging.exception("Resampling failed")
 
                     # We're done, so break out of for loop
                     break
@@ -356,8 +386,8 @@ class EmbryoPreprocess(object):
                 status_id = 2  # we tried to rescale, but something broke
             else:
                 status_id = 1  # everything went fine
-                print "-- generating QC MIP"
-                self.get_mip(mip_path, recon['out_folder'])
+                logging.info("Generating QC MIP")
+                self.get_mip(mip_path, recon['out_folder'], recon['out_name'])
 
             # Update the pre-processed table
             url = recon['url']
@@ -365,16 +395,9 @@ class EmbryoPreprocess(object):
 
         # We're all done, so close connection to database
         self.db_disconnect()
+        logging.info("Embryo pre-processing complete")
 
-        end_time = time.time()
-        end_timestamp = datetime.datetime.fromtimestamp(end_time).strftime('%Y-%m-%d %H:%M:%S')
-        print "\nEmbryo pre-processing finished at " + end_timestamp
-
-        m, s = divmod(end_time - self.start_time, 60)
-        h, m = divmod(m, 60)
-        print "Time taken: %d:%02d:%02d" % (h, m, s)
-
-    def get_mip(self, in_path, out_dir):
+    def get_mip(self, in_path, out_dir, mid):
         """The get_mip method generates three maximum intensity projections (MIP) for visual QC purposes.
 
         MIPs are generated from the downscaled image data, so the whole image can be loaded into memory for ease. The
@@ -385,7 +408,7 @@ class EmbryoPreprocess(object):
 
         for ax, view in enumerate(self.orientations):
             mip = np.amax(volume, axis=ax)
-            sitk.WriteImage(sitk.GetImageFromArray(mip.T), os.path.join(out_dir, 'mip_{}.png'.format(view)))
+            sitk.WriteImage(sitk.GetImageFromArray(mip), os.path.join(out_dir, '{0}_{1}.png'.format(mid, view)))
 
     def query_database(self, sql, replacement=None):
         """The query_database method executes arbitrary queries and returns any results as dictionary lists.
@@ -414,7 +437,7 @@ class EmbryoPreprocess(object):
             self.cursor.execute(query)
             self.conn.commit()
         except MySQLdb.MySQLError as e:
-            print "Error querying database!", e
+            logging.error("Error querying database: ", e)
 
         # If this was an INSERT, there will be no description
         if self.cursor.description:
@@ -436,6 +459,19 @@ class EmbryoPreprocess(object):
         else:
             return None
 
+    def dump_database(self, out_path):
+
+        # Perform the dump command and wait for it to finish
+        dump = sp.Popen(['mysqldump', '--skip-lock-tables', '--single-transaction',
+                         '-u', self.USER, '-p' + self.PASS, '-h', self.HOST, 'phenodcc_media'], stdout=sp.PIPE)
+
+        # Zip and  write the dump to a file
+        out_file = open(out_path, 'w')
+        zip_dump = sp.Popen(['gzip', '-c'], stdin=dump.stdout, stdout=out_file)
+        dump.wait()
+        zip_dump.wait()
+
+
     def db_connect(self):
         """ The db_connect method attempts to connect to a database using the credentials in the specified .yaml file.
 
@@ -444,9 +480,9 @@ class EmbryoPreprocess(object):
 
         try:
             conn = MySQLdb.connect(host=self.HOST, user=self.USER, passwd=self.PASS)
-            print 'Connect status: {}'.format(conn)
+            logging.info('Connected to database: {}'.format(conn))
         except MySQLdb.Error as e:
-            print "Error connecting to '{}'".format(self.HOST), e
+            logging.critical("Error connecting to '{}'".format(self.HOST), e)
             return None
 
         return conn
@@ -458,12 +494,12 @@ class EmbryoPreprocess(object):
 
         try:
             self.conn.close()
-            print 'Connect status: {}'.format(self.conn)
+            logging.info('Disconnected from database: {}'.format(self.conn))
         except MySQLdb.Error as e:
-            print "Error disconnecting from '{}'".format(self.HOST), e
+            logging.error("Error disconnecting from '{}'".format(self.HOST), e)
 
 
 if __name__ == '__main__':
 
-    ep = EmbryoPreprocess('/media/sf_siah/IMPC_pipeline', 'phenodcc_embryo.preprocessed_test', 'db_connect.yaml')
-    ep.run()
+    ep = EmbryoPreprocess('/home/dcccrawler/IMPC_media', 'phenodcc_embryo.preprocessed',
+                          'db_prince.yaml', debug=True)

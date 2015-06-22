@@ -1,5 +1,13 @@
 body{
     min-width: 800px;
+    font-family: Source Sans Pro, Arial, Helvetica, sans-serif;
+    
+    //Prevent elements being highlighted
+    -webkit-user-select: none; /* Chrome/Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+    -o-user-select: none;
+    
 }
 
 #viewer {
@@ -40,11 +48,6 @@ body{
   
 }
 
-.slider{
-
- 
-}
-
 .sliceControls{
     height: 25px !important;
     position: absolute !important;
@@ -56,20 +59,117 @@ body{
 
 .windowLevel{
     float: left;
-    width: 200px;
+  
 }
 
-/*clear{
+
+.metadata{
+    float: right;
+    width: 280px;
+    height: 100%;
+    /*background-color: #E6E3DA;*/
+    margin-right: 20px;
+    font-size: 10px;
+}
+
+.metadata_c1, .metadata_c2{
+    width: 39%;
+    float: left;
+    margin-left: 8px;
+  
+}
+.centre_logo{
+    position: relative;
+    /*bottom: 3px;*/
+    width: 10%;
+    float: left;
+    margin-right: 10px
+}
+
+.logo_img{
+    height: 30px;
+}
+
+.centre_logo{
+    padding-bottom: 5px;
+}
+
+
+.ui-dialog { z-index: 1000 !important;
+}
+
+#download{
+   
+    top: 5px;
+    padding: 5px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.clear{
     clear:both;
-}*/
+}
+
+fieldset{
+    display:inline;
+  -moz-border-radius:10px;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+    margin: 5px;
+    padding: 2px 7px 2px 7px;
+    border-color:white;
+    border-style: solid;
+    height: 45px;
+    font-size: 12px;
+ 
+   
+  
+}
 
 #help_link, #help_form{
     float: left;
 }
 
 #help_link{
+    color: #F29C24;
     top: 2px;
     margin-right: 10px;
+}
+
+#help{
+    height: 30px;
+}
+
+#orthogonal_views_buttons_fieldset{
+  
+    float: left;
+}
+
+#orientation_fieldset{
+    float: left;
+  
+}
+
+#orientation_buttons{
+    float: right;
+    margin-left: 10px;
+    padding-top: 2px;
+}
+
+#modality_stage_fieldset{
+    float: right;
+}
+
+#heightslider_fieldset{
+    float:left;
+}
+
+#zoom_fieldset{
+    float: left;
+}
+
+#scale_fieldset{
+    float: left;
 }
 
 .nodata {
@@ -86,22 +186,25 @@ body{
 .wlwrap{
     margin-left: 15px;
     margin-right: 10px;
-    margin-top: 4px;
-    float: left;  
+    margin-top: 10px;
+    float: left; 
+    width: 110;
+    height: auto;
 }
 
 .windowLevel{
-    width: 200px;
+    width: 100px;
     display: inline-block;
     vertical-align: middle;
 }
 
 .wlwrap .ui-slider, #viewHeightSlider.ui-slider {
-    height: 7px;
+    height: 4px;
     cursor: pointer;
+ 
 }
 .wlwrap .ui-slider-handle, #viewHeightSlider .ui-slider-handle {
-    top: -8px;
+    top: -7px;
     width: 8px;
     margin-left: -5px;
     cursor: pointer;
@@ -138,9 +241,10 @@ body{
 }
 
 #viewHeightSlider {
+    
     float: right;
-    width: 300px;
-    top: 5px;
+    width: 75px;
+    top: 12px;
     margin: 0 10px;
 
 }
@@ -167,6 +271,7 @@ body{
 
 .controls {
     margin: 3px 0 3px 0;   
+    height: 32px;
 }
 
 /*#controls .ui-slider {
@@ -190,6 +295,31 @@ input[type=checkbox].linkCheck {
     display:none;    
 }
 
+.linkCheck{
+    z-index: 999;
+}
+
+ .scale_text{
+     color: #FFFFFF;
+ }
+  .scale{
+     background-color:#FFFFFF;
+ }
+ 
+             
+.scale_outer{
+    height: 100%;
+    bottom: 30px;
+    width: 20px;
+    position: relative;
+    left: 20px;
+    z-index: 998;
+    cursor: pointer;
+ }
+
+#scale_visible{
+        margin-top: 0;
+}
 
 
 .sliceControls input[type="checkbox"]:checked + label{
@@ -245,9 +375,12 @@ input[type=checkbox].linkCheck {
 
 #top_bar{
 
-    height: 30px;
-    border-bottom: 1px solid #EEE;
-    height: 40px;
+
+    border-bottom: 1px solid #9E9E9E;
+    //height: 40px;
+    background-color: #E0E0E0;
+    margin-bottom: 5px;
+    display:none;// Hide until we have successfully got some vol paths
     
 }
 
@@ -305,20 +438,43 @@ label#Z_check_label.ui-state-active span{
 
 /* The orientation buttons *****************************************************
 */
-label#vertical_check_label.ui-state-active span {
-background-color: #DEDEDE;
-}
-label#vertical_check_label span {
+/*label#vertical_label.ui-state-active span, label#horizontal_label.ui-state-active span  {
 background-color: #FFB64F;
 }
-
-label#horizontal_check_label.ui-state-active span {
+label#vertical_label span, label#horizontal_label span {
 background-color: #DEDEDE;
-}
-label#horizontal_check_label span {
-background-color: #FFB64F;
+}*/
+
+/*input[type=checkbox].hide_default_check{ display: none; }*/
+
+.orientation{
+    float: left;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    padding-top: 5px;
 }
 
+#orientation_button.vertical{
+   background: transparent url(../images/vertical_small.png) no-repeat;
+   background-size: 27px;
+}
+
+#orientation_button.horizontal{
+    
+   background: transparent url(../images/horizontal_small.png) no-repeat;
+   background-size: 27px;
+}
+
+
+
+.button_label span{
+    background-color: #DEDEDE;
+}
+
+.button_label.ui-state-active span{
+    background-color: #FFB64F;
+}
 .ui-tooltip{
     font-size: 8pt;
 }
@@ -353,4 +509,12 @@ background-color: #FFB64F;
 
 .sliderZ .ui-slider-range{
     background: blue;
+}
+
+
+////////// Scale bar //////////////
+#scale {
+    left: 20px;
+    font-size: 0.6em;
+    position: absolute;
 }
