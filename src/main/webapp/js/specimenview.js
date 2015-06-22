@@ -155,29 +155,30 @@
         }
         
         
-        function createEventHandlers() {
+        function setContrastSlider() {
             /**
              * Create event handler for controlling the specimen view
              * @method createEventHandlers
              * @TODO: Min and max slider level to be set dynamically
              */
+            console.log(volume.min);
             
             $windowLevel.slider({
                 range: true,
-//                min: parseInt(volume.windowLow),
-//                max: parseInt(volume.windowHigh),
-                min: 0, // TODO: remove hard coding
-                max: 65535,
-                step: 100,
-                //values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
-                values: [0, 65535],
+                min: parseInt(volume.min),
+                max: parseInt(volume.max),
+                step: (volume.max - volume.min) / 128,
+                values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
+                //values: [0, 65535],
                 slide: $.proxy(function (event, ui) {
                     volume.windowLow = ui.values[0];
                     volume.windowHigh = ui.values[1];
                     volume.modified(true);
                 }, this)
             });
-            
+            console.log('hello 4');
+            console.log('mm', volume.min);
+            console.log('ma', volume.max);
         }; 
 
 
@@ -457,6 +458,12 @@
                    xtk_showtime();
                 }
             };
+            
+            xRen.onShowtime = function(){   
+                // we have to wait before volumes have fully loaded before we
+                // can extract intesity information
+                setContrastSlider();
+                };
         
             /*
              * 
@@ -482,6 +489,7 @@
             // create a X.volume
             volume = new X.volume();
             volume.file = currentVolume['volume_url'];
+            
 
             // First we render X. Then X.afterRender() calls the loading and rendering of the others
             xRen.add(volume);
@@ -894,7 +902,7 @@
         updateVolumeSelector();
         jQuerySelectors();
         setupRenderers();
-        createEventHandlers();
+        //createEventHandlers();
         drawScaleBar();
         return public_interface;
     }
