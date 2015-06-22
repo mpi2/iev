@@ -511,6 +511,13 @@ background-color: #DEDEDE;
     background: blue;
 }
 
+///// download table
+#mutant_table{
+    margin-bottom: 10px;
+}
+
+td#cell-one{min-width: 80px;}
+
 
 ////////// Scale bar //////////////
 #scale {

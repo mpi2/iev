@@ -17,6 +17,7 @@
         var scaleVisible = true;
         var wtView;
         var mutView;
+        var currentModality;
         
         
         //Give users a warning about using the deprecated colony_id=test url
@@ -59,7 +60,7 @@
             }
         };
         
-         var volorder = [203, 204, 202]; //At startup, search in this order for modality data to display first
+         var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
         
         
         /*
@@ -218,9 +219,9 @@
             
             
             // Find first lot of data to use. loop over PIDs in reverse to try CT before OPT
-         
+            var pid;
             for (var i in volorder){
-                var pid = volorder[i];
+                pid = volorder[i];
                 if (objSize(modalityData[pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
                     var wildtypeData = modalityData[pid]['vols']['wildtype'];
                     var mutantData = modalityData[pid]['vols']['mutant'];
@@ -228,6 +229,7 @@
                 }
             }
             
+            currentModality = pid;
             
             //Check the modality button
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
@@ -248,6 +250,8 @@
              * 
              * @param {string} 
              */
+            
+            currentModality = pid;
             
             if (typeof wtView !== 'undefined'){
                 var wtVolumes = modalityData[pid]['vols'].wildtype;
@@ -270,9 +274,7 @@
                 } else {
                     $("#mut").hide();
                 }
-                
-            }
-                
+            }    
         }
         
 
@@ -424,23 +426,22 @@
             $('#download').click(function (e) {
                 e.preventDefault();
                 dlg.load('download_dialog.html', function () {
-                  
-                
                 for (var pid in modalityData){
+                    if (pid !== currentModality) continue;
                     var vols = modalityData[pid]['vols'];
                     
                     for (var vol in vols['mutant']){
                          var path = vols['mutant'][vol]['volume_url'];
                   
-                         $("#download_table tbody").append("<tr>" +
-                                    "<td>" + basename(path) + "</td>" +
+                         $("#mutant_table tbody").append("<tr>" +
+                                    "<td class='cell-one'>" + basename(path) + "</td>" +
                                     "<td>" + "<a href='"+ path + "' class='down_all'>Download</a></td>" +
                                     "</tr>");
                     }
                     for (var vol in vols['wildtype']){
                         var path = vols['wildtype'][vol]['volume_url'];
-                         $("#download_table tbody").append("<tr>" +
-                                    "<td>" + basename(path) + "</td>" +
+                         $("#wt_table tbody").append("<tr>" +
+                                    "<td class='cell-one'>" + basename(path) + "</td>" +
                                     "<td>" + "<a href='"+ path + "'>Download</a></td>" +
                                     "</tr>");
                     }  

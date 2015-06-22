@@ -1,12 +1,7 @@
-<<<<<<< HEAD:src/main/webapp/js/viewer.js
+
 //goog.require('X.renderer2D');
 //goog.require('X.interactor2D');
-=======
-//
-//    goog.require('X.renderer2D');
-//    goog.require('X.interactor2D');
-//
->>>>>>> refactor_classess:src/main/webapp/js/specimenview.js
+
 
 
 (function () {
