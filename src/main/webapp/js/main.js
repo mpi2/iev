@@ -12,6 +12,7 @@
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
+        var OUTPUT_FILE_EXT = '.NRRD';
         var queryId = queryId;
         var horizontalView = undefined;
         var scaleVisible = true;
@@ -26,9 +27,6 @@
             $('#' + div).append(template());
             return;
         }
-      
-
-        
         
         /**
          * 
@@ -376,6 +374,28 @@
             } 
         }
         
+        
+        function getNewFileName(volData){
+            /* .. function:: loadxhtml(url, data, reqtype, mode)
+              The file names in the Preprocessed db are just procedure performed? 
+              We need domething more informative downloading
+
+            Parameters:
+
+            * `volData`: object
+                containing al the data from the database for this volume
+               
+            Returns: String
+             */
+            var path = volData['volume_url'];
+            var sex = volData['sex'];
+            var geneSymbol = sanitizeFileName(volData['geneSymbol']);
+            var animalName = sanitizeFileName(volData['animalName']);
+            var newPath = sex + '_' + animalName + '_' + geneSymbol + OUTPUT_FILE_EXT;
+            return newPath;
+            
+            
+        }
 
         function attachEvents() {
             /**
@@ -461,22 +481,26 @@
                 e.preventDefault();
                 dlg.load('download_dialog.html', function () {
                 for (var pid in modalityData){
-                    if (pid !== currentModality) continue;
+                    if (pid !== currentModality) continue;  // Only supply current modality data for download
                     var vols = modalityData[pid]['vols'];
                     
                     for (var vol in vols['mutant']){
-                         var path = vols['mutant'][vol]['volume_url'];
+                        var volData = vols['mutant'][vol];
+                        var newName = getNewFileName(volData);
+                        var remotePath = volData['volume_url']; 
                   
                          $("#mutant_table tbody").append("<tr>" +
-                                    "<td class='cell-one'>" + basename(path) + "</td>" +
-                                    "<td>" + "<a href='"+ path + "' class='down_all'>Download</a></td>" +
+                                    "<td class='cell-one'>" + newName + "</td>" +
+                                    "<td>" + "<a href='"+ remotePath + "' class='down_all'>Download</a></td>" +
                                     "</tr>");
                     }
                     for (var vol in vols['wildtype']){
-                        var path = vols['wildtype'][vol]['volume_url'];
+                        var volData = vols['wildtype'][vol];
+                        var newName = getNewFileName(volData);
+                        var remotePath = volData['volume_url'];
                          $("#wt_table tbody").append("<tr>" +
-                                    "<td class='cell-one'>" + basename(path) + "</td>" +
-                                    "<td>" + "<a href='"+ path + "'>Download</a></td>" +
+                                    "<td class='cell-one'>" + newName + "</td>" +
+                                    "<td>" + "<a href='"+ remotePath + "'>Download</a></td>" +
                                     "</tr>");
                     }  
                 }
@@ -645,6 +669,20 @@
     }//AttachEvents
     
     
+        function getZippedVolumes(volumeList) {
+            /*
+             * 
+             */
+            dcc_get("rest/zipped" + (colonyId === undefined ? "" : "?colony_id=" + colonyId),
+                    function (data) {
+                        console.log(data);
+                    });
+        }
+    
+        function sanitizeFileName(dirtyString){
+            var cleanString = dirtyString.replace(/[|&;$%@"<>()+,\/]/g, "");
+            return cleanString;
+        }
 
         function basename(path) {
             /**
