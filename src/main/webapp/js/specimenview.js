@@ -158,9 +158,8 @@
         
         function setContrastSlider() {
             /**
-             * Create event handler for controlling the specimen view
-             * @method createEventHandlers
-             * @TODO: Min and max slider level to be set dynamically
+             * Makes contrast slider for specimen view
+             * @method setContrastSlider
              */
             console.log(volume.min);
             
@@ -168,9 +167,8 @@
                 range: true,
                 min: parseInt(volume.min),
                 max: parseInt(volume.max),
-                step: (volume.max - volume.min) / 128,
+                step: Math.ceil((volume.max - volume.min) / 256),
                 values: [ parseInt(volume.windowLow), parseInt(volume.windowHigh) ],
-                //values: [0, 65535],
                 slide: $.proxy(function (event, ui) {
                     volume.windowLow = ui.values[0];
                     volume.windowHigh = ui.values[1];
@@ -179,7 +177,13 @@
             });
         }; 
 
-
+        function screenShot() {
+     
+            var canvas = xRen._canvas;
+            console.log('trwep', canvas);
+//            var img    = canvas.toDataURL("image/png");
+//            document.write('<img src="'+img+'"/>');
+        }
 
         function reset(){
             /*
@@ -462,10 +466,7 @@
                 // we have to wait before volumes have fully loaded before we
                 // can extract intesity information
                 setContrastSlider();
-                console.log('r', ready);
                 setReady();
-                console.log('p', ready);
-                readyCB();
                 };
         
             /*
@@ -511,6 +512,7 @@
         
         function setReady(){
             ready = true;
+            readyCB();
         }
         
         function isReady(){
@@ -907,7 +909,8 @@
             reset: reset,
             invertColour: invertColour,
             setLowPowerState: setLowPowerState,
-            isReady: isReady
+            isReady: isReady,
+            screenShot: screenShot
           
         };
         

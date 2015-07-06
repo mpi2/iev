@@ -2,7 +2,7 @@
     if (typeof dcc === 'undefined')
         dcc = {};
     
-     dcc.EmbryoViewer = function(data, div, queryType, queryColonyId) {
+     dcc.EmbryoViewer = function(data, div, queryType, queryId) {
          /**
           * @class EmbryoViewer
           * @type String
@@ -12,28 +12,20 @@
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
-        var queryColonyId = queryColonyId;
+        var queryId = queryId;
         var horizontalView = undefined;
         var scaleVisible = true;
         var wtView;
         var mutView;
         var currentModality;
-        
-        /*
-         * Set to true when any loading is occuring.
-         */
-        var volumesLoading = true;
-        
-        
-        
-        
+          
         //Give users a warning about using the deprecated colony_id=test url
-//        if (queryType === 'colony ID' && queryColonyId === 'test'){
-//            var source   = $("#redirect_test_template").html();
-//            var template = Handlebars.compile(source);
-//            $('#' + div).append(template());
-//            return;
-//        }
+        if (queryType === 'colony ID' && queryId === 'test'){
+            var source   = $("#redirect_test_template").html();
+            var template = Handlebars.compile(source);
+            $('#' + div).append(template());
+            return;
+        }
       
 
         
@@ -126,7 +118,7 @@
         }else{
             //Just display a message informing no data
             var data = {
-                colonyId: queryColonyId,
+                colonyId: queryId,
                 queryType: queryType
             };
             
@@ -165,11 +157,14 @@
         
         function setActiveModalityButtons(){
             /*
-             * Chaeck which modalities we have data for and inactivate buttons for which we have no data
+             * Check which modalities we have data for and inactivate buttons for which we have no data
              */
             for (var pid in modalityData ){
                 if (objSize(modalityData[pid]['vols']['mutant']) < 1){
-                    $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled',true);
+                    $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', true);
+                }
+                else{
+                    $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', false);
                 }
             }  
         }
@@ -233,8 +228,8 @@
         }
         
         function onReady(){
-            console.log('is enabled');
-            $('#modality_stage :input').prop('disabled', false);
+            setActiveModalityButtons();
+            //$('#modality_stage :input').prop('disabled', false);
             $("#modality_stage").buttonset('refresh');
             
         }
@@ -273,7 +268,7 @@
                 views.push(wtView);
             }
             mutView = dcc.SpecimenView(mutantData, 'mut', container, 
-            queryColonyId, sliceChange, config, loadedCb);
+            queryId, sliceChange, config, loadedCb);
             views.push(mutView);   
         };
         
@@ -387,6 +382,11 @@
              * 
              */
             
+            
+            $('#screenShot').click(function(e){
+                for (var i = 0; i < views.length; i++) {
+                    views[i].screenShot();                }
+            }.bind(this));
           
             $('#low_power_check').click(function(e){
                 setLowPowerState(e.currentTarget.checked);
@@ -621,13 +621,8 @@
                         max: 1920,
                         values: [500],
                         slide: $.proxy(function (event, ui) {
-                            //console.log('before slider', $('#X_mut').height(), $('.sliceWrap').height());
-                            $('.sliceWrap').css('height', ui.value);
-                            
-                            //console.log('after slider', $('#X_mut').height(), $('.sliceWrap').height());
-                            scaleOrthogonalViews();
-                       
-                            //console.log('after scaling', $('#X_mut').height());
+                            $('.sliceWrap').css('height', ui.value);                            
+                            scaleOrthogonalViews();                       
                             var evt = document.createEvent('UIEvents');
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);

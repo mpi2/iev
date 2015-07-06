@@ -67,16 +67,19 @@ body{
     float: right;
     width: 280px;
     height: 100%;
-    /*background-color: #E6E3DA;*/
     margin-right: 20px;
-    font-size: 10px;
+    font-size: 9px;
 }
 
-.metadata_c1, .metadata_c2{
-    width: 39%;
+.metadata_c1{
+    width: 45%;
     float: left;
     margin-left: 8px;
-  
+}
+
+.metadata_c2{
+    width: 35%;
+    float: left;
 }
 .centre_logo{
     position: relative;

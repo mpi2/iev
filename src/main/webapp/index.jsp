@@ -87,6 +87,7 @@ limitations under the License.
                   
                     <span class="button" id="zoomIn">+</span>
                     <span class="button" id ="zoomOut">-</span>   
+                    <span class="button" id ="screenShot">c</span> 
                 </fieldset>
                 
                 <fieldset id="color_fieldset">
@@ -210,7 +211,7 @@ limitations under the License.
         <!--redirect from test template-->
     <script id="redirect_test_template" type="text/x-handlebars-template">
         <div class="nodata">
-        <p>This test no longer works. Try this one:<br> <a href="http://dev.mousephenotype.org/embryoviewer/?gene_symbol=gene1">dev.mousephenotype.org/embryoviewer/?gene_symbol=gene1</a></p>
+        <p>This test no longer works. Try this one:<br> <a href="https://beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7" target="_top">beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7</a></p>
         </div>
     </script>
     
