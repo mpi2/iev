@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Preprocessed.findByGid", query = "SELECT p FROM Preprocessed p WHERE p.gid = :gid"),
     @NamedQuery(name = "Preprocessed.findByColonyId", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId"),
     @NamedQuery(name = "Preprocessed.findByGeneSymbol", query = "SELECT p FROM Preprocessed p WHERE p.geneSymbol = :geneSymbol"),
+    @NamedQuery(name = "Preprocessed.findByStatusReady", query = "SELECT p FROM Preprocessed p WHERE p.statusId = 1 AND p.colonyId !='baseline'"),
     @NamedQuery(name = "Preprocessed.findByGeneSymbolAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.geneSymbol = :geneSymbol AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
     @NamedQuery(name = "Preprocessed.findByColonyIdAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.colonyId = :colonyId AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
     @NamedQuery(name = "Preprocessed.findBySid", query = "SELECT p FROM Preprocessed p WHERE p.sid = :sid"),
@@ -50,6 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Preprocessed.findByCentreColonyId", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId AND p.cid = :cid")
 })
 public class Preprocessed implements Serializable {
+    
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)

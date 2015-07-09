@@ -19,6 +19,8 @@
         var wtView;
         var mutView;
         var currentModality;
+        var downloadTableRowSource;
+        var spinner; // Progress spinner 
           
         //Give users a warning about using the deprecated colony_id=test url
         if (queryType === 'colony ID' && queryId === 'test'){
@@ -71,7 +73,7 @@
             '2mm': 2000,
             '4mm': 4000,
             '6mm': 6000
-        }
+        };
             
         
         var scaleLabels = function(){
@@ -81,11 +83,34 @@
                 options.push("<option value='" + scaleOptions[key]  + "'>" + key + "</option>");
             }
             return options;
-        }
+        };
         
         
         var config = { //remove hardcoding
             scaleBarSize: 600,
+        };
+        
+        var spinnerOpts = {
+            lines: 8 // The number of lines to draw
+            , length: 6 // The length of each line
+            , width: 6 // The line thickness
+            , radius: 8 // The radius of the inner circle
+            , scale: 1 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: '#ef7b0b' // #rgb or #rrggbb or array of colors
+            , opacity: 0.2 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1 // Rounds per second
+            , trail: 50 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '50%' // Top position relative to parent
+            , left: '70%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: true // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
         };
 
      
@@ -391,7 +416,7 @@
             var sex = volData['sex'];
             var geneSymbol = sanitizeFileName(volData['geneSymbol']);
             var animalName = sanitizeFileName(volData['animalName']);
-            var newPath = sex + '_' + animalName + '_' + geneSymbol + OUTPUT_FILE_EXT;
+            var newPath = sex + '_' + animalName + '_' + geneSymbol;
             return newPath;
             
             
@@ -401,7 +426,7 @@
             /**
              * 
              */
-            
+        
             
             $('#screenShot').click(function(e){
                 for (var i = 0; i < views.length; i++) {
@@ -464,61 +489,19 @@
                     }
                 }, this));
        
-            
-            var dlg = $('#download_dialog').dialog({
-                title: 'Select volumes for download',
-                resizable: true,
-                autoOpen: false,
-                modal: true,
-                hide: 'fade',
-                width: 500,
-                height: 450
-            });
-
 
             // Set up the table for available downloads
             $('#download').click(function (e) {
                 e.preventDefault();
-                dlg.load('download_dialog.html', function () {
-                for (var pid in modalityData){
-                    if (pid !== currentModality) continue;  // Only supply current modality data for download
-                    var vols = modalityData[pid]['vols'];
-                    
-                    for (var vol in vols['mutant']){
-                        var volData = vols['mutant'][vol];
-                        var newName = getNewFileName(volData);
-                        var remotePath = volData['volume_url']; 
-                  
-                         $("#mutant_table tbody").append("<tr>" +
-                                    "<td class='cell-one'>" + newName + "</td>" +
-                                    "<td>" + "<a href='"+ remotePath + "' class='down_all'>Download</a></td>" +
-                                    "</tr>");
-                    }
-                    for (var vol in vols['wildtype']){
-                        var volData = vols['wildtype'][vol];
-                        var newName = getNewFileName(volData);
-                        var remotePath = volData['volume_url'];
-                         $("#wt_table tbody").append("<tr>" +
-                                    "<td class='cell-one'>" + newName + "</td>" +
-                                    "<td>" + "<a href='"+ remotePath + "'>Download</a></td>" +
-                                    "</tr>");
-                    }  
-                }
-                    
-                
-                    dlg.dialog('open');
-                }.bind(this));
-            }); 
-           
-    
+                setupDownloadTable(e);
+            });
             
+        
+            
+   
             $("#modality_stage" ).buttonset();
             $("#orthogonal_views_buttons").buttonset();
 
-
-
-            
-            
             /*
              * Orientation buttons *************************
              */
@@ -651,7 +634,7 @@
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);
                         }, this)
-                    })
+                    });
                 
 //            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
 //                 show: {delay: 1200 }
@@ -665,19 +648,128 @@
          
          
             scaleOrthogonalViews();
+            // Put this here as calling this multiple times does not work
+            downloadTableRowSource = $("#downloadTableRowTemplate").html();
         
     }//AttachEvents
     
     
-        function getZippedVolumes(volumeList) {
-            /*
+        function setupDownloadTable() {
+            var dlg = $('#download_dialog').dialog({
+                title: 'Select volumes for download',
+                resizable: true,
+                autoOpen: false,
+                modal: true,
+                hide: 'fade',
+                width: 700,
+                height: 550
+            });
+         
+
+            
+            var template = Handlebars.compile(downloadTableRowSource);
+
+            dlg.load('download_dialog.html', function () {
+                for (var pid in modalityData) {
+                    if (pid !== currentModality)
+                        continue;  // Only supply current modality data for download
+                    var vols = modalityData[pid]['vols'];
+                    
+                    var currentlyViewed = [];
+                    for (var i=0; i < views.length; ++i){
+                        currentlyViewed.push(views[i].getCurrentVolume()['volume_url'])
+                    }
+
+                    for (var vol in vols['mutant']) {
+                        
+                        var volData = vols['mutant'][vol];
+                        var displayName = getNewFileName(volData);
+                        var remotePath = volData['volume_url'];
+                        var bg = '#FFFFFF';
+                        if ($.inArray(remotePath, currentlyViewed)  > -1) bg = '#ef7b0b';
+                        var data = {
+                            remotePath: remotePath + ";" + displayName,
+                            volDisplayName: displayName,
+                            bg: bg
+                        };
+
+                        $("#mutant_table tbody").append(template(data));
+                    }
+                    for (var vol in vols['wildtype']) {
+                        var volData = vols['wildtype'][vol];
+                        var displayName = getNewFileName(volData);
+                        var remotePath = volData['volume_url'];
+                        var bg = '#FFFFFF';
+                        if ($.inArray(remotePath, currentlyViewed)  > -1) bg = '#ef7b0b';
+                        var data = {
+                            remotePath: remotePath + ";" + displayName,
+                            volDisplayName: displayName,
+                            bg: bg
+                        };
+
+                        $("#wt_table tbody").append(template(data));
+                    }
+                }
+                dlg.dialog('open');
+
+                // Once selected on download dialog, download volumes
+                $('#download_dialog_button').click(function () {
+                    dlg.dialog('close');
+                    getZippedVolumes();
+                });
+            });
+        }
+        ;
+        
+        
+        
+        function getZippedVolumes(event) {
+            /* Just try zipping one volume for now
              * 
              */
-            dcc_get("rest/zipped" + (colonyId === undefined ? "" : "?colony_id=" + colonyId),
-                    function (data) {
-                        console.log(data);
-                    });
+            // Jsut try with one volume for now
+           var volumeURLs = "";
+           var checked = $('#wt_table').find('input[type="checkbox"]:checked')
+           for (var i=0; i < checked.length; ++i){
+               var url = checked[i]['name'];
+               volumeURLs += url + ',';  
+           }
+           var checked = $('#mutant_table').find('input[type="checkbox"]:checked')
+           for (var i=0; i < checked.length; ++i){
+               var url = checked[i]['name'];
+               volumeURLs += url + ',';  
+           }
+            var restURL = 'rest/zip?vol=' + volumeURLs;
+            // Start the progress spinner
+           
+            
+            progressIndicator('preparing zip');
+            
+            $.fileDownload(restURL, {
+                successCallback: function (url) {
+                    progressStop();
+                },
+                failCallback: function (html, url) {
+
+                    alert('There was an error downloading the images' );
+                }
+            });
+
+            
         }
+        
+        function progressStop(){
+            spinner.stop();
+             $("#progressMsg").empty();
+        }
+        
+        function progressIndicator(msg){
+            
+            var target =  document.getElementById("progressSpin");
+            spinner = new Spinner(spinnerOpts).spin(target);
+            $("#progressMsg").text(msg);   
+        }
+        
     
         function sanitizeFileName(dirtyString){
             var cleanString = dirtyString.replace(/[|&;$%@"<>()+,\/]/g, "");
@@ -718,7 +810,7 @@
             horizontalView = true;
             $('.specimen_view').css({
                 float: 'left',
-                width: '48%',
+                width: '50%',
                 clear: 'none'
                        
                 });

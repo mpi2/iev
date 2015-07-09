@@ -57,7 +57,15 @@
          * 
          * A temporary fix to map cid to centre logo icon
          */
-        var iconsDir = "images/centre_icons/"
+        var ICONS_DIR = "images/centre_icons/"
+        var IMG_DIR = "images/";
+        var FEMALE_ICON = "female.png"
+        var MALE_ICON = "male.png"
+        var HOM_ICON = 'hom.png';
+        var HET_ICON = 'het.png';
+        var HEMI_ICON = 'het.png';
+        
+        var specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
         
         var centreIcons ={
             1: "logo_Bcm.png",
@@ -126,16 +134,7 @@
         
         
         function showMetadata(){
-            
-            //Add the text elements
-            var $col1 = $("#metadata_c1_" + id);
-            var $col2 = $("#metadata_c2_" + id);
-            
-            $col1.empty();
-            $col2.empty();
-            $('#centre_logo_' + id).empty();
-            
-            
+                     
             var date = new Date(currentVolume.experimentDate)
        
             var displayDate = monthNames[date.getMonth()];
@@ -143,16 +142,46 @@
             displayDate += " " + date.getDate();
             displayDate += " " + date.getFullYear();
             
-            $('<div>Animal: ' + currentVolume.animalName + '</div>').appendTo($col1);
-            $('<div>Scan date: ' + displayDate + '</div>').appendTo($col1);
-            $('<div>Sex: ' + currentVolume.sex + '</div>').appendTo($col2);
-            $('<div>Zygosity: ' + currentVolume.zygosity + '</div>').appendTo($col2);
-            
-            // Show the centre icon
-            if (centreIcons.hasOwnProperty(currentVolume.cid)){
-                var iconPath = iconsDir + centreIcons[currentVolume.cid];
-                $('#centre_logo_' + id).prepend('<img class="logo_img" src="' + iconPath + '"/>')
+            var sexIconPath;
+            if (currentVolume.sex.toLowerCase() === 'female'){
+               sexIconPath = IMG_DIR + FEMALE_ICON;
             }
+            else{
+                sexIconPath = IMG_DIR + MALE_ICON;
+            }
+            
+            var zygIconPath;
+            if (currentVolume.zygosity.toLowerCase() === 'homozygous'){
+               zygIconPath = IMG_DIR + HOM_ICON;
+            }
+            else if(currentVolume.zygosity.toLowerCase() === 'heterozygous'){
+                zygIconPath = IMG_DIR + HET_ICON;
+            }
+            else if(currentVolume.zygosity.toLowerCase() === 'hemizygous'){
+                zygIconPath = IMG_DIR + HEMI_ICON;
+            }
+            
+            var centreLogoPath = "";
+          
+            if (centreIcons.hasOwnProperty(currentVolume.cid)){
+                centreLogoPath = ICONS_DIR + centreIcons[currentVolume.cid];
+            }
+            
+            var data = {
+                animalId: currentVolume.animalName,
+                date: displayDate,
+                sexIconPath: sexIconPath,
+                zygIconPath: zygIconPath,
+                centreLogoPath: centreLogoPath
+            }
+            
+            var template = Handlebars.compile(specimenMetaTemplateSource);
+            
+            var $metaDataHtml = $(template(data));
+            
+            //Clear any current metadata
+            $("#metadata_" +id).empty();
+            $("#metadata_" +id).append($metaDataHtml);
         }
         
         
@@ -447,6 +476,9 @@
             if (objSize(volumeData) < 1) return;
             
             xRen = new X.renderer2D();
+           
+          
+            
             
             /*
              * Sagittal scaling bug fix.
@@ -476,6 +508,7 @@
             xRen.container = $xContainer.get(0);
             xRen.orientation = 'X';
             xRen.init();
+         
             overrideRightMouse(xRen);
 
             yRen = new X.renderer2D();
@@ -503,8 +536,12 @@
         
         // Attempting to stop the right mouse zoom functionality
         function overrideRightMouse(ren){
+            
             ren.interactor.onMouseDown = function(left, middle, right) {
+                // This doesn't override the onMouseDown_ function
                 if (right) {
+                    console.log('mousy R');
+                    return;
                    
                 }
             }
@@ -813,6 +850,13 @@
             return volume.dimensions;
         }
         
+        function getCurrentVolume(){
+            /*
+             * Return the data for the currently viewd image
+             */
+            return currentVolume;
+        }
+        
 
 
 
@@ -910,6 +954,7 @@
             invertColour: invertColour,
             setLowPowerState: setLowPowerState,
             isReady: isReady,
+            getCurrentVolume: getCurrentVolume,
             screenShot: screenShot
           
         };

@@ -67,18 +67,19 @@ body{
     float: right;
     width: 280px;
     height: 100%;
-    margin-right: 20px;
+    //margin-right: 20px;
     font-size: 9px;
 }
 
 .metadata_c1{
-    width: 45%;
+    width: 60%;
     float: left;
+    padding-top: 5px;
     margin-left: 8px;
 }
 
 .metadata_c2{
-    width: 35%;
+    width: 20%;
     float: left;
 }
 .centre_logo{
@@ -519,8 +520,23 @@ background-color: #DEDEDE;
     margin-bottom: 10px;
 }
 
-td#cell-one{min-width: 80px;}
 
+#progress{
+    position:absolute;
+    top: 50px;
+    z-index: 999;
+    height: 30px;
+    width: 30px;
+    
+}
+#progressMsg{
+    color: #ef7b0b;
+    opacity: 0.7;
+    font-size: 12pt;
+    display: table-cell;
+    vertical-align: bottom;
+    height: 70px;
+}
 
 ////////// Scale bar //////////////
 #scale {

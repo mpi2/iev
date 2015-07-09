@@ -34,6 +34,9 @@ limitations under the License.
         <script type="text/javascript" src="js/main.js"></script>
         <script type="text/javascript" src="js/specimenview.js"></script>
         <script type="text/javascript" src="js/sliceview.js"></script>
+        <script type="text/javascript" src="js/spin.min.js"></script>
+        <script type="text/javascript" src="js/fileDownload.js"></script>
+        
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
     </head>
     <body>
@@ -87,7 +90,7 @@ limitations under the License.
                   
                     <span class="button" id="zoomIn">+</span>
                     <span class="button" id ="zoomOut">-</span>   
-                    <span class="button" id ="screenShot">c</span> 
+                    <!--<span class="button" id ="screenShot">c</span>--> 
                 </fieldset>
                 
                 <fieldset id="color_fieldset">
@@ -112,12 +115,16 @@ limitations under the License.
                         <label for="202" class="button_label">OPT E9.5</label>
                     </div>
                 </fieldset>
-
-
             </div>
         </div>
         <div class="clear"></div>
-        <div id="viewer"></div>
+        <div id="viewer">
+            <div id="progress">
+                <div id="progressSpin"></div>
+                <div id="progressMsg"></div>
+            </div>
+        </div>
+        
         <script>
 
 
@@ -167,9 +174,7 @@ limitations under the License.
                 <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
             </div>
             <div class="metadata" id="metadata_{{id}}">
-                <div class="centre_logo" id="centre_logo_{{id}}"></div>
-                <div class="metadata_c1" id="metadata_c1_{{id}}"></div>
-                <div class="metadata_c2" id="metadata_c2_{{id}}"></div>
+            
             <div>
         </div>
     </script>
@@ -213,6 +218,40 @@ limitations under the License.
         <div class="nodata">
         <p>This test no longer works. Try this one:<br> <a href="https://beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7" target="_top">beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7</a></p>
         </div>
+    </script>
+    
+            <!--Download table row template-->
+    <script id="downloadTableRowTemplate" type="text/x-handlebars-template">
+     
+       <tr>
+       <td style="background-color: {{bg}}">{{volDisplayName}}</td>
+       <td><input type='checkbox' name={{remotePath}}></td>
+       </tr>
+
+    </script>
+    
+    
+            <!--Sepeciment metadata template-->
+    <script id="specimenMetdataTemplate" type="text/x-handlebars-template">
+         <div class="centre_logo" id="centre_logo_{{id}}">
+            <img class="logo_img" src="{{centreLogoPath}}"/>
+         </div>
+         <div class="metadata_c1" id="metadata_c1_{{id}}">
+            <div>
+                ID:{{animalId}}
+            </div>
+            <div>
+                Date:{{date}}
+            </div>
+         </div>
+         <div class="metadata_c2" id="metadata_c2_{{id}}">
+            <div>
+                <img class="sexIcon" src="{{sexIconPath}}"/>
+            </div>
+             <div>
+                <img class="zygIcon" src="{{zygIconPath}}"/>
+            </div>
+         </div>
     </script>
     
 </html>
