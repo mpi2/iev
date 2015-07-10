@@ -5,6 +5,8 @@
  */
 package org.mousephenotype.dcc.embryo.viewer.webservice;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.mousephenotype.dcc.embryo.viewer.entities.Centre;
 import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
+import org.mousephenotype.dcc.embryo.viewer.webservice.Utils;
 
 /**
  *
@@ -27,7 +30,9 @@ import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 @Stateless
 @Path("ready")
 public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
-    private String IMAGE_SERVER =  "https://www.mousephenotype.org/images/emb/";
+    
+    
+    private String IEVURL = "https://dev.mousephenotype.org/embryoviewer?colony_id=";
     private HashMap<Integer, String> centreMapping;
 
     public DataReadyFacadeREST() {
@@ -49,15 +54,23 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
 
         em.close();
        
-        ArrayList<HashMap> hml = new ArrayList<>();
+        // Using HashMap we don't get duplicate colony_ids
+        HashMap<String, HashMap> hml = new HashMap<>();
         
         for (Preprocessed p: results){
             HashMap r = processResult(p);
-            hml.add(r);
+            hml.put(p.getColonyId(), r);
         }
-        JSONObject jo = new JSONObject();
-        jo.put("data", hml);
-        return jo.toString();
+        //JSONObject jo = new JSONObject();
+        Gson gson = new GsonBuilder()
+                .disableHtmlEscaping()
+                .setPrettyPrinting()
+                .create();
+         
+        //gson.put("results", hml);
+        
+        String json = gson.toJson(hml);
+        return json;
     }
     
     private HashMap processResult(Preprocessed p){
@@ -65,36 +78,17 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
         HashMap<String, String> m;
         m = new HashMap<>();
         String cenName = centreMapping.get(p.getCid());
-        //String cenName = String.valueOf(p.getCid());
-        m.put("centre", cenName); //get Centre short name
-          
+        m.put("centre", cenName); //get Centre short name  
         m.put("mgi", p.getMgi());
-        m.put("url", buildUrl(p));
-        m.put("colony_id", p.getColonyId());
+        m.put("url", IEVURL + p.getColonyId());
         
-        System.out.println(m);
         return m;
     }
     
-    private String buildUrl(Preprocessed p){
-        
-        String url = 
-        IMAGE_SERVER + '/' +
-        String.valueOf(p.getCid()) + '/' +
-        String.valueOf(p.getLid()) + '/' +
-        String.valueOf(p.getSid()) + '/' +
-        String.valueOf(p.getPid()) + '/' +
-        String.valueOf(p.getQid()) + '/' +
-        p.getImageForDisplay();
-       
-
-        return url;
-    }
     
     private void getCentreIdMapping(){
         EntityManager em = getEntityManager();
         TypedQuery<Centre> q = em.createNamedQuery("Centre.getNames", Centre.class);
-        System.out.println(q);
         List<Centre> results = q.getResultList();
         centreMapping = new HashMap<>();
         for (Centre c: results){
