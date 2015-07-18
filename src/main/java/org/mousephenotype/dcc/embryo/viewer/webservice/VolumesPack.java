@@ -19,15 +19,28 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.mousephenotype.dcc.embryo.viewer.entities.Analysis;
 import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 
 @XmlSeeAlso(Preprocessed.class)
 @XmlType(propOrder = {"success", "total", "volumes"})
 public class VolumesPack extends AbstractRestResponse<Preprocessed> {
+    
+    private Analysis analysisData = null;
 
     @Override
     @XmlElement(name = "volumes")
     public List<Preprocessed> getDataSet() {
         return super.getDataSet();
     }
+    
+    public void setAnalysisData(Analysis analysisData) {
+        this.analysisData = analysisData;
+    }
+    
+    @XmlElement(name = "analysis")
+    public Analysis getAnalysisData() {
+        return analysisData;
+    }
+    
 }

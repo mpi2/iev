@@ -26,6 +26,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
+import org.mousephenotype.dcc.embryo.viewer.entities.Analysis;
+
 
 @Stateless
 @Path("volumes")
@@ -50,7 +52,7 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
         EntityManager emcid = getEntityManager();
         EntityManager em = getEntityManager();
         TypedQuery<Preprocessed> qcid;
-        List<Preprocessed> p = new ArrayList<Preprocessed>();
+        List<Preprocessed> p; // = new ArrayList<Preprocessed>();
      
         if (colonyId != null){
             
@@ -85,7 +87,21 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
             List<Preprocessed> v = q.getResultList();
             em.close();
             vp.setDataSet(v);
-        } 
+            
+            // Get analysis data if it exists (by gid for now)
+            int genotypeId = p.get(0).getGid();
+            System.out.println("genotype id " + genotypeId);
+            EntityManager emAna = getEntityManager();
+            TypedQuery<Analysis> qAna = emAna.createNamedQuery("Analysis.findByGid", Analysis.class);
+            qAna.setParameter("gid", genotypeId);
+            List<Analysis> ana = qAna.getResultList();
+            emAna.close();
+           
+            if (ana.isEmpty() == false) {
+                vp.setAnalysisData(ana.get(0));
+            }
+                        
+        }
  
         return vp;
     }

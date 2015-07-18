@@ -35,7 +35,8 @@
         dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
             function(data) {   
                 dcc.EmbryoViewer(data, 'viewer', 'gene symbol', geneSymbol);     
-        });
+            }
+        );
     };
 
 

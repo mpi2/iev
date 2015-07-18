@@ -528,6 +528,12 @@
             volume = new X.volume();
             volume.file = currentVolume['volume_url'];
             
+            // add jacobian overlay by default (if it exists)
+            var jac = 'jacobian_overlay';
+            if (jac in currentVolume) {
+                volume.labelmap.file = currentVolume['jacobian_overlay'];
+                volume.labelmap.colortable.file = currentVolume['jacobian_cmap'];
+            }
 
             // First we render X. Then X.afterRender() calls the loading and rendering of the others
             xRen.add(volume);

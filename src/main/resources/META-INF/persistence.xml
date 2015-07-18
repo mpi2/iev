@@ -5,6 +5,9 @@
     <class>org.mousephenotype.dcc.embryo.viewer.entities.ACentre</class>
     <class>org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed</class>
     <class>org.mousephenotype.dcc.embryo.viewer.entities.Centre</class>
+    <class>org.mousephenotype.dcc.embryo.viewer.entities.DeformationAnalysis</class>
+    <class>org.mousephenotype.dcc.embryo.viewer.entities.IntensityAnalysis</class>
+    <class>org.mousephenotype.dcc.embryo.viewer.entities.Analysis</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="${db.url}"/>
       <property name="javax.persistence.jdbc.driver" value="${db.driver}"/>
