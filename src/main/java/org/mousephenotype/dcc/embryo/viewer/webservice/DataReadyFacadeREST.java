@@ -31,7 +31,7 @@ import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
     
     
-    private String IEVURL = "https://dev.mousephenotype.org/embryoviewer?colony_id=";
+    private String IEVURL = "https://dev.mousephenotype.org/embryoviewer?mgi=";
     private HashMap<Integer, String> centreMapping;
 
     public DataReadyFacadeREST() {
@@ -54,20 +54,34 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
         em.close();
        
       
-        HashMap<String, ArrayList> hml = new HashMap<>();
-        ArrayList<HashMap> resultList = new ArrayList<>();
-        
-        hml.put("strains", resultList);
-        
-        ArrayList<String> done = new ArrayList<>();
+        HashMap<String, ReadyRestMaker> resultHash = new HashMap<>();
+        HashMap<String, ArrayList<HashMap<String, Object>>> out = new HashMap<>();
         
         for (Preprocessed p: results){
-            HashMap r = processResult(p);
-            // Do not add to the result map if we have already processed that colony_id
-            if (! done.contains(p.getColonyId())){
-                hml.get("strains").add(r);
-                done.add(p.getColonyId());
+            if (!resultHash.containsKey(p.getMgi())){
+                ReadyRestMaker m = new ReadyRestMaker();
+                
+                m.setColonyId(p.getColonyId());
+                String cenName = centreMapping.get(p.getCid());
+                m.setCentreId(cenName);
+                m.setMgi(p.getMgi());
+                m.addModality(String.valueOf(p.getPid()));
+                resultHash.put(p.getMgi(), m);
+            }else{
+               ReadyRestMaker maker = resultHash.get(p.getMgi());
+               maker.addModality(String.valueOf(p.getPid()));
             }
+           
+        //Build list to output
+        ArrayList<HashMap<String, Object>>  resultList = new ArrayList<>();
+        for (ReadyRestMaker r : resultHash.values()){
+            resultList.add(r.getResults());
+        }
+        
+        
+
+
+        out.put("colonies", resultList );
             
         }
         //JSONObject jo = new JSONObject();
@@ -76,19 +90,27 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
                 .setPrettyPrinting()
                 .create();
           
-        String json = gson.toJson(hml);
+        String json = gson.toJson(out);
         return json;
     }
     
+    
+    
+    
     private HashMap processResult(Preprocessed p){
         
-        HashMap<String, String> m;
+        HashMap<String, Object> m;
         m = new HashMap<>();
+        ArrayList<String> modalities = new ArrayList<>();
+        
         String cenName = centreMapping.get(p.getCid());
         m.put("colony_id", p.getColonyId());
         m.put("centre", cenName); //get Centre short name  
         m.put("mgi", p.getMgi());
-        m.put("url", IEVURL + p.getColonyId());
+        m.put("url", IEVURL + p.getMgi());
+        modalities.add(String.valueOf(p.getPid()));
+        m.put("Modalities", modalities);
+        
         
         return m;
     }
