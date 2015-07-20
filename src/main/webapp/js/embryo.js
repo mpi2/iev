@@ -37,6 +37,16 @@
                 dcc.EmbryoViewer(data, 'viewer', 'gene symbol', geneSymbol);     
         });
     };
+    
+    dcc.getVolumesByMgi = function(mgi) {
+        console.log('gettigng by mgi');
+        console.log(mgi);
+        dcc_get("rest/volumes" + (mgi === undefined ? "" : "?mgi=" + mgi), 
+            function(data) {   
+                dcc.EmbryoViewer(data, 'viewer', 'mgi', mgi);  
+               
+        });
+    };
 
 
 })();

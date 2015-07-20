@@ -39,11 +39,12 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
     @Produces(MediaType.APPLICATION_JSON)
     public VolumesPack all(
             @QueryParam("colony_id") String colonyId, 
-            @QueryParam("gene_symbol") String geneSymbol) {
+            @QueryParam("gene_symbol") String geneSymbol,
+            @QueryParam("mgi") String mgiId){
         
         VolumesPack vp = new VolumesPack();
         
-        if (colonyId == null && geneSymbol == null){
+        if (colonyId == null && geneSymbol == null && mgiId == null){
             return vp;
         }
   
@@ -51,6 +52,8 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
         EntityManager em = getEntityManager();
         TypedQuery<Preprocessed> qcid;
         List<Preprocessed> p = new ArrayList<Preprocessed>();
+        
+        System.out.println("testytesty");
      
         if (colonyId != null){
             
@@ -71,6 +74,7 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
         }
         
         else if (geneSymbol != null){
+            System.out.println("gs " + geneSymbol);
            
             qcid = emcid.createNamedQuery("Preprocessed.findByGeneSymbol", Preprocessed.class);
             qcid.setParameter("geneSymbol", geneSymbol);
@@ -78,9 +82,24 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
             if (p.size() < 1) return vp;
             
             int centreId = p.get(0).getCid();
-            System.out.println("centre id " + centreId);
             TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByGeneSymbolAndWt", Preprocessed.class);
             q.setParameter("geneSymbol", geneSymbol);
+            q.setParameter("centreId", centreId);
+            List<Preprocessed> v = q.getResultList();
+            em.close();
+            vp.setDataSet(v);
+        } 
+        
+        else if (mgiId != null){
+           
+            qcid = emcid.createNamedQuery("Preprocessed.findByMgi", Preprocessed.class);
+            qcid.setParameter("mgi", mgiId);
+            p = qcid.getResultList();
+            if (p.size() < 1) return vp;
+            
+            int centreId = p.get(0).getCid();
+            TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByMgiAndWt", Preprocessed.class);
+            q.setParameter("mgi", mgiId);
             q.setParameter("centreId", centreId);
             List<Preprocessed> v = q.getResultList();
             em.close();

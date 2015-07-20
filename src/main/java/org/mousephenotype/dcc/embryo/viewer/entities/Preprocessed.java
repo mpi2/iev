@@ -37,18 +37,16 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Preprocessed.findByColonyId", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId"),
     @NamedQuery(name = "Preprocessed.findByGeneSymbol", query = "SELECT p FROM Preprocessed p WHERE p.geneSymbol = :geneSymbol"),
     @NamedQuery(name = "Preprocessed.findByStatusReady", query = "SELECT p FROM Preprocessed p WHERE p.statusId = 1 AND p.colonyId !='baseline'"),
-    @NamedQuery(name = "Preprocessed.findByGeneSymbolAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.geneSymbol = :geneSymbol AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
+   
     @NamedQuery(name = "Preprocessed.findByColonyIdAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.colonyId = :colonyId AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
     @NamedQuery(name = "Preprocessed.findBySid", query = "SELECT p FROM Preprocessed p WHERE p.sid = :sid"),
     @NamedQuery(name = "Preprocessed.findByMid", query = "SELECT p FROM Preprocessed p WHERE p.mid = :mid"),
-    @NamedQuery(name = "Preprocessed.findByStatusId", query = "SELECT p FROM Preprocessed p WHERE p.statusId = :statusId"),
-    @NamedQuery(name = "Preprocessed.findByUrl", query = "SELECT p FROM Preprocessed p WHERE p.url = :url"),
-    @NamedQuery(name = "Preprocessed.findByChecksums", query = "SELECT p FROM Preprocessed p WHERE p.checksum = :checksum"),
-    @NamedQuery(name = "Preprocessed.findByExtensionId", query = "SELECT p FROM Preprocessed p WHERE p.extensionId = :extensionId"),
-    @NamedQuery(name = "Preprocessed.findByPixelsize", query = "SELECT p FROM Preprocessed p WHERE p.pixelsize = :pixelsize"),
-    @NamedQuery(name = "Preprocessed.findByCreated", query = "SELECT p FROM Preprocessed p WHERE p.created = :created"),
-    @NamedQuery(name = "Preprocessed.findByLastUpdate", query = "SELECT p FROM Preprocessed p WHERE p.lastUpdate = :lastUpdate"),
-    @NamedQuery(name = "Preprocessed.findByCentreColonyId", query = "SELECT p FROM Preprocessed p WHERE p.colonyId = :colonyId AND p.cid = :cid")
+    
+    @NamedQuery(name = "Preprocessed.findByGeneSymbolAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.geneSymbol = :geneSymbol AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
+    @NamedQuery(name = "Preprocessed.findByMgiAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.mgi = :mgi AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
+    @NamedQuery(name = "Preprocessed.findByMgi", query = "SELECT p FROM Preprocessed p WHERE p.mgi = :mgi"),
+    
+    @NamedQuery(name = "Preprocessed.findByStatusId", query = "SELECT p FROM Preprocessed p WHERE p.statusId = :statusId")
 })
 public class Preprocessed implements Serializable {
     

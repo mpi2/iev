@@ -8,7 +8,7 @@
           * @type String
           */
         
-   
+        console.log('main', data);
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';

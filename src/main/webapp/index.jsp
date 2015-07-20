@@ -133,12 +133,16 @@ limitations under the License.
             window.addEventListener('load', function () {
                 var geneSymbol = "<%= request.getParameter("gene_symbol")%>";
                 var colonyId = "<%= request.getParameter("colony_id")%>";
+                var mgi = "<%= request.getParameter("mgi")%>";
                 
                 if (colonyId !== 'null'){
                     dcc.getVolumesByColonyId(colonyId);
                 }
                 else if (geneSymbol !== 'null') {
                     dcc.getVolumesByGeneSymbol(geneSymbol);
+                }
+                else if (mgi !== 'null') {
+                    dcc.getVolumesByMgi(mgi);
                 }
                
             });

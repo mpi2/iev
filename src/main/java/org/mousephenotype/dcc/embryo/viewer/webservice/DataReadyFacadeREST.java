@@ -18,10 +18,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.mousephenotype.dcc.embryo.viewer.entities.Centre;
 import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
-import org.mousephenotype.dcc.embryo.viewer.webservice.Utils;
+
 
 /**
  *
@@ -54,21 +53,29 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
 
         em.close();
        
-        // Using HashMap we don't get duplicate colony_ids
-        HashMap<String, HashMap> hml = new HashMap<>();
+      
+        HashMap<String, ArrayList> hml = new HashMap<>();
+        ArrayList<HashMap> resultList = new ArrayList<>();
+        
+        hml.put("strains", resultList);
+        
+        ArrayList<String> done = new ArrayList<>();
         
         for (Preprocessed p: results){
             HashMap r = processResult(p);
-            hml.put(p.getColonyId(), r);
+            // Do not add to the result map if we have already processed that colony_id
+            if (! done.contains(p.getColonyId())){
+                hml.get("strains").add(r);
+                done.add(p.getColonyId());
+            }
+            
         }
         //JSONObject jo = new JSONObject();
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
                 .create();
-         
-        //gson.put("results", hml);
-        
+          
         String json = gson.toJson(hml);
         return json;
     }
@@ -78,6 +85,7 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
         HashMap<String, String> m;
         m = new HashMap<>();
         String cenName = centreMapping.get(p.getCid());
+        m.put("colony_id", p.getColonyId());
         m.put("centre", cenName); //get Centre short name  
         m.put("mgi", p.getMgi());
         m.put("url", IEVURL + p.getColonyId());
