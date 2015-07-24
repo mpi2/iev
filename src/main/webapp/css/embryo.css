@@ -25,7 +25,6 @@ body{
     
 }
 
-
 .sliceWrap{
     background-color: #000000;
     float: left;
@@ -59,9 +58,7 @@ body{
 
 .windowLevel{
     float: left;
-  
 }
-
 
 .metadata{
     float: right;
@@ -187,17 +184,27 @@ fieldset{
     padding: 25px;
 }
 
-.wlwrap{
+.overlayWrap {
+    height: 100%;
+    position: relative;
+    float: left;
+}
+
+.overlayWrap .ui-button-text {
+    padding: 3px;
+}
+
+.wlwrap {
     margin-left: 15px;
     margin-right: 10px;
     margin-top: 10px;
     float: left; 
-    width: 110;
+    width: 80px;
     height: auto;
 }
 
-.windowLevel{
-    width: 100px;
+.windowLevel {
+    width:75px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -274,6 +281,7 @@ fieldset{
 }*/
 
 .controls {
+    position: relative;
     margin: 3px 0 3px 0;   
     height: 32px;
 }
@@ -407,7 +415,6 @@ input[type=checkbox].linkCheck {
 .ui-button, .ui-button-text {
     font-size: 10px !important;
     margin: 2px;
-    
 }
 
 

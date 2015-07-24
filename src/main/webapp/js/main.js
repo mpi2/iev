@@ -143,6 +143,7 @@
             
             // Get analysis data, if it exists
             var ana = data.analysis;
+            ana.sex = 'Mixed'
             console.log(ana);
             
             // Create population average url

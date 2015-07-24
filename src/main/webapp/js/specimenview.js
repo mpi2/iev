@@ -40,34 +40,37 @@
         var $ySlider;
         var $zSlider;
         var $windowLevel;
+        var $overlayControl;
         var xRen;
         var yRen;
         var zRen;
         var volume;
-        var lowPower = false
+        var lowPower = false;
+        var hasLabelmap = false;
+        var currentLabelmap = 'jacobian';
         var windowLevel = 'windowLevel_' + id;
+        var overlayControl = 'overlayControl_' + id;
         var vselector = 'volumeSelector_' + id;
         var xOffset = 0;
         var yOffset = 0;
         var zOffset = 0;
         var ready = false;
         
-        
         /*
          * 
          * A temporary fix to map cid to centre logo icon
          */
-        var ICONS_DIR = "images/centre_icons/"
+        var ICONS_DIR = "images/centre_icons/";
         var IMG_DIR = "images/";
-        var FEMALE_ICON = "female.png"
-        var MALE_ICON = "male.png"
+        var FEMALE_ICON = "female.png";
+        var MALE_ICON = "male.png";
         var HOM_ICON = 'hom.png';
         var HET_ICON = 'het.png';
         var HEMI_ICON = 'het.png';
         
         var specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
         
-        var centreIcons ={
+        var centreIcons = {
             1: "logo_Bcm.png",
             3: "logo_Gmc.png",
             4: "logo_H.png",
@@ -78,7 +81,7 @@
             10: "logo_Rbrc.png",
             11: "logo_Ucd.png",
             12: "logo_Wtsi.png"
-        }
+        };
         
         var monthNames = ["Jan", "Feb", "Mar", "April", "May", "June",
             "July", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -88,7 +91,7 @@
         function updateData(volumes){
             /*
              * Chnage the current stage/modality being viewed
-             * 
+             * L
              */
             
             volumeData = volumes;
@@ -190,8 +193,6 @@
              * Makes contrast slider for specimen view
              * @method setContrastSlider
              */
-            console.log(volume.min);
-            
             $windowLevel.slider({
                 range: true,
                 min: parseInt(volume.min),
@@ -205,6 +206,33 @@
                 }, this)
             });
         }; 
+        
+        function showHideOverlayControls() {
+            
+            if (hasLabelmap) {
+                $overlayControl.show();
+            } else {
+                $overlayControl.hide();
+            }
+
+        }
+        
+        function setupOverlayControls() {
+            // Set up overlay controls
+            $overlayControl.buttonset();
+            $overlayControl.click(function() {
+                currentLabelmap = $('input[type=radio]:checked', this).prop("id").split("_")[0];
+                console.log(currentLabelmap);
+                replaceVolume(currentVolume['volume_url']);
+            });
+        }
+        
+        function setLabelmap(overlay_type) {
+            if (overlay_type !== "none") {
+                volume.labelmap.file = currentVolume[overlay_type + '_overlay'];
+                volume.labelmap.colortable.file = currentVolume[overlay_type + '_cmap'];
+            }
+        }
 
         function screenShot() {
      
@@ -284,6 +312,7 @@
             $specimenView.append(createSliceView('Z'));
 
             $viewsContainer.append($specimenView);
+                        
         }
         
         
@@ -305,7 +334,6 @@
                 id: id,
                 scaleId: 'scale_' + orient + id,
                 scaleTextId: 'scaletext_' + orient + id
-               
             };
             
             var source = $("#slice_view_template").html();
@@ -332,10 +360,9 @@
             $yWrap = $('#sliceWrap_Y_' + id);
             $zWrap = $('#sliceWrap_Z_' + id);
             $windowLevel = $('#' + windowLevel);
+            $overlayControl = $('#' + overlayControl);
         }
         
-        
-
         function controls_tab() {
             /**
              * Use handlebars.js to the controls tab HTML for the specimen view
@@ -350,7 +377,8 @@
                 controlsButtonsId: "controlsButtons_" + id,
                 selectorWrapId: "selectorWrap_" + id,
                 vselectorId: vselector,
-                windowLevelId: windowLevel 
+                windowLevelId: windowLevel,
+                overlayId: overlayControl
             };
             
             var source   = $("#slice_controls_template").html();
@@ -393,7 +421,7 @@
 
             var $scaleouter =  $('.scale_outer_' + id);
             
-            if (currentVolume["pixelsize"] == null ||  currentVolume["pixelsize"] == 0){
+            if (currentVolume["pixelsize"] == null ||  currentVolume["pixelsize"] == 0) {
                 $scaleouter.hide();
                 return;
             }
@@ -436,7 +464,7 @@
         function replaceVolume(volumePath) {
             /**
              * Replace current specimen volume with another.
-             * Destroys current object (not sure is necessary) add new path and call setupoRenderers
+             * Destroys current object (not sure is necessary) add new path and call setuoRenderers
              * 
              * @method replaceVolume
              * @param {String} VolumePath path to new volume to load into viewer
@@ -462,9 +490,6 @@
             setupRenderers();
         };
         
-
-
-
         function setupRenderers() {
             /**
              * Call the XTK functions that are required to get our volume rendered in 2D
@@ -477,9 +502,6 @@
             
             xRen = new X.renderer2D();
            
-          
-            
-            
             /*
              * Sagittal scaling bug fix.
              * also see fix in X.renderer2D.render_
@@ -494,17 +516,17 @@
                 }
             };
             
+            // Set flag if overlay exists        
+            hasLabelmap = 'jacobian_overlay' in currentVolume;
+            
             xRen.onShowtime = function(){   
                 // we have to wait before volumes have fully loaded before we
                 // can extract intesity information
                 setContrastSlider();
+                showHideOverlayControls();   
                 setReady();
-                };
-        
-            /*
-             * 
-             */
-            
+            };
+
             xRen.container = $xContainer.get(0);
             xRen.orientation = 'X';
             xRen.init();
@@ -523,16 +545,13 @@
             zRen.init();
             overrideRightMouse(zRen);
             
-            
             // create a X.volume
             volume = new X.volume();
             volume.file = currentVolume['volume_url'];
             
-            // add jacobian overlay by default (if it exists)
-            var jac = 'jacobian_overlay';
-            if (jac in currentVolume) {
-                volume.labelmap.file = currentVolume['jacobian_overlay'];
-                volume.labelmap.colortable.file = currentVolume['jacobian_cmap'];
+            // add jacobian overlay by default (if it exists)            
+            if (hasLabelmap) {
+                setLabelmap(currentLabelmap);
             }
 
             // First we render X. Then X.afterRender() calls the loading and rendering of the others
@@ -578,25 +597,20 @@
                 volume.maxColor = [0, 0, 0];
                 volume.minColor = [1, 1, 1];
                 $("#" + id + "> .sliceView").css("background-color", "#FFFFFF");
-
-                volume.indexX++;
-                volume.indexY++;
-                volume.indexZ++;
-
+                moveSlices(1);
             } else {
-
                 volume.maxColor = [1, 1, 1];
                 volume.minColor = [0, 0, 0];
                 $("#" + id + "> .sliceView").css("background-color", "#000000");
-
-                // Bodge to get the colours to update
-                volume.indexX--;
-                volume.indexY--;
-                volume.indexZ--;
+                moveSlices(-1);
             }
         };
         
-        
+        function moveSlices(val) {
+            volume.indexX += val;
+            volume.indexY += val;
+            volume.indexZ += val;
+        }
         
        function sliceChange(id, ortho, index){
            /**
@@ -968,6 +982,7 @@
         createHTML();
         updateVolumeSelector();
         jQuerySelectors();
+        setupOverlayControls();
         setupRenderers();
         //createEventHandlers();
         drawScaleBar();
