@@ -662,7 +662,8 @@
                 modal: true,
                 hide: 'fade',
                 width: 700,
-                height: 550
+                height: 550,
+                position: { my: "left bottom", at: "left top", of: $('#top_bar')}
             });
          
 
