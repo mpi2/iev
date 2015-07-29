@@ -137,9 +137,13 @@
         
         
         function showMetadata(){
+            
+            if (hasLabelmap) {
+                $("#metadata_" +id).empty();
+                return;
+            }
                      
-            var date = new Date(currentVolume.experimentDate)
-       
+            var date = new Date(currentVolume.experimentDate);       
             var displayDate = monthNames[date.getMonth()];
        
             displayDate += " " + date.getDate();
@@ -176,10 +180,9 @@
                 sexIconPath: sexIconPath,
                 zygIconPath: zygIconPath,
                 centreLogoPath: centreLogoPath
-            }
+            };
             
-            var template = Handlebars.compile(specimenMetaTemplateSource);
-            
+            var template = Handlebars.compile(specimenMetaTemplateSource);            
             var $metaDataHtml = $(template(data));
             
             //Clear any current metadata
@@ -222,7 +225,6 @@
             $overlayControl.buttonset();
             $overlayControl.click(function() {
                 currentLabelmap = $('input[type=radio]:checked', this).prop("id").split("_")[0];
-                console.log(currentLabelmap);
                 replaceVolume(currentVolume['volume_url']);
             });
         }
@@ -749,9 +751,6 @@
                     }
                 }.bind(this)
             });
-            
-            
-           
 
             // Overload onMouseWheel event to control slice sliders
             xRen.interactor.onMouseWheel = function (event) {
@@ -860,7 +859,6 @@
             if (ortho === 'Z') zOffset = offset;
         }
         
-        
         function getDimensions(){
             /**
              * Get the dimensions of the current volume
@@ -876,9 +874,6 @@
              */
             return currentVolume;
         }
-        
-
-
 
         function setVisibleViews(viewList, count, horizontalView) {
             /**

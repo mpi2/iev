@@ -167,11 +167,11 @@ limitations under the License.
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
         <div id="controls_{{id}}"class="controls clear">
-            <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
+            <div class="selectorWrap" id="{{selectorWrapId}}" title="Embryo selector">
                 <select id="{{vselectorId}}" class ="selectmenu"></select>
             </div>
             <div class="wlwrap">
-                <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
+                <div id="{{windowLevelId}}" class="windowLevel" title="Brightness/contrast"></div>
             </div>
     
             <div class="overlayWrap">
@@ -194,7 +194,7 @@ limitations under the License.
     </script>
 
     <!--Specimen view template-->
-    <script id="specimen_view_template" type="text/x-handlebars-template">  
+    <script id="specimen_view_template" type="text/x-handlebars-template">
         <div id="{{id}}" class='specimen_view'></div>"  
     </script>
 
@@ -203,18 +203,16 @@ limitations under the License.
     <script id="slice_view_template" type="text/x-handlebars-template">
         <div class="sliceWrap" id="{{sliceWrapId}}">
             <div class='scale_outer scale_outer_{{id}}' >
-                <div class="scale" id="{{scaleId}}">
-                </div>
+                <div class="scale" id="{{scaleId}}"></div>
                 <div class='scale_text' id="{{scaleTextId}}"></div>
             </div>
            
-        <div id="{{sliceContainerID}}" class ="sliceView"></div>
-        <div class="sliceControls">
-            <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
+            <div id="{{sliceContainerID}}" class ="sliceView"></div>
+            <div class="sliceControls">
+                <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
                 <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
                 <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
-
-        </div>
+            </div>
         </div>
     </script>
 

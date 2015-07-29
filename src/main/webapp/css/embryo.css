@@ -188,6 +188,7 @@ fieldset{
     height: 100%;
     position: relative;
     float: left;
+    padding-top: 2px;
 }
 
 .overlayWrap .ui-button-text {
