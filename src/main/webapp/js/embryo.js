@@ -23,27 +23,27 @@
         request.send(null);
     }
 
-    dcc.getVolumesByColonyId = function(colonyId) {   
+    dcc.getVolumesByColonyId = function(colonyId, bookmarkData) {   
         dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
             function(data) {   
-                dcc.EmbryoViewer(data, 'viewer', 'colony ID', colonyId);     
+                dcc.EmbryoViewer(data, 'viewer', 'colony ID', colonyId, bookmarkData);     
         });
     };
     
     
-    dcc.getVolumesByGeneSymbol = function(geneSymbol) {   
+    dcc.getVolumesByGeneSymbol = function(geneSymbol, bookmarkData) {
         dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
             function(data) {   
-                dcc.EmbryoViewer(data, 'viewer', 'gene symbol', geneSymbol);     
+                dcc.EmbryoViewer(data, 'viewer', 'gene symbol', geneSymbol, bookmarkData);     
         });
     };
     
-    dcc.getVolumesByMgi = function(mgi) {
+    dcc.getVolumesByMgi = function(mgi, bookmarkData) {
         console.log('gettigng by mgi');
         console.log(mgi);
         dcc_get("rest/volumes" + (mgi === undefined ? "" : "?mgi=" + mgi), 
             function(data) {   
-                dcc.EmbryoViewer(data, 'viewer', 'mgi', mgi);  
+                dcc.EmbryoViewer(data, 'viewer', 'mgi', mgi, bookmarkData);  
                
         });
     };

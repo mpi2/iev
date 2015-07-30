@@ -110,6 +110,22 @@ body{
     cursor: pointer;
 }
 
+#createBookmark {
+    padding-left: auto;
+    padding-right: auto;
+    cursor: pointer;
+}
+
+#createBookmark img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#bookmark_img:hover, #download_img:hover {
+    opacity: 0.5;
+}
+
 .clear{
     clear:both;
 }
@@ -173,6 +189,10 @@ fieldset{
 }
 
 #scale_fieldset{
+    float: left;
+}
+
+#bookmark_fieldset {
     float: left;
 }
 

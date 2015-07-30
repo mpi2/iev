@@ -24,7 +24,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 
 @Stateless
@@ -40,8 +43,8 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
     public VolumesPack all(
             @QueryParam("colony_id") String colonyId, 
             @QueryParam("gene_symbol") String geneSymbol,
-            @QueryParam("mgi") String mgiId){
-        
+            @QueryParam("mgi") String mgiId) {
+                
         VolumesPack vp = new VolumesPack();
         
         if (colonyId == null && geneSymbol == null && mgiId == null){
@@ -51,10 +54,8 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
         EntityManager emcid = getEntityManager();
         EntityManager em = getEntityManager();
         TypedQuery<Preprocessed> qcid;
-        List<Preprocessed> p = new ArrayList<Preprocessed>();
+        List<Preprocessed> p;
         
-        System.out.println("testytesty");
-     
         if (colonyId != null){
             
             qcid = emcid.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
@@ -105,7 +106,7 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
             em.close();
             vp.setDataSet(v);
         } 
- 
+
         return vp;
     }
 }

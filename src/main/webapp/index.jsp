@@ -50,11 +50,11 @@ limitations under the License.
                                 <input type="submit" value="?" id="help_link" >
                             </form>
                         </div>
-                            <div id="download">
-                                <img src="images/download.png" height="25" id="download_img">
-                            </div>
+                        <div id="download">
+                            <img src="images/download.png" height="25" id="download_img">
+                        </div>
                     </div>
-
+                    
                 </div>
                 <fieldset id="orthogonal_views_buttons_fieldset">
                     <legend>Views</legend>
@@ -100,6 +100,13 @@ limitations under the License.
                     <button id="reset">Reset</button>
                     <input type="checkbox" id="low_power_check" class='toggle_slice'>
                     <label for="low_power_check" id='low_power_check_label'>low cpu</label>      
+                </fieldset>       
+                
+                <fieldset id="bookmark_fieldset">
+                    <legend>Bookmark</legend>
+                    <div id="createBookmark">
+                        <img src="images/bookmark.png" height="25" id="bookmark_img">
+                    </div>
                 </fieldset>
 
                 <fieldset id="modality_stage_fieldset">
@@ -111,7 +118,7 @@ limitations under the License.
                         <input type="radio" id="204" name="project" class="modality_button">
                         <label for="204" class="button_label">&#956;CT E18.5</label>
 
-                        <input type="radio" id="202" class="modality_button" name="project">
+                        <input type="radio" id="202" class=low"modality_button" name="project">
                         <label for="202" class="button_label">OPT E9.5</label>
                     </div>
                 </fieldset>
@@ -126,23 +133,79 @@ limitations under the License.
         </div>
         
         <script>
-
-
-
-
             window.addEventListener('load', function () {
+                
                 var geneSymbol = "<%= request.getParameter("gene_symbol")%>";
                 var colonyId = "<%= request.getParameter("colony_id")%>";
                 var mgi = "<%= request.getParameter("mgi")%>";
                 
+
+                var modalityData = {
+                    203: {
+                        'id': 'CT E14.5/15.5',
+                        'vols': {
+                            'mutant': {},
+                            'wildtype': {}
+                        }
+                    },
+                    204: {
+                        'id': 'CT E18.5',
+                        'vols':{
+                            'mutant': {},
+                            'wildtype': {}
+                        }
+                    },
+                    202:{
+                        'id': 'OPT 9.5',
+                        'vols':{
+                            'mutant': {},
+                            'wildtype': {}
+                        }
+                    }
+                };
+                
+                var bookmarkData = {
+                    mode: null, // done
+                    gene: null, // done
+                    modality: <%= request.getParameter("modality")%>,
+                    wt: {
+                        name: "<%= request.getParameter("wt")%>",
+                        brightness: {
+                            lower: <%= request.getParameter("wt_bl")%>,
+                            upper: <%= request.getParameter("wt_bu")%>
+                        }
+                    },         
+                    mut: {
+                        name: "<%= request.getParameter("mut")%>",
+                        brightness: {
+                            lower: <%= request.getParameter("mut_bl")%>,
+                            upper: <%= request.getParameter("mut_bu")%>
+                        }
+                    },
+                    s: "<%= request.getParameter("s")%>", // done
+                    c: "<%= request.getParameter("c")%>", // done
+                    a: "<%= request.getParameter("a")%>", // done
+                    x: parseInt(<%= request.getParameter("x")%>), // done
+                    y: parseInt(<%= request.getParameter("y")%>), // done
+                    z: parseInt(<%= request.getParameter("z")%>), // done
+                    zoom: parseFloat(<%= request.getParameter("zoom")%>),
+                    orientation: "<%= request.getParameter("orientation")%>"
+                };
+                
                 if (colonyId !== 'null'){
-                    dcc.getVolumesByColonyId(colonyId);
+                    bookmarkData['mode'] = "colony_id";
+                    bookmarkData['gene'] = colonyId;
+                    dcc.getVolumesByColonyId(colonyId, bookmarkData);
                 }
                 else if (geneSymbol !== 'null') {
-                    dcc.getVolumesByGeneSymbol(geneSymbol);
+                    bookmarkData['mode'] = "gene_symbol";
+                    bookmarkData['gene'] = geneSymbol;
+                    dcc.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
                 }
                 else if (mgi !== 'null') {
-                    dcc.getVolumesByMgi(mgi);
+                    bookmarkData['mode'] = "mgi";
+                    bookmarkData['gene'] = mgi;
+                    dcc.getVolumesByMgi(mgi, bookmarkData);
                 }
                
             });
@@ -166,7 +229,6 @@ limitations under the License.
         <!-- This is where the download dialog goes -->
         <div id="download_dialog"><div>
     </body>
-
 
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      

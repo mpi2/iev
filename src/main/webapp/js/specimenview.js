@@ -27,8 +27,19 @@
         var viewContainer = container;
         var volumeData = volumeData;
         
-        // Load up the first volume
+        // Load up the first volume (replace with config if available)
         var currentVolume = volumeData[Object.keys(volumeData)[0]];
+        if (config['specimen']) {       
+            for (var key in volumeData) {
+                if (volumeData.hasOwnProperty(key)) {
+                    var vol = volumeData[key];
+                    if (vol['animalName'] === config['specimen']['name']) {
+                        currentVolume = vol;
+                        break;
+                    }
+                }
+            }           
+        }
        
         var $xContainer;
         var $yContainer;
@@ -51,6 +62,7 @@
         var yOffset = 0;
         var zOffset = 0;
         var ready = false;
+        var contrast = config['specimen']['brightness'];
         
         
         /*
@@ -173,7 +185,7 @@
                 sexIconPath: sexIconPath,
                 zygIconPath: zygIconPath,
                 centreLogoPath: centreLogoPath
-            }
+            };
             
             var template = Handlebars.compile(specimenMetaTemplateSource);
             
@@ -190,7 +202,6 @@
              * Makes contrast slider for specimen view
              * @method setContrastSlider
              */
-            console.log(volume.min);
             
             $windowLevel.slider({
                 range: true,
@@ -204,6 +215,7 @@
                     volume.modified(true);
                 }, this)
             });
+            
         }; 
 
         function screenShot() {
@@ -358,6 +370,19 @@
             return template(data);
         };
         
+        function zoomBy(amt) {
+            if (amt < 0) {
+                while (amt < 0) {
+                    zoomOut();
+                    amt++;
+                }
+            } else {
+                while (amt > 0) {
+                    zoomIn();
+                    amt--;
+                }
+            }
+        }
         
         function zoomIn(){
            xRen.camera.zoomIn(false);
@@ -492,14 +517,37 @@
                    this.firstRender = false;
                    xtk_showtime();
                 }
+                
+                // Set contrast                            
+                var lower = parseInt(volume.windowLow);
+                if (contrast['lower'] !== null) {
+                    lower = Math.max(contrast['lower'], parseInt(volume.windowLow));
+                    volume.windowLow = lower;
+                    volume.modified(false);
+                }
+
+                var upper = parseInt(volume.windowHigh);
+                if (contrast['upper'] !== null) {
+                    upper = Math.min(contrast['upper'], parseInt(volume.windowHigh));
+                    volume.windowHigh = upper;
+                    volume.modified(false);
+                }
+                
+                $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+                                
+               // Zoom
+                var zoom = config['zoom'];
+                if (zoom) {
+                    zoomBy(zoom);
+                } 
             };
             
             xRen.onShowtime = function(){   
                 // we have to wait before volumes have fully loaded before we
                 // can extract intesity information
-                setContrastSlider();
+                setContrastSlider();               
                 setReady();
-                };
+            };
         
             /*
              * 
@@ -658,17 +706,14 @@
             zRen.add(volume);
             zRen.render();
 
-            var dims = volume.dimensions;
-           
+            var dims = volume.dimensions;           
             
             // Let main know of the new dimensions of the orthogonal views
 
             // It appears that dimensins are in yxz order. At least with nii loading
-            volume.indexX = Math.floor((dims[0] - 1) / 2);
-            volume.indexY = Math.floor((dims[1] - 1) / 2);
-            volume.indexZ = Math.floor((dims[2] - 1) / 2);
-            // Setup the sliders within 'onShowtime' as we need the volume dimensions for the ranges
-
+            volume.indexX = config['x'] !== "null" ? config['x'] : Math.floor((dims[0] - 1) / 2);
+            volume.indexY = config['y'] !== "null" ? config['y'] : Math.floor((dims[1] - 1) / 2);
+            volume.indexZ = config['z'] !== "null" ? config['z'] : Math.floor((dims[2] - 1) / 2);
 
             // make the sliders
             $xSlider.slider({
@@ -815,6 +860,14 @@
              $zSlider.slider("value", volume.indexZ);
         }
         
+        function getBrightnessLower() { 
+            return volume.windowLow;
+        }
+        
+        function getBrightnessUpper() { 
+            return volume.windowHigh;
+        }   
+        
         function getIndex(ortho){
             /**
              * Get the index of the current slice for a orthogonal view
@@ -855,10 +908,7 @@
              * Return the data for the currently viewd image
              */
             return currentVolume;
-        }
-        
-
-
+        }     
 
         function setVisibleViews(viewList, count, horizontalView) {
             /**
@@ -942,6 +992,8 @@
             setYindex: setYindex,
             setZindex: setZindex,
             getIndex: getIndex,
+            getBrightnessLower: getBrightnessLower,
+            getBrightnessUpper: getBrightnessUpper,
             id: id,
             setIdxOffset: setIdxOffset,
             getDimensions: getDimensions,
@@ -965,6 +1017,7 @@
         setupRenderers();
         //createEventHandlers();
         drawScaleBar();
+        
         return public_interface;
     }
 

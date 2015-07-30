@@ -2,25 +2,29 @@
     if (typeof dcc === 'undefined')
         dcc = {};
     
-     dcc.EmbryoViewer = function(data, div, queryType, queryId) {
+     dcc.EmbryoViewer = function(data, div, queryType, queryId, bookmarkData) {
          /**
           * @class EmbryoViewer
           * @type String
           */
         
         console.log('main', data);
+        console.log('main', bookmarkData);
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var OUTPUT_FILE_EXT = '.NRRD';
         var queryId = queryId;
-        var horizontalView = undefined;
+        var horizontalView;
         var scaleVisible = true;
         var wtView;
         var mutView;
         var currentModality;
         var downloadTableRowSource;
-        var spinner; // Progress spinner 
+        var spinner; // Progress spinner
+        var currentZoom;
+        var currentOrientation = 'horizontal';
+        var bookmarkReady = false;
           
         //Give users a warning about using the deprecated colony_id=test url
         if (queryType === 'colony ID' && queryId === 'test'){
@@ -59,8 +63,12 @@
             }
         };
         
-         var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
+        var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
         
+        if (bookmarkData['modality'] !== null) {
+            volorder.unshift(bookmarkData['modality']);
+        }
+          
         
         /*
          * Map micrometer scale bar sizes to labels
@@ -85,9 +93,14 @@
             return options;
         };
         
-        
         var config = { //remove hardcoding
             scaleBarSize: 600,
+            x: parseInt(bookmarkData['x']),
+            y: parseInt(bookmarkData['y']),
+            z: parseInt(bookmarkData['z']),
+            specimen: null,
+            zoom: parseInt(bookmarkData['zoom']),
+            contrast: null
         };
         
         var spinnerOpts = {
@@ -190,8 +203,7 @@
                     $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', false);
                 }
             }  
-        }
-        
+        }        
     
         function buildUrl(data){
             /**
@@ -211,12 +223,67 @@
                     + data.imageForDisplay;
                     //+ data.url;
             
-            data['volume_url'] = url
+            data['volume_url'] = url;
 
             return data;
-        }
+        }               
         
-
+        function bookmarkConfigure() {
+            // Configure viewers based on bookmark data            
+            if (bookmarkData['s'] === 'off') {
+                $('#X_check').trigger('click');
+            }
+            
+            if (bookmarkData['c'] === 'off') {
+                $('#Y_check').trigger('click');
+            }
+            
+            if (bookmarkData['a'] === 'off') {
+                $('#Z_check').trigger('click');
+            }
+            
+            // Add a little delay
+            if (bookmarkData['orientation'] === 'vertical') {
+                $("#orientation_button").trigger("click");
+            }
+            
+            bookmarkReady = true;
+            
+        }       
+        
+        
+        function generateBookmark() {
+            
+            var currentUrl = window.location.href; // TODO get the current URL + gene_symbol/mgi
+            var hostname = currentUrl.split('?')[0];
+            
+            var s =  ortho['X']['visible'] ? 'on' : 'off';
+            var c = ortho['Y']['visible'] ? 'on' : 'off';
+            var a = ortho['Z']['visible'] ? 'on' : 'off';
+            
+            var bookmark = hostname
+                + '?' + bookmarkData['mode'] + '=' + bookmarkData['gene']
+                + '&modality=' + currentModality
+                + '&wt=' + wtView.getCurrentVolume()['animalName']
+                + '&mut=' + wtView.getCurrentVolume()['animalName']
+                + '&s=' + s
+                + '&c=' + c
+                + '&a=' + a
+                + '&x=' + wtView.getIndex('X')
+                + '&y=' + wtView.getIndex('Y')
+                + '&z=' + wtView.getIndex('Z') // TODO add zoom
+                + '&orientation=' + currentOrientation
+                + '&wt_bl=' + wtView.getBrightnessLower()
+                + '&wt_bu=' + wtView.getBrightnessUpper()
+                + '&mut_bl=' + mutView.getBrightnessLower()
+                + '&mut_bu=' + mutView.getBrightnessUpper();
+            // + '&zoom= currentZoom
+            return bookmark;
+        }
+                
+        function copyToClipboard(text) {
+            window.prompt("Copy to clipboard (Ctrl/Cmd+C + Enter)", text);
+          }
 
         function scaleOrthogonalViews(){
             /**
@@ -247,7 +314,7 @@
         
         function beforeReady(){
             $('#modality_stage :input').prop("disabled", true); 
-            $("#modality_stage").buttonset('refresh');
+            $("#modality_stage").buttonset('refresh'); 
         }
         
         function onReady(){
@@ -255,10 +322,11 @@
             //$('#modality_stage :input').prop('disabled', false);
             $("#modality_stage").buttonset('refresh');
             
-        }
-        
-        
             
+            // Configure viewer styling based on bookmark data
+            bookmarkConfigure();
+        }  
+                    
         function loadViewers(container) {
             /**
              * Create instances of SpecimenView and append to views[]. 
@@ -279,17 +347,21 @@
                 }
             }
             
-            currentModality = pid;
+            currentModality = pid;            
             
             //Check the modality button
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
             
             // only load if baseline data available
             if (objSize(wildtypeData) > 0){
+                config['specimen'] = bookmarkData['wt'];
                 wtView = dcc.SpecimenView(wildtypeData, 'wt', container, 
                 WILDTYPE_COLONYID, sliceChange, config, loadedCb);
                 views.push(wtView);
             }
+            
+            // Set mutant specimen based on bookmark
+            config['specimen'] = bookmarkData['mut'];
             mutView = dcc.SpecimenView(mutantData, 'mut', container, 
             queryId, sliceChange, config, loadedCb);
             views.push(mutView);   
@@ -496,8 +568,15 @@
                 setupDownloadTable(e);
             });
             
-        
-            
+            // Create bookmark when clicked
+            $('#createBookmark').click(function (e) {
+                if (!bookmarkReady) { 
+                    return;
+                }
+                e.preventDefault();
+                var newBookmark = generateBookmark();
+                copyToClipboard(newBookmark);           
+            });            
    
             $("#modality_stage" ).buttonset();
             $("#orthogonal_views_buttons").buttonset();
@@ -506,16 +585,19 @@
              * Orientation buttons *************************
              */
             
-            $("#orientation_button").click(function(){
+            $("#orientation_button").click(function(e) {
+                e.preventDefault();
                 if ($(this).hasClass('vertical')){
                     $(this).removeClass('vertical');
                     $(this).addClass('horizontal');
                     setViewOrientation('horizontal');
+                    currentOrientation = 'horizontal';
                 }
                 else{
                     $(this).removeClass('horizontal');
                     $(this).addClass('vertical');
                     setViewOrientation('vertical');
+                    currentOrientation = 'vertical';
                 }
             });
             
@@ -862,17 +944,12 @@
 //    $('body').bind('beforeunload', function () {
 //        console.log('bye');
 //    });
+
     setActiveModalityButtons();
-
-
     loadViewers(container);
     attachEvents();
     beforeReady();
     
-    
-    
     }//EmbryoViewer
-     
-   
-    
+       
 })();

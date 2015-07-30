@@ -24,10 +24,10 @@ import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 @XmlSeeAlso(Preprocessed.class)
 @XmlType(propOrder = {"success", "total", "volumes"})
 public class VolumesPack extends AbstractRestResponse<Preprocessed> {
-
+    
     @Override
     @XmlElement(name = "volumes")
     public List<Preprocessed> getDataSet() {
         return super.getDataSet();
-    }
+    } 
 }
