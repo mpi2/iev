@@ -51,6 +51,7 @@
         var yOffset = 0;
         var zOffset = 0;
         var ready = false;
+        var WILDTYPE_COLONYID = 'baseline';
         
         
         /*
@@ -64,6 +65,7 @@
         var HOM_ICON = 'hom.png';
         var HET_ICON = 'het.png';
         var HEMI_ICON = 'het.png';
+        var WT_ICON = 'wildtype.png';
         
         var specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
         
@@ -150,17 +152,31 @@
                 sexIconPath = IMG_DIR + MALE_ICON;
             }
             
+            // Set the zygosity icon for mutants or the 'WT' icon for baselines 
             var zygIconPath;
-            if (currentVolume.zygosity.toLowerCase() === 'homozygous'){
-               zygIconPath = IMG_DIR + HOM_ICON;
-            }
-            else if(currentVolume.zygosity.toLowerCase() === 'heterozygous'){
-                zygIconPath = IMG_DIR + HET_ICON;
-            }
-            else if(currentVolume.zygosity.toLowerCase() === 'hemizygous'){
-                zygIconPath = IMG_DIR + HEMI_ICON;
+            var zygIcon;
+            
+            if (currentVolume.colonyId === WILDTYPE_COLONYID){
+                zygIcon = WT_ICON;
             }
             
+            else{
+                
+                switch (currentVolume.zygosity.toLowerCase()){
+                    case 'homozygous':
+                        zygIcon = HOM_ICON;
+                        break;
+                    case 'heterozygous':
+                        zygIcon = HET_ICON;
+                        break;
+                    case 'hemizygous':
+                        break;
+                        zygIcon = HEMI_ICON;
+                }
+            }
+            
+            zygIconPath = IMG_DIR + zygIcon;
+                    
             var centreLogoPath = "";
           
             if (centreIcons.hasOwnProperty(currentVolume.cid)){
@@ -173,7 +189,7 @@
                 sexIconPath: sexIconPath,
                 zygIconPath: zygIconPath,
                 centreLogoPath: centreLogoPath
-            }
+            };
             
             var template = Handlebars.compile(specimenMetaTemplateSource);
             
