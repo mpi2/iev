@@ -65,7 +65,7 @@
         
         var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
         
-        if (bookmarkData['modality'] !== null) {
+        if (bookmarkData['modality'] !== "null") {
             volorder.unshift(bookmarkData['modality']);
         }
           
