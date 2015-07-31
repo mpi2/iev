@@ -167,7 +167,7 @@ limitations under the License.
                 var bookmarkData = {
                     mode: null, // done
                     gene: null, // done
-                    modality: <%= request.getParameter("modality")%>,
+                    modality: "<%= request.getParameter("modality")%>",
                     wt: {
                         name: "<%= request.getParameter("wt")%>",
                         brightness: {
