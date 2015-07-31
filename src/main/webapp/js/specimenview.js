@@ -104,8 +104,26 @@
             showMetadata();
         }
         
+
+
+        
         
         function updateVolumeSelector(){
+            $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+                _renderItem: function (ul, item) {
+                    var li = $("<li>", {text: item.label});
+                    if (item.disabled) {
+                        li.addClass("ui-state-disabled");
+                    }
+
+                    $("<span>", {
+                        style: item.element.attr("data-style"),
+                        "class": "ui-icon " + item.element.attr("data-class")
+                    })
+                            .appendTo(li);
+                    return li.appendTo(ul);
+                }
+            });
             //remove any current options
             $('#' + vselector)
                 .find('option')
@@ -116,22 +134,29 @@
             var options = [];
             for (var i in volumeData) {
                 var url = volumeData[i]['volume_url'];
-                options.push("<option value='" + url + "'>" + basename(url) + "</option>");
+                var sex = volumeData[i].sex.toLowerCase();
+                options.push("<option value='" + url + "' data-class='" + sex +"'>" + basename(url) + "</option>");
             }
             
+               
             $('#' + vselector)
-            .append(options.join(""))
-            .selectmenu({
-                width: 100,
-                height: 20,
-                change: $.proxy(function (event, ui) {
-                    replaceVolume(ui.item.value);
-                }, this)
-            });
+            .append(options.join(""));
             
-                             
-            $('#' + vselector)
-                .selectmenu("refresh");
+     
+            $('#' + vselector).iconselectmenu()
+            .iconselectmenu("menuWidget")
+                    .addClass("ui-menu-icons customicons");
+                  
+             $('#' + vselector)
+                     .iconselectmenu({
+                        change: $.proxy(function (event, ui) {
+                            replaceVolume(ui.item.value);
+                        }, this)
+                    })
+             .iconselectmenu("refresh");
+//                             
+            
+                
         }
         
         
@@ -164,19 +189,33 @@
                 
                 switch (currentVolume.zygosity.toLowerCase()){
                     case 'homozygous':
+                        console.log('hello');
                         zygIcon = HOM_ICON;
                         break;
                     case 'heterozygous':
+                        console.log('hettttt');
                         zygIcon = HET_ICON;
                         break;
                     case 'hemizygous':
+                        console.log('hemiiiii');
                         break;
                         zygIcon = HEMI_ICON;
                 }
             }
             
             zygIconPath = IMG_DIR + zygIcon;
-                    
+            
+            
+//            if (currentVolume.zygosity.toLowerCase() === 'homozygous'){
+//               zygIconPath = IMG_DIR + HOM_ICON;
+//            }
+//            else if(currentVolume.zygosity.toLowerCase() === 'heterozygous'){
+//                zygIconPath = IMG_DIR + HET_ICON;
+//            }
+//            else if(currentVolume.zygosity.toLowerCase() === 'hemizygous'){
+//                zygIconPath = IMG_DIR + HEMI_ICON;
+//            }
+//            
             var centreLogoPath = "";
           
             if (centreIcons.hasOwnProperty(currentVolume.cid)){

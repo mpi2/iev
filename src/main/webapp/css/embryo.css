@@ -256,6 +256,30 @@ fieldset{
 .ui-selectmenu-text{
     font-size: 10px;
 }
+
+
+
+  /* select with custom icons */
+    .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item {
+     
+    }
+    .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item .ui-icon {
+      height: 20px;
+      width: 20px;
+      
+    }
+    .ui-icon.male {
+      background: url("../images/male.png") 0 0 no-repeat;
+    }
+    .ui-icon.female {
+      background: url("../images/female.png") 0 0 no-repeat;
+    }
+
+
+
+
+
+
 .pane {
     position: absolute;
     z-index: 10;
