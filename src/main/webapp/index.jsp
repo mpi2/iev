@@ -78,6 +78,13 @@ limitations under the License.
                     <select name="scale_select" id="scale_select">
                     </select>  
             </fieldset>
+                
+            
+            <fieldset id="avaiable_centres">
+                <legend>centres</legend>
+                    <select name="centre_select" id="centre_select">
+                    </select>  
+            </fieldset>
                
             
                 <fieldset id="heightslider_fieldset">

@@ -21,6 +21,7 @@
         var currentModality;
         var downloadTableRowSource;
         var spinner; // Progress spinner 
+        var currentCentreId; // Which Data's centre are we looking at
           
         //Give users a warning about using the deprecated colony_id=test url
         if (queryType === 'colony ID' && queryId === 'test'){
@@ -35,7 +36,13 @@
          * @type {object} modality_stage_pids
          * A mapping of procedure ids and imaging modality/stage key
          */
-        var modalityData = {
+        
+         // Contains a bunch of modalityData objects
+         // {centreId: modalitydata}
+        var centreData = {};
+        
+        var getModalityData = function(){
+            return {
             203: {
                 'id': 'CT E14.5/15.5',
                 'vols': {
@@ -57,9 +64,10 @@
                     'wildtype': {}
                 }
             }
+            }
         };
         
-         var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
+        var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
         
         
         /*
@@ -119,24 +127,31 @@
          * If data is not available, load an error message
          */
         if (data['success']){
-            
-            //Display the top control bar
-            $('#top_bar').show();
-            
-            // Get the baselines and the mutant paths
-            for(var i = 0; i < objSize(data.volumes); i++) {
+           
+            for (var cen in data['centre_data']){ // Pick the first centre you come across as the current centre
+                var modData =  getModalityData(); 
+                //Display the top control bar
+                $('#top_bar').show();
 
-                var obj = data.volumes[i];
-                               
-                buildUrl(obj);
-                
-                if (obj.colonyId === WILDTYPE_COLONYID){
-                    modalityData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
+                // Loop over the centres
+                for(var i = 0; i < objSize(data['centre_data'][cen]); i++) {
+                    //loop over the data for this centre
 
-                }else{
-                    modalityData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
+                    var obj = data['centre_data'][cen][i];
+
+                    buildUrl(obj);
+
+                    if (obj.colonyId === WILDTYPE_COLONYID){
+                        modData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
+
+                    }else{
+                        modData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
+                    }
                 }
+                centreData[cen] = modData;
+           
             }
+            currentCentreId = cen; // Just pick the last one to be visible
             
         }else{
             //Just display a message informing no data
@@ -182,14 +197,16 @@
             /*
              * Check which modalities we have data for and inactivate buttons for which we have no data
              */
-            for (var pid in modalityData ){
-                if (objSize(modalityData[pid]['vols']['mutant']) < 1){
+            for (var pid in centreData[currentCentreId] ){
+                if (objSize(centreData[currentCentreId][pid]['vols']['mutant']) < 1){
                     $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', true);
                 }
                 else{
                     $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', false);
                 }
             }  
+            
+            
         }
         
     
@@ -246,6 +263,9 @@
         }
         
         function beforeReady(){
+            /*
+             * Diable the modality buttons during loading
+             */
             $('#modality_stage :input').prop("disabled", true); 
             $("#modality_stage").buttonset('refresh');
         }
@@ -268,13 +288,46 @@
              */
             
             
+            
+
+//            $('.scale_text').text($('#scale_select').find(":selected").text());
+           
+            
+            //Just for testing
+            // Populate ddb with available centres
+            var availableCentres = [];
+            for (var cen in data['centre_data']){ // 
+                availableCentres.push("<option value='" + cen  + "'>" + cen + "</option>");
+               
+            }
+             $('#centre_select')
+                .append(availableCentres.join(""))
+                .selectmenu({
+                    width: 80,
+                    height: 20,
+                    change: $.proxy(function (event, ui) { 
+                            setCentre(event.currentTarget.innerText)
+                        
+                    }, this)
+                });
+                
+              //$('#centre_select').val(4).selectmenu('refresh');
+            
+            
+            
+            
+            
+            
+            
+            ////////////////////testing
+            
             // Find first lot of data to use. loop over PIDs in reverse to try CT before OPT
             var pid;
             for (var i in volorder){
                 pid = volorder[i];
-                if (objSize(modalityData[pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
-                    var wildtypeData = modalityData[pid]['vols']['wildtype'];
-                    var mutantData = modalityData[pid]['vols']['mutant'];
+                if (objSize(centreData[currentCentreId][pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
+                    var wildtypeData = centreData[currentCentreId][pid]['vols']['wildtype'];
+                    var mutantData = centreData[currentCentreId][pid]['vols']['mutant'];
                     break;
                 }
             }
@@ -296,6 +349,16 @@
         };
         
         
+        function setCentre(cid){
+            /*
+             * Change the centre. Only works if there is data from multiple centres.
+             * Such as with reference lines
+             * 
+             */
+           currentCentreId = cid;
+           setStageModality(currentModality);
+        }
+        
         
         function setStageModality(pid){
             /*
@@ -304,9 +367,10 @@
              */
             beforeReady();
             currentModality = pid;
+            console.log(currentCentreId);
             
             if (typeof wtView !== 'undefined'){
-                var wtVolumes = modalityData[pid]['vols'].wildtype;
+                var wtVolumes = centreData[currentCentreId][pid]['vols'].wildtype;
                 
                 if (Object.keys(wtVolumes).length > 0) {
                     $("#wt").show();
@@ -317,7 +381,7 @@
                 }
             }
             if (typeof mutView !== 'undefined'){
-                var mutVolumes = modalityData[pid]['vols'].mutant;
+                var mutVolumes = centreData[currentCentreId][pid]['vols'].mutant;
 
                 if (Object.keys(mutVolumes).length > 0) {
                     $("#mut").show();
@@ -671,10 +735,10 @@
             var template = Handlebars.compile(downloadTableRowSource);
 
             dlg.load('download_dialog.html', function () {
-                for (var pid in modalityData) {
+                for (var pid in centreData[currentCentreId]) {
                     if (pid !== currentModality)
                         continue;  // Only supply current modality data for download
-                    var vols = modalityData[pid]['vols'];
+                    var vols = centreData[currentCentreId]['vols'];
                     
                     var currentlyViewed = [];
                     for (var i=0; i < views.length; ++i){
