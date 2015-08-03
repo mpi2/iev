@@ -22,7 +22,7 @@
         var currentModality;
         var downloadTableRowSource;
         var spinner; // Progress spinner
-        var currentZoom;
+        var currentZoom = 0;
         var currentOrientation = 'horizontal';
         var bookmarkReady = false;
           
@@ -99,7 +99,6 @@
             y: parseInt(bookmarkData['y']),
             z: parseInt(bookmarkData['z']),
             specimen: null,
-            zoom: parseInt(bookmarkData['zoom']),
             contrast: null
         };
         
@@ -229,25 +228,36 @@
         }               
         
         function bookmarkConfigure() {
-            // Configure viewers based on bookmark data            
-            if (bookmarkData['s'] === 'off') {
-                $('#X_check').trigger('click');
-            }
             
-            if (bookmarkData['c'] === 'off') {
-                $('#Y_check').trigger('click');
-            }
+            if (!bookmarkReady) { 
+
+                console.log("Configuring bookmark");
+
+                // Set views       
+                if (bookmarkData['s'] === 'off') {
+                    $('#X_check').trigger('click');
+                }
+
+                if (bookmarkData['c'] === 'off') {
+                    $('#Y_check').trigger('click');
+                }
+
+                if (bookmarkData['a'] === 'off') {
+                    $('#Z_check').trigger('click');
+                }
+
+                // Set orientation
+                if (bookmarkData['orientation'] === 'vertical') {
+                    $("#orientation_button").trigger("click");
+                }
+
+                // Set zoom
+                zoomBy(bookmarkData['zoom']); // NOT WORKING
+
+                // Set ready
+                bookmarkReady = true;
             
-            if (bookmarkData['a'] === 'off') {
-                $('#Z_check').trigger('click');
             }
-            
-            // Add a little delay
-            if (bookmarkData['orientation'] === 'vertical') {
-                $("#orientation_button").trigger("click");
-            }
-            
-            bookmarkReady = true;
             
         }       
         
@@ -276,14 +286,47 @@
                 + '&wt_bl=' + wtView.getBrightnessLower()
                 + '&wt_bu=' + wtView.getBrightnessUpper()
                 + '&mut_bl=' + mutView.getBrightnessLower()
-                + '&mut_bu=' + mutView.getBrightnessUpper();
-            // + '&zoom= currentZoom
+                + '&mut_bu=' + mutView.getBrightnessUpper()
+                + '&zoom=' + currentZoom;
             return bookmark;
         }
                 
         function copyToClipboard(text) {
-            window.prompt("Copy to clipboard (Ctrl/Cmd+C + Enter)", text);
+            window.prompt("Bookmark created!\nCopy to clipboard (Ctrl/Cmd+C + Enter)", text);
           }
+          
+        function zoomBy(times) {
+            
+            if (times < 0) {
+                while (times < 0) {                    
+                    setTimeout(function() {
+                        zoomViewsOut();
+                    }, 1000);   
+                    times++;
+                }
+            }
+            
+            if (times > 0) {
+                while (times > 0) { 
+                    setTimeout(function() {
+                        zoomViewsIn();
+                    }, 1000);   
+                    times--;
+                }
+            }             
+            
+        }
+        
+        function zoomViewsIn() {
+            wtView.zoomIn();
+            mutView.zoomIn();
+        }
+        
+        function zoomViewsOut() {
+            wtView.zoomOut();
+            mutView.zoomOut();
+        }
+
 
         function scaleOrthogonalViews(){
             /**
@@ -309,22 +352,27 @@
             for (var i = 0; i < views.length; i++){
                 if (!views[i].isReady()) return;
             }
+            
+            console.log("Volumes ready");
             onReady();
         }
         
         function beforeReady(){
+            
             $('#modality_stage :input').prop("disabled", true); 
             $("#modality_stage").buttonset('refresh'); 
+ 
         }
         
         function onReady(){
+                        
             setActiveModalityButtons();
             //$('#modality_stage :input').prop('disabled', false);
-            $("#modality_stage").buttonset('refresh');
-            
+            $("#modality_stage").buttonset('refresh');      
             
             // Configure viewer styling based on bookmark data
             bookmarkConfigure();
+            
         }  
                     
         function loadViewers(container) {
@@ -547,6 +595,7 @@
             $("#zoomIn")
                 .button()
                 .click($.proxy(function () {
+                    currentZoom++;                    
                     for (var i = 0; i < views.length; i++) {
                         views[i].zoomIn();
                     }
@@ -556,6 +605,7 @@
             $("#zoomOut")
                 .button()
                 .click($.proxy(function () {
+                    currentZoom--;
                     for (var i = 0; i < views.length; i++) {
                         views[i].zoomOut();
                     }
@@ -641,7 +691,9 @@
                 for (var i = 0; i < views.length; i++) {
                     views[i].setVisibleViews(ortho, count, horizontalView);
                 }
-                window.dispatchEvent(new Event('resize')); 
+                window.dispatchEvent(new Event('resize'));
+                
+                currentZoom = 0; // necessary as the zoom resets on change
 
             });
             
@@ -737,6 +789,7 @@
     
     
         function setupDownloadTable() {
+            
             var dlg = $('#download_dialog').dialog({
                 title: 'Select volumes for download',
                 resizable: true,
@@ -747,9 +800,7 @@
                 height: 550,
                 position: { my: "left bottom", at: "left top", of: $('#top_bar')}
             });
-         
 
-            
             var template = Handlebars.compile(downloadTableRowSource);
 
             dlg.load('download_dialog.html', function () {
@@ -803,8 +854,6 @@
             });
         }
         ;
-        
-        
         
         function getZippedVolumes(event) {
             /* Just try zipping one volume for now

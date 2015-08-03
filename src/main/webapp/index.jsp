@@ -188,7 +188,7 @@ limitations under the License.
                     x: parseInt(<%= request.getParameter("x")%>), // done
                     y: parseInt(<%= request.getParameter("y")%>), // done
                     z: parseInt(<%= request.getParameter("z")%>), // done
-                    zoom: parseFloat(<%= request.getParameter("zoom")%>),
+                    zoom: parseInt(<%= request.getParameter("zoom")%>),
                     orientation: "<%= request.getParameter("orientation")%>"
                 };
                 
@@ -233,11 +233,11 @@ limitations under the License.
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
         <div id="controls_{{id}}"class="controls clear">
-            <div class="selectorWrap" id="{{selectorWrapId}}" title="test">
+            <div class="selectorWrap" id="{{selectorWrapId}}" title="Select an embryo">
                 <select id="{{vselectorId}}" class ="selectmenu"></select>
             </div>
             <div class="wlwrap">
-                <div id="{{windowLevelId}}" class="windowLevel" title="test"></div>
+                <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
             </div>
             <div class="metadata" id="metadata_{{id}}">
             
@@ -297,7 +297,7 @@ limitations under the License.
     </script>
     
     
-            <!--Sepeciment metadata template-->
+            <!--Specimen metadata template-->
     <script id="specimenMetdataTemplate" type="text/x-handlebars-template">
          <div class="centre_logo" id="centre_logo_{{id}}">
             <img class="logo_img" src="{{centreLogoPath}}"/>

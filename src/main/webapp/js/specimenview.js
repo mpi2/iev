@@ -369,22 +369,9 @@
             var template = Handlebars.compile(source);
             return template(data);
         };
-        
-        function zoomBy(amt) {
-            if (amt < 0) {
-                while (amt < 0) {
-                    zoomOut();
-                    amt++;
-                }
-            } else {
-                while (amt > 0) {
-                    zoomIn();
-                    amt--;
-                }
-            }
-        }
-        
+                
         function zoomIn(){
+           console.log('Zoom in');
            xRen.camera.zoomIn(false);
            yRen.camera.zoomIn(false);
            zRen.camera.zoomIn(false);
@@ -396,6 +383,7 @@
             if (xRen.normalizedScale < 1.0 || yRen.normalizedScale < 1.0 || zRen.normalizedScale < 1.0){
                return;
             }
+            console.log('Zoom out');
             xRen.camera.zoomOut(false);
             yRen.camera.zoomOut(false);
             zRen.camera.zoomOut(false);
@@ -533,18 +521,14 @@
                     volume.modified(false);
                 }
                 
-                $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);
+                $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);                               
                                 
-               // Zoom
-                var zoom = config['zoom'];
-                if (zoom) {
-                    zoomBy(zoom);
-                } 
             };
             
             xRen.onShowtime = function(){   
                 // we have to wait before volumes have fully loaded before we
                 // can extract intesity information
+                console.log("On showtime");
                 setContrastSlider();               
                 setReady();
             };
