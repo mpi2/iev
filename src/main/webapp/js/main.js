@@ -9,8 +9,8 @@
           */
         
         console.log('main', data);
-        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var OUTPUT_FILE_EXT = '.NRRD';
         var queryId = queryId;
@@ -82,6 +82,21 @@
             '4mm': 4000,
             '6mm': 6000
         };
+        
+        var ICONS_DIR = "images/centre_icons/"; //Also in SpecimenView
+        
+        var centreIcons ={ // This should go somewhere else. There's also a copy in SpecimenView
+            1: "logo_Bcm.png",
+            3: "logo_Gmc.png",
+            4: "logo_H.png",
+            6: "logo_Ics.png",
+            7: "logo_J.png",
+            8: "logo_Tcp.png",
+            9: "logo_Ning.png",
+            10: "logo_Rbrc.png",
+            11: "logo_Ucd.png",
+            12: "logo_Wtsi.png"
+        }
             
         
         var scaleLabels = function(){
@@ -133,7 +148,7 @@
                 //Display the top control bar
                 $('#top_bar').show();
 
-                // Loop over the centres
+                // Loop over the centre data
                 for(var i = 0; i < objSize(data['centre_data'][cen]); i++) {
                     //loop over the data for this centre
 
@@ -287,40 +302,6 @@
              * @param {String} container HTML element to put the specimen viewer in to
              */
             
-            
-            
-
-//            $('.scale_text').text($('#scale_select').find(":selected").text());
-           
-            
-            //Just for testing
-            // Populate ddb with available centres
-            var availableCentres = [];
-            for (var cen in data['centre_data']){ // 
-                availableCentres.push("<option value='" + cen  + "'>" + cen + "</option>");
-               
-            }
-             $('#centre_select')
-                .append(availableCentres.join(""))
-                .selectmenu({
-                    width: 80,
-                    height: 20,
-                    change: $.proxy(function (event, ui) { 
-                            setCentre(event.currentTarget.innerText)
-                        
-                    }, this)
-                });
-                
-              //$('#centre_select').val(4).selectmenu('refresh');
-            
-            
-            
-            
-            
-            
-            
-            ////////////////////testing
-            
             // Find first lot of data to use. loop over PIDs in reverse to try CT before OPT
             var pid;
             for (var i in volorder){
@@ -346,7 +327,84 @@
             mutView = dcc.SpecimenView(mutantData, 'mut', container, 
             queryId, sliceChange, config, loadedCb);
             views.push(mutView);   
+            centreSelector();
         };
+        
+        
+        
+        
+        
+        function centreSelector(){
+            /*
+             * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
+             */
+//            
+//            //Just for testing
+//            // Populate drop down box with available centres
+        
+            
+//             $('#centre_select')
+//                .append(availableCentres.join(""))
+//                .selectmenu({
+//                    width: 80,
+//                    height: 20,
+//                    change: $.proxy(function (event, ui) { 
+//                            setCentre(event.currentTarget.innerText)
+//                        
+//                    }, this)
+//                });
+//                
+//              $('#centre_select').val(currentCentreId).selectmenu('refresh');
+
+            ////////////////////testing
+            $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+                _renderItem: function (ul, item) {
+                    var li = $("<li>", {text: item.label});
+                    if (item.disabled) {
+                        li.addClass("ui-state-disabled");
+                    }
+
+                    $("<span>", {
+                        style: item.element.attr("data-style"),
+                        "class": "ui-icon " + item.element.attr("data-class")
+                    })
+                            .appendTo(li);
+                    return li.appendTo(ul);
+                }
+            });
+            //remove any current options
+            $('#centre_select')
+                    .find('option')
+                    .remove()
+                    .end();
+
+            // Add the volume options
+            var options = [];
+            for (var cen in data['centre_data']){
+                var iconUrl = ICONS_DIR + centreIcons[cen];
+                options.push('<option value="' + cen + '" data-class="cen_'+ cen + ' centreIcons"></option>');
+            }
+
+
+            $('#centre_select')
+                    .append(options.join("")).val(currentCentreId);
+
+
+            $('#centre_select').iconselectmenu()
+                    .iconselectmenu("menuWidget")
+                    .addClass("ui-menu-icons customicons");
+
+            $('#centre_select')
+                    .iconselectmenu({
+                        change: $.proxy(function (event, ui) {
+                            setCentre(ui.item.value);
+                        }, this)
+                    })         
+            }
+          
+               
+//            
+        
         
         
         function setCentre(cid){

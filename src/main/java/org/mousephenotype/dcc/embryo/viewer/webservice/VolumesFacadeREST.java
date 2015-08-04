@@ -45,11 +45,12 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
     public String all(
             @QueryParam("colony_id") String colonyId, 
             @QueryParam("gene_symbol") String geneSymbol,
-            @QueryParam("mgi") String mgiId){
+            @QueryParam("mgi") String mgi)
+    
+    {
         
-        VolumesPack vp = new VolumesPack();
         
-        if (colonyId == null && geneSymbol == null && mgiId == null){
+        if (colonyId == null && geneSymbol == null && mgi == null){
             return "Failed";
         }
         
@@ -116,7 +117,6 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
                 q.setParameter("centreId", cid);
                 List<Preprocessed> v = q.getResultList();
                 centreResults.put(cid, v);
-                
             }
             
             HashMap<String, Object> allResults = new HashMap<>();
@@ -124,6 +124,11 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
             allResults.put("num_centres", set.size());
             allResults.put("centre_data", centreResults);
             em.close();
+            System.out.println("all");
+            System.out.println(allResults);
+
+            
+ 
             //vp.setDataSet(allResults);
         
         

@@ -259,24 +259,57 @@ fieldset{
 
 
 
-  /* select with custom icons */
-    .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item {
-     
-    }
-    .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item .ui-icon {
-      height: 20px;
-      width: 20px;
-      
-    }
-    .ui-icon.male {
-      background: url("../images/male.png") 0 0 no-repeat;
-    }
-    .ui-icon.female {
-      background: url("../images/female.png") 0 0 no-repeat;
-    }
+/* select with custom icons */
+  .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item {
 
+  }
+  .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item .ui-icon {
+    height: 20px;
+    width: 20px;
 
-
+  }
+  .ui-icon.male {
+    background: url("../images/male.png") 0 0 no-repeat;
+  }
+  .ui-icon.female {
+    background: url("../images/female.png") 0 0 no-repeat;
+  }
+  
+  
+/* Centre selector */
+  .ui-icon.cen_1 {
+    background: url("../images/centre_icons/logo_Bcm.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_3 {
+    background: url("../images/centre_icons/logo_Gmc.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_4 {
+    background: url("../images/centre_icons/logo_H.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_6 {
+    background: url("../images/centre_icons/logo_Ics.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_7 {
+    background: url("../images/centre_icons/logo_J.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_8 {
+    background: url("../images/centre_icons/logo_Tcp.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_9 {
+    background: url("../images/centre_icons/logo_Ning.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_10 {
+    background: url("../images/centre_icons/Rbrc.png") 0 0 no-repeat;
+  }
+ .ui-icon.cen_11 {
+    background: url("../images/centre_icons/logo_Ucd.png") 0 0 no-repeat;
+  }
+  .ui-icon.cen_12 {
+    background: url("../images/centre_icons/logo_Wtsi.png") 0 0 no-repeat;
+  }
+  .ui-icon.centreIcons{
+    background-size: 20px 20px;
+  }
 
 
 

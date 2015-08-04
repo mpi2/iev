@@ -108,7 +108,7 @@
 
         
         
-        function updateVolumeSelector(){
+        function updateVolumeSelector() {
             $.widget("custom.iconselectmenu", $.ui.selectmenu, {
                 _renderItem: function (ul, item) {
                     var li = $("<li>", {text: item.label});
@@ -126,38 +126,36 @@
             });
             //remove any current options
             $('#' + vselector)
-                .find('option')
-                .remove()
-                .end();
+                    .find('option')
+                    .remove()
+                    .end();
 
             // Add the volume options
             var options = [];
             for (var i in volumeData) {
                 var url = volumeData[i]['volume_url'];
                 var sex = volumeData[i].sex.toLowerCase();
-                options.push("<option value='" + url + "' data-class='" + sex +"'>" + basename(url) + "</option>");
+                options.push("<option value='" + url + "' data-class='" + sex + "'>" + basename(url) + "</option>");
             }
-            
-               
+
+
             $('#' + vselector)
-            .append(options.join(""));
-            
-     
+                    .append(options.join(""));
+
+
             $('#' + vselector).iconselectmenu()
-            .iconselectmenu("menuWidget")
+                    .iconselectmenu("menuWidget")
                     .addClass("ui-menu-icons customicons");
-                  
-             $('#' + vselector)
-                     .iconselectmenu({
+
+            $('#' + vselector)
+                    .iconselectmenu({
                         change: $.proxy(function (event, ui) {
                             replaceVolume(ui.item.value);
                         }, this)
                     })
-             .iconselectmenu("refresh");
-//                             
-            
-                
+                    .iconselectmenu("refresh");
         }
+        
         
         
         function showMetadata(){
