@@ -167,29 +167,36 @@ limitations under the License.
                 var bookmarkData = {
                     mode: null, // done
                     gene: null, // done
-                    modality: "<%= request.getParameter("modality")%>",
+                    modality: "<%= request.getParameter("mod")%>",
                     wt: {
                         name: "<%= request.getParameter("wt")%>",
+                        pos: {
+                            x: parseInt(<%= request.getParameter("wx")%>),
+                            y: parseInt(<%= request.getParameter("wy")%>),
+                            z: parseInt(<%= request.getParameter("wz")%>)
+                        },
                         brightness: {
-                            lower: <%= request.getParameter("wt_bl")%>,
-                            upper: <%= request.getParameter("wt_bu")%>
+                            lower: <%= request.getParameter("wl")%>,
+                            upper: <%= request.getParameter("wu")%>
                         }
                     },         
                     mut: {
                         name: "<%= request.getParameter("mut")%>",
+                        pos: {
+                            x: parseInt(<%= request.getParameter("mx")%>),
+                            y: parseInt(<%= request.getParameter("my")%>),
+                            z: parseInt(<%= request.getParameter("mz")%>)
+                        },
                         brightness: {
-                            lower: <%= request.getParameter("mut_bl")%>,
-                            upper: <%= request.getParameter("mut_bu")%>
+                            lower: <%= request.getParameter("ml")%>,
+                            upper: <%= request.getParameter("mu")%>
                         }
                     },
-                    s: "<%= request.getParameter("s")%>", // done
-                    c: "<%= request.getParameter("c")%>", // done
-                    a: "<%= request.getParameter("a")%>", // done
-                    x: parseInt(<%= request.getParameter("x")%>), // done
-                    y: parseInt(<%= request.getParameter("y")%>), // done
-                    z: parseInt(<%= request.getParameter("z")%>), // done
+                    s: "<%= request.getParameter("s")%>",
+                    c: "<%= request.getParameter("c")%>",
+                    a: "<%= request.getParameter("a")%>",
                     zoom: parseInt(<%= request.getParameter("zoom")%>),
-                    orientation: "<%= request.getParameter("orientation")%>"
+                    orientation: "<%= request.getParameter("o")%>"
                 };
                 
                 if (colonyId !== 'null'){

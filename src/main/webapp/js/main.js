@@ -7,9 +7,7 @@
           * @class EmbryoViewer
           * @type String
           */
-        
-        console.log('main', data);
-        console.log('main', bookmarkData);
+
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
@@ -91,15 +89,6 @@
                 options.push("<option value='" + scaleOptions[key]  + "'>" + key + "</option>");
             }
             return options;
-        };
-        
-        var config = { //remove hardcoding
-            scaleBarSize: 600,
-            x: parseInt(bookmarkData['x']),
-            y: parseInt(bookmarkData['y']),
-            z: parseInt(bookmarkData['z']),
-            specimen: null,
-            contrast: null
         };
         
         var spinnerOpts = {
@@ -231,8 +220,6 @@
             
             if (!bookmarkReady) { 
 
-                console.log("Configuring bookmark");
-
                 // Set views       
                 if (bookmarkData['s'] === 'off') {
                     $('#X_check').trigger('click');
@@ -259,12 +246,11 @@
             
             }
             
-        }       
-        
+        }
         
         function generateBookmark() {
             
-            var currentUrl = window.location.href; // TODO get the current URL + gene_symbol/mgi
+            var currentUrl = window.location.href;
             var hostname = currentUrl.split('?')[0];
             
             var s =  ortho['X']['visible'] ? 'on' : 'off';
@@ -273,20 +259,23 @@
             
             var bookmark = hostname
                 + '?' + bookmarkData['mode'] + '=' + bookmarkData['gene']
-                + '&modality=' + currentModality
+                + '&mod=' + currentModality
                 + '&wt=' + wtView.getCurrentVolume()['animalName']
-                + '&mut=' + wtView.getCurrentVolume()['animalName']
+                + '&mut=' + mutView.getCurrentVolume()['animalName']
                 + '&s=' + s
                 + '&c=' + c
                 + '&a=' + a
-                + '&x=' + wtView.getIndex('X')
-                + '&y=' + wtView.getIndex('Y')
-                + '&z=' + wtView.getIndex('Z') // TODO add zoom
-                + '&orientation=' + currentOrientation
-                + '&wt_bl=' + wtView.getBrightnessLower()
-                + '&wt_bu=' + wtView.getBrightnessUpper()
-                + '&mut_bl=' + mutView.getBrightnessLower()
-                + '&mut_bu=' + mutView.getBrightnessUpper()
+                + '&wx=' + wtView.getIndex('X')
+                + '&wy=' + wtView.getIndex('Y')
+                + '&wz=' + wtView.getIndex('Z')
+                + '&mx=' + mutView.getIndex('X')
+                + '&my=' + mutView.getIndex('Y')
+                + '&mz=' + mutView.getIndex('Z')                
+                + '&wl=' + wtView.getBrightnessLower()
+                + '&wu=' + wtView.getBrightnessUpper()
+                + '&ml=' + mutView.getBrightnessLower()
+                + '&mu=' + mutView.getBrightnessUpper()
+                + '&o=' + currentOrientation
                 + '&zoom=' + currentZoom;
             return bookmark;
         }
@@ -351,9 +340,7 @@
              */
             for (var i = 0; i < views.length; i++){
                 if (!views[i].isReady()) return;
-            }
-            
-            console.log("Volumes ready");
+            }            
             onReady();
         }
         
@@ -402,16 +389,16 @@
             
             // only load if baseline data available
             if (objSize(wildtypeData) > 0){
-                config['specimen'] = bookmarkData['wt'];
+                var wtConfig = { scaleBarSize: 600, specimen: bookmarkData['wt'] };
                 wtView = dcc.SpecimenView(wildtypeData, 'wt', container, 
-                WILDTYPE_COLONYID, sliceChange, config, loadedCb);
+                    WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb);
                 views.push(wtView);
             }
             
-            // Set mutant specimen based on bookmark
-            config['specimen'] = bookmarkData['mut'];
+            // Set mutant specimen based on bookmark   
+            var mutConfig = { scaleBarSize: 600, specimen: bookmarkData['mut'] };
             mutView = dcc.SpecimenView(mutantData, 'mut', container, 
-            queryId, sliceChange, config, loadedCb);
+                queryId, sliceChange, mutConfig, loadedCb);
             views.push(mutView);   
         };
         
@@ -511,7 +498,7 @@
         
         function setLowPowerState(state){
             /*
-             * Switches the low poer option on or off
+             * Switches the low power option on or off
              */
 
             for (var i = 0; i < views.length; i++) {
@@ -595,21 +582,23 @@
             
             $("#zoomIn")
                 .button()
-                .click($.proxy(function () {
-                    currentZoom++;                    
+                .click($.proxy(function () {                                        
                     for (var i = 0; i < views.length; i++) {
                         views[i].zoomIn();
                     }
+                    currentZoom++;
                 }, this));
 
 
             $("#zoomOut")
                 .button()
-                .click($.proxy(function () {
-                    currentZoom--;
+                .click($.proxy(function () {                    
                     for (var i = 0; i < views.length; i++) {
-                        views[i].zoomOut();
+                        if (!views[i].zoomOut()) {
+                            return; // stop trying to zoom if we hit a limit
+                        };                        
                     }
+                    currentZoom--;
                 }, this));
        
 

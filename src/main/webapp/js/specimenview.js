@@ -55,7 +55,7 @@
         var yRen;
         var zRen;
         var volume;
-        var lowPower = false
+        var lowPower = false;
         var windowLevel = 'windowLevel_' + id;
         var vselector = 'volumeSelector_' + id;
         var xOffset = 0;
@@ -69,10 +69,10 @@
          * 
          * A temporary fix to map cid to centre logo icon
          */
-        var ICONS_DIR = "images/centre_icons/"
+        var ICONS_DIR = "images/centre_icons/";
         var IMG_DIR = "images/";
-        var FEMALE_ICON = "female.png"
-        var MALE_ICON = "male.png"
+        var FEMALE_ICON = "female.png";
+        var MALE_ICON = "male.png";
         var HOM_ICON = 'hom.png';
         var HET_ICON = 'het.png';
         var HEMI_ICON = 'het.png';
@@ -371,7 +371,6 @@
         };
                 
         function zoomIn(){
-           console.log('Zoom in');
            xRen.camera.zoomIn(false);
            yRen.camera.zoomIn(false);
            zRen.camera.zoomIn(false);
@@ -381,13 +380,13 @@
         function zoomOut(){
             //Prevent over out-zooming
             if (xRen.normalizedScale < 1.0 || yRen.normalizedScale < 1.0 || zRen.normalizedScale < 1.0){
-               return;
-            }
-            console.log('Zoom out');
+               return false;
+            }            
             xRen.camera.zoomOut(false);
             yRen.camera.zoomOut(false);
             zRen.camera.zoomOut(false);
             drawScaleBar();        
+            return true;
         }
         
         
@@ -528,7 +527,6 @@
             xRen.onShowtime = function(){   
                 // we have to wait before volumes have fully loaded before we
                 // can extract intesity information
-                console.log("On showtime");
                 setContrastSlider();               
                 setReady();
             };
@@ -665,7 +663,8 @@
                 //Set the index sliders
                 $xSlider.slider("value", volume.indexX);
                 $ySlider.slider("value", volume.indexY);
-                $zSlider.slider("value", volume.indexZ);   
+                $zSlider.slider("value", volume.indexZ);
+                
                 //Set the index in the other linked views
                 sliceChange(id, 'X', volume.indexX);
                 sliceChange(id, 'Y', volume.indexY);
@@ -695,9 +694,14 @@
             // Let main know of the new dimensions of the orthogonal views
 
             // It appears that dimensins are in yxz order. At least with nii loading
-            volume.indexX = config['x'] !== "null" ? config['x'] : Math.floor((dims[0] - 1) / 2);
-            volume.indexY = config['y'] !== "null" ? config['y'] : Math.floor((dims[1] - 1) / 2);
-            volume.indexZ = config['z'] !== "null" ? config['z'] : Math.floor((dims[2] - 1) / 2);
+            var pos = config['specimen']['pos'];
+            volume.indexX = !isNaN(pos['x']) ? pos['x'] : pos['x']; //Math.floor((dims[0] - 1) / 2);
+            volume.indexY = !isNaN(pos['y']) ? pos['y'] : pos['y']; //Math.floor((dims[1] - 1) / 2);
+            volume.indexZ = !isNaN(pos['z']) ? pos['z'] : pos['z']; //Math.floor((dims[2] - 1) / 2);
+            
+            console.log(id + volume.indexX);
+            console.log(id + volume.indexY);
+            console.log(id + volume.indexZ);            
 
             // make the sliders
             $xSlider.slider({
@@ -759,9 +763,6 @@
                 }.bind(this)
             });
             
-            
-           
-
             // Overload onMouseWheel event to control slice sliders
             xRen.interactor.onMouseWheel = function (event) {
                 $xSlider.slider({value: volume.indexX});
@@ -856,7 +857,7 @@
             /**
              * Get the index of the current slice for a orthogonal view
              * @method getIndex
-             * @param {String} ortho Orthogonal view ('x', 'Y' or 'Z')
+             * @param {String} ortho Orthogonal view ('X', 'Y' or 'Z')
              */
             if (ortho === 'X') return volume.indexX;
             if (ortho === 'Y') return volume.indexY;
