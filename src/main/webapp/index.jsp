@@ -98,12 +98,12 @@ limitations under the License.
                     <input type="checkbox" id="invertColours">
                     <label for="invertColours">Invert colours</label>
                     <button id="reset">Reset</button>
-                    <input type="checkbox" id="low_power_check" class='toggle_slice'>
-                    <label for="low_power_check" id='low_power_check_label'>low cpu</label>      
+                    <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle dynamic rendering">
+                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label>      
                 </fieldset>       
                 
                 <fieldset id="bookmark_fieldset">
-                    <legend>Bookmark</legend>
+                    <legend>Save</legend>
                     <div id="createBookmark">
                         <img src="images/bookmark.png" height="25" id="bookmark_img">
                     </div>

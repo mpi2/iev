@@ -548,12 +548,13 @@
              */
         
             
-            $('#screenShot').click(function(e){
+            $('#screenShot').click(function(e) {
                 for (var i = 0; i < views.length; i++) {
-                    views[i].screenShot();                }
+                    views[i].screenShot();
+                }
             }.bind(this));
           
-            $('#low_power_check').click(function(e){
+            $('#low_power_check').button().click(function(e){                               
                 setLowPowerState(e.currentTarget.checked);
             }.bind(this));
 
