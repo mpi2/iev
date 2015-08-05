@@ -31,7 +31,7 @@ import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
     
     
-    private String IEVURL = "https://dev.mousephenotype.org/embryoviewer?mgi=";
+    private String IEVURL = "http://www.mousephenotype.org/embryoviewer?mgi=";
     private HashMap<Integer, String> centreMapping;
 
     public DataReadyFacadeREST() {
