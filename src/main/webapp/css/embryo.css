@@ -110,6 +110,8 @@ body{
     cursor: pointer;
 }
 
+
+
 #createBookmark {
     padding-left: auto;
     padding-right: auto;
@@ -331,6 +333,12 @@ fieldset{
     background-size: 20px 20px;
   }
 
+  
+  #reset{
+      height: 50px;
+      width: 50px;
+      float: left;
+  }
 
 
 .pane {

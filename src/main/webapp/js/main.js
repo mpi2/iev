@@ -666,7 +666,7 @@
 
 
             $("#reset")
-                .button()
+               
                 .click($.proxy(function () {
                    for (var i = 0; i < views.length; i++) {
                         views[i].reset();

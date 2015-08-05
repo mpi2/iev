@@ -82,8 +82,10 @@ limitations under the License.
             
             <fieldset id="avaiable_centres">
                 <legend>centres</legend>
-                    <select name="centre_select" id="centre_select">
-                    </select>  
+                <div id="centre_wrap">
+                    <!--<select name="centre_select" id="centre_select">-->
+                    <!--</select>-->  
+                 </div>
             </fieldset>
                
             
@@ -104,7 +106,9 @@ limitations under the License.
                     <legend>Other</legend>
                     <input type="checkbox" id="invertColours">
                     <label for="invertColours">Invert colours</label>
-                    <button id="reset">Reset</button>
+                    <div id="reset">
+                          <img src="images/reload.png" height="25" id="download_img">
+                    </div>
                     <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle dynamic rendering">
                     <label for="low_power_check" id='low_power_check_label'>Low CPU</label>      
                 </fieldset>       
