@@ -35,6 +35,12 @@ import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 @Stateless
 @Path("volumes")
 public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
+    private String firstSearch;
+    private String secondSearch;
+    private String searchType;
+    private String searchTerm;
+    
+    
 
     public VolumesFacadeREST() {
         super(Preprocessed.class);
@@ -45,80 +51,59 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
     public String all(
             @QueryParam("colony_id") String colonyId, 
             @QueryParam("gene_symbol") String geneSymbol,
-            @QueryParam("mgi") String mgi)
-    
-    {
+            @QueryParam("mgi") String mgi){
         
         
         if (colonyId == null && geneSymbol == null && mgi == null){
             return "Failed";
         }
         
-  
-        EntityManager emcid = getEntityManager();
-        EntityManager em = getEntityManager();
-        TypedQuery<Preprocessed> qcid;
-        List<Preprocessed> p = new ArrayList<Preprocessed>();
-     
-//        if (colonyId != null){
-//            
-//            qcid = emcid.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
-//            qcid.setParameter("colonyId", colonyId);
-//            p = qcid.getResultList();
-//            if (p.size() < 1) return vp;
-//          
-//            // What about if we have multiple centre IDs. e.g. for refrence lines
-//            //First create a Set of the centre IDs
-//            Set<Integer> set = new HashSet<>();
-//            for (Preprocessed p1 : p) {
-//                set.add(p1.getCid());
-//            }
-//            
-//            int centreId;
-//            //If we have multiple centreIds, such as with reference lines, put them in here
-//            ArrayList<Integer> allCentreIds = new ArrayList<>();
-//            for (Integer c : set){
-//                allCentreIds.add(c);
-//            }
-//            // Set the current centrId as the 
-//            centreId = set.iterator().next();
-//            
-//            TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyIdAndWt", Preprocessed.class);
-//            q.setParameter("colonyId", colonyId);
-//            q.setParameter("centreId", centreId);
-//            List<Preprocessed> v = q.getResultList();
-//            System.out.println(v);
-//            
-//            em.close();
-//            
-//            vp.setDataSet(v);
-//        }
-        
-     
+ 
+            if (geneSymbol != null){
+                firstSearch = "Preprocessed.findByGeneSymbol";
+                secondSearch = "Preprocessed.findByGeneSymbolAndWt";
+                searchType = "geneSymbol";
+                searchTerm = geneSymbol;
+            }
+            else if (colonyId != null){
+                firstSearch = "Preprocessed.findByColonyId";
+                secondSearch = "Preprocessed.findByColonyIdAndWt";
+                searchType = "colonyId";
+                searchTerm = colonyId;
+            }
+            else if (mgi != null){
+                firstSearch = "Preprocessed.findByMgi";
+                secondSearch = "Preprocessed.findByMgiAndWt";
+                searchType = "mgi";
+                searchTerm = mgi;
+            }
+            
+            
+            EntityManager emcid = getEntityManager();
+            TypedQuery<Preprocessed> qcid = emcid.createNamedQuery(firstSearch, Preprocessed.class);
+            qcid.setParameter(searchType, searchTerm);
+            List<Preprocessed> p = qcid.getResultList();
+            if (p.size() < 1){
+                return "failed";
+            }
            
-            qcid = emcid.createNamedQuery("Preprocessed.findByGeneSymbol", Preprocessed.class);
-            qcid.setParameter("geneSymbol", geneSymbol);
-            p = qcid.getResultList();
-            if (p.size() < 1) return "failed";
-            
-            
             //Get a set of unique centre IDs
             Set<Integer> set = new HashSet<>();
             for (Preprocessed p1 : p) {
                 set.add(p1.getCid());
             }
             
-            
+            EntityManager em = getEntityManager();
             HashMap<Integer, List<Preprocessed>> centreResults = new HashMap<>();
             for (Integer cid : set){
-               
-                TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByGeneSymbolAndWt", Preprocessed.class);
-                q.setParameter("geneSymbol", geneSymbol);
+                
+                TypedQuery<Preprocessed> q = em.createNamedQuery(secondSearch, Preprocessed.class);
+                q.setParameter(searchType, searchTerm);
                 q.setParameter("centreId", cid);
                 List<Preprocessed> v = q.getResultList();
                 centreResults.put(cid, v);
             }
-            
+       
             HashMap<String, Object> allResults = new HashMap<>();
             allResults.put("success", true);
             allResults.put("num_centres", set.size());
@@ -127,28 +112,6 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
             System.out.println("all");
             System.out.println(allResults);
 
-            
- 
-            //vp.setDataSet(allResults);
-        
-        
-//        else if (mgiId != null){
-//           
-//            qcid = emcid.createNamedQuery("Preprocessed.findByMgi", Preprocessed.class);
-//            qcid.setParameter("mgi", mgiId);
-//            p = qcid.getResultList();
-//            if (p.size() < 1) return vp;
-//            
-//            int centreId = p.get(0).getCid();
-//            TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByMgiAndWt", Preprocessed.class);
-//            q.setParameter("mgi", mgiId);
-//            q.setParameter("centreId", centreId);
-//            List<Preprocessed> v = q.getResultList();
-//            em.close();
-//            vp.setDataSet(v);
-//        } 
-            
-            //JSONObject jo = new JSONObject();
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
@@ -156,8 +119,5 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
           
         String json = gson.toJson(allResults);
         return json;
- 
     }
-    
-
 }
