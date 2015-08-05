@@ -752,10 +752,6 @@
             volume.indexX = !isNaN(pos['x']) ? pos['x'] : pos['x']; //Math.floor((dims[0] - 1) / 2);
             volume.indexY = !isNaN(pos['y']) ? pos['y'] : pos['y']; //Math.floor((dims[1] - 1) / 2);
             volume.indexZ = !isNaN(pos['z']) ? pos['z'] : pos['z']; //Math.floor((dims[2] - 1) / 2);
-            
-            console.log(id + volume.indexX);
-            console.log(id + volume.indexY);
-            console.log(id + volume.indexZ);            
 
             // make the sliders
             $xSlider.slider({
