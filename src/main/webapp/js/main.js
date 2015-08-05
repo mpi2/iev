@@ -8,8 +8,8 @@
           * @type String
           */
 
-        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var OUTPUT_FILE_EXT = '.NRRD';
         var queryId = queryId;
@@ -87,6 +87,23 @@
             '4mm': 4000,
             '6mm': 6000
         };
+        
+        
+        var ICONS_DIR = "images/centre_icons/"; //Also in SpecimenView
+        
+        var centreIcons ={ // This should go somewhere else. There's also a copy in SpecimenView
+            1: "logo_Bcm.png",
+            3: "logo_Gmc.png",
+            4: "logo_H.png",
+            6: "logo_Ics.png",
+            7: "logo_J.png",
+            8: "logo_Tcp.png",
+            9: "logo_Ning.png",
+            10: "logo_Rbrc.png",
+            11: "logo_Ucd.png",
+            12: "logo_Wtsi.png"
+        };
+            
             
         
         var scaleLabels = function(){
