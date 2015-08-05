@@ -7,9 +7,16 @@
           * @class EmbryoViewer
           * @type String
           */
+<<<<<<< HEAD
 
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+=======
+        
+        console.log('main', data);
+        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+>>>>>>> meta
         var WILDTYPE_COLONYID = 'baseline';
         var OUTPUT_FILE_EXT = '.NRRD';
         var queryId = queryId;
@@ -19,10 +26,15 @@
         var mutView;
         var currentModality;
         var downloadTableRowSource;
+<<<<<<< HEAD
         var spinner; // Progress spinner
         var currentZoom = 0;
         var currentOrientation = 'horizontal';
         var bookmarkReady = false;
+=======
+        var spinner; // Progress spinner 
+        var currentCentreId; // Which Data's centre are we looking at
+>>>>>>> meta
           
         //Give users a warning about using the deprecated colony_id=test url
         if (queryType === 'colony ID' && queryId === 'test'){
@@ -65,8 +77,8 @@
                     'wildtype': {}
                 }
             }
+            }
         };
-    }
         
         var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
         
@@ -87,6 +99,21 @@
             '4mm': 4000,
             '6mm': 6000
         };
+        
+        var ICONS_DIR = "images/centre_icons/"; //Also in SpecimenView
+        
+        var centreIcons ={ // This should go somewhere else. There's also a copy in SpecimenView
+            1: "logo_Bcm.png",
+            3: "logo_Gmc.png",
+            4: "logo_H.png",
+            6: "logo_Ics.png",
+            7: "logo_J.png",
+            8: "logo_Tcp.png",
+            9: "logo_Ning.png",
+            10: "logo_Rbrc.png",
+            11: "logo_Ucd.png",
+            12: "logo_Wtsi.png"
+        }
             
         
         var scaleLabels = function(){
@@ -97,7 +124,6 @@
             }
             return options;
         };
-        
         
         var spinnerOpts = {
             lines: 8 // The number of lines to draw
@@ -205,9 +231,15 @@
                 else{
                     $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', false);
                 }
-            }        
+            }  
+<<<<<<< HEAD
+        }        
+=======
+            
+            
         }
         
+>>>>>>> meta
     
         function buildUrl(data){
             /**
@@ -356,14 +388,21 @@
              */
             for (var i = 0; i < views.length; i++){
                 if (!views[i].isReady()) return;
-            }
+            }            
             onReady();
         }
         
         function beforeReady(){
+<<<<<<< HEAD
             
+=======
+            /*
+             * Diable the modality buttons during loading
+             */
+>>>>>>> meta
             $('#modality_stage :input').prop("disabled", true); 
-            $("#modality_stage").buttonset('refresh');
+            $("#modality_stage").buttonset('refresh'); 
+ 
         }
         
         function onReady(){
@@ -385,7 +424,6 @@
              * @param {String} container HTML element to put the specimen viewer in to
              */
             
-            
             // Find first lot of data to use. loop over PIDs in reverse to try CT before OPT
             var pid;
             for (var i in volorder){
@@ -397,7 +435,7 @@
                 }
             }
             
-            currentModality = pid;
+            currentModality = pid;            
             
             //Check the modality button
             $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
@@ -513,6 +551,7 @@
              */
             beforeReady();
             currentModality = pid;
+            console.log(currentCentreId);
             
             if (typeof wtView !== 'undefined'){
                 var wtVolumes = centreData[currentCentreId][pid]['vols'].wildtype;
@@ -892,9 +931,7 @@
                 height: 550,
                 position: { my: "left bottom", at: "left top", of: $('#top_bar')}
             });
-         
 
-            
             var template = Handlebars.compile(downloadTableRowSource);
 
             dlg.load('download_dialog.html', function () {
@@ -948,8 +985,6 @@
             });
         }
         ;
-        
-        
         
         function getZippedVolumes(event) {
             /* Just try zipping one volume for now
@@ -1091,16 +1126,10 @@
 //    });
 
     setActiveModalityButtons();
-
-
     loadViewers(container);
     attachEvents();
     beforeReady();
     
-    
-    
     }//EmbryoViewer
-     
-   
-    
+       
 })();

@@ -15,6 +15,7 @@
  */
 package org.mousephenotype.dcc.embryo.viewer.webservice;
 
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -22,12 +23,14 @@ import javax.xml.bind.annotation.XmlType;
 import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 
 @XmlSeeAlso(Preprocessed.class)
-@XmlType(propOrder = {"success", "total", "volumes"})
+@XmlType(propOrder = {"success", "total", "centres"})
 public class VolumesPack extends AbstractRestResponse<Preprocessed> {
-    
+
     @Override
-    @XmlElement(name = "volumes")
-    public List<Preprocessed> getDataSet() {
+    @XmlElement(name = "centres")
+    public HashMap<Integer, List<Preprocessed>> getDataSet() {
         return super.getDataSet();
-    } 
+    }
+    
+    
 }

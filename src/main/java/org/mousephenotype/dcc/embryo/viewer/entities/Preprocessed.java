@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Preprocessed.findBySid", query = "SELECT p FROM Preprocessed p WHERE p.sid = :sid"),
     @NamedQuery(name = "Preprocessed.findByMid", query = "SELECT p FROM Preprocessed p WHERE p.mid = :mid"),
     
-    @NamedQuery(name = "Preprocessed.findByGeneSymbolAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.geneSymbol = :geneSymbol AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
+    @NamedQuery(name = "Preprocessed.findByGeneSymbolAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.geneSymbol = :geneSymbol AND p.statusId = 1 AND p.cid = :centreId) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
     @NamedQuery(name = "Preprocessed.findByMgiAndWt", query = "SELECT p FROM Preprocessed p WHERE (p.mgi = :mgi AND p.statusId = 1) OR (p.colonyId = 'baseline' AND p.cid = :centreId AND p.statusId = 1)"),
     @NamedQuery(name = "Preprocessed.findByMgi", query = "SELECT p FROM Preprocessed p WHERE p.mgi = :mgi"),
     

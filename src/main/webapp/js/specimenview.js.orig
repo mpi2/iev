@@ -62,8 +62,11 @@
         var yOffset = 0;
         var zOffset = 0;
         var ready = false;
+<<<<<<< HEAD
         var contrast = config['specimen']['brightness'];
-		var WILDTYPE_COLONYID = 'baseline';
+=======
+        var WILDTYPE_COLONYID = 'baseline';
+>>>>>>> meta
         
         
         /*
@@ -255,7 +258,6 @@
              * Makes contrast slider for specimen view
              * @method setContrastSlider
              */
-            console.log(volume.min);
             
             $windowLevel.slider({
                 range: true,
@@ -269,6 +271,7 @@
                     volume.modified(true);
                 }, this)
             });
+            
         }; 
 
         function screenShot() {
@@ -422,8 +425,7 @@
             var template = Handlebars.compile(source);
             return template(data);
         };
-        
-        
+                
         function zoomIn(){
            xRen.camera.zoomIn(false);
            yRen.camera.zoomIn(false);
@@ -817,9 +819,6 @@
                 }.bind(this)
             });
             
-            
-           
-
             // Overload onMouseWheel event to control slice sliders
             xRen.interactor.onMouseWheel = function (event) {
                 $xSlider.slider({value: volume.indexX});
