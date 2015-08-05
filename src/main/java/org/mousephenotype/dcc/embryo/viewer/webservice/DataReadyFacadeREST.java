@@ -30,8 +30,6 @@ import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 @Path("ready")
 public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
     
-    
-    private String IEVURL = "http://www.mousephenotype.org/embryoviewer?mgi=";
     private HashMap<Integer, String> centreMapping;
 
     public DataReadyFacadeREST() {
@@ -78,13 +76,10 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
             resultList.add(r.getResults());
         }
         
-        
-
-
         out.put("colonies", resultList );
             
         }
-        //JSONObject jo = new JSONObject();
+    
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
@@ -92,27 +87,6 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
           
         String json = gson.toJson(out);
         return json;
-    }
-    
-    
-    
-    
-    private HashMap processResult(Preprocessed p){
-        
-        HashMap<String, Object> m;
-        m = new HashMap<>();
-        ArrayList<String> modalities = new ArrayList<>();
-        
-        String cenName = centreMapping.get(p.getCid());
-        m.put("colony_id", p.getColonyId());
-        m.put("centre", cenName); //get Centre short name  
-        m.put("mgi", p.getMgi());
-        m.put("url", IEVURL + p.getMgi());
-        modalities.add(String.valueOf(p.getPid()));
-        m.put("Modalities", modalities);
-        
-        
-        return m;
     }
     
     
