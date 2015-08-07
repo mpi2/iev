@@ -8,8 +8,8 @@
           * @type String
           */
 
-        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
         var WILDTYPE_COLONYID = 'baseline';
         var OUTPUT_FILE_EXT = '.NRRD';
         var queryId = queryId;
@@ -89,6 +89,20 @@
         };
         
         
+        var centreOptions = {
+            1: 'BCM',
+            3: 'GMC',
+            4: 'HAR',
+            6: 'ICS',
+            7: 'J',
+            8: 'TCP',
+            9: 'Ning',
+            10: 'RBRC',
+            11: 'UCD',
+            12: 'Wtsi'
+        };
+        
+        
         var ICONS_DIR = "images/centre_icons/"; //Also in SpecimenView
         
         var centreIcons ={ // This should go somewhere else. There's also a copy in SpecimenView
@@ -105,14 +119,24 @@
         };
             
             
-        
-        var scaleLabels = function(){
+
+        var scaleLabels = function () {
             var options = [];
-            for (var key in scaleOptions){
-           
-                options.push("<option value='" + scaleOptions[key]  + "'>" + key + "</option>");
+            for (var key in scaleOptions) {
+
+                options.push("<option value='" + scaleOptions[key] + "'>" + key + "</option>");
             }
             return options;
+        };
+
+        var centreLabels = function () {
+            var options = [];
+            for (var key in centreOptions) {
+                if (key in data['centre_data']) {
+                    options.push("<option value='" + key + "'>" + centreOptions[key] + "</option>");
+                }
+                return options;
+            }
         };
         
         
@@ -448,66 +472,66 @@
 //            
 //            //Just for testing
 //            // Populate drop down box with available centres
-        
             
-//             $('#centre_select')
-//                .append(availableCentres.join(""))
-//                .selectmenu({
-//                    width: 80,
-//                    height: 20,
-//                    change: $.proxy(function (event, ui) { 
-//                            setCentre(event.currentTarget.innerText)
-//                        
-//                    }, this)
-//                });
-//                
-//              $('#centre_select').val(currentCentreId).selectmenu('refresh');
+             $('#centre_select')
+                //.append(centreOptions().join(""))
+                .selectmenu({
+                    width: 30,
+                    height: 20,
+                    change: $.proxy(function (event, ui) { 
+                            setCentre(event.currentTarget.innerText)
+                        
+                    }, this)
+                });
+                
+              //$('#centre_select').val('4').selectmenu('refresh');
+          }
 
             ////////////////////testing
-            $.widget("custom.iconselectmenu", $.ui.selectmenu, {
-                _renderItem: function (ul, item) {
-                    var li = $("<li>", {text: item.label});
-                    if (item.disabled) {
-                        li.addClass("ui-state-disabled");
-                    }
-
-                    $("<span>", {
-                        style: item.element.attr("data-style"),
-                        "class": "ui-icon " + item.element.attr("data-class")
-                    })
-                            .appendTo(li);
-                    return li.appendTo(ul);
-                }
-            });
-            //remove any current options
-            $('#centre_select')
-                    .find('option')
-                    .remove()
-                    .end();
-
-            // Add the volume options
-            var options = [];
-            for (var cen in data['centre_data']){
-                var iconUrl = ICONS_DIR + centreIcons[cen];
-                options.push('<option value="' + cen + '" data-class="cen_'+ cen + ' centreIcons"></option>');
-            }
-
-
-            $('#centre_select')
-                    .append(options.join("")).val(currentCentreId);
-
-
-            $('#centre_select').iconselectmenu()
-                    .iconselectmenu("menuWidget")
-                    .addClass("ui-menu-icons customicons");
-
-            $('#centre_select')
-                    .iconselectmenu({
-                        change: $.proxy(function (event, ui) {
-                            setCentre(ui.item.value);
-                        }, this)
-                    })         
-            }
+//            $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+//                _renderItem: function (ul, item) {
+//                    var li = $("<li>", {text: item.label});
+//                    if (item.disabled) {
+//                        li.addClass("ui-state-disabled");
+//                    }
+//
+//                    $("<span>", {
+//                        style: item.element.attr("data-style"),
+//                        "class": "ui-icon " + item.element.attr("data-class")
+//                    })
+//                            .appendTo(li);
+//                    return li.appendTo(ul);
+//                }
+//            });
+//            //remove any current options
+//            $('#centre_select')
+//                    .find('option')
+//                    .remove()
+//                    .end();
+//
+//            // Add the volume options
+//            var options = [];
+//            for (var cen in data['centre_data']){
+//                var iconUrl = ICONS_DIR + centreIcons[cen];
+//                options.push('<option value="' + cen + '" data-class="cen_'+ cen + ' centreIcons"></option>');
+//            }
+//
+//
+//            $('#centre_select')
+//                    .append(options.join("")).val(currentCentreId);
+//
+//
+//            $('#centre_select').iconselectmenu()
+//                    .iconselectmenu("menuWidget")
+//                    .addClass("ui-menu-icons customicons");
+//
+//            $('#centre_select')
+//                    .iconselectmenu({
+//                        change: $.proxy(function (event, ui) {
+//                            setCentre(ui.item.value);
+//                        }, this)
+//                    })         
+//            }
           
                
 //            
@@ -677,26 +701,33 @@
                 
                 
             $("#invertColours")
-                .button()
-                .click($.proxy(function (e) {
+                .click(function (e) {
+                     e.preventDefault();
                     //First change the background colors and scale colors
-                    var checked = e.target.checked;
-                    if (checked) {
+                    var checked;
+                    if ($(this).hasClass('ievgrey')){
+                        $(this).removeClass('ievgrey');
+                        $(this).addClass('ievInvertedGrey');
                         $(".sliceView").css("background-color", "#FFFFFF");
                         $('.scale_text').css("color", "#000000");
                         $('.scale').css("background-color", "#000000");
-                    } else {
+                        checked = true;
+                    } else if ($(this).hasClass('ievInvertedGrey')){  
+                        $(this).removeClass('ievInvertedGrey');
+                        $(this).addClass('ievgrey');
                         $(".sliceView").css("background-color", "#000000");
                         $('.scale_text').css("color", "#FFFFFF");
                         $('.scale').css("background-color", "#FFFFFF");
+                        checked = false;
                     }
                     //Now get the SpecimenViews to reset
                     for (var i = 0; i < views.length; i++) {
                         views[i].invertColour(checked);
                     }
 
-                }, this));
+                });
                 
+               
                 
             $('.scale_outer').draggable();
             
@@ -1044,6 +1075,18 @@
             }
             return count;
         }
+        
+    function setupImpcMenus(){
+//        $.get('https://dev.mousephenotype.org/menudisplaycombinedrendered', function(data){ /for deploying live
+          $.get('menudisplaycombinedrendered.html', function(data){
+            var menuItems = data.split("MAIN*MENU*BELOW");
+            $('#block-menu-block-1').append(menuItems[1]);
+            $('#tn').append(menuItems[0]);
+        });
+    
+        
+       
+    }
     
     function setViewOrientation(orientation){
                      
@@ -1109,9 +1152,8 @@
 //        console.log('bye');
 //    });
 
+    setupImpcMenus();
     setActiveModalityButtons();
-
-
     loadViewers(container);
     attachEvents();
     beforeReady();

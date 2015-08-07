@@ -71,6 +71,12 @@ body{
     font-size: 9px;
 }
 
+
+/* Overiding IMPC css*/
+.metadata div{
+    line-height: 10px !important;
+}
+
 .metadata_c1{
     width: 60%;
     float: left;
@@ -108,6 +114,15 @@ body{
     padding: 5px;
     height: 20px;
     cursor: pointer;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 
@@ -180,6 +195,10 @@ fieldset{
 
 #modality_stage_fieldset{
     float: right;
+}
+
+#centres_fieldset{
+    float:left;
 }
 
 #heightslider_fieldset{
@@ -297,8 +316,26 @@ fieldset{
     background: url("../images/female.png") 0 0 no-repeat;
   }
   
+  #iev_subHeader{
+      width: 100% !important;
+      height: 100px;
+      position: relative;
+      //background-color: blue !important;
+  }
   
-/* Centre selector */
+  #iev_searchBox{
+      float: right;
+      width: 620px;
+      margin-right: 5%;
+      height: 35px;
+  } 
+  
+  #iev_breadCrumb{
+      width: 200px;
+  }
+  
+  
+/* Centre selector 
   .ui-icon.cen_1 {
     background: url("../images/centre_icons/logo_Bcm.png") 0 0 no-repeat;
   }
@@ -331,12 +368,12 @@ fieldset{
   }
   .ui-icon.centreIcons{
     background-size: 20px 20px;
-  }
+  }*/
 
   
-  #reset{
-      height: 50px;
-      width: 50px;
+  #reset, #invertColours{
+      height: 30px;
+      width: 30px;
       float: left;
   }
 
@@ -358,9 +395,11 @@ fieldset{
     color:#FFFFFF !important;
 }*/
 
-.controls {
-    margin: 3px 0 3px 0;   
-    height: 32px;
+.controls {   
+    /*Need to override the IMPC css*/
+    width: 100% !important;
+    height: 32px !important;
+    margin: 3px 0 3px 0 !important;
 }
 
 /*#controls .ui-slider {
@@ -402,7 +441,7 @@ input[type=checkbox].linkCheck {
     width: 20px;
     position: relative;
     left: 20px;
-    z-index: 998;
+    z-index: 900;
     cursor: pointer;
  }
 
@@ -552,6 +591,17 @@ background-color: #DEDEDE;
 #orientation_button.horizontal{
     
    background: transparent url(../images/horizontal_small.png) no-repeat;
+   background-size: 27px;
+}
+
+#invertColours.ievgrey{
+   background: transparent url(../images/contrast.png) no-repeat;
+   background-size: 27px;
+}
+
+#invertColours.ievInvertedGrey{
+    
+   background: transparent url(../images/contrast_invert.png) no-repeat;
    background-size: 27px;
 }
 
