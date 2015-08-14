@@ -111,9 +111,9 @@ body{
 #download{
    
     top: 5px;
-    padding: 5px;
     height: 20px;
     cursor: pointer;
+    float: left;
 }
 
 .noselect {
@@ -180,6 +180,10 @@ fieldset{
 #orthogonal_views_buttons_fieldset{
   
     float: left;
+}
+
+#lowcpu{
+    float: right;
 }
 
 #orientation_fieldset{
@@ -323,17 +327,85 @@ fieldset{
       //background-color: blue !important;
   }
   
+  
+  
+  //Stuff for the search box etc, on the full page web app
+  
   #iev_searchBox{
       float: right;
-      width: 620px;
+      width: 25%;
       margin-right: 5%;
       height: 35px;
   } 
   
   #iev_breadCrumb{
       width: 200px;
+      position: relative;
+      top: 30px;
+      color: #666;     
+      cursor: pointer;
+      font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 20.7999992370605px;
+     
+      vertical-align: baseline;
+      width: auto;
   }
   
+  #iev_breadCrumb > a{
+     color: #666;    
+    text-decoration: underline;
+  }
+  
+  #s{
+      padding-left: 0;
+      padding-top: .5em;
+      text-indent: 1.8em;
+      padding-bottom: .5em;
+      font-size: 1.2em;
+      border: none;
+      color: #0978a1;
+  }
+  
+  i.searchExample{
+float: right;
+text-decoration: none;
+border-radius: 3px;
+border: 1px solid white;
+margin: 3px 5px 0 1px;
+padding: 8px 2px 0px 3px;
+width: 10px;
+height: 15px;
+color: white;
+text-align: center;
+  }
+  
+  .fa.fa-search.iev{
+      top: 18px;
+  }
+  
+  
+  
+  #bigsearchbox{
+      margin-top: 0 !important;
+  }
+/*  .fa {
+display: inline-block;
+font: normal normal normal 16px/1 FontAwesome;
+font-size: inherit;
+text-rendering: auto;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+transform: translate(0, 0);
+}*/
+/*.fa-info:before {
+content: "\f129";
+}*/
+
+  
+/////////////////////////
   
 /* Centre selector 
   .ui-icon.cen_1 {
@@ -371,11 +443,7 @@ fieldset{
   }*/
 
   
-  #reset, #invertColours{
-      height: 30px;
-      width: 30px;
-      float: left;
-  }
+
 
 
 .pane {
@@ -503,12 +571,14 @@ input[type=checkbox].linkCheck {
 
 #top_bar{
 
-
-    border-bottom: 1px solid #9E9E9E;
+    padding: 7px;
+    border-bottom: 2px solid #F2F2F2;
+    border-top: 2px solid #F2F2F2;
     //height: 40px;
-    background-color: #E0E0E0;
+/*    background-color: #E0E0E0;*/
     margin-bottom: 5px;
     display:none;// Hide until we have successfully got some vol paths
+    
     
 }
 
@@ -596,14 +666,20 @@ background-color: #DEDEDE;
 
 #invertColours.ievgrey{
    background: transparent url(../images/contrast.png) no-repeat;
-   background-size: 27px;
+   background-size: 23px;
 }
 
 #invertColours.ievInvertedGrey{
     
    background: transparent url(../images/contrast_invert.png) no-repeat;
-   background-size: 27px;
+   background-size: 23px;
 }
+
+#invertColours{
+      height: 30px;
+      width: 30px;
+      float: left;
+  }
 
 
 
@@ -617,6 +693,12 @@ background-color: #DEDEDE;
 .ui-tooltip{
     font-size: 8pt;
 }
+
+  #reset{
+      height: 30px;
+      width: 30px;
+      float: left;
+  }
 
 /*.ui-icon-vertical { background-image: url(images/vertical.png); }
 .ui-icon-horizontal { background-image: url(images/horizontal.png); }*/

@@ -52,6 +52,9 @@ limitations under the License.
         <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" media="all" />
         <link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css" media="all" />
         <link type="text/css" rel="stylesheet" href="css/css_JbqXNeGT2vW5-6KTgm-ypazaAqvl8n-0h3My8pH_69Q.css" media="all" />
+        <link rel="stylesheet" href="css/searchPage.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+     
         
         <script>
             
@@ -99,22 +102,27 @@ limitations under the License.
         <div id="iev_subHeader">
 
             <div id="iev_breadCrumb">
-                <a href="https://dev.mousephenotype.org">Home</a> &raquo;&nbsp;IEV&raquo; your gene/mgi here
+                <a href="https://dev.mousephenotype.org">Home</a> &raquo;&nbsp;<a href="/data/search">Search</a>&raquo;&nbsp;<a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
             </div>
             <div id="iev_searchBox">
                 <div class='searchcontent'>
                     <div id='bigsearchbox' class='block'>
                         <div class='content'>
-                            <p><i id='sicon' class='fa fa-search'></i></p>
+                            <p><i id='sicon' class='fa fa-search iev'></i></p>
                             <div class='ui-widget'>
                                 <input id='s' class="ui-autocomplete-input" autocomplete="off">
-                                <a><i class='fa fa-info searchExample'></i></a>
+                                <a><i class='fa fa-info searchExample' data-hasqtip='255'></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>        
         </div>
+           <div id="help">
+                            <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">
+                                <input type="submit" value="?" id="help_link" >
+                            </form>
+                        </div>
 
 <!--                <div id='batchQryLink'>
                     <a id='batchquery' href='/data/batchQuery'><i class='fa fa-th-list batchQuery'></i><span id='bqry'>Batch query</span></a>
@@ -131,16 +139,7 @@ limitations under the License.
             <div id='top_bar'>
                 <div id='topleft'>
                    
-                    <div>
-                        <div id="help">
-                            <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">
-                                <input type="submit" value="?" id="help_link" >
-                            </form>
-                        </div>
-                        <div id="download">
-                            <img src="images/download.png" height="25" id="download_img">
-                        </div>
-                    </div>
+             
                     
                 </div>
                 <fieldset id="orthogonal_views_buttons_fieldset">
@@ -194,8 +193,15 @@ limitations under the License.
                     <div id="reset">
                           <img src="images/reload.png" height="25">
                     </div>
+                       
+                    <div id="download">
+                        <img src="images/download.png" height="25" id="download_img">
+               
+                    </div>
+                    <div id='lowcpu'>
                     <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle dynamic rendering">
-                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label>      
+                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label> 
+                    </div>
                 </fieldset>       
                 
                 <fieldset id="bookmark_fieldset">
@@ -332,6 +338,8 @@ limitations under the License.
         <!-- This is where the download dialog goes -->
         <div id="download_dialog"><div>
     </body>
+    
+
 
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      

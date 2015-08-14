@@ -23,6 +23,8 @@
         var currentZoom = 0;
         var currentOrientation = 'horizontal';
         var bookmarkReady = false;
+        var mgi;
+        var gene_symbol;
           
         //Give users a warning about using the deprecated colony_id=test url
         if (queryType === 'colony ID' && queryId === 'test'){
@@ -169,11 +171,14 @@
          * If data is not available, load an error message
          */
         if (data['success']){
+            //In case we load another dataset  
+            mgi = 'undefined';
+            gene_symbol = 'undefined';
            
             for (var cen in data['centre_data']){ // Pick the first centre you come across as the current centre
                 var modData =  getModalityData(); 
                 //Display the top control bar
-                $('#top_bar').show();
+                $('#top_bar').show(); //NH? what's this
 
                 // Loop over the centre data
                 for(var i = 0; i < objSize(data['centre_data'][cen]); i++) {
@@ -188,6 +193,13 @@
 
                     }else{
                         modData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
+                        //Now set the current MGI and Genesymbol
+                        if (mgi === 'undefined'){
+                            mgi = obj.mgi;
+                        }
+                        if (gene_symbol=== 'undefined'){
+                            gene_symbol = obj.geneSymbol;
+                        }
                     }
                 }
                 centreData[cen] = modData;
@@ -1076,17 +1088,27 @@
             return count;
         }
         
-    function setupImpcMenus(){
-//        $.get('https://dev.mousephenotype.org/menudisplaycombinedrendered', function(data){ /for deploying live
-          $.get('menudisplaycombinedrendered.html', function(data){
-            var menuItems = data.split("MAIN*MENU*BELOW");
-            $('#block-menu-block-1').append(menuItems[1]);
-            $('#tn').append(menuItems[0]);
-        });
-    
         
-       
-    }
+        function setupImpcMenus() {
+            /*
+             * Get the dynamically generated menu code. Split into main menu and the login section
+             */
+            $.get('menudisplaycombinedrendered.html', function (data) {
+                var menuItems = data.split("MAIN*MENU*BELOW");
+                $('#block-menu-block-1').append(menuItems[1]);
+                $('#tn').append(menuItems[0]);
+            });
+            
+            // Get the gene symbol and the MGI for creating the breadcrumb
+           
+            var mgi_href = '/data/genes/' + mgi;
+            
+            var b_link = $('#ievBreadCrumbGene').html(gene_symbol).attr('href', mgi_href);
+         
+            
+            
+
+        }
     
     function setViewOrientation(orientation){
                      
