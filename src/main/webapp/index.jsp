@@ -348,7 +348,9 @@ limitations under the License.
                 <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:999'></select>
             </div>
             <div class="wlwrap">
+               
                 <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
+             
             </div>
             <div class="metadata" id="metadata_{{id}}">
             

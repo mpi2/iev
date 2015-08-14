@@ -57,10 +57,6 @@ body{
     vertical-align: middle;
 }
 
-.windowLevel{
-    float: left;
-  
-}
 
 
 .metadata{
@@ -238,22 +234,43 @@ fieldset{
     margin-top: 10px;
     float: left; 
     width: 110;
-    height: auto;
+    /*height: auto;*/
 }
 
+
+
+
 .windowLevel{
+    float: left;
+    bottom:5px;
     width: 100px;
     display: inline-block;
     vertical-align: middle;
 }
 
-.wlwrap .ui-slider, #viewHeightSlider.ui-slider {
-    height: 4px;
-    cursor: pointer;
- 
+.windowLevel .ui-widget-header{
+    bottom:10px;
+    height: 18px;
+    background: rgba(0,0,0,1);
+    background: -moz-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(255,255,255,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,0,0,1)), color-stop(100%, rgba(255,255,255,1)));
+    background: -webkit-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(255,255,255,1) 100%);
+    background: -o-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(255,255,255,1) 100%);
+    background: -ms-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(255,255,255,1) 100%);
+    background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(255,255,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#ffffff', GradientType=1 );
 }
-.wlwrap .ui-slider-handle, #viewHeightSlider .ui-slider-handle {
-    top: -7px;
+
+
+#viewHeightSlider .ui-slider-handle{
+    top: -4px;
+    width: 8px;
+    cursor: pointer;
+}
+
+
+.wlwrap .ui-slider-handle{
+    top: -3px;
     width: 8px;
     margin-left: -5px;
     cursor: pointer;
@@ -291,10 +308,10 @@ fieldset{
 
 #viewHeightSlider {
     
-    float: right;
+    float: left;
     width: 75px;
-    top: 12px;
-    margin: 0 10px;
+    top: 6px;
+    /*margin: 0 10px;*/
 
 }
 
@@ -322,7 +339,7 @@ fieldset{
   
   #iev_subHeader{
       width: 100% !important;
-      height: 100px;
+      height: 70px;
       position: relative;
       //background-color: blue !important;
   }

@@ -18,6 +18,7 @@
         var wtView;
         var mutView;
         var currentModality;
+        var currentCentreId;
         var downloadTableRowSource;
         var spinner; // Progress spinner
         var currentZoom = 0;
@@ -963,7 +964,7 @@
                 for (var pid in centreData[currentCentreId]) {
                     if (pid !== currentModality)
                         continue;  // Only supply current modality data for download
-                    var vols = centreData[currentCentreId]['vols'];
+                    var vols = centreData[currentCentreId][currentModality]['vols'];
                     
                     var currentlyViewed = [];
                     for (var i=0; i < views.length; ++i){
