@@ -53,7 +53,7 @@ limitations under the License.
         <link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css" media="all" />
         <link type="text/css" rel="stylesheet" href="css/css_JbqXNeGT2vW5-6KTgm-ypazaAqvl8n-0h3My8pH_69Q.css" media="all" />
         <link rel="stylesheet" href="css/searchPage.css">
-        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <!--<link rel="stylesheet" href="css/font-awesome.min.css">-->
      
         
         <script>
@@ -433,13 +433,13 @@ limitations under the License.
          </div>
     </script>
 
-    <script type='text/javascript' src='/data/js/searchAndFacet/searchAndFacetConfig.js?v=20150807'></script>
+<!--    <script type='text/javascript' src='/data/js/searchAndFacet/searchAndFacetConfig.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/utils/tools.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>
 
 
-    <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js?v=20150807"></script>
+    <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js?v=20150807"></script>-->
 
     
 </html>

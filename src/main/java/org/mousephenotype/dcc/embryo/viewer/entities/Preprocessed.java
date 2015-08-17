@@ -117,7 +117,11 @@ public class Preprocessed implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "pixel_size", nullable = false)
-    private long pixelsize;
+    private float pixelsize;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "rescaled_pixel_size", nullable = false)
+    private float rescaledPixelsize;
     @Basic(optional = false)
     @NotNull
     @Column(nullable = false)
@@ -180,7 +184,7 @@ public class Preprocessed implements Serializable {
     public Preprocessed(Integer id, int cid, int lid, int gid, int pid, int qid, 
             String geneSymbol, String colonyId, int sid, String mid, 
             int statusId, String url, String checksum, String extensionId, 
-            long pixelsize, Date created, Date lastUpdate, int touched, 
+            float pixelsize, float rescaledPixelsize, Date created, Date lastUpdate, int touched, 
             String animalName, String imageForDisplay,
             int qc, String mgi, String zygosity, String sex, Date experimentDate) {
         
@@ -197,6 +201,7 @@ public class Preprocessed implements Serializable {
         this.checksum = checksum;
         this.extensionId = extensionId;
         this.pixelsize = pixelsize;
+        this.rescaledPixelsize = rescaledPixelsize;
         this.created = created;
         this.lastUpdate = lastUpdate;
         this.touched = touched;
@@ -323,12 +328,20 @@ public class Preprocessed implements Serializable {
         this.extensionId = extensionId;
     }
 
-    public long getPixelsize() {
+    public float getPixelsize() {
         return pixelsize;
     }
 
-    public void setPixelsize(long pixelsize) {
+    public void setPixelsize(float pixelsize) {
         this.pixelsize = pixelsize;
+    }
+    
+    public float getRescaledPixelsize() {
+        return rescaledPixelsize;
+    }
+
+    public void setRescaledPixelsize(float rescaledPixelsize) {
+        this.rescaledPixelsize = rescaledPixelsize;
     }
 
     public Date getCreated() {

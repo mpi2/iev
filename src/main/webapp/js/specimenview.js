@@ -41,6 +41,7 @@
         var yRen;
         var zRen;
         var volume;
+        var scaleBarSize;
         var lowPower = false;
         var windowLevel = 'windowLevel_' + id;
         var vselector = 'volumeSelector_' + id;
@@ -121,9 +122,6 @@
         }
         
 
-
-        
-        
         function updateVolumeSelector() {
             $.widget("custom.iconselectmenu", $.ui.selectmenu, {
                 _renderItem: function (ul, item) {
@@ -494,14 +492,14 @@
 
             var $scaleouter =  $('.scale_outer_' + id);
             
-            if (currentVolume["pixelsize"] == null ||  currentVolume["pixelsize"] == 0){
+            if (currentVolume["rescaledPixelsize"] == null ||  currentVolume["rescaledPixelsize"] == 0){
                 $scaleouter.hide();
                 return;
             }
             $scaleouter.show();
             
-            var pixel_size = 28.0; //for now hard code
-            var bar_size_pixels = (config.scaleBarSize / pixel_size) * ren.normalizedScale;
+            var pixel_size = currentVolume["rescaledPixelsize"]; //for now hard code
+            var bar_size_pixels = (scaleBarSize / pixel_size) * ren.normalizedScale;
            
             var outer_height = $('.scale_outer').height();
             var top = (outer_height - bar_size_pixels) / 2;
@@ -521,8 +519,9 @@
         }      
         
               
-        function rescale(){
+        function rescale(scale){
             
+            scaleBarSize = scale;
             drawScaleBar();
         }
         

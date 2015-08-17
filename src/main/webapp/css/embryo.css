@@ -356,7 +356,7 @@ fieldset{
   } 
   
   #iev_breadCrumb{
-      width: 200px;
+      width: 30% !important;;
       position: relative;
       top: 30px;
       color: #666;     
@@ -366,9 +366,8 @@ fieldset{
       font-style: normal;
       font-weight: normal;
       line-height: 20.7999992370605px;
-     
       vertical-align: baseline;
-      width: auto;
+     
   }
   
   #iev_breadCrumb > a{
