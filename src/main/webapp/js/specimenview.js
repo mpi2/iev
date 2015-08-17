@@ -26,21 +26,7 @@
         var id = id;
         var viewContainer = container;
         var volumeData = volumeData;
-        
-        // Load up the first volume (replace with config if available)
-        var currentVolume = volumeData[Object.keys(volumeData)[0]];
-        if (config['specimen']) {       
-            for (var key in volumeData) {
-                if (volumeData.hasOwnProperty(key)) {
-                    var vol = volumeData[key];
-                    if (vol['animalName'] === config['specimen']['name']) {
-                        currentVolume = vol;
-                        break;
-                    }
-                }
-            }           
-        }
-       
+               
         var $xContainer;
         var $yContainer;
         var $zContainer;
@@ -64,6 +50,24 @@
         var ready = false;
         var contrast = config['specimen']['brightness'];
         var WILDTYPE_COLONYID = 'baseline';
+        
+        // Select first volume in the list
+        var currentVolume = volumeData[Object.keys(volumeData)[0]];
+        var bookmarkHasVolume = false;
+        
+        // If the config has a specimen, select that instead
+        if (config['specimen']) {
+            for (var key in volumeData) {
+                if (volumeData.hasOwnProperty(key)) {
+                    var vol = volumeData[key];
+                    if (vol['animalName'] === config['specimen']['name']) {
+                        currentVolume = vol;
+                        bookmarkHasVolume = true;
+                        break;
+                    }
+                }
+            }           
+        }
         
         
         /*
@@ -147,7 +151,12 @@
             for (var i in volumeData) {
                 var url = volumeData[i]['volume_url'];
                 var sex = volumeData[i].sex.toLowerCase();
-                options.push("<option value='" + url + "' data-class='" + sex + "'>" + basename(url) + "</option>");
+                
+                if (url === currentVolume['volume_url']) {
+                    options.push("<option value='" + url + "' data-class='" + sex + "' selected>" + basename(url) + "</option>");
+                } else {
+                    options.push("<option value='" + url + "' data-class='" + sex + "'>" + basename(url) + "</option>");
+                }
             }
 
 
@@ -162,10 +171,12 @@
             $('#' + vselector)
                     .iconselectmenu({
                         change: $.proxy(function (event, ui) {
-                            replaceVolume(ui.item.value);
+                            if (!bookmarkHasVolume) { // not a bookmark triggered change
+                                replaceVolume(ui.item.value);
+                            }
                         }, this)
                     })
-                    .iconselectmenu("refresh");
+                    .iconselectmenu("refresh");                  
         }
         
         
@@ -365,7 +376,7 @@
             
             var $specimenView = $(template(data));
             
-            $specimenView.append(controls_tab());
+            $specimenView.append(controls_tab());            
       
             // This defines the order of the orthogonal views
             $specimenView.append(createSliceView('X'));
@@ -424,7 +435,7 @@
         }
         
         
-
+        
         function controls_tab() {
             /**
              * Use handlebars.js to the controls tab HTML for the specimen view
@@ -863,7 +874,8 @@
             yRen.interactor.rightButtonDown = function () {
             };
             
-            // Set bookmark contrast
+            
+            // Set bookmark contrast and selected volume in menu
             setBookmarkContrast();
             
             update();
@@ -1059,8 +1071,8 @@
         };
         
         createHTML();
-        updateVolumeSelector();
-        jQuerySelectors();
+        updateVolumeSelector();        
+        jQuerySelectors();        
         setupRenderers();
         //createEventHandlers();
         drawScaleBar();        
