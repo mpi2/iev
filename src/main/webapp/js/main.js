@@ -81,14 +81,20 @@
         /*
          * Map micrometer scale bar sizes to labels
          */
-        var scaleOptions = {
-            '200&#956;m': 200,
-            '400&#956;m': 400,
-            '600&#956;m': 600,
-            '1mm': 1000,
-            '2mm': 2000,
-            '4mm': 4000,
-            '6mm': 6000
+        
+        var scales = {
+            
+            currentBarSize: 600,
+            
+            options: {
+                '200&#956;m': 200,
+                '400&#956;m': 400,
+                '600&#956;m': 600,
+                '1mm': 1000,
+                '2mm': 2000,
+                '4mm': 4000,
+                '6mm': 6000
+            }
         };
         
         
@@ -125,9 +131,9 @@
 
         var scaleLabels = function () {
             var options = [];
-            for (var key in scaleOptions) {
+            for (var key in scales.options) {
 
-                options.push("<option value='" + scaleOptions[key] + "'>" + key + "</option>");
+                options.push("<option value='" + scales.options[key] + "'>" + key + "</option>");
             }
             return options;
         };
@@ -395,7 +401,7 @@
           
             // Set the proportional views
             for (var i=0; i < views.length; ++i){
-                views[i].rescale();   
+                views[i].rescale(scales.currentBarSize);   
             }
            
             window.dispatchEvent(new Event('resize')); 
@@ -887,7 +893,7 @@
                     width: 80,
                     height: 20,
                     change: $.proxy(function (event, ui) { 
-                        config.scaleBarSize = ui.item.value;
+                        scales.currentBarSize = ui.item.value;
                         $('.scale_text').text(ui.item.label);
                         scaleOrthogonalViews();
                         
