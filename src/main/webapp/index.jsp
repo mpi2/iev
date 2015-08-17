@@ -36,24 +36,110 @@ limitations under the License.
         <script type="text/javascript" src="js/sliceview.js"></script>
         <script type="text/javascript" src="js/spin.min.js"></script>
         <script type="text/javascript" src="js/fileDownload.js"></script>
+        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/head.min.js?v=2.0.2"></script>
+        <script type="text/javascript" src="js/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="js/dataTables.tableTools.min.js"></script>
+
+
+        
+
         
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
+        
+        <link type="text/css" rel="stylesheet" href="css/css_FOZ_d3UAptpDgO0Bi3g0O_i_hnW9qo3cnnlJ7zHLIpU.css" media="all" />
+        <link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" media="all" />
+        <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" media="all" />
+        <link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css" media="all" />
+        <link type="text/css" rel="stylesheet" href="css/css_JbqXNeGT2vW5-6KTgm-ypazaAqvl8n-0h3My8pH_69Q.css" media="all" />
+        <link rel="stylesheet" href="css/searchPage.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+     
+        
+        <script>
+            
+            try {
+                console.log(" ");
+            } catch (err) {
+                var console = {};
+                console.log = console.error = console.info = console.debug = console.warn = console.trace = console.dir = console.dirxml = console.group = console.groupEnd = console.time = console.timeEnd = console.assert = console.profile = function () {
+                };
+            }
+
+            var baseUrl = "/data";
+            var solrUrl = 'https://wwwdev.ebi.ac.uk/mi/impc/dev/solr';
+            var drupalBaseUrl = "https://dev.mousephenotype.org";
+            var mediaBaseUrl = "http://wwwdev.ebi.ac.uk/mi/impc/dev/phenotype-archive/media";
+            console.log("mediaBaseUrl set="+mediaBaseUrl);
+            var pdfThumbnailUrl = "//wwwdev.ebi.ac.uk/mi/media/omero/webgateway/render_thumbnail/119501";
+            console.log("pdfThumbnailUrl set="+pdfThumbnailUrl);
+
+        </script>
     </head>
     <body>
-        <div id='wrap'>
-            <div id='top_bar'>
-                <div id='topleft'>
-                   
-                    <div>
-                        <div id="help">
+        <!-- Got the menu and header code from https://github.com/mpi2/PhenotypeData/ -->
+        <header id="header">
+            <div class="region region-header">
+
+                <div id="tn">
+                    <!-- Login icons go here. Look in main.js-->
+                </div>
+
+                <div id="logo">
+                    <a href="https://www.mousephenotype.org/"><img src="images/impc.png" alt="IMPC Logo" /></a>
+                    <div id="logoslogan">International Mouse Phenotyping Consortium</div>
+                </div>
+
+                <nav id="mn"><div id="block-menu-block-1" class="block block-menu-block">
+
+                    <!--menu goes . Look in main.js -->
+                    
+                    
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <div id="iev_subHeader">
+
+            <div id="iev_breadCrumb">
+                <a href="https://dev.mousephenotype.org">Home</a> &raquo;&nbsp;<a href="/data/search">Search</a>&raquo;&nbsp;<a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
+            </div>
+            <div id="iev_searchBox">
+                <div class='searchcontent'>
+                    <div id='bigsearchbox' class='block'>
+                        <div class='content'>
+                            <p><i id='sicon' class='fa fa-search iev'></i></p>
+                            <div class='ui-widget'>
+                                <input id='s' class="ui-autocomplete-input" autocomplete="off">
+                                <a><i class='fa fa-info searchExample' data-hasqtip='255'></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+        </div>
+           <div id="help">
                             <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">
                                 <input type="submit" value="?" id="help_link" >
                             </form>
                         </div>
-                        <div id="download">
-                            <img src="images/download.png" height="25" id="download_img">
-                        </div>
-                    </div>
+
+<!--                <div id='batchQryLink'>
+                    <a id='batchquery' href='/data/batchQuery'><i class='fa fa-th-list batchQuery'></i><span id='bqry'>Batch query</span></a>
+                </div>-->
+        
+        
+        
+
+<!-- -->
+        
+        
+        
+        <div id='wrap' class="noselect">
+            <div id='top_bar'>
+                <div id='topleft'>
+                   
+             
                     
                 </div>
                 <fieldset id="orthogonal_views_buttons_fieldset">
@@ -80,10 +166,11 @@ limitations under the License.
             </fieldset>
                 
             
-            <fieldset id="avaiable_centres">
+            <fieldset id="centres_fieldset">
                 <legend>centres</legend>
                     <select name="centre_select" id="centre_select">
                     </select>  
+                
             </fieldset>
                
             
@@ -102,11 +189,19 @@ limitations under the License.
                 
                 <fieldset id="color_fieldset">
                     <legend>Other</legend>
-                    <input type="checkbox" id="invertColours">
-                    <label for="invertColours">Invert colours</label>
-                    <button id="reset">Reset</button>
+                    <div id="invertColours" class="ievgrey"></div>
+                    <div id="reset">
+                          <img src="images/reload.png" height="25">
+                    </div>
+                       
+                    <div id="download">
+                        <img src="images/download.png" height="25" id="download_img">
+               
+                    </div>
+                    <div id='lowcpu'>
                     <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle dynamic rendering">
-                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label>      
+                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label> 
+                    </div>
                 </fieldset>       
                 
                 <fieldset id="bookmark_fieldset">
@@ -132,7 +227,7 @@ limitations under the License.
             </div>
         </div>
         <div class="clear"></div>
-        <div id="viewer">
+        <div id="viewer" class="noselect">
             <div id="progress">
                 <div id="progressSpin"></div>
                 <div id="progressMsg"></div>
@@ -243,15 +338,19 @@ limitations under the License.
         <!-- This is where the download dialog goes -->
         <div id="download_dialog"><div>
     </body>
+    
+
 
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
         <div id="controls_{{id}}"class="controls clear">
             <div class="selectorWrap" id="{{selectorWrapId}}" title="Select an embryo">
-                <select id="{{vselectorId}}" class ="selectmenu"></select>
+                <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:999'></select>
             </div>
             <div class="wlwrap">
+               
                 <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
+             
             </div>
             <div class="metadata" id="metadata_{{id}}">
             
@@ -261,13 +360,13 @@ limitations under the License.
 
     <!--Specimen view template-->
     <script id="specimen_view_template" type="text/x-handlebars-template">  
-        <div id="{{id}}" class='specimen_view'></div>"  
+        <div id="{{id}}" class='specimen_view noselect'></div>"  
     </script>
 
 
     <!--Slice view template-->
     <script id="slice_view_template" type="text/x-handlebars-template">
-        <div class="sliceWrap" id="{{sliceWrapId}}">
+        <div class="sliceWrap noselect" id="{{sliceWrapId}}">
             <div class='scale_outer scale_outer_{{id}}' >
                 <div class="scale" id="{{scaleId}}">
                 </div>
@@ -333,5 +432,14 @@ limitations under the License.
             </div>
          </div>
     </script>
+
+    <script type='text/javascript' src='/data/js/searchAndFacet/searchAndFacetConfig.js?v=20150807'></script>
+    <script type='text/javascript' src='/data/js/utils/tools.js?v=20150807'></script>
+    <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
+    <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>
+
+
+    <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js?v=20150807"></script>
+
     
 </html>
