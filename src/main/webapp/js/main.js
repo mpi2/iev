@@ -408,18 +408,6 @@
         }
         
         
-        function loadedCb(){
-            /*
-             * called when each specimenView has finished loading
-             * @param {type} container
-             * @return {undefined}
-             */
-            for (var i = 0; i < views.length; i++){
-                if (!views[i].isReady()) return;
-            }
-            onReady();
-        }
-        
         function beforeReady(){
             
             $('#modality_stage :input').prop("disabled", true); 
@@ -466,20 +454,32 @@
             
             // only load if baseline data available
             if (objSize(wildtypeData) > 0){
-                var wtConfig = { scaleBarSize: 600, specimen: bookmarkData['wt'] };
+                var wtConfig = {specimen: bookmarkData['wt'] };
                 wtView = dcc.SpecimenView(wildtypeData, 'wt', container, 
                     WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb);
                 views.push(wtView);
             }
             
             // Set mutant specimen based on bookmark   
-            var mutConfig = { scaleBarSize: 600, specimen: bookmarkData['mut'] };
+            var mutConfig = {specimen: bookmarkData['mut'] };
             mutView = dcc.SpecimenView(mutantData, 'mut', container, 
                 queryId, sliceChange, mutConfig, loadedCb);
             views.push(mutView);   
             centreSelector();
         };
         
+        
+        function loadedCb(){
+            /*
+             * called when each specimenView has finished loading
+             * @param {type} container
+             * @return {undefined}
+             */
+            for (var i = 0; i < views.length; i++){
+                if (!views[i].isReady()) return;
+            }
+            onReady();
+        }
         
         
         

@@ -25,9 +25,11 @@
         //This is s atest vomment
         var id = id;
         var viewContainer = container;
+     
+        
         var volumeData = volumeData;
         
-        // Load up the first volume (replace with config if available)
+        // Load up the first volume 
         var currentVolume = volumeData[Object.keys(volumeData)[0]];
         if (config['specimen']) {       
             for (var key in volumeData) {
@@ -40,7 +42,8 @@
                 }
             }           
         }
-       
+        
+     
         var $xContainer;
         var $yContainer;
         var $zContainer;
@@ -55,6 +58,7 @@
         var yRen;
         var zRen;
         var volume;
+        var progressDiv;
         var scaleBarSize;
         var lowPower = false;
         var windowLevel = 'windowLevel_' + id;
@@ -63,6 +67,7 @@
         var yOffset = 0;
         var zOffset = 0;
         var ready = false;
+        var progressSpinner;
         var contrast = config['specimen']['brightness'];
 		var WILDTYPE_COLONYID = 'baseline';
         
@@ -95,10 +100,49 @@
             12: "logo_Wtsi.png"
         }
         
+        var spinnerOpts = {
+            lines: 8 // The number of lines to draw
+            , length: 6 // The length of each line
+            , width: 6 // The line thickness
+            , radius: 8 // The radius of the inner circle
+            , scale: 1 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: '#ef7b0b' // #rgb or #rrggbb or array of colors
+            , opacity: 0.2 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1 // Rounds per second
+            , trail: 50 // Afterglow percentage
+            , fps: 10 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '20px' // Top position relative to parent
+//            , left: '70%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'relative' // Element positioning
+        };
+
+        
         var monthNames = ["Jan", "Feb", "Mar", "April", "May", "June",
             "July", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
         
+        
+        function beforeLoading(){
+            /*
+             Create a progress div
+             */
+            
+//            progressDiv = $('#' + viewContainer);
+//            progressDiv.append("<div class='iev_progress' id='progress_" + id +   "' ></div>")
+            
+            
+//            var target =  document.getElementById("progressSpin");
+//            spinner = new Spinner(spinnerOpts).spin(target);
+//            $("#progressMsg").text(msg);   
+        
+        }
         
         function updateData(volumes){
             /*
@@ -253,7 +297,7 @@
              * Makes contrast slider for specimen view
              * @method setContrastSlider
              */
-            console.log(volume.min);
+            //console.log(volume.min);
             
             $windowLevel.slider({
                 range: true,
@@ -345,9 +389,31 @@
             $specimenView.append(createSliceView('X'));
             $specimenView.append(createSliceView('Y'));
             $specimenView.append(createSliceView('Z'));
+           
+            var progressSource   = $("#progress_template").html();
+            var progressTemplate = Handlebars.compile(progressSource);
+            var $progress = $(progressTemplate(data));
+           
+            $specimenView.append($progress);
+            spinner = new Spinner(spinnerOpts).spin();
+            //spinner = new Spinner(spinnerOpts).spin($specimenView);
+            $progress.find('.ievLoadingMsg').append(spinner.el);
+            
 
             $viewsContainer.append($specimenView);
         }
+        
+        
+        
+        
+        
+        
+        function progressStop(){
+            spinner.stop();
+             $("#progressMsg").empty();
+        }
+        
+   
         
         
         function createSliceView(orient){
@@ -541,6 +607,7 @@
             if (objSize(volumeData) < 1) return;
             
             xRen = new X.renderer2D();
+            xRen.config.PROGRESSBAR_ENABLED = false;
            
           
             
@@ -595,12 +662,14 @@
             overrideRightMouse(xRen);
 
             yRen = new X.renderer2D();
+            yRen.config.PROGRESSBAR_ENABLED = false;
             yRen.container = $yContainer.get(0);
             yRen.orientation = 'Y';
             yRen.init();
             overrideRightMouse(yRen);
 
             zRen = new X.renderer2D();
+            zRen.config.PROGRESSBAR_ENABLED = false;
             zRen.container = $zContainer.get(0);
             zRen.orientation = 'Z';
             zRen.init();
@@ -631,6 +700,9 @@
         }
         
         function setReady(){
+            //remove the progress div
+            //
+            $('#ievLoading' + id).remove();
             ready = true;
             readyCB();
         }
@@ -1048,6 +1120,7 @@
           
         };
         
+        beforeLoading();
         createHTML();
         updateVolumeSelector();
         jQuerySelectors();

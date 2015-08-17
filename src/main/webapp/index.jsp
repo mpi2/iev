@@ -228,6 +228,7 @@ limitations under the License.
         </div>
         <div class="clear"></div>
         <div id="viewer" class="noselect">
+            
             <div id="progress">
                 <div id="progressSpin"></div>
                 <div id="progressMsg"></div>
@@ -360,7 +361,9 @@ limitations under the License.
 
     <!--Specimen view template-->
     <script id="specimen_view_template" type="text/x-handlebars-template">  
-        <div id="{{id}}" class='specimen_view noselect'></div>"  
+        
+        <div id="{{id}}" class='specimen_view noselect'></div>
+
     </script>
 
 
@@ -380,6 +383,16 @@ limitations under the License.
                 <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
 
         </div>
+        </div>
+    </script>
+    
+    
+    
+    <script id="progress_template" type="text/x-handlebars-template">
+        <div class="ievLoading" id="ievLoading{{id}}">
+            <div class="ievLoadingMsg" id="ievLoadingMsg{{id}}">
+            Scan loading
+            </div>
         </div>
     </script>
 

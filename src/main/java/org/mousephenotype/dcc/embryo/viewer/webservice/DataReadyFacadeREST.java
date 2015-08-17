@@ -94,27 +94,24 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
         return json;
     }
     
-    
-    
-    
-    private HashMap processResult(Preprocessed p){
-        
-        HashMap<String, Object> m;
-        m = new HashMap<>();
-        ArrayList<String> modalities = new ArrayList<>();
-        
-        String cenName = centreMapping.get(p.getCid());
-        m.put("colony_id", p.getColonyId());
-        m.put("centre", cenName); //get Centre short name  
-        m.put("mgi", p.getMgi());
-        m.put("url", IEVURL + p.getMgi());
-        modalities.add(String.valueOf(p.getPid()));
-        m.put("Modalities", modalities);
-        
-        
-        return m;
-    }
-    
+//    private HashMap processResult(Preprocessed p){
+//        
+//        HashMap<String, Object> m;
+//        m = new HashMap<>();
+//        ArrayList<String> modalities = new ArrayList<>();
+//        
+//        String cenName = centreMapping.get(p.getCid());
+//        m.put("colony_id", p.getColonyId());
+//        m.put("centre", cenName); //get Centre short name  
+//        m.put("mgi", p.getMgi());
+//        m.put("url", IEVURL + p.getMgi());
+//        modalities.add(String.valueOf(p.getPid()));
+//        m.put("Modalities", modalities);
+//        
+//        
+//        return m;
+//    }
+//    
     
     private void getCentreIdMapping(){
         EntityManager em = getEntityManager();

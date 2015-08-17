@@ -63,7 +63,7 @@ public class ReadyRestMaker {
         results.put("mgi", this.mgi);
         String url = IEVURL + this.mgi;
         results.put("url", url);
-        results.put("procedure_parameters", this.procsParams);
+        results.put("procedures_parameters", this.procsParams);
         results.put("stages", this.stages);
         
         return results;
