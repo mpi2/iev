@@ -929,18 +929,7 @@
                             evt.initUIEvent('resize', true, false,window,0);
                             window.dispatchEvent(evt);
                         }, this)
-                    });
-                
-//            $('.windowLevel').tooltip({content: "Adjust brightness/contrast",
-//                 show: {delay: 1200 }
-//             });
-//             
-//            $("#selectorWrap_wt").tooltip({content: "Select WT embryo to view",
-//             show: {delay: 1200 }});
-//         
-//            $("#selectorWrap_mut").tooltip({content: "Select mutant embryo to view",
-//             show: {delay: 1200 }});
-         
+                    }); 
          
             scaleOrthogonalViews();
             // Put this here as calling this multiple times does not work

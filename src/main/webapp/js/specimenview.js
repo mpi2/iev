@@ -256,18 +256,7 @@
             }
             
             zygIconPath = IMG_DIR + zygIcon;
-            
-            
-//            if (currentVolume.zygosity.toLowerCase() === 'homozygous'){
-//               zygIconPath = IMG_DIR + HOM_ICON;
-//            }
-//            else if(currentVolume.zygosity.toLowerCase() === 'heterozygous'){
-//                zygIconPath = IMG_DIR + HET_ICON;
-//            }
-//            else if(currentVolume.zygosity.toLowerCase() === 'hemizygous'){
-//                zygIconPath = IMG_DIR + HEMI_ICON;
-//            }
-//            
+              
             var centreLogoPath = "";
           
             if (centreIcons.hasOwnProperty(currentVolume.cid)){
@@ -403,17 +392,10 @@
             $viewsContainer.append($specimenView);
         }
         
-        
-        
-        
-        
-        
         function progressStop(){
             spinner.stop();
              $("#progressMsg").empty();
         }
-        
-   
         
         
         function createSliceView(orient){
@@ -572,6 +554,19 @@
              * @method replaceVolume
              * @param {String} VolumePath path to new volume to load into viewer
              */
+            var data = {
+                id: id
+            };
+            var $specimenView = $('#' + id);
+            var progressSource   = $("#progress_template").html();
+            var progressTemplate = Handlebars.compile(progressSource);
+            var $progress = $(progressTemplate(data));
+           
+            $specimenView.append($progress);
+            spinner = new Spinner(spinnerOpts).spin();
+            //spinner = new Spinner(spinnerOpts).spin($specimenView);
+            $progress.find('.ievLoadingMsg').append(spinner.el);
+            
             if (typeof (xRen) !== 'undefined') {
                 xRen.destroy();
                 delete xRen;
