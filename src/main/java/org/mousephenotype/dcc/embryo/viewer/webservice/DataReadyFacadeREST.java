@@ -65,11 +65,14 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
                 String cenName = centreMapping.get(p.getCid());
                 m.setCentreId(cenName);
                 m.setMgi(p.getMgi());
-                m.addModality(String.valueOf(p.getPid()));
+                m.addModality(String.valueOf(p.getPid()),
+                        String.valueOf(p.getQid()));
                 resultHash.put(p.getMgi(), m);
+            // ?
             }else{
                ReadyRestMaker maker = resultHash.get(p.getMgi());
-               maker.addModality(String.valueOf(p.getPid()));
+               maker.addModality(String.valueOf(p.getPid()),
+                        String.valueOf(p.getQid()));
             }
            
         //Build list to output
@@ -78,9 +81,6 @@ public class DataReadyFacadeREST extends AbstractFacade<Preprocessed> {
             resultList.add(r.getResults());
         }
         
-        
-
-
         out.put("colonies", resultList );
             
         }

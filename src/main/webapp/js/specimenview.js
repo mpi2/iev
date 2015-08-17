@@ -117,9 +117,6 @@
         }
         
 
-
-        
-        
         function updateVolumeSelector() {
             $.widget("custom.iconselectmenu", $.ui.selectmenu, {
                 _renderItem: function (ul, item) {
