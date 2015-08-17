@@ -266,9 +266,10 @@ limitations under the License.
                 };
                 
                 var bookmarkData = {
-                    mode: null, // done
-                    gene: null, // done
+                    mode: null,
+                    gene: null,
                     modality: "<%= request.getParameter("mod")%>",
+                    h: parseInt(<%= request.getParameter("h")%>),
                     wt: {
                         name: "<%= request.getParameter("wt")%>",
                         pos: {
