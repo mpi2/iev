@@ -135,7 +135,7 @@ body{
     margin-right: auto;
 }
 
-#bookmark_img:hover, #download_img:hover {
+.hoverable:hover {
     opacity: 0.5;
 }
 
@@ -684,12 +684,14 @@ background-color: #DEDEDE;
 #invertColours.ievgrey{
    background: transparent url(../images/contrast.png) no-repeat;
    background-size: 23px;
+   cursor: pointer;
 }
 
 #invertColours.ievInvertedGrey{
     
    background: transparent url(../images/contrast_invert.png) no-repeat;
    background-size: 23px;
+   cursor: pointer;
 }
 
 #invertColours{
@@ -697,8 +699,6 @@ background-color: #DEDEDE;
       width: 30px;
       float: left;
   }
-
-
 
 .button_label span{
     background-color: #DEDEDE;
@@ -711,11 +711,12 @@ background-color: #DEDEDE;
     font-size: 8pt;
 }
 
-  #reset{
-      height: 30px;
-      width: 30px;
-      float: left;
-  }
+#reset{
+    height: 30px;
+    width: 30px;
+    float: left;
+    cursor: pointer;
+}
 
 /*.ui-icon-vertical { background-image: url(images/vertical.png); }
 .ui-icon-horizontal { background-image: url(images/horizontal.png); }*/
