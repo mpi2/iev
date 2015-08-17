@@ -25,25 +25,8 @@
         //This is s atest vomment
         var id = id;
         var viewContainer = container;
-     
-        
         var volumeData = volumeData;
-        
-        // Load up the first volume 
-        var currentVolume = volumeData[Object.keys(volumeData)[0]];
-        if (config['specimen']) {       
-            for (var key in volumeData) {
-                if (volumeData.hasOwnProperty(key)) {
-                    var vol = volumeData[key];
-                    if (vol['animalName'] === config['specimen']['name']) {
-                        currentVolume = vol;
-                        break;
-                    }
-                }
-            }           
-        }
-        
-     
+               
         var $xContainer;
         var $yContainer;
         var $zContainer;
@@ -69,7 +52,25 @@
         var ready = false;
         var progressSpinner;
         var contrast = config['specimen']['brightness'];
-		var WILDTYPE_COLONYID = 'baseline';
+        var WILDTYPE_COLONYID = 'baseline';
+        
+        // Select first volume in the list
+        var currentVolume = volumeData[Object.keys(volumeData)[0]];
+        var bookmarkHasVolume = false;
+        
+        // If the config has a specimen, select that instead
+        if (config['specimen']) {
+            for (var key in volumeData) {
+                if (volumeData.hasOwnProperty(key)) {
+                    var vol = volumeData[key];
+                    if (vol['animalName'] === config['specimen']['name']) {
+                        currentVolume = vol;
+                        bookmarkHasVolume = true;
+                        break;
+                    }
+                }
+            }           
+        }
         
         
         /*
@@ -189,7 +190,12 @@
             for (var i in volumeData) {
                 var url = volumeData[i]['volume_url'];
                 var sex = volumeData[i].sex.toLowerCase();
-                options.push("<option value='" + url + "' data-class='" + sex + "'>" + basename(url) + "</option>");
+                
+                if (url === currentVolume['volume_url']) {
+                    options.push("<option value='" + url + "' data-class='" + sex + "' selected>" + basename(url) + "</option>");
+                } else {
+                    options.push("<option value='" + url + "' data-class='" + sex + "'>" + basename(url) + "</option>");
+                }
             }
 
 
@@ -204,10 +210,12 @@
             $('#' + vselector)
                     .iconselectmenu({
                         change: $.proxy(function (event, ui) {
-                            replaceVolume(ui.item.value);
+                            if (!bookmarkHasVolume) { // not a bookmark triggered change
+                                replaceVolume(ui.item.value);
+                            }
                         }, this)
                     })
-                    .iconselectmenu("refresh");
+                    .iconselectmenu("refresh");                  
         }
         
         
@@ -286,7 +294,7 @@
              * Makes contrast slider for specimen view
              * @method setContrastSlider
              */
-            //console.log(volume.min);
+            console.log(volume.min);
             
             $windowLevel.slider({
                 range: true,
@@ -300,7 +308,31 @@
                     volume.modified(true);
                 }, this)
             });
-        }; 
+        };
+        
+        function setBookmarkContrast() {
+            
+            // Set lower contrast level
+            var lower = parseInt(volume.windowLow);
+            if (contrast['lower'] !== null) {
+                lower = Math.max(contrast['lower'], parseInt(volume.windowLow));                
+            }
+            
+            // Set upper contrast level
+            var upper = parseInt(volume.windowHigh);
+            if (contrast['upper'] !== null) {
+                upper = Math.min(contrast['upper'], parseInt(volume.windowHigh));                             
+            }
+            
+            // Set volume modifed
+            volume.windowLow = lower;
+            volume.windowHigh = upper;
+            volume.modified(false);
+            
+            // Set slider values
+            $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);            
+            
+        }
 
         function screenShot() {
      
@@ -446,7 +478,7 @@
         }
         
         
-
+        
         function controls_tab() {
             /**
              * Use handlebars.js to the controls tab HTML for the specimen view
@@ -618,32 +650,14 @@
                    this.resetViewAndRender();
                    this.firstRender = false;
                    xtk_showtime();
-                }
-                
-                // Set contrast                            
-                var lower = parseInt(volume.windowLow);
-                if (contrast['lower'] !== null) {
-                    lower = Math.max(contrast['lower'], parseInt(volume.windowLow));
-                    volume.windowLow = lower;
-                    volume.modified(false);
-                }
-
-                var upper = parseInt(volume.windowHigh);
-                if (contrast['upper'] !== null) {
-                    upper = Math.min(contrast['upper'], parseInt(volume.windowHigh));
-                    volume.windowHigh = upper;
-                    volume.modified(false);
-                }
-                
-                $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);                               
-                                
+                }                           
             };
             
             xRen.onShowtime = function(){   
                 // we have to wait before volumes have fully loaded before we
-                // can extract intesity information
-                setContrastSlider();               
-                setReady();
+                // can extract intesity information                
+                setContrastSlider();                
+                setReady();                
             };
         
             /*
@@ -923,6 +937,10 @@
             yRen.interactor.rightButtonDown = function () {
             };
             
+            
+            // Set bookmark contrast and selected volume in menu
+            setBookmarkContrast();
+            
             update();
          
         };
@@ -1117,11 +1135,11 @@
         
         beforeLoading();
         createHTML();
-        updateVolumeSelector();
-        jQuerySelectors();
+        updateVolumeSelector();        
+        jQuerySelectors();        
         setupRenderers();
         //createEventHandlers();
-        drawScaleBar();
+        drawScaleBar();        
         
         return public_interface;
     }

@@ -23,6 +23,7 @@
         var spinner; // Progress spinner
         var currentZoom = 0;
         var currentOrientation = 'horizontal';
+        var currentViewHeight;
         var bookmarkReady = false;
         var mgi;
         var gene_symbol;
@@ -294,7 +295,7 @@
         
         function bookmarkConfigure() {
             
-            if (!bookmarkReady) { 
+            if (!bookmarkReady) {               
 
                 // Set views       
                 if (bookmarkData['s'] === 'off') {
@@ -315,7 +316,14 @@
                 }
 
                 // Set zoom
-                zoomBy(bookmarkData['zoom']); // NOT WORKING
+                zoomBy(bookmarkData['zoom']);
+                
+                // Set viewer height
+                if (bookmarkData['h']) {
+                    $viewHeight = $("#viewHeightSlider");
+                    $viewHeight.slider('value', bookmarkData['h']);
+                    $viewHeight.slider("option", "slide").call($viewHeight, null, { value: bookmarkData['h']});
+                }
 
                 // Set ready
                 bookmarkReady = true;
@@ -336,6 +344,7 @@
             var bookmark = hostname
                 + '?' + bookmarkData['mode'] + '=' + bookmarkData['gene']
                 + '&mod=' + currentModality
+                + '&h=' + currentViewHeight
                 + '&wt=' + wtView.getCurrentVolume()['animalName']
                 + '&mut=' + mutView.getCurrentVolume()['animalName']
                 + '&s=' + s
@@ -921,8 +930,9 @@
                     .slider({
                         min: 200,
                         max: 1920,
-                        values: [500],
+                        value: 500,
                         slide: $.proxy(function (event, ui) {
+                            currentViewHeight = ui.value;
                             $('.sliceWrap').css('height', ui.value);                            
                             scaleOrthogonalViews();                       
                             var evt = document.createEvent('UIEvents');

@@ -145,15 +145,15 @@ limitations under the License.
                 <fieldset id="orthogonal_views_buttons_fieldset">
                     <legend>Views</legend>
                     <div id="orthogonal_views_buttons">
-                        <input type="checkbox" id="X_check" class='toggle_slice' checked>
+                        <input type="checkbox" id="X_check" class='toggle_slice' title="Sagittal" checked>
                         <label for="X_check" id='X_check_label'>S</label>
-                        <input type="checkbox" id="Y_check" class='toggle_slice' checked>
+                        <input type="checkbox" id="Y_check" class='toggle_slice' title="Coronal" checked>
                         <label for="Y_check" id='Y_check_label'>C</label>
-                        <input type="checkbox" id="Z_check" class='toggle_slice' checked>
+                        <input type="checkbox" id="Z_check" class='toggle_slice' title="Axial" checked>
                         <label for="Z_check" id='Z_check_label'>A</label>
                    
-                         <div id='orientation_buttons'>
-                        <div id="orientation_button" class="orientation horizontal"></div>
+                        <div id='orientation_buttons'>
+                        <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation"></div>
                  
                 </fieldset>
                 
@@ -167,10 +167,9 @@ limitations under the License.
                 
             
             <fieldset id="centres_fieldset">
-                <legend>centres</legend>
+                <legend>Centres</legend>
                     <select name="centre_select" id="centre_select">
-                    </select>  
-                
+                    </select>                
             </fieldset>
                
             
@@ -189,17 +188,17 @@ limitations under the License.
                 
                 <fieldset id="color_fieldset">
                     <legend>Other</legend>
-                    <div id="invertColours" class="ievgrey"></div>
+                    <div id="invertColours" class="ievgrey hoverable" title="Invert colours"></div>
                     <div id="reset">
-                          <img src="images/reload.png" height="25">
+                          <img src="images/reload.png" height="25" class="hoverable" title="Restore default view">
                     </div>
                        
                     <div id="download">
-                        <img src="images/download.png" height="25" id="download_img">
+                        <img src="images/download.png" height="25" id="download_img" class="hoverable" title="Download embryo data">
                
                     </div>
                     <div id='lowcpu'>
-                    <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle dynamic rendering">
+                    <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle static/dynamic rendering">
                     <label for="low_power_check" id='low_power_check_label'>Low CPU</label> 
                     </div>
                 </fieldset>       
@@ -207,13 +206,13 @@ limitations under the License.
                 <fieldset id="bookmark_fieldset">
                     <legend>Save</legend>
                     <div id="createBookmark">
-                        <img src="images/bookmark.png" height="25" id="bookmark_img">
+                        <img src="images/bookmark.png" height="25" id="bookmark_img" title="Generate URL for current view" class="hoverable">
                     </div>
                 </fieldset>
 
                 <fieldset id="modality_stage_fieldset">
                     <legend>Modality/stage selection</legend>
-                    <div id="modality_stage">
+                    <div id="modality_stage" title="Change modality">
                         <input type="radio" id="203" name="project" class="modality_button">
                         <label for="203" class="button_label">&#956;CT E14/E15.5</label>
 
@@ -268,9 +267,10 @@ limitations under the License.
                 };
                 
                 var bookmarkData = {
-                    mode: null, // done
-                    gene: null, // done
+                    mode: null,
+                    gene: null,
                     modality: "<%= request.getParameter("mod")%>",
+                    h: parseInt(<%= request.getParameter("h")%>),
                     wt: {
                         name: "<%= request.getParameter("wt")%>",
                         pos: {
