@@ -63,7 +63,7 @@
         var zOffset = 0;
         var ready = false;
         var contrast = config['specimen']['brightness'];
-		var WILDTYPE_COLONYID = 'baseline';
+        var WILDTYPE_COLONYID = 'baseline';
         
         
         /*
@@ -269,7 +269,31 @@
                     volume.modified(true);
                 }, this)
             });
-        }; 
+        };
+        
+        function setBookmarkContrast() {
+            
+            // Set lower contrast level
+            var lower = parseInt(volume.windowLow);
+            if (contrast['lower'] !== null) {
+                lower = Math.max(contrast['lower'], parseInt(volume.windowLow));                
+            }
+            
+            // Set upper contrast level
+            var upper = parseInt(volume.windowHigh);
+            if (contrast['upper'] !== null) {
+                upper = Math.min(contrast['upper'], parseInt(volume.windowHigh));                             
+            }
+            
+            // Set volume modifed
+            volume.windowLow = lower;
+            volume.windowHigh = upper;
+            volume.modified(false);
+            
+            // Set slider values
+            $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);            
+            
+        }
 
         function screenShot() {
      
@@ -557,32 +581,14 @@
                    this.resetViewAndRender();
                    this.firstRender = false;
                    xtk_showtime();
-                }
-                
-                // Set contrast                            
-                var lower = parseInt(volume.windowLow);
-                if (contrast['lower'] !== null) {
-                    lower = Math.max(contrast['lower'], parseInt(volume.windowLow));
-                    volume.windowLow = lower;
-                    volume.modified(false);
-                }
-
-                var upper = parseInt(volume.windowHigh);
-                if (contrast['upper'] !== null) {
-                    upper = Math.min(contrast['upper'], parseInt(volume.windowHigh));
-                    volume.windowHigh = upper;
-                    volume.modified(false);
-                }
-                
-                $windowLevel.slider("option", "values", [volume.windowLow, volume.windowHigh]);                               
-                                
+                }                           
             };
             
             xRen.onShowtime = function(){   
                 // we have to wait before volumes have fully loaded before we
-                // can extract intesity information
-                setContrastSlider();               
-                setReady();
+                // can extract intesity information                
+                setContrastSlider();                
+                setReady();                
             };
         
             /*
@@ -857,6 +863,9 @@
             yRen.interactor.rightButtonDown = function () {
             };
             
+            // Set bookmark contrast
+            setBookmarkContrast();
+            
             update();
          
         };
@@ -1054,7 +1063,7 @@
         jQuerySelectors();
         setupRenderers();
         //createEventHandlers();
-        drawScaleBar();
+        drawScaleBar();        
         
         return public_interface;
     }

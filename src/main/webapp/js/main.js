@@ -309,7 +309,7 @@
                 }
 
                 // Set zoom
-                zoomBy(bookmarkData['zoom']); // NOT WORKING
+                zoomBy(bookmarkData['zoom']);
 
                 // Set ready
                 bookmarkReady = true;
