@@ -149,6 +149,29 @@
             }
         };
         
+                
+        function centreSelector(){
+            /*
+             * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
+             */
+//            
+//            //Just for testing
+//            // Populate drop down box with available centres
+            
+             $('#centre_select')
+                .append(centreLabels().join(""))
+                .selectmenu({
+                    width: 30,
+                    height: 20,
+                    change: $.proxy(function (event, ui) { 
+                            setCentre(event.currentTarget.innerText)
+                        
+                    }, this)
+                });
+                
+              //$('#centre_select').val('4').selectmenu('refresh');
+          }
+        
         
         var spinnerOpts = {
             lines: 8 // The number of lines to draw
@@ -492,28 +515,7 @@
         
         
         
-        
-        function centreSelector(){
-            /*
-             * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
-             */
-//            
-//            //Just for testing
-//            // Populate drop down box with available centres
-            
-             $('#centre_select')
-                //.append(centreOptions().join(""))
-                .selectmenu({
-                    width: 30,
-                    height: 20,
-                    change: $.proxy(function (event, ui) { 
-                            setCentre(event.currentTarget.innerText)
-                        
-                    }, this)
-                });
-                
-              //$('#centre_select').val('4').selectmenu('refresh');
-          }
+
 
             ////////////////////testing
 //            $.widget("custom.iconselectmenu", $.ui.selectmenu, {

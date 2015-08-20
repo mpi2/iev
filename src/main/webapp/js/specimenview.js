@@ -58,7 +58,7 @@
         var currentVolume = volumeData[Object.keys(volumeData)[0]];
         var bookmarkHasVolume = false;
         
-        // If the config has a specimen, select that instead
+        // If the config has a specimen, select that igit nstead
         if (config['specimen']) {
             for (var key in volumeData) {
                 if (volumeData.hasOwnProperty(key)) {
@@ -129,21 +129,6 @@
             "July", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
         
-        
-        function beforeLoading(){
-            /*
-             Create a progress div
-             */
-            
-//            progressDiv = $('#' + viewContainer);
-//            progressDiv.append("<div class='iev_progress' id='progress_" + id +   "' ></div>")
-            
-            
-//            var target =  document.getElementById("progressSpin");
-//            spinner = new Spinner(spinnerOpts).spin(target);
-//            $("#progressMsg").text(msg);   
-        
-        }
         
         function updateData(volumes){
             /*
@@ -1133,7 +1118,7 @@
           
         };
         
-        beforeLoading();
+       
         createHTML();
         updateVolumeSelector();        
         jQuerySelectors();        
