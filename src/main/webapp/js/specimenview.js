@@ -178,6 +178,7 @@
                 
                 if (url === currentVolume['volume_url']) {
                     options.push("<option value='" + url + "' data-class='" + sex + "' selected>" + basename(url) + "</option>");
+                    bookmarkHasVolume = false;
                 } else {
                     options.push("<option value='" + url + "' data-class='" + sex + "'>" + basename(url) + "</option>");
                 }
