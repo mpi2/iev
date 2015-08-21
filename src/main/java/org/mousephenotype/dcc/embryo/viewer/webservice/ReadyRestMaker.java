@@ -21,7 +21,7 @@ public class ReadyRestMaker {
     String centreId;
     String url;
     String mgi;
-    final private String IEVURL = "https://dev.mousephenotype.org/embryoviewer?mgi=";
+    final private String IEVURL = "https://mousephenotype.org/embryoviewer?mgi=";
 
     public ReadyRestMaker(){
         this.procedcureIds = new ArrayList<>();
