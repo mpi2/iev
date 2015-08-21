@@ -1,11 +1,14 @@
 
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 goog.provide('iev.specimenview');
 
-
-//(function () {
+/**
+ * Create a specimen view that displays three orthogonal views
+ *
+ * @constructor
+ */
 
 iev.specimenview = function(volumeData, id, container, 
              queryColonyId, indexCB, config, readyCB){
@@ -13,29 +16,29 @@ iev.specimenview = function(volumeData, id, container,
 if (typeof dcc === 'undefined')
     dcc = {};
 
-
-//        var iev_spinner = new iev.spinner();
-//        iev_spinner.showmsg();
-    /**
-     * This class holds the three orthogonal views from a single specimen and 
-     * allows for loading in of differnt specimens of the same genenotype/colonyID
-     * 
-     * @class SpcimenView
-     * @param {Array} VolumePaths volumes paths for a specific mutant/baseline
-     * @param {String} id unique id for this view
-     * @param {String} container html element to place this view
-     * @param {String} queryColonyId The colonyId of this specimen
-     * @param {function} indexCB called when slice index changes
-     */
-    //This is s atest vomment
+    /* @type {string} */
     this.queryColonyId = queryColonyId;
+    
+   /*@type {?Object}*/
     this.config = config;
+    
+   
     this.indexCB = indexCB;
+    
+    /** @type {string} */
     this.id = id;
+    /** @type {string} */
     this.viewContainer = container;
     this.volumeData = volumeData;
     this.readyCB = readyCB;
     this.$xContainer;
+     /**
+    * The orientation index in respect to the
+    * attached volume and its scan direction.
+    *
+    * @type {!number}
+    * @protected
+    */
     this.$yContainer;
     this.$zContainer;
     this.$xWrap;
@@ -59,6 +62,7 @@ if (typeof dcc === 'undefined')
     this.ready = false;
     this.progressSpinner;
     this.contrast = config['specimen']['brightness'];
+    /** @const */ 
     this.WILDTYPE_COLONYID = 'baseline';
 
     // Select first volume in the list
@@ -84,17 +88,26 @@ if (typeof dcc === 'undefined')
      * 
      * A temporary fix to map cid to centre logo icon
      */
+    /** @const */ 
     this.ICONS_DIR = "images/centre_icons/";
+    /** @const */ 
     this.IMG_DIR = "images/";
+    /** @const */ 
     this.FEMALE_ICON = "female.png";
+    /** @const */ 
     this.MALE_ICON = "male.png";
+    /** @const */ 
     this.HOM_ICON = 'hom.png';
+    /** @const */ 
     this.HET_ICON = 'het.png';
+    /** @const */ 
     this.HEMI_ICON = 'het.png';
+    /** @const */ 
     this.WT_ICON = 'wildtype.png';
 
     this.specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
 
+    /** @const */ 
     this.centreIcons ={
         1: "logo_Bcm.png",
         3: "logo_Gmc.png",
@@ -109,6 +122,8 @@ if (typeof dcc === 'undefined')
     }
 
     this.spinner;
+    
+    /** @const */ 
     this.spinnerOpts = {
         lines: 8 // The number of lines to draw
         , length: 6 // The length of each line
@@ -132,7 +147,7 @@ if (typeof dcc === 'undefined')
         , position: 'relative' // Element positioning
     };
 
-
+    /** @const */ 
     this.monthNames = ["Jan", "Feb", "Mar", "April", "May", "June",
         "July", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
@@ -260,8 +275,8 @@ iev.specimenview.prototype.showMetadata = function(){
                 break;
             case 'hemizygous':
                 console.log('hemiiiii');
-                break;
                 zygIcon = this.HEMI_ICON;
+                break;
         }
     }
 
@@ -765,7 +780,7 @@ iev.specimenview.prototype.sliceChange = function(id, ortho, index){
      if (ortho === 'X') this.indexCB(id, ortho, index + this.xOffset );
      else if (ortho === 'Y') this.indexCB(id, ortho, index + this.yOffset );
      else if (ortho === 'Z') this.indexCB(id, ortho, index + this.zOffset );
-}
+};
        
        
 iev.specimenview.prototype.setLowPowerState = function(state){
@@ -773,7 +788,7 @@ iev.specimenview.prototype.setLowPowerState = function(state){
      * @param {bool} state. Wheter low power should be turned on or off
      */
     this.lowPower = state;
-}
+};
 
 
 
@@ -805,7 +820,7 @@ iev.specimenview.prototype.updateSliders = function(renderer) {
     else if(renderer.interactor.leftButtonDown){
           this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);
     }
-}
+};
 
 
 
@@ -1104,36 +1119,6 @@ iev.specimenview.prototype.objSize = function(obj) {
     return count;
 }
 
-
-//iev.specimenview.prototype.public_interface = {
-//    /**
-//     * The public interface for this class.
-//     * refernce public methods in here
-//     * @type {Object}
-//     */
-//    setVisibleViews: this.setVisibleViews,
-//    setXindex: setXindex,
-//    setYindex: setYindex,
-//    setZindex: setZindex,
-//    getIndex: getIndex,
-//    getBrightnessLower: getBrightnessLower,
-//    getBrightnessUpper: getBrightnessUpper,
-//    id: id,
-//    setIdxOffset: setIdxOffset,
-//    getDimensions: getDimensions,
-//    rescale: rescale,
-//    getVolume: getVolume,
-//    updateData: updateData,
-//    zoomIn: zoomIn,
-//    zoomOut: zoomOut,
-//    reset: reset,
-//    invertColour: invertColour,
-//    setLowPowerState: setLowPowerState,
-//    isReady: isReady,
-//    getCurrentVolume: getCurrentVolume,
-//    screenShot: screenShot
-//
-//};
         
 
 
