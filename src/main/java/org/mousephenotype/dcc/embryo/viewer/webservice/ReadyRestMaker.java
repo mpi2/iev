@@ -14,29 +14,36 @@ import java.util.HashMap;
  */
 public class ReadyRestMaker {
     
-    ArrayList<String> modalities;
+    ArrayList<String> procedcureIds;
     ArrayList<String> stages;
+    ArrayList<HashMap<String, String>> procsParams;
     String colonyId;
     String centreId;
     String url;
     String mgi;
-    final private String IEVURL = "http://www.mousephenotype.org/embryoviewer?mgi=";
+    final private String IEVURL = "https://dev.mousephenotype.org/embryoviewer?mgi=";
 
     public ReadyRestMaker(){
-        this.modalities = new ArrayList<>();
+        this.procedcureIds = new ArrayList<>();
+        this. procsParams = new ArrayList<>();
     }
     
-    public void addModality(String modality) {
+    public void addModality(String procedureId, String parameter) {
 
         String modalityName = "unknown";
-        if ("203".equals(modality)) modalityName = "&#956CT E14.5/15.5";
-        if ("204".equals(modality)) modalityName = "&#956CT E18.5";
-        if ("202".equals(modality)) modalityName = "OPT 9.5";
-        if (!this.modalities.contains(modalityName)){
-            this.modalities.add(modalityName);
+        if ("203".equals(procedureId)) modalityName = "&#956CT E14.5/15.5";
+        if ("204".equals(procedureId)) modalityName = "&#956CT E18.5";
+        if ("202".equals(procedureId)) modalityName = "OPT 9.5";
+        if (!this.procedcureIds.contains(procedureId)){
+            this.procedcureIds.add(procedureId);
+            HashMap<String, String> pps = new HashMap<>();
+            pps.put("procedure_id", procedureId);
+            pps.put("parameter_id", parameter);
+            pps.put("modality", modalityName);
+            this.procsParams.add(pps);
         }
     }
-
+    
     public void setCentreId(String centreId) {
         this.centreId = centreId;
     }
@@ -56,7 +63,7 @@ public class ReadyRestMaker {
         results.put("mgi", this.mgi);
         String url = IEVURL + this.mgi;
         results.put("url", url);
-        results.put("modalities", this.modalities);
+        results.put("procedures_parameters", this.procsParams);
         results.put("stages", this.stages);
         
         return results;
