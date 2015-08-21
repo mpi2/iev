@@ -512,6 +512,7 @@ goog.require('iev.specimenview');
              * @param {type} container
              * @return {undefined}
              */
+            
             for (var i = 0; i < views.length; i++){
                 if (!views[i].isReady()) return;
             }
