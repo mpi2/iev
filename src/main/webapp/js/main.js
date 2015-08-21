@@ -1,3 +1,6 @@
+
+goog.require('iev.specimenview');
+
 (function () {
     if (typeof dcc === 'undefined')
         dcc = {};
@@ -35,6 +38,8 @@
             $('#' + div).append(template());
             return;
         }
+        
+
         
         /**
          * 
@@ -487,14 +492,14 @@
             // only load if baseline data available
             if (objSize(wildtypeData) > 0){
                 var wtConfig = {specimen: bookmarkData['wt'] };
-                wtView = dcc.SpecimenView(wildtypeData, 'wt', container, 
+                wtView = new iev.specimenview(wildtypeData, 'wt', container, 
                     WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb);
                 views.push(wtView);
             }
             
             // Set mutant specimen based on bookmark   
             var mutConfig = {specimen: bookmarkData['mut'] };
-            mutView = dcc.SpecimenView(mutantData, 'mut', container, 
+            mutView = new iev.specimenview(mutantData, 'mut', container, 
                 queryId, sliceChange, mutConfig, loadedCb);
             views.push(mutView);   
             centreSelector();
