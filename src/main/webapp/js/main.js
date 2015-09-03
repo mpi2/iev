@@ -9,8 +9,8 @@
           */
         
    
-        //var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        //var ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
+//        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+//        var ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
         var IMAGE_SERVER = 'http://localhost:8000/emb/';
         var ANA_SERVER = 'http://localhost:8000/ana/';
         var WILDTYPE_COLONYID = 'baseline';
@@ -142,22 +142,21 @@
             }
             
             // Get analysis data, if it exists
-            var ana = data.analysis;
+            var ana = data.analysis;            
             
-            // Create population average url
-            analysisUrl(ana, 'volume_url', 'average', OUTPUT_FILE_EXT);
-            
-            // Create Jacobian URLs
-            analysisUrl(ana, 'jacobian_overlay', 'jacobian', OUTPUT_FILE_EXT);
-            analysisUrl(ana, 'jacobian_cmap', 'jacobian', '.txt');
-            
-            // Create intensity URLs
-            analysisUrl(ana, 'intensity_overlay', 'intensity', OUTPUT_FILE_EXT);
-            analysisUrl(ana, 'intensity_cmap', 'intensity', '.txt');
+            if (ana) {
+                
+                // Create URLs
+                analysisUrl(ana, 'volume_url', 'average', OUTPUT_FILE_EXT);
+                analysisUrl(ana, 'jacobian_overlay', 'jacobian', OUTPUT_FILE_EXT);
+                analysisUrl(ana, 'intensity_overlay', 'intensity', OUTPUT_FILE_EXT);
+                analysisUrl(ana, 'jacobian_cmap', 'jacobian', '.txt');
+                analysisUrl(ana, 'intensity_cmap', 'intensity', '.txt');
 
-            // Add populate average volume to both viewers
-            modalityData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
-            modalityData[ana.pid]['vols']['mutant'][ana.volume_url] = ana;
+                // Add populate average volume to both viewers
+                modalityData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
+                modalityData[ana.pid]['vols']['mutant'][ana.volume_url] = ana;
+            }
 
         }else{
             //Just display a message informing no data

@@ -6,6 +6,7 @@
 package org.mousephenotype.dcc.embryo.viewer.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,12 +38,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Analysis.findBySid", query = "SELECT a FROM Analysis a WHERE a.sid = :sid"),
     @NamedQuery(name = "Analysis.findByPid", query = "SELECT a FROM Analysis a WHERE a.pid = :pid"),
     @NamedQuery(name = "Analysis.findByQid", query = "SELECT a FROM Analysis a WHERE a.qid = :qid"),
-    @NamedQuery(name = "Analysis.findByNoBaselines", query = "SELECT a FROM Analysis a WHERE a.noBaselines = :noBaselines"),
-    @NamedQuery(name = "Analysis.findByNoMutants", query = "SELECT a FROM Analysis a WHERE a.noMutants = :noMutants"),
     @NamedQuery(name = "Analysis.findByStatusId", query = "SELECT a FROM Analysis a WHERE a.statusId = :statusId"),
     @NamedQuery(name = "Analysis.findByActive", query = "SELECT a FROM Analysis a WHERE a.active = :active"),
-    @NamedQuery(name = "Analysis.findByDateStarted", query = "SELECT a FROM Analysis a WHERE a.dateStarted = :dateStarted"),
-    @NamedQuery(name = "Analysis.findByDateCompleted", query = "SELECT a FROM Analysis a WHERE a.dateCompleted = :dateCompleted")})
+    @NamedQuery(name = "Analysis.findByDateAnalysed", query = "SELECT a FROM Analysis a WHERE a.dateAnalysed = :dateAnalysed"),
+    @NamedQuery(name = "Analysis.findByPydpiperVersion", query = "SELECT a FROM Analysis a WHERE a.pydpiperVersion = :pydpiperVersion")})
 public class Analysis implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -74,26 +75,22 @@ public class Analysis implements Serializable {
     private int qid;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "no_baselines")
-    private String noBaselines;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "no_mutants")
-    private String noMutants;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "status_id")
     private int statusId;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "active")
-    private Integer active;
-    @Size(max = 45)
-    @Column(name = "date_started")
-    private String dateStarted;
-    @Size(max = 45)
-    @Column(name = "date_completed")
-    private String dateCompleted;
+    private int active;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "date_analysed")
+    @Temporal(TemporalType.DATE)
+    private Date dateAnalysed;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "pydpiper_version")
+    private String pydpiperVersion;
 
     public Analysis() {
     }
@@ -102,7 +99,7 @@ public class Analysis implements Serializable {
         this.id = id;
     }
 
-    public Analysis(Integer id, int cid, int lid, int gid, int sid, int pid, int qid, String noBaselines, String noMutants, int statusId) {
+    public Analysis(Integer id, int cid, int lid, int gid, int sid, int pid, int qid, int statusId, int active, Date dateAnalysed, String pydpiperVersion) {
         this.id = id;
         this.cid = cid;
         this.lid = lid;
@@ -110,9 +107,10 @@ public class Analysis implements Serializable {
         this.sid = sid;
         this.pid = pid;
         this.qid = qid;
-        this.noBaselines = noBaselines;
-        this.noMutants = noMutants;
         this.statusId = statusId;
+        this.active = active;
+        this.dateAnalysed = dateAnalysed;
+        this.pydpiperVersion = pydpiperVersion;
     }
 
     public Integer getId() {
@@ -171,22 +169,6 @@ public class Analysis implements Serializable {
         this.qid = qid;
     }
 
-    public String getNoBaselines() {
-        return noBaselines;
-    }
-
-    public void setNoBaselines(String noBaselines) {
-        this.noBaselines = noBaselines;
-    }
-
-    public String getNoMutants() {
-        return noMutants;
-    }
-
-    public void setNoMutants(String noMutants) {
-        this.noMutants = noMutants;
-    }
-
     public int getStatusId() {
         return statusId;
     }
@@ -195,28 +177,28 @@ public class Analysis implements Serializable {
         this.statusId = statusId;
     }
 
-    public Integer getActive() {
+    public int getActive() {
         return active;
     }
 
-    public void setActive(Integer active) {
+    public void setActive(int active) {
         this.active = active;
     }
 
-    public String getDateStarted() {
-        return dateStarted;
+    public Date getDateAnalysed() {
+        return dateAnalysed;
     }
 
-    public void setDateStarted(String dateStarted) {
-        this.dateStarted = dateStarted;
+    public void setDateAnalysed(Date dateAnalysed) {
+        this.dateAnalysed = dateAnalysed;
     }
 
-    public String getDateCompleted() {
-        return dateCompleted;
+    public String getPydpiperVersion() {
+        return pydpiperVersion;
     }
 
-    public void setDateCompleted(String dateCompleted) {
-        this.dateCompleted = dateCompleted;
+    public void setPydpiperVersion(String pydpiperVersion) {
+        this.pydpiperVersion = pydpiperVersion;
     }
 
     @Override
