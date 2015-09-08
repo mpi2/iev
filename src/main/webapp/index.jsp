@@ -355,6 +355,20 @@ limitations under the License.
                 <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
              
             </div>
+    
+            <div class="overlayWrap">
+                <div id="{{overlayId}}" title="Overlay controls" style="display: none;">
+                    <input type="radio" class="none" id="none_{{overlayId}}" name="{{overlayId}}">
+                    <label for="none_{{overlayId}}" class="button_label">None</label>
+
+                    <input type="radio" class="jacobian" id="jacobian_{{overlayId}}" name="{{overlayId}}" checked="true">
+                    <label for="jacobian_{{overlayId}}" class="button_label">Deformation</label>
+
+                    <input type="radio" class="intensity" id="intensity_{{overlayId}}" name="{{overlayId}}">
+                    <label for="intensity_{{overlayId}}" class="button_label">Intensity</label>
+                </div>
+            </div>
+    
             <div class="metadata" id="metadata_{{id}}">
             
             <div>

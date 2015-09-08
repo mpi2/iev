@@ -10,11 +10,14 @@ goog.require('iev.specimenview');
           * @class EmbryoViewer
           * @type String
           */
-
-        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-        //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
+        
+   
+//        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+//        var ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
+        var IMAGE_SERVER = 'http://localhost:8000/emb/';
+        var ANA_SERVER = 'http://localhost:8000/ana/';
         var WILDTYPE_COLONYID = 'baseline';
-        var OUTPUT_FILE_EXT = '.NRRD';
+        var OUTPUT_FILE_EXT = '.nrrd';
         var queryId = queryId;
         var horizontalView;
         var scaleVisible = true;
@@ -238,6 +241,29 @@ goog.require('iev.specimenview');
                         }
                     }
                 }
+
+                // Get analysis data, if it exists
+                var ana = data['analysis_data'][cen];
+                
+                if (ana) {
+                    
+                    ana = ana[0];
+                    ana.sex = 'Intersex';
+                    ana.zygosity = 'Mixed';
+                    ana.animalName = 'Population average';
+
+                    // Create URLs
+                    analysisUrl(ana, 'volume_url', 'average', OUTPUT_FILE_EXT);
+                    analysisUrl(ana, 'jacobian_overlay', 'jacobian', OUTPUT_FILE_EXT);
+                    analysisUrl(ana, 'intensity_overlay', 'intensity', OUTPUT_FILE_EXT);
+                    analysisUrl(ana, 'jacobian_cmap', 'jacobian', '.txt');
+                    analysisUrl(ana, 'intensity_cmap', 'intensity', '.txt');
+
+                    // Add populate average volume to both viewers
+                    modData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
+                    modData[ana.pid]['vols']['mutant'][ana.volume_url] = ana;
+                }                
+                
                 centreData[cen] = modData;
            
             }
@@ -359,8 +385,8 @@ goog.require('iev.specimenview');
             }
             
         }
-        
-        function generateBookmark() {
+
+	function generateBookmark() {
             
             var currentUrl = window.location.href;
             var hostname = currentUrl.split('?')[0];
@@ -392,8 +418,8 @@ goog.require('iev.specimenview');
                 + '&zoom=' + currentZoom;
             return bookmark;
         }
-                
-        function copyToClipboard(text) {
+
+	function copyToClipboard(text) {
             window.prompt("Bookmark created!\nCopy to clipboard (Ctrl/Cmd+C + Enter)", text);
           }
           
@@ -417,6 +443,26 @@ goog.require('iev.specimenview');
                 }
             }             
             
+        }
+
+	function analysisUrl(data, field, name, ext){
+            /**
+             * Create url for the analysis data, based on type and extension
+             * @method analysisUrl
+             * @param {json} data Data for colonyID 
+             */
+
+            var url = ANA_SERVER + data.cid + '/' 
+                    + data.lid + '/' 
+                    + data.gid + '/' 
+                    + data.sid + '/' 
+                    + data.pid + '/' 
+                    + data.qid + '/' 
+                    + data.id + '/'
+                    + name + ext;
+            
+            data[field] = url;
+            return data;
         }
         
         function zoomViewsIn() {
@@ -444,6 +490,8 @@ goog.require('iev.specimenview');
             window.dispatchEvent(new Event('resize')); 
         }
         
+        
+
         
         function beforeReady(){
             
@@ -491,14 +539,14 @@ goog.require('iev.specimenview');
             
             // only load if baseline data available
             if (objSize(wildtypeData) > 0){
-                var wtConfig = {specimen: bookmarkData['wt'] };
+                var wtConfig = {specimen: bookmarkData['wt']};
                 wtView = new iev.specimenview(wildtypeData, 'wt', container, 
                     WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb);
                 views.push(wtView);
             }
             
             // Set mutant specimen based on bookmark   
-            var mutConfig = {specimen: bookmarkData['mut'] };
+            var mutConfig = {specimen: bookmarkData['mut']};
             mutView = new iev.specimenview(mutantData, 'mut', container, 
                 queryId, sliceChange, mutConfig, loadedCb);
             views.push(mutView);   

@@ -1,37 +1,1174 @@
-var iev={specimenview:function(a,b,c,d,g,e,h){"undefined"===typeof dcc&&(dcc={});this.queryColonyId=d;this.config=e;this.indexCB=g;this.id=b;this.viewContainer=c;this.volumeData=a;this.readyCB=h;this.$xContainer;this.$zContainer;this.$xWrap;this.$yWrap;this.$zWrap;this.$xSlider;this.$ySlider;this.$zSlider;this.$windowLevel;this.xRen;this.yRen;this.zRen;this.volume;this.scaleBarSize;this.lowPower=!1;this.windowLevel="windowLevel_"+b;this.vselector="volumeSelector_"+b;this.zOffset=this.yOffset=this.xOffset=
-0;this.ready=!1;this.progressSpinner;this.contrast=e.specimen.brightness;this.WILDTYPE_COLONYID="baseline";this.currentVolume=a[Object.keys(a)[0]];this.bookmarkHasVolume=!1;if(e.specimen)for(var f in a)if(a.hasOwnProperty(f)&&(b=a[f],b.animalName===e.specimen.name)){this.currentVolume=b;this.bookmarkHasVolume=!0;break}this.ICONS_DIR="images/centre_icons/";this.IMG_DIR="images/";this.FEMALE_ICON="female.png";this.MALE_ICON="male.png";this.HOM_ICON="hom.png";this.HEMI_ICON=this.HET_ICON="het.png";this.WT_ICON=
-"wildtype.png";this.specimenMetaTemplateSource=$("#specimenMetdataTemplate").html();this.centreIcons={1:"logo_Bcm.png",3:"logo_Gmc.png",4:"logo_H.png",6:"logo_Ics.png",7:"logo_J.png",8:"logo_Tcp.png",9:"logo_Ning.png",10:"logo_Rbrc.png",11:"logo_Ucd.png",12:"logo_Wtsi.png"};this.spinner;this.spinnerOpts={lines:8,length:6,width:6,radius:8,scale:1,corners:1,color:"#ef7b0b",opacity:.2,rotate:0,direction:1,speed:1,trail:50,fps:10,zIndex:2E9,className:"spinner",top:"20px",shadow:!1,hwaccel:!1,position:"relative"};
-this.monthNames="Jan Feb Mar April May June July Aug Sep Oct Nov Dec".split(" ");this.createHTML();this.updateVolumeSelector();this.jQuerySelectors();this.setupRenderers();this.drawScaleBar()}};iev.specimenview.prototype.updateData=function(a){this.volumeData=a;this.replaceVolume(this.volumeData[Object.keys(this.volumeData)[0]].volume_url);this.updateVolumeSelector()};iev.specimenview.prototype.update=function(){this.drawScaleBar();this.showMetadata()};
-iev.specimenview.prototype.updateVolumeSelector=function(){$.widget("custom.iconselectmenu",$.ui.selectmenu,{_renderItem:function(a,b){var c=$("<li>",{text:b.label});b.disabled&&c.addClass("ui-state-disabled");$("<span>",{style:b.element.attr("data-style"),"class":"ui-icon "+b.element.attr("data-class")}).appendTo(c);return c.appendTo(a)}});$("#"+this.vselector).find("option").remove().end();var a=[],b;for(b in this.volumeData){var c=this.volumeData[b].volume_url,d=this.volumeData[b].sex.toLowerCase();
-c===this.currentVolume.volume_url?(a.push("<option value='"+c+"' data-class='"+d+"' selected>"+this.basename(c)+"</option>"),this.bookmarkHasVolume=!1):a.push("<option value='"+c+"' data-class='"+d+"'>"+this.basename(c)+"</option>")}$("#"+this.vselector).append(a.join(""));$("#"+this.vselector).iconselectmenu().iconselectmenu("menuWidget").addClass("ui-menu-icons customicons");$("#"+this.vselector).iconselectmenu({change:$.proxy(function(a,b){this.bookmarkHasVolume||this.replaceVolume(b.item.value)},
-this)}).iconselectmenu("refresh")};
-iev.specimenview.prototype.showMetadata=function(){var a=new Date(this.currentVolume.experimentDate),b=this.monthNames[a.getMonth()],b=b+(" "+a.getDate()),b=b+(" "+a.getFullYear()),a="female"===this.currentVolume.sex.toLowerCase()?this.IMG_DIR+this.FEMALE_ICON:this.IMG_DIR+this.MALE_ICON,c;if(this.currentVolume.colonyId===this.WILDTYPE_COLONYID)c=this.WT_ICON;else switch(this.currentVolume.zygosity.toLowerCase()){case "homozygous":console.log("hello");c=this.HOM_ICON;break;case "heterozygous":console.log("hettttt");
-c=this.HET_ICON;break;case "hemizygous":console.log("hemiiiii"),c=this.HEMI_ICON}c=this.IMG_DIR+c;var d="";this.centreIcons.hasOwnProperty(this.currentVolume.cid)&&(d=this.ICONS_DIR+this.centreIcons[this.currentVolume.cid]);b={animalId:this.currentVolume.animalName,date:b,sexIconPath:a,zygIconPath:c,centreLogoPath:d};a=Handlebars.compile(this.specimenMetaTemplateSource);b=$(a(b));$("#metadata_"+this.id).empty();$("#metadata_"+this.id).append(b)};
-iev.specimenview.prototype.setContrastSlider=function(){console.log(this.volume.min);this.$windowLevel.slider({range:!0,min:parseInt(this.volume.min),max:parseInt(this.volume.max),step:Math.ceil((this.volume.max-this.volume.min)/256),values:[parseInt(this.volume.windowLow),parseInt(this.volume.windowHigh)],slide:$.proxy(function(a,b){this.volume.windowLow=b.values[0];this.volume.windowHigh=b.values[1];this.volume.modified(!0)},this)})};
-iev.specimenview.prototype.setBookmarkContrast=function(){var a=parseInt(this.volume.windowLow);null!==this.contrast.lower&&(a=Math.max(this.contrast.lower,parseInt(this.volume.windowLow)));var b=parseInt(this.volume.windowHigh);null!==this.contrast.upper&&(b=Math.min(this.contrast.upper,parseInt(this.volume.windowHigh)));this.volume.windowLow=a;this.volume.windowHigh=b;this.volume.modified(!1);this.$windowLevel.slider("option","values",[this.volume.windowLow,this.volume.windowHigh])};
-iev.specimenview.prototype.reset=function(){this.xRen.resetViewAndRender();this.yRen.resetViewAndRender();this.zRen.resetViewAndRender();var a=this.volume.dimensions;this.volume.indexX=Math.floor((a[0]-1)/2);this.volume.indexY=Math.floor((a[1]-1)/2);this.volume.indexZ=Math.floor((a[2]-1)/2);this.$xSlider.slider("value",this.volume.indexX);this.$ySlider.slider("value",this.volume.indexY);this.$zSlider.slider("value",this.volume.indexZ);this.$windowLevel.slider("option","values",[this.volume.windowLow,
-this.volume.windowHigh]);$(".scale_outer").css({height:"100%",bottom:"30px",width:"20px",position:"relative",left:"20px","z-index":900});this.update()};
-iev.specimenview.prototype.createHTML=function(){var a=$("#"+this.viewContainer);if(!(1>this.objSize(this.volumeData)&&null!==this.queryColonyId)){var b={id:this.id},c=$("#specimen_view_template").html(),c=Handlebars.compile(c),c=$(c(b));c.append(this.controls_tab());c.append(this.createSliceView("X"));c.append(this.createSliceView("Y"));c.append(this.createSliceView("Z"));var d=$("#progress_template").html(),d=Handlebars.compile(d),b=$(d(b));c.append(b);this.spinner=(new Spinner(this.spinnerOpts)).spin();
-b.find(".ievLoadingMsg").append(this.spinner.el);a.append(c)}};iev.specimenview.prototype.progressStop=function(){this.spinner.stop();$("#progressMsg").empty()};iev.specimenview.prototype.createSliceView=function(a){a={sliceWrapId:"sliceWrap_"+a+"_"+this.id,sliceContainerID:a+"_"+this.id,viewSliceClasss:"slice"+a,sliderId:"slider_"+a+"_"+this.id,sliderClass:"slider"+a,orientation:a,id:this.id,scaleId:"scale_"+a+this.id,scaleTextId:"scaletext_"+a+this.id};var b=$("#slice_view_template").html();return Handlebars.compile(b)(a)};
-iev.specimenview.prototype.jQuerySelectors=function(){this.$xContainer=$("#X_"+this.id);this.$yContainer=$("#Y_"+this.id);this.$zContainer=$("#Z_"+this.id);this.$xSlider=$("#slider_X_"+this.id);this.$ySlider=$("#slider_Y_"+this.id);this.$zSlider=$("#slider_Z_"+this.id);this.$xWrap=$("#sliceWrap_X_"+this.id);this.$yWrap=$("#sliceWrap_Y_"+this.id);this.$zWrap=$("#sliceWrap_Z_"+this.id);this.$windowLevel=$("#"+this.windowLevel)};
-iev.specimenview.prototype.controls_tab=function(){var a={id:this.id,controlsButtonsId:"controlsButtons_"+this.id,selectorWrapId:"selectorWrap_"+this.id,vselectorId:this.vselector,windowLevelId:this.windowLevel},b=$("#slice_controls_template").html();return Handlebars.compile(b)(a)};iev.specimenview.prototype.zoomIn=function(){this.xRen.camera.zoomIn(!1);this.yRen.camera.zoomIn(!1);this.zRen.camera.zoomIn(!1);this.drawScaleBar()};
-iev.specimenview.prototype.zoomOut=function(){if(1>this.xRen.normalizedScale||1>this.yRen.normalizedScale||1>this.zRen.normalizedScale)return!1;this.xRen.camera.zoomOut(!1);this.yRen.camera.zoomOut(!1);this.zRen.camera.zoomOut(!1);this.drawScaleBar();return!0};
-iev.specimenview.prototype.drawScaleBar=function(){setTimeout(function(){this.drawScale(this.yRen,"scale_Y"+this.id,"scaletext_Y"+this.id);this.drawScale(this.zRen,"scale_Z"+this.id,"scaletext_Z"+this.id);this.drawScale(this.xRen,"scale_X"+this.id,"scaletext_X"+this.id)}.bind(this),20)};
-iev.specimenview.prototype.drawScale=function(a,b,c){var d=$(".scale_outer_"+this.id);null===this.currentVolume.rescaledPixelsize||0===this.currentVolume.rescaledPixelsize?d.hide():(d.show(),a=this.scaleBarSize/this.currentVolume.rescaledPixelsize*a.normalizedScale,d=($(".scale_outer").height()-a)/2,$("#"+b).css({height:a,width:"2px",position:"absolute",top:d}),$("#"+c).css({position:"absolute",top:d-20,"font-size":"10px"}))};iev.specimenview.prototype.rescale=function(a){this.scaleBarSize=a;this.drawScaleBar()};
-iev.specimenview.prototype.getVolume=function(){return this.volume};
-iev.specimenview.prototype.replaceVolume=function(a){var b={id:this.id},c=$("#"+this.id),d=$("#progress_template").html(),d=Handlebars.compile(d),b=$(d(b));c.append(b);this.spinner=(new Spinner(this.spinnerOpts)).spin();b.find(".ievLoadingMsg").append(this.spinner.el);"undefined"!==typeof this.xRen&&(this.xRen.destroy(),delete this.xRen);"undefined"!==typeof this.yRen&&(this.yRen.destroy(),delete this.yRen);"undefined"!==typeof this.zRen&&(this.zRen.destroy(),delete this.zRen);"undefined"!==typeof this.volume&&
-(this.volume.destroy(),delete this.volume);this.currentVolume=this.volumeData[a];this.setupRenderers()};
-iev.specimenview.prototype.setupRenderers=function(){this.ready=!1;1>this.objSize(this.volumeData)||(this.xRen=new X.renderer2D,this.xRen.config.PROGRESSBAR_ENABLED=!1,this.xRen.firstRender=!0,this.xRen.afterRender=function(){this.xRen.firstRender&&(this.xRen.resetViewAndRender(),this.xRen.firstRender=!1,this.xtk_showtime())}.bind(this),this.xRen.onShowtime=function(){this.setContrastSlider();this.setReady()}.bind(this),this.xRen.container=this.$xContainer.get(0),this.xRen.orientation="X",this.xRen.init(),
-this.overrideRightMouse(this.xRen),this.yRen=new X.renderer2D,this.yRen.config.PROGRESSBAR_ENABLED=!1,this.yRen.container=this.$yContainer.get(0),this.yRen.orientation="Y",this.yRen.init(),this.overrideRightMouse(this.yRen),this.zRen=new X.renderer2D,this.zRen.config.PROGRESSBAR_ENABLED=!1,this.zRen.container=this.$zContainer.get(0),this.zRen.orientation="Z",this.zRen.init(),this.overrideRightMouse(this.zRen),this.volume=new X.volume,this.volume.file=this.currentVolume.volume_url,this.xRen.add(this.volume),
-this.xRen.render())};iev.specimenview.prototype.overrideRightMouse=function(a){a.interactor.onMouseDown=function(a,c,d){d&&console.log("mousy R")}};iev.specimenview.prototype.setReady=function(){$("#ievLoading"+this.id).remove();ready=!0;this.readyCB()};iev.specimenview.prototype.isReady=function(){return ready};
-iev.specimenview.prototype.invertColour=function(a){this.volume&&(a?(this.volume.maxColor=[0,0,0],this.volume.minColor=[1,1,1],$("#"+this.id+"> .sliceView").css("background-color","#FFFFFF"),this.volume.indexX++,this.volume.indexY++,this.volume.indexZ++):(this.volume.maxColor=[1,1,1],this.volume.minColor=[0,0,0],$("#"+this.id+"> .sliceView").css("background-color","#000000"),this.volume.indexX--,this.volume.indexY--,this.volume.indexZ--))};
-iev.specimenview.prototype.sliceChange=function(a,b,c){"X"===b?this.indexCB(a,b,c+this.xOffset):"Y"===b?this.indexCB(a,b,c+this.yOffset):"Z"===b&&this.indexCB(a,b,c+this.zOffset)};iev.specimenview.prototype.setLowPowerState=function(a){this.lowPower=a};
-iev.specimenview.prototype.updateSliders=function(a){a.interactor.mousemoveEvent.shiftKey?(this.$xSlider.slider("value",this.volume.indexX),this.$ySlider.slider("value",this.volume.indexY),this.$zSlider.slider("value",this.volume.indexZ),this.sliceChange(this.id,"X",this.volume.indexX),this.sliceChange(this.id,"Y",this.volume.indexY),this.sliceChange(this.id,"Z",this.volume.indexZ)):a.interactor.leftButtonDown&&this.$windowLevel.slider("option","values",[this.volume.windowLow,this.volume.windowHigh])};
-iev.specimenview.prototype.xtk_showtime=function(){this.yRen.add(this.volume);this.yRen.render();this.zRen.add(this.volume);this.zRen.render();var a=this.volume.dimensions,b=this.config.specimen.pos;this.volume.indexX=(isNaN(b.x),b.x);this.volume.indexY=(isNaN(b.y),b.y);this.volume.indexZ=(isNaN(b.z),b.z);this.$xSlider.slider({disabled:!1,range:"min",min:0,max:a[0]-1,value:this.volume.indexX,slide:function(a,b){this.volume&&!this.lowPower&&(this.volume.indexX=b.value,this.sliceChange(this.id,"X",
-this.volume.indexX))}.bind(this),stop:function(a,b){this.volume&&this.lowPower&&(this.volume.indexX=b.value,sliceChange(this.id,"X",this.volume.indexX))}.bind(this)});this.$ySlider.slider({disabled:!1,range:"min",min:0,max:a[1]-1,value:this.volume.indexY,slide:function(a,b){this.volume&&!this.lowPower&&(this.volume.indexY=b.value,this.sliceChange(this.id,"Y",this.volume.indexY))}.bind(this),stop:function(a,b){this.volume&&this.lowPower&&(this.volume.indexY=b.value,this.sliceChange(this.id,"Y",this.volume.indexY))}.bind(this)});
-this.$zSlider.slider({disabled:!1,range:"min",min:0,max:a[2]-1,value:this.volume.indexZ,slide:function(a,b){this.volume&&!this.lowPower&&(this.volume.indexZ=b.value,sliceChange(id,"Z",this.volume.indexZ))}.bind(this),stop:function(a,b){this.volume&&this.lowPower&&(this.volume.indexZ=b.value,sliceChange(this.id,"Z",this.volume.indexZ))}.bind(this)});this.xRen.interactor.onMouseWheel=function(a){this.$xSlider.slider({value:this.volume.indexX});this.sliceChange(id,"X",this.volume.indexX)}.bind(this);
-this.yRen.interactor.onMouseWheel=function(a){this.$ySlider.slider({value:this.volume.indexY});this.sliceChange(id,"Y",this.volume.indexY)}.bind(this);this.zRen.interactor.onMouseWheel=function(a){this.$zSlider.slider({value:this.volume.indexZ});this.sliceChange(id,"Z",this.volume.indexZ)}.bind(this);this.xRen.interactor.onMouseMove=function(a){this.updateSliders(this.xRen,a)}.bind(this);this.yRen.interactor.onMouseMove=function(a){this.updateSliders(this.yRen,a)}.bind(this);this.zRen.interactor.onMouseMove=
-function(a){this.updateSliders(this.zRen,a)}.bind(this);this.yRen.interactor.rightButtonDown=function(){};this.setBookmarkContrast();this.update()};iev.specimenview.prototype.setXindex=function(a){this.volume.indexX=a-this.xOffset;this.$xSlider.slider("value",this.volume.indexX)};iev.specimenview.prototype.setYindex=function(a){this.volume.indexY=a-this.yOffset;this.$ySlider.slider("value",this.volume.indexY)};
-iev.specimenview.prototype.setZindex=function(a){this.volume.indexZ=a-this.zOffset;this.$zSlider.slider("value",this.volume.indexZ)};iev.specimenview.prototype.getBrightnessLower=function(){return this.volume.windowLow};iev.specimenview.prototype.getBrightnessUpper=function(){return this.volume.windowHigh};iev.specimenview.prototype.getIndex=function(a){if("X"===a)return this.volume.indexX;if("Y"===a)return this.volume.indexY;if("Z"===a)return this.volume.indexZ};
-iev.specimenview.prototype.setIdxOffset=function(a,b){"X"===a&&(this.xOffset=b);"Y"===a&&(this.yOffset=b);"Z"===a&&(this.zOffset=b)};iev.specimenview.prototype.getDimensions=function(){return this.volume.dimensions};iev.specimenview.prototype.getCurrentVolume=function(){return this.currentVolume};
-iev.specimenview.prototype.setVisibleViews=function(a,b,c){b=c?100:String(100/b);a.X.visible?(this.$xWrap.show(),this.$xWrap.width(b+"%")):this.$xWrap.hide();a.Y.visible?(this.$yWrap.show(),this.$yWrap.width(b+"%")):this.$yWrap.hide();a.Z.visible?(this.$zWrap.show(),this.$zWrap.width(b+"%")):this.$zWrap.hide()};iev.specimenview.prototype.basename=function(a){return a.split(/[\\/]/).pop()};iev.specimenview.prototype.objSize=function(a){var b=0,c;for(c in a)a.hasOwnProperty(c)&&b++;return b};
+
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
+
+goog.provide('iev.specimenview');
+
+/**
+ * Create a specimen view that displays three orthogonal views
+ *
+ * @constructor
+ */
+
+iev.specimenview = function(volumeData, id, container, 
+             queryColonyId, indexCB, config, readyCB){
+    
+if (typeof dcc === 'undefined')
+    dcc = {};
+
+    /* @type {string} */
+    this.queryColonyId = queryColonyId;
+    
+   /*@type {?Object}*/
+    this.config = config;
+    
+   
+    this.indexCB = indexCB;
+    
+    /** @type {string} */
+    this.id = id;
+    /** @type {string} */
+    this.viewContainer = container;
+    this.volumeData = volumeData;
+    this.readyCB = readyCB;
+    this.$xContainer;
+     /**
+    * The orientation index in respect to the
+    * attached volume and its scan direction.
+    *
+    * @type {!number}
+    * @protected
+    */
+    this.$yContainer;
+    this.$zContainer;
+    this.$xWrap;
+    this.$yWrap;
+    this.$zWrap;
+    this.$xSlider;
+    this.$ySlider;
+    this.$zSlider;
+    this.$windowLevel;
+    this.$overlayControl;
+    this.xRen;
+    this.yRen;
+    this.zRen;
+    this.volume;
+    this.hasLabelmap = false;
+    this.currentLabelmap = 'jacobian';
+    this.scaleBarSize;
+    this.lowPower = false;
+    this.windowLevel = 'windowLevel_' + id;
+    this.overlayControl = 'overlayControl_' + id;
+    this.vselector = 'volumeSelector_' + id;
+    this.xOffset = 0;
+    this.yOffset = 0;
+    this.zOffset = 0;
+    this.ready = false;
+    this.progressSpinner;
+    this.contrast = config['specimen']['brightness'];
+    /** @const */ 
+    this.WILDTYPE_COLONYID = 'baseline';
+
+    // Select first volume in the list
+    /*@type {?Object}*/
+    this.currentVolume = volumeData[Object.keys(volumeData)[0]];
+    this.bookmarkHasVolume = false;
+
+    // If the config has a specimen, select that igit nstead
+    if (config['specimen']['name'] !== "null") {
+        for (var key in volumeData) {
+            if (volumeData.hasOwnProperty(key)) {
+                var vol = volumeData[key];
+                if (vol['animalName'] === config['specimen']['name']) {
+                    this.currentVolume = vol;
+                    this.bookmarkHasVolume = true;
+                    break;
+                }
+            }
+        }           
+    }
+
+
+    /*
+     * 
+     * A temporary fix to map cid to centre logo icon
+     */
+    /** @const */ 
+    this.ICONS_DIR = "images/centre_icons/";
+    /** @const */ 
+    this.IMG_DIR = "images/";
+    /** @const */ 
+    this.FEMALE_ICON = "female.png";
+    /** @const */ 
+    this.MALE_ICON = "male.png";
+    /** @const */ 
+    this.HOM_ICON = 'hom.png';
+    /** @const */ 
+    this.HET_ICON = 'het.png';
+    /** @const */ 
+    this.HEMI_ICON = 'het.png';
+    /** @const */ 
+    this.WT_ICON = 'wildtype.png';
+    /** @const */ 
+    this.INTERSEX_ICON = 'male.png'; // TODO replace this
+    /** @const */ 
+    this.MIXED_ICON = 'wildtype.png';  // TODO and this
+
+    this.specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
+
+    /** @const */ 
+    this.centreIcons ={
+        1: "logo_Bcm.png",
+        3: "logo_Gmc.png",
+        4: "logo_H.png",
+        6: "logo_Ics.png",
+        7: "logo_J.png",
+        8: "logo_Tcp.png",
+        9: "logo_Ning.png",
+        10: "logo_Rbrc.png",
+        11: "logo_Ucd.png",
+        12: "logo_Wtsi.png"
+    }
+
+    this.spinner;
+    
+    /** @const */ 
+    this.spinnerOpts = {
+        lines: 8 // The number of lines to draw
+        , length: 6 // The length of each line
+        , width: 6 // The line thickness
+        , radius: 8 // The radius of the inner circle
+        , scale: 1 // Scales overall size of the spinner
+        , corners: 1 // Corner roundness (0..1)
+        , color: '#ef7b0b' // #rgb or #rrggbb or array of colors
+        , opacity: 0.2 // Opacity of the lines
+        , rotate: 0 // The rotation offset
+        , direction: 1 // 1: clockwise, -1: counterclockwise
+        , speed: 1 // Rounds per second
+        , trail: 50 // Afterglow percentage
+        , fps: 10 // Frames per second when using setTimeout() as a fallback for CSS
+        , zIndex: 2e9 // The z-index (defaults to 2000000000)
+        , className: 'spinner' // The CSS class to assign to the spinner
+        , top: '20px' // Top position relative to parent
+//            , left: '70%' // Left position relative to parent
+        , shadow: false // Whether to render a shadow
+        , hwaccel: false // Whether to use hardware acceleration
+        , position: 'relative' // Element positioning
+    };
+
+    /** @const */ 
+    this.monthNames = ["Jan", "Feb", "Mar", "April", "May", "June",
+        "July", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    
+    this.createHTML();
+    this.updateVolumeSelector();        
+    this.jQuerySelectors();
+    this.setupOverlayControls();        
+    this.setupRenderers();
+    //createEventHandlers();
+    this.drawScaleBar();        
+}
+        
+        
+iev.specimenview.prototype.updateData = function (volumes){
+    /*
+     * Chnage the current stage/modality being viewed
+     * 
+     */
+
+    this.volumeData = volumes;
+    this.replaceVolume(this.volumeData[Object.keys(this.volumeData)[0]]['volume_url']);
+    this.updateVolumeSelector();
+}
+        
+        
+iev.specimenview.prototype.update = function (){
+    this.drawScaleBar();
+    this.showMetadata();
+}
+        
+
+iev.specimenview.prototype.updateVolumeSelector = function () {
+    $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+        _renderItem: function (ul, item) {
+            var li = $("<li>", {text: item.label});
+            if (item.disabled) {
+                li.addClass("ui-state-disabled");
+            }
+
+            $("<span>", {
+                style: item.element.attr("data-style"),
+                "class": "ui-icon " + item.element.attr("data-class")
+            })
+                    .appendTo(li);
+            return li.appendTo(ul);
+        }
+    });
+    //remove any current options
+    $('#' + this.vselector)
+            .find('option')
+            .remove()
+            .end();
+
+    // Add the volume options
+    var options = [];
+    for (var i in this.volumeData) {
+        var url = this.volumeData[i]['volume_url'];
+        var sex = this.volumeData[i].sex.toLowerCase();
+
+        if (url === this.currentVolume['volume_url']) {
+            options.push("<option value='" + url + "' data-class='" + sex + "' selected>" + this.basename(url) + "</option>");
+            this.bookmarkHasVolume = false;
+        } else {
+            options.push("<option value='" + url + "' data-class='" + sex + "'>" + this.basename(url) + "</option>");
+        }
+    }
+
+
+    $('#' + this.vselector)
+            .append(options.join(""));
+
+
+    $('#' + this.vselector).iconselectmenu()
+            .iconselectmenu("menuWidget")
+            .addClass("ui-menu-icons customicons");
+
+    $('#' + this.vselector)
+            .iconselectmenu({
+                change: $.proxy(function (event, ui) {
+                    if (!this.bookmarkHasVolume) { // not a bookmark triggered change
+                        this.replaceVolume(ui.item.value);
+                    }
+                }, this)
+            })
+            .iconselectmenu("refresh");                  
+}
+        
+        
+        
+iev.specimenview.prototype.showMetadata = function(){
+        
+    if (this.currentVolume.experimentDate) {
+        var date = new Date(this.currentVolume.experimentDate);
+    } else {
+        var date = new Date(this.currentVolume.dateAnalysed);
+    }
+
+    var displayDate = this.monthNames[date.getMonth()];
+
+    displayDate += " " + date.getDate();
+    displayDate += " " + date.getFullYear();
+
+    var sexIconPath;
+    if (this.currentVolume.sex.toLowerCase() === 'female'){
+       sexIconPath = this.IMG_DIR + this.FEMALE_ICON;
+    } else if (this.currentVolume.sex.toLowerCase() === 'male') {
+        sexIconPath = this.IMG_DIR + this.MALE_ICON;
+    } else {
+        sexIconPath = this.IMG_DIR + this.INTERSEX_ICON;
+    }
+
+    // Set the zygosity icon for mutants or the 'WT' icon for baselines 
+    var zygIconPath;
+    var zygIcon;
+
+    if (this.currentVolume.colonyId === this.WILDTYPE_COLONYID){
+        zygIcon = this.WT_ICON;
+    }
+
+    else{
+
+        switch (this.currentVolume.zygosity.toLowerCase()){
+            case 'homozygous':
+                console.log('hello');
+                zygIcon = this.HOM_ICON;
+                break;
+            case 'heterozygous':
+                console.log('hettttt');
+                zygIcon = this.HET_ICON;
+                break;
+            case 'hemizygous':
+                console.log('hemiiiii');
+                zygIcon = this.HEMI_ICON;
+                break;
+            default:
+                console.log('other');
+                zygIcon = this.MIXED_ICON;
+                break;
+        }
+    }
+
+    zygIconPath = this.IMG_DIR + zygIcon;
+
+    var centreLogoPath = "";
+
+    if (this.centreIcons.hasOwnProperty(this.currentVolume.cid)){
+        centreLogoPath = this.ICONS_DIR + this.centreIcons[this.currentVolume.cid];
+    }
+
+    var data = {
+        animalId: this.currentVolume.animalName,
+        date: displayDate,
+        sexIconPath: sexIconPath,
+        zygIconPath: zygIconPath,
+        centreLogoPath: centreLogoPath
+    };
+
+    var template = Handlebars.compile(this.specimenMetaTemplateSource);
+
+    var $metaDataHtml = $(template(data));
+
+    //Clear any current metadata
+    $("#metadata_" + this.id).empty();
+    $("#metadata_" + this.id).append($metaDataHtml);
+}
+        
+        
+iev.specimenview.prototype.setContrastSlider = function() {
+    /**
+     * Makes contrast slider for specimen view
+     * @method setContrastSlider
+     */
+    console.log(this.volume.min);
+
+    this.$windowLevel.slider({
+        range: true,
+        min: parseInt(this.volume.min),
+        max: parseInt(this.volume.max),
+        step: Math.ceil((this.volume.max - this.volume.min) / 256),
+        values: [ parseInt(this.volume.windowLow), parseInt(this.volume.windowHigh) ],
+        slide: $.proxy(function (event, ui) {
+            this.volume.windowLow = ui.values[0];
+            this.volume.windowHigh = ui.values[1];
+            this.volume.modified(true);
+        }, this)
+    });
+};
+
+iev.specimenview.prototype.setupOverlayControls = function() {
+    // Set up overlay controls
+    var spec_view = this;
+    this.$overlayControl.buttonset();
+    this.$overlayControl.click(function() {
+        spec_view.currentLabelmap = $('input[type=radio]:checked', this).prop("id").split("_")[0];
+        spec_view.replaceVolume(spec_view.currentVolume['volume_url']);
+    });
+}
+
+iev.specimenview.prototype.setLabelmap = function(overlay_type) {
+    if (overlay_type !== "none") {
+        this.volume.labelmap.file = this.currentVolume[overlay_type + '_overlay'];
+        this.volume.labelmap.colortable.file = this.currentVolume[overlay_type + '_cmap'];
+    }
+}
+
+iev.specimenview.prototype.showHideOverlayControls = function() {
+    
+    if (this.hasLabelmap) {
+        this.$overlayControl.show();
+    } else {
+        this.$overlayControl.hide();
+    }
+
+};
+        
+iev.specimenview.prototype.setBookmarkContrast = function() {
+
+    // Set lower contrast level
+    var lower = parseInt(this.volume.windowLow);
+    if (this.contrast['lower'] !== null) {
+        lower = Math.max(this.contrast['lower'], parseInt(this.volume.windowLow));                
+    }
+
+    // Set upper this.contrast level
+    var upper = parseInt(this.volume.windowHigh);
+    if (this.contrast['upper'] !== null) {
+        upper = Math.min(this.contrast['upper'], parseInt(this.volume.windowHigh));                             
+    }
+
+    // Set this.volume modifed
+    this.volume.windowLow = lower;
+    this.volume.windowHigh = upper;
+    this.volume.modified(false);
+
+    // Set slider values
+    this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);            
+
+}
+
+
+iev.specimenview.prototype.reset = function(){
+    /*
+     * Resets:
+     *  Renderer: undoes the zoom
+     *  Set the slice index to the mid-slice
+     *  contrast
+     *  The scale bar are put back in original place, and redrawn
+     *  @method reset
+     */
+    this.xRen.resetViewAndRender();
+    this.yRen.resetViewAndRender();
+    this.zRen.resetViewAndRender();
+    //Reset the slider position
+    var dims = this.volume.dimensions;
+    this.volume.indexX = Math.floor((dims[0] - 1) / 2);
+    this.volume.indexY = Math.floor((dims[1] - 1) / 2);
+    this.volume.indexZ = Math.floor((dims[2] - 1) / 2);
+    this.$xSlider.slider("value", this.volume.indexX);
+    this.$ySlider.slider("value", this.volume.indexY);
+    this.$zSlider.slider("value", this.volume.indexZ);
+    //reset the window level
+    this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);
+
+    // Put scale bars back in place            
+    $('.scale_outer').css(
+       {
+        'height': '100%',
+        'bottom': '30px',
+        'width': '20px',
+        'position': 'relative',
+        'left': '20px',
+        'z-index': 900
+        });
+
+    this.update();
+}
+
+
+iev.specimenview.prototype.createHTML = function() {
+    /**
+     * Creates the html needed for the specimen view to live in.
+     * Uses handlebar.js to generate from templates
+     * 
+     * @method createHtml
+     * 
+     */
+
+    var $viewsContainer = $("#" + this.viewContainer);
+
+    if (this.objSize(this.volumeData) < 1 && this.queryColonyId !==  null){
+            return;
+    }
+
+    var data = {
+        id:this.id
+    };
+
+    var source   = $("#specimen_view_template").html();
+    var template = Handlebars.compile(source);
+
+    var $specimenView = $(template(data));
+
+    $specimenView.append(this.controls_tab());
+
+    // This defines the order of the orthogonal views
+    $specimenView.append(this.createSliceView('X'));
+    $specimenView.append(this.createSliceView('Y'));
+    $specimenView.append(this.createSliceView('Z'));
+
+    var progressSource   = $("#progress_template").html();
+    var progressTemplate = Handlebars.compile(progressSource);
+    var $progress = $(progressTemplate(data));
+
+    $specimenView.append($progress);
+    this.spinner = new Spinner(this.spinnerOpts).spin();
+    //spinner = new Spinner(this.spinnerOpts).spin($specimenView);
+    $progress.find('.ievLoadingMsg').append(this.spinner.el);
+
+
+    $viewsContainer.append($specimenView);
+};
+        
+        
+        
+        
+iev.specimenview.prototype.progressStop = function(){
+    this.spinner.stop();
+     $("#progressMsg").empty();
+};
+        
+        
+iev.specimenview.prototype.createSliceView = function(orient){
+    /**
+     * Create the HTML for the elements containing the slice view
+     * @param {String} orient Orientation (X, Y or Z)
+     */
+
+    var viewSliceClass = 'slice' + orient;
+
+    var data = {
+        sliceWrapId: 'sliceWrap_' + orient + '_' + this.id,
+        sliceContainerID: orient + '_' + this.id,
+        viewSliceClasss: viewSliceClass,
+        sliderId: 'slider_' + orient + '_'+ this.id,
+        sliderClass: 'slider' + orient,
+        orientation: orient,
+        id: this.id,
+        scaleId: 'scale_' + orient + this.id,
+        scaleTextId: 'scaletext_' + orient + this.id
+
+    };
+
+    var source = $("#slice_view_template").html();
+    var template = Handlebars.compile(source);
+    return template(data);
+}
+        
+           
+        
+iev.specimenview.prototype.jQuerySelectors = function(){
+    /**
+     * Get Jquery handles on elements that need to be accessed multiple times
+     * Should speed things up not having to query the DOM all the time
+     * 
+     * @method jQuerySelectors
+     */
+    this.$xContainer =  $('#X_' + this.id);
+    this.$yContainer =  $('#Y_' + this.id);
+    this.$zContainer =  $('#Z_' + this.id);
+    this.$xSlider = $('#slider_X_'+ this.id);
+    this.$ySlider = $('#slider_Y_'+ this.id);
+    this.$zSlider = $('#slider_Z_'+ this.id);
+    this.$xWrap = $('#sliceWrap_X_' + this.id);
+    this.$yWrap = $('#sliceWrap_Y_' + this.id);
+    this.$zWrap = $('#sliceWrap_Z_' + this.id);
+    this.$windowLevel = $('#' + this.windowLevel);
+    this.$overlayControl = $('#' + this.overlayControl);
+}
+        
+        
+        
+iev.specimenview.prototype.controls_tab = function() {
+    /**
+     * Use handlebars.js to the controls tab HTML for the specimen view
+     * Controls tab contains zoom buttons contrst slider etc.
+     * 
+     * @method controls_tab
+     * 
+     */
+
+    var data = {
+        id: this.id,
+        controlsButtonsId: "controlsButtons_" + this.id,
+        selectorWrapId: "selectorWrap_" + this.id,
+        vselectorId: this.vselector,
+        windowLevelId: this.windowLevel,
+	overlayId: this.overlayControl
+    };
+
+    var source   = $("#slice_controls_template").html();
+    var template = Handlebars.compile(source);
+    return template(data);
+};
+        
+        
+iev.specimenview.prototype.zoomIn = function(){
+   this.xRen.camera.zoomIn(false);
+   this.yRen.camera.zoomIn(false);
+   this.zRen.camera.zoomIn(false);
+   this.drawScaleBar();
+};
+
+        
+iev.specimenview.prototype.zoomOut = function(){
+    //Prevent over out-zooming
+    if (this.xRen.normalizedScale < 1.0 || this.yRen.normalizedScale < 1.0 || this.zRen.normalizedScale < 1.0){
+       return false;
+    }            
+    this.xRen.camera.zoomOut(false);
+    this.yRen.camera.zoomOut(false);
+    this.zRen.camera.zoomOut(false);
+    this.drawScaleBar();        
+    return true;
+};
+
+
+iev.specimenview.prototype.drawScaleBar = function() {   
+    // After resizing the window or doing a zoomIn or zoomOut, we need to wait for renderer2D to call
+    // render_(). Otherwose normalizScale will not have been set
+     setTimeout(function () {
+        this.drawScale(this.yRen, 'scale_' + 'Y' + this.id, 'scaletext_' + 'Y' + this.id);
+        this.drawScale(this.zRen, 'scale_' + 'Z' + this.id, 'scaletext_' + 'Z' + this.id);
+        this.drawScale(this.xRen, 'scale_' + 'X' + this.id, 'scaletext_' + 'X' + this.id );
+    }.bind(this), 20);  
+};
+        
+            
+iev.specimenview.prototype.drawScale = function(ren, scaleId, scaleTextId){
+
+    var $scaleouter =  $('.scale_outer_' + this.id);
+
+    if (this.currentVolume["rescaledPixelsize"] === null ||  this.currentVolume["rescaledPixelsize"] === 0){
+        $scaleouter.hide();
+        return;
+    }
+    $scaleouter.show();
+
+    var pixel_size = this.currentVolume["rescaledPixelsize"]; //for now hard code
+    var bar_size_pixels = (this.scaleBarSize / pixel_size) * ren.normalizedScale;
+
+    var outer_height = $('.scale_outer').height();
+    var top = (outer_height - bar_size_pixels) / 2;
+
+    $('#'+ scaleId).css(
+       {'height': bar_size_pixels, 
+        'width': '2px',
+        'position': 'absolute',
+        'top': top
+    });
+    $('#' + scaleTextId).css(
+        {
+        'position': 'absolute',
+        'top': top - 20,
+        'font-size': '10px'
+    });
+};      
+        
+              
+iev.specimenview.prototype.rescale = function(scale){
+
+    this.scaleBarSize = scale;
+    this.drawScaleBar();
+}
+        
+         
+iev.specimenview.prototype.getVolume = function(){
+
+    return this.volume;
+}
+
+        
+
+iev.specimenview.prototype.replaceVolume = function(volumePath) {
+    /**
+     * Replace current specimen volume with another.
+     * Destroys current object (not sure is necessary) add new path and call setupoRenderers
+     * 
+     * @method replaceVolume
+     * @param {String} VolumePath path to new volume to load into viewer
+     */
+    var data = {
+        id: this.id
+    };
+    var $specimenView = $('#' + this.id);
+    var progressSource   = $("#progress_template").html();
+    var progressTemplate = Handlebars.compile(progressSource);
+    var $progress = $(progressTemplate(data));
+
+    $specimenView.append($progress);
+    this.spinner = new Spinner(this.spinnerOpts).spin();
+    //spinner = new Spinner(this.spinnerOpts).spin($specimenView);
+    $progress.find('.ievLoadingMsg').append(this.spinner.el);
+
+    if (typeof (this.xRen) !== 'undefined') {
+        this.xRen.destroy();
+        delete this.xRen;
+    }
+    if (typeof (this.yRen) !== 'undefined') {
+        this.yRen.destroy();
+        delete this.yRen;
+    }
+    if (typeof (this.zRen) !== 'undefined') {
+        this.zRen.destroy();
+        delete this.zRen;
+    }
+    if (typeof (this.volume) !== 'undefined') {
+        this.volume.destroy();
+        delete this.volume;
+    }
+
+    this.currentVolume = this.volumeData[volumePath];
+    this.setupRenderers();
+};
+        
+
+
+
+iev.specimenview.prototype.setupRenderers = function() {
+    /**
+     * Call the XTK functions that are required to get our volume rendered in 2D
+     * 
+     * @method setupRenderers
+     */
+    this.ready = false;
+
+    if (this.objSize(this.volumeData) < 1) return;
+
+    this.xRen = new X.renderer2D();
+    this.xRen.config.PROGRESSBAR_ENABLED = false;
+
+    /*
+     * Sagittal scaling bug fix.
+     * also see fix in X.renderer2D.render_
+     */ 
+    this.xRen.firstRender = true;
+
+    this.xRen.afterRender = function(){   
+        if (this.xRen.firstRender){
+           this.xRen.resetViewAndRender();
+           this.xRen.firstRender = false;
+           this.xtk_showtime();
+        }                           
+    }.bind(this);
+    
+    // Set flag if overlay exists (checks by jacobian)      
+    this.hasLabelmap = 'jacobian_overlay' in this.currentVolume;
+
+    this.xRen.onShowtime = function(){   
+        // we have to wait before volumes have fully loaded before we
+        // can extract intesity information                
+        this.setContrastSlider();   
+	this.showHideOverlayControls();              
+        this.setReady();                
+    }.bind(this);
+
+
+    this.xRen.container = this.$xContainer.get(0);
+    this.xRen.orientation = 'X';
+    this.xRen.init();
+
+    this.overrideRightMouse(this.xRen);
+
+    this.yRen = new X.renderer2D();
+    this.yRen.config.PROGRESSBAR_ENABLED = false;
+    this.yRen.container = this.$yContainer.get(0);
+    this.yRen.orientation = 'Y';
+    this.yRen.init();
+    this.overrideRightMouse(this.yRen);
+
+    this.zRen = new X.renderer2D();
+    this.zRen.config.PROGRESSBAR_ENABLED = false;
+    this.zRen.container = this.$zContainer.get(0);
+    this.zRen.orientation = 'Z';
+    this.zRen.init();
+    this.overrideRightMouse(this.zRen);
+
+    // create a X.volume
+    this.volume = new X.volume();
+    this.volume.file = this.currentVolume['volume_url'];
+
+    // add jacobian overlay by default (if it exists)            
+    if (this.hasLabelmap) {
+        this.setLabelmap(this.currentLabelmap);
+    }
+
+    // First we render X. Then X.afterRender() calls the loading and rendering of the others
+    this.xRen.add(this.volume);
+    this.xRen.render(); 
+};
+
+        
+// Attempting to stop the right mouse zoom functionality
+iev.specimenview.prototype.overrideRightMouse = function(ren){
+
+    ren.interactor.onMouseDown = function(left, middle, right) {
+        // This doesn't override the onMouseDown_ function
+        if (right) {
+            console.log('mousy R');
+            return;
+
+        }
+    }
+}
+
+        
+iev.specimenview.prototype.setReady = function(){
+    //remove the progress div
+    //
+    $('#ievLoading' + this.id).remove();
+    ready = true;
+    this.readyCB();
+}
+
+        
+iev.specimenview.prototype.isReady = function(){
+    return ready;
+}
+
+
+iev.specimenview.prototype.invertColour = function(checked) {
+    /**
+     * Responds to invert color checkbox, and inverts the lookup table
+     * 
+     * @method invertColour
+     * @param {bool} checked Is the checkbox active
+     */
+
+    if (!this.volume)
+        return;
+
+    if (checked) {
+        this.volume.maxColor = [0, 0, 0];
+        this.volume.minColor = [1, 1, 1];
+        $("#" + this.id + "> .sliceView").css("background-color", "#FFFFFF");
+
+        this.volume.indexX++;
+        this.volume.indexY++;
+        this.volume.indexZ++;
+
+    } else {
+
+        this.volume.maxColor = [1, 1, 1];
+        this.volume.minColor = [0, 0, 0];
+        $("#" + this.id + "> .sliceView").css("background-color", "#000000");
+
+        // Bodge to get the colours to update
+        this.volume.indexX--;
+        this.volume.indexY--;
+        this.volume.indexZ--;
+    }
+};
+        
+        
+        
+iev.specimenview.prototype.sliceChange = function(id, ortho, index){
+    /**
+     * Called when the slice index is changed either from the slider of the mouse scroll button
+     * 
+     * @method sliceChange
+     * @param {String} id The ID of the this SpecimenView class
+     * @param {String} ortho The orthogonal view that was changed ('X', 'Y', or 'Z')
+     */
+     if (ortho === 'X') this.indexCB(id, ortho, index + this.xOffset );
+     else if (ortho === 'Y') this.indexCB(id, ortho, index + this.yOffset );
+     else if (ortho === 'Z') this.indexCB(id, ortho, index + this.zOffset );
+};
+       
+       
+iev.specimenview.prototype.setLowPowerState = function(state){
+    /*
+     * @param {bool} state. Wheter low power should be turned on or off
+     */
+    this.lowPower = state;
+};
+
+
+
+iev.specimenview.prototype.updateSliders = function(renderer) {
+    /**
+     * Update the slice index or contrast sliders.
+     * If the shift key is down, we want to move the other orthogonal views index correspondingly
+     * If the left mouse button is down, we are changing the contrast, so update the contrast sliders
+     * 
+     *  @method updateSliders
+     *  @param {X.renderer2D} renderer The renderer from which the event came from. Contains the event
+     *  @param {type} name description 
+     * 
+     */
+
+    if (renderer.interactor.mousemoveEvent.shiftKey) {  
+        //Cross-hair navigating///////////////////
+
+        //Set the index sliders
+        this.$xSlider.slider("value", this.volume.indexX);
+        this.$ySlider.slider("value", this.volume.indexY);
+        this.$zSlider.slider("value", this.volume.indexZ);
+
+        //Set the index in the other linked views
+        this.sliceChange(this.id, 'X', this.volume.indexX);
+        this.sliceChange(this.id, 'Y', this.volume.indexY);
+        this.sliceChange(this.id, 'Z', this.volume.indexZ);
+    }
+    else if(renderer.interactor.leftButtonDown){
+          this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);
+    }
+};
+
+
+
+iev.specimenview.prototype.xtk_showtime = function() {
+    /**
+     * Gets executed after all files were fully loaded and just before the first rendering attempt.
+     * Sets up: Volumes and their index to view, index sliders, and mouse whell events
+     * 
+     * @method xtk_showtime
+     */
+    this.yRen.add(this.volume);
+    this.yRen.render();
+    this.zRen.add(this.volume);
+    this.zRen.render();
+
+    var dims = this.volume.dimensions;           
+
+    // Let main know of the new dimensions of the orthogonal views
+
+    // It appears that dimensins are in yxz order. At least with nii loading
+    var pos = this.config['specimen']['pos'];
+    this.volume.indexX = !isNaN(pos['x']) ? pos['x'] : pos['x']; //Math.floor((dims[0] - 1) / 2);
+    this.volume.indexY = !isNaN(pos['y']) ? pos['y'] : pos['y']; //Math.floor((dims[1] - 1) / 2);
+    this.volume.indexZ = !isNaN(pos['z']) ? pos['z'] : pos['z']; //Math.floor((dims[2] - 1) / 2);
+
+    // make the sliders
+    this.$xSlider.slider({
+        disabled: false,
+        range: "min",
+        min: 0,
+        max: dims[0] - 1,
+        value: this.volume.indexX,
+        slide: function (event, ui) {
+            if (!this.volume || this.lowPower) return;
+            this.volume.indexX = ui.value;
+            this.sliceChange(this.id, 'X', this.volume.indexX);
+        }.bind(this),
+        stop: function (event, ui){
+            if (this.volume && this.lowPower){
+                this.volume.indexX = ui.value;
+                sliceChange(this.id, 'X', this.volume.indexX);
+            }
+        }.bind(this)
+    });
+
+
+    this.$ySlider.slider({
+        disabled: false,
+        range: "min",
+        min: 0,
+        max: dims[1] - 1,
+        value: this.volume.indexY,
+        slide: function (event, ui) {
+            if (!this.volume || this.lowPower) return;
+            this.volume.indexY = ui.value;
+            this.sliceChange(this.id, 'Y', this.volume.indexY);
+        }.bind(this),
+        stop: function (event, ui){
+            if (this.volume && this.lowPower){
+                this.volume.indexY = ui.value;
+                this.sliceChange(this.id, 'Y', this.volume.indexY);
+            }
+        }.bind(this)
+    });
+
+
+    this.$zSlider.slider({
+        disabled: false,
+        range: "min",
+        min: 0,
+        max: dims[2] - 1,
+        value: this.volume.indexZ,
+        slide: function (event, ui) {
+            if (!this.volume || this.lowPower) return;
+            this.volume.indexZ = ui.value;
+            sliceChange(id, 'Z', this.volume.indexZ);
+        }.bind(this),
+        stop: function (event, ui){
+            if (this.volume && this.lowPower){
+                this.volume.indexZ = ui.value;
+                sliceChange(this.id, 'Z', this.volume.indexZ);
+            }
+        }.bind(this)
+    });
+
+
+
+
+    // Overload onMouseWheel event to control slice sliders
+    this.xRen.interactor.onMouseWheel = function (event) {
+        this.$xSlider.slider({value: this.volume.indexX});
+
+        this.sliceChange(id, 'X', this.volume.indexX);
+    }.bind(this);
+
+    this.yRen.interactor.onMouseWheel = function (event) {
+        this.$ySlider.slider({value: this.volume.indexY});
+        this.sliceChange(id, 'Y', this.volume.indexY);
+    }.bind(this);
+
+    this.zRen.interactor.onMouseWheel = function (event) {
+        this.$zSlider.slider({value: this.volume.indexZ});
+        this.sliceChange(id, 'Z', this.volume.indexZ);
+    }.bind(this);
+
+
+    /*
+     * Link the cross-hairs between the spacimen views
+     */
+
+    // Overload sliceX mouse moved
+    this.xRen.interactor.onMouseMove = function (event) {
+        this.updateSliders(this.xRen, event);
+    }.bind(this);
+
+    // Overload this.yRen mouse moved
+    this.yRen.interactor.onMouseMove = function (event) {
+        this.updateSliders(this.yRen, event);
+    }.bind(this);
+
+    // Overload this.zRen mouse moved
+    this.zRen.interactor.onMouseMove = function (event) {
+        this.updateSliders(this.zRen, event);
+    }.bind(this);
+
+    //TODO: overload right click zoom. Do not want
+    this.yRen.interactor.rightButtonDown = function () {
+    };
+
+
+
+    // Set bookmark contrast and selected volume in menu
+    this.setBookmarkContrast();
+
+    this.update();
+
+};
+        
+        
+iev.specimenview.prototype.setXindex = function(index){
+    /**
+     * Set the volume index for the X orientation
+     * Apply the offset used in linking orthogonal views across SpecimenViews
+     * @method setIndex
+     * @param {int} index The new slice index to set
+     */
+     this.volume.indexX = index -this.xOffset;
+     this.$xSlider.slider("value", this.volume.indexX);
+}
+
+        
+iev.specimenview.prototype.setYindex = function(index){
+    /**
+     * Set the volume index for the Y orientation
+     * Apply the offset used in linking orthogonal views across SpecimenViews
+     * @method setIndex
+     * @param {int} index The new slice index to set
+     */
+
+     this.volume.indexY = index - this.yOffset;
+     this.$ySlider.slider("value", this.volume.indexY);
+};
+        
+iev.specimenview.prototype.setZindex = function(index){
+    /**
+     * Set the volume index for the Z orientation
+     * Apply the offset used in linking orthogonal views across SpecimenViews
+     * @method setIndex
+     * @param {int} index The new slice index to set
+     */
+
+     this.volume.indexZ = index - this.zOffset;
+     this.$zSlider.slider("value", this.volume.indexZ);
+}
+        
+iev.specimenview.prototype.getBrightnessLower = function() { 
+    return this.volume.windowLow;
+}
+        
+iev.specimenview.prototype.getBrightnessUpper = function() { 
+    return this.volume.windowHigh;
+}   
+        
+iev.specimenview.prototype.getIndex = function(ortho){
+    /**
+     * Get the index of the current slice for a orthogonal view
+     * @method getIndex
+     * @param {String} ortho Orthogonal view ('X', 'Y' or 'Z')
+     */
+    if (ortho === 'X') return this.volume.indexX;
+    if (ortho === 'Y') return this.volume.indexY;
+    if (ortho === 'Z') return this.volume.indexZ;
+}
+
+       
+iev.specimenview.prototype.setIdxOffset = function(ortho, offset){
+    /**
+     * Set the index offset for a specific orthogonal view.
+     * The offset defines how much the slice index differs compared to the corresponding slice in the
+     * other view
+     * @method setIdxOffset
+     * @param {String} ortho Orthogonal view ('X', 'Y' or 'Z')
+     * @param {int} offset slice index offset
+     */
+    if (ortho === 'X') this.xOffset = offset;
+    if (ortho === 'Y') this.yOffset = offset;
+    if (ortho === 'Z') this.zOffset = offset;
+}
+        
+        
+iev.specimenview.prototype.getDimensions = function(){
+    /**
+     * Get the dimensions of the current volume
+     * @method getDimensions
+     * @return {Array<int>} XYZ dimensions of the current this.volume
+     */
+    return this.volume.dimensions;
+}
+    
+    
+iev.specimenview.prototype.getCurrentVolume = function(){
+    /*
+     * Return the data for the currently viewd image
+     */
+    return this.currentVolume;
+}     
+
+
+iev.specimenview.prototype.setVisibleViews = function(viewList, count, horizontalView) {
+    /**
+     * Set which orthogonal views should be visible. Change the container width
+     * to take up the full width of the outer container.
+     * If orientation in vertical, slice width should always be 100%
+     * @method setVisibleViews
+     * @param {Hash} viewsList Info on which orthogonal view is visible
+     * @param {int} count How many views should be visible
+     */
+
+    var slice_view_width;
+
+    if (horizontalView){
+        slice_view_width = 100;
+    }
+    else{
+        var slice_view_width = String(100 / count);
+    }
+
+    if (viewList['X'].visible) {
+        this.$xWrap.show();
+        this.$xWrap.width(slice_view_width + '%');
+
+    } else {
+        this.$xWrap.hide();
+    }
+
+    if (viewList['Y'].visible) {
+        this.$yWrap.show();
+        this.$yWrap.width(slice_view_width + '%');
+
+    } else {
+        this.$yWrap.hide();
+    }
+
+    if (viewList['Z'].visible) {
+        this.$zWrap.show();
+        this.$zWrap.width(slice_view_width + '%');
+
+    } else {
+        this.$zWrap.hide();
+    }
+}
+
+
+iev.specimenview.prototype.basename = function(path) {
+    /**
+     * Extract the basename from a path
+     * @method basename
+     * @param {String} path File path
+     */
+    return path.split(/[\\/]/).pop();
+};
+
+        
+iev.specimenview.prototype.objSize = function(obj) {
+    /*
+     * Get the size of an object (associative array)
+     * @method objSize
+     */
+    var count = 0;
+    var i;
+
+    for (i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            count++;
+        }
+    }
+    return count;
+}

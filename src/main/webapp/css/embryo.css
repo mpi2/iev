@@ -228,6 +228,17 @@ fieldset{
     padding: 25px;
 }
 
+.overlayWrap {
+    height: 100%;
+    position: relative;
+    float: left;
+    padding-top: 2px;
+}
+
+.overlayWrap .ui-button-text {
+    padding: 3px;
+}
+
 .wlwrap{
     margin-left: 15px;
     margin-right: 10px;
@@ -236,9 +247,6 @@ fieldset{
     width: 110;
     /*height: auto;*/
 }
-
-
-
 
 .windowLevel{
     float: left;
