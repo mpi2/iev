@@ -48,7 +48,6 @@ if (typeof dcc === 'undefined')
     this.$ySlider;
     this.$zSlider;
     this.$windowLevel;
-    this.$overlayControl;
     this.xRen;
     this.yRen;
     this.zRen;
@@ -70,11 +69,12 @@ if (typeof dcc === 'undefined')
     this.WILDTYPE_COLONYID = 'baseline';
 
     // Select first volume in the list
+    /*@type {?Object}*/
     this.currentVolume = volumeData[Object.keys(volumeData)[0]];
     this.bookmarkHasVolume = false;
 
     // If the config has a specimen, select that igit nstead
-    if (config['specimen']) {
+    if (config['specimen']['name'] !== "null") {
         for (var key in volumeData) {
             if (volumeData.hasOwnProperty(key)) {
                 var vol = volumeData[key];
@@ -243,7 +243,20 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
             })
             .iconselectmenu("refresh");                  
 }
-        
+
+iev.specimenview.prototype.setupOverlayControls = function() {
+    // Set up overlay controls
+    $('#' + this.overlayControl).buttonset();
+   
+    // On click
+    $('#' + this.overlayControl).click(function(e) {
+        var overlay_type = $('input[type=radio]:checked', e.currentTarget).prop("id").split("_")[0];
+        if (this.currentLabelmap !== overlay_type) {  // check if anything changed
+            this.currentLabelmap = overlay_type;        
+            this.replaceVolume(this.currentVolume['volume_url']);
+        }
+    }.bind(this));
+};
         
         
 iev.specimenview.prototype.showMetadata = function(){
@@ -344,15 +357,6 @@ iev.specimenview.prototype.setContrastSlider = function() {
         }, this)
     });
 };
-
-iev.specimenview.prototype.setupOverlayControls = function() {
-    // Set up overlay controls
-    this.$overlayControl.buttonset();
-    this.$overlayControl.click(function() {
-        this.currentLabelmap = $('input[type=radio]:checked', this).prop("id").split("_")[0];
-        this.replaceVolume(this.currentVolume['volume_url']);
-    });
-}
 
 iev.specimenview.prototype.setLabelmap = function(overlay_type) {
     if (overlay_type !== "none") {
