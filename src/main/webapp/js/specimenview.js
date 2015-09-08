@@ -109,9 +109,7 @@ if (typeof dcc === 'undefined')
     /** @const */ 
     this.WT_ICON = 'wildtype.png';
     /** @const */ 
-    this.INTERSEX_ICON = 'male.png'; // TODO replace this
-    /** @const */ 
-    this.MIXED_ICON = 'wildtype.png';  // TODO and this
+    this.INTERSEX_ICON = 'intersex.png';
 
     this.specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
 
@@ -287,9 +285,7 @@ iev.specimenview.prototype.showMetadata = function(){
 
     if (this.currentVolume.colonyId === this.WILDTYPE_COLONYID){
         zygIcon = this.WT_ICON;
-    }
-
-    else{
+    } else {
 
         switch (this.currentVolume.zygosity.toLowerCase()){
             case 'homozygous':
@@ -306,7 +302,7 @@ iev.specimenview.prototype.showMetadata = function(){
                 break;
             default:
                 console.log('other');
-                zygIcon = this.MIXED_ICON;
+                zygIcon = "";
                 break;
         }
     }
@@ -916,7 +912,7 @@ iev.specimenview.prototype.xtk_showtime = function() {
         stop: function (event, ui){
             if (this.volume && this.lowPower){
                 this.volume.indexX = ui.value;
-                sliceChange(this.id, 'X', this.volume.indexX);
+                this.sliceChange(this.id, 'X', this.volume.indexX);
             }
         }.bind(this)
     });
@@ -951,12 +947,12 @@ iev.specimenview.prototype.xtk_showtime = function() {
         slide: function (event, ui) {
             if (!this.volume || this.lowPower) return;
             this.volume.indexZ = ui.value;
-            sliceChange(id, 'Z', this.volume.indexZ);
+            this.sliceChange(id, 'Z', this.volume.indexZ);
         }.bind(this),
         stop: function (event, ui){
             if (this.volume && this.lowPower){
                 this.volume.indexZ = ui.value;
-                sliceChange(this.id, 'Z', this.volume.indexZ);
+                this.sliceChange(this.id, 'Z', this.volume.indexZ);
             }
         }.bind(this)
     });
@@ -1083,7 +1079,7 @@ iev.specimenview.prototype.setIdxOffset = function(ortho, offset){
     if (ortho === 'X') this.xOffset = offset;
     if (ortho === 'Y') this.yOffset = offset;
     if (ortho === 'Z') this.zOffset = offset;
-}
+};
         
         
 iev.specimenview.prototype.getDimensions = function(){
@@ -1093,7 +1089,7 @@ iev.specimenview.prototype.getDimensions = function(){
      * @return {Array<int>} XYZ dimensions of the current this.volume
      */
     return this.volume.dimensions;
-}
+};
     
     
 iev.specimenview.prototype.getCurrentVolume = function(){
@@ -1101,7 +1097,7 @@ iev.specimenview.prototype.getCurrentVolume = function(){
      * Return the data for the currently viewd image
      */
     return this.currentVolume;
-}     
+};  
 
 
 iev.specimenview.prototype.setVisibleViews = function(viewList, count, horizontalView) {
@@ -1146,7 +1142,7 @@ iev.specimenview.prototype.setVisibleViews = function(viewList, count, horizonta
     } else {
         this.$zWrap.hide();
     }
-}
+};
 
 
 iev.specimenview.prototype.basename = function(path) {
@@ -1173,4 +1169,4 @@ iev.specimenview.prototype.objSize = function(obj) {
         }
     }
     return count;
-}
+};
