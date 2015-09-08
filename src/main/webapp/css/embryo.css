@@ -10,6 +10,10 @@ body{
     
 }
 
+#iev{
+    padding: 0 10px 0 10px;
+}
+
 #viewer {
   position: relative;
   margin: 0;
@@ -320,6 +324,38 @@ fieldset{
 }
 
 
+.ui-icon.female_homozygous {
+    background: url("../images/female_hom.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+  
+.ui-icon.female_heterozygous {
+    background: url("../images/female_het.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+
+
+.ui-icon.male_homozygous {
+    background: url("../images/male_hom.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+  
+.ui-icon.male_heterozygous {
+    background: url("../images/male_het.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+
+.ui-icon.male_wildtype {
+    background: url("../images/male_wildtype.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+
+.ui-icon.female_wildtype {
+    background: url("../images/female_wildtype.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+  
+
 
 /* select with custom icons */
   .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item {
@@ -327,26 +363,32 @@ fieldset{
   }
   .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item .ui-icon {
     height: 20px;
-    width: 20px;
-
+    width: 40px;
   }
-  .ui-icon.male {
+.ui-icon.male {
     background: url("../images/male.png") 0 0 no-repeat;
   }
-  .ui-icon.female {
+.ui-icon.female {
     background: url("../images/female.png") 0 0 no-repeat;
   }
+.ui-icon.het {
+    background: url("../images/het.png") 0 0 no-repeat;
+  }
+  
+
+  
+
   
   #iev_subHeader{
       width: 100% !important;
       height: 70px;
       position: relative;
-      //background-color: blue !important;
+      /*background-color: blue !important;*/
   }
   
   
   
-  //Stuff for the search box etc, on the full page web app
+  /*Stuff for the search box etc, on the full page web app*/
   
   #iev_searchBox{
       float: right;

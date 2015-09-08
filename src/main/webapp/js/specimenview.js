@@ -206,12 +206,23 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
     for (var i in this.volumeData) {
         var url = this.volumeData[i]['volume_url'];
         var sex = this.volumeData[i].sex.toLowerCase();
+        var zygosity = this.volumeData[i].zygosity.toLowerCase();
+        
+        var idForSexZygosityIcon;
+       
+        if (this.volumeData[i].colonyId === this.WILDTYPE_COLONYID){
+            idForSexZygosityIcon = sex + '_' + 'wildtype';
+        }else{
+              var idForSexZygosityIcon = sex + '_' + zygosity;
+        }
+      
+        var animalNameForDisplay = this.volumeData[i].animalName.substring(0, 25);
 
         if (url === this.currentVolume['volume_url']) {
-            options.push("<option value='" + url + "' data-class='" + sex + "' selected>" + this.basename(url) + "</option>");
+            options.push("<option value='" + url + "' data-class='" + idForSexZygosityIcon + "' selected>" + animalNameForDisplay + "</option>");
             this.bookmarkHasVolume = false;
         } else {
-            options.push("<option value='" + url + "' data-class='" + sex + "'>" + this.basename(url) + "</option>");
+            options.push("<option value='" + url + "' data-class='" + idForSexZygosityIcon + "'>" + animalNameForDisplay + "</option>");
         }
     }
 

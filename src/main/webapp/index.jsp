@@ -31,9 +31,8 @@ limitations under the License.
         <script type="text/javascript" src="X/xtk-deps.js"></script>
         <script type="text/javascript" src="js/xtk.js"></script>
         <script type="text/javascript" src="js/embryo.js"></script>
-        <!--<script type="text/javascript" src="js/ievSpinner.js"></script>-->
-        <!--<script type="text/javascript" src="js/specimenview.js"></script>-->
-        <script type="text/javascript" src="js/specimenview_gc_min.js"></script>
+        <script type="text/javascript" src="js/specimenview.js"></script>
+        <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
         <script type="text/javascript" src="js/main.js"></script>
         <script type="text/javascript" src="js/sliceview.js"></script>
         <script type="text/javascript" src="js/spin.min.js"></script>
@@ -101,6 +100,7 @@ limitations under the License.
                 </nav>
             </div>
         </header>
+        <div id="iev">
         <div id="iev_subHeader">
 
             <div id="iev_breadCrumb">
@@ -136,7 +136,7 @@ limitations under the License.
 <!-- -->
         
         
-        
+      
         <div id='wrap' class="noselect">
             <div id='top_bar'>
                 <div id='topleft'>
@@ -215,14 +215,16 @@ limitations under the License.
                 <fieldset id="modality_stage_fieldset">
                     <legend>Modality/stage selection</legend>
                     <div id="modality_stage" title="Change modality">
+                        <input type="radio" id="202" class=low"modality_button" name="project">
+                        <label for="202" class="button_label">OPT E9.5</label>
+                        
                         <input type="radio" id="203" name="project" class="modality_button">
                         <label for="203" class="button_label">&#956;CT E14/E15.5</label>
 
                         <input type="radio" id="204" name="project" class="modality_button">
                         <label for="204" class="button_label">&#956;CT E18.5</label>
 
-                        <input type="radio" id="202" class=low"modality_button" name="project">
-                        <label for="202" class="button_label">OPT E9.5</label>
+
                     </div>
                 </fieldset>
             </div>
@@ -235,6 +237,7 @@ limitations under the License.
                 <div id="progressMsg"></div>
             </div>
         </div>
+            </div> <!-- iev -->
         
         <script>
             window.addEventListener('load', function () {
@@ -267,6 +270,7 @@ limitations under the License.
                         }
                     }
                 };
+                
                 
                 var bookmarkData = {
                     mode: null,
@@ -321,6 +325,33 @@ limitations under the License.
                 }
                
             });
+            
+            (function setupImpcMenus() {
+            /*
+             * Get the dynamically generated menu code. Split into main menu and the login section
+             */
+                var header_menu_source;
+                //Set the correct menu depending on which sub-domain we're on
+                switch (location.hostname) {
+                    case 'localhost':
+                        header_menu_source = 'menudisplaycombinedrendered.html';
+                        break;
+                    case 'mousephenotype.org':
+                        header_menu_source = 'http://www.mousephenotype.org/menudisplaycombinedrendered';
+                        break;
+                    case 'beta.mousephenotype.org':
+                        header_menu_source = 'http://beta.mousephenotype.org/menudisplaycombinedrendered';
+                        break;
+                    case 'dev.mousephenotype.org':
+                        header_menu_source = 'http://dev.mousephenotype.org/menudisplaycombinedrendered';
+                        break;
+                }
+                $.get(header_menu_source, function (data) {
+                    var menuItems = data.split("MAIN*MENU*BELOW");
+                    $('#block-menu-block-1').append(menuItems[1]);
+                    $('#tn').append(menuItems[0]);
+                });
+              })()
         </script>
 <!--        <script>
             (function (i, s, o, g, r, a, m) {
@@ -393,7 +424,7 @@ limitations under the License.
     <script id="progress_template" type="text/x-handlebars-template">
         <div class="ievLoading" id="ievLoading{{id}}">
             <div class="ievLoadingMsg" id="ievLoadingMsg{{id}}">
-            Scan loading
+            Images loading
             </div>
         </div>
     </script>

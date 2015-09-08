@@ -1,6 +1,7 @@
 
 goog.require('iev.specimenview');
 
+
 (function () {
     if (typeof dcc === 'undefined')
         dcc = {};
@@ -144,38 +145,38 @@ goog.require('iev.specimenview');
             return options;
         };
 
-        var centreLabels = function () {
-            var options = [];
-            for (var key in centreOptions) {
-                if (key in data['centre_data']) {
-                    options.push("<option value='" + key + "'>" + centreOptions[key] + "</option>");
-                }
-                return options;
-            }
-        };
-        
-                
-        function centreSelector(){
+       
+
+        function centreSelector() {
             /*
              * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
              */
 //            
 //            //Just for testing
 //            // Populate drop down box with available centres
+            function centreLabels () {
+                var options = [];
+                for (var key in centreOptions) {
+                    if (key in data['centre_data']) {
+                        options.push("<option value='" + key + "'>" + centreOptions[key] + "</option>");
+                    }
+                    return options;
+                }
+            }
             
-             $('#centre_select')
-                .append(centreLabels().join(""))
-                .selectmenu({
-                    width: 30,
-                    height: 20,
-                    change: $.proxy(function (event, ui) { 
-                            setCentre(event.currentTarget.innerText)
-                        
-                    }, this)
-                });
-                
-              //$('#centre_select').val('4').selectmenu('refresh');
-          }
+            $('#centre_select')
+                    .append(centreLabels().join(""))
+                    .selectmenu({
+                        width: 30,
+                        height: 20,
+                        change: $.proxy(function (event, ui) {
+                            setCentre(event.currentTarget.innerText);
+
+                        }, this)
+                    });
+
+            //$('#centre_select').val('4').selectmenu('refresh');
+        }
         
         
         var spinnerOpts = {
@@ -393,10 +394,7 @@ goog.require('iev.specimenview');
             return bookmark;
         }
                 
-        function copyToClipboard(text) {
-            window.prompt("Bookmark created!\nCopy to clipboard (Ctrl/Cmd+C + Enter)", text);
-          }
-          
+   
         function zoomBy(times) {
             
             if (times < 0) {
@@ -802,8 +800,8 @@ goog.require('iev.specimenview');
                     return;
                 }
                 e.preventDefault();
-                var newBookmark = generateBookmark();
-                copyToClipboard(newBookmark);           
+                var newBookmark = generateBookmark();   
+                window.prompt("Bookmark created!\nCopy to clipboard (Ctrl/Cmd+C + Enter)", newBookmark);   
             });            
    
             $("#modality_stage" ).buttonset();
@@ -1102,27 +1100,6 @@ goog.require('iev.specimenview');
             return count;
         }
         
-        
-        function setupImpcMenus() {
-            /*
-             * Get the dynamically generated menu code. Split into main menu and the login section
-             */
-            $.get('menudisplaycombinedrendered.html', function (data) {
-                var menuItems = data.split("MAIN*MENU*BELOW");
-                $('#block-menu-block-1').append(menuItems[1]);
-                $('#tn').append(menuItems[0]);
-            });
-            
-            // Get the gene symbol and the MGI for creating the breadcrumb
-           
-            var mgi_href = '/data/genes/' + mgi;
-            
-            var b_link = $('#ievBreadCrumbGene').html(gene_symbol).attr('href', mgi_href);
-         
-            
-            
-
-        }
     
     function setViewOrientation(orientation){
                      
@@ -1184,11 +1161,6 @@ goog.require('iev.specimenview');
 
     });
 
-//    $('body').bind('beforeunload', function () {
-//        console.log('bye');
-//    });
-
-    setupImpcMenus();
     setActiveModalityButtons();
     loadViewers(container);
     attachEvents();
