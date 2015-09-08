@@ -110,6 +110,8 @@ if (typeof dcc === 'undefined')
     this.WT_ICON = 'wildtype.png';
     /** @const */ 
     this.INTERSEX_ICON = 'intersex.png';
+    /** @const */ 
+    this.MIXED_ICON = 'mixed.png';
 
     this.specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
 
@@ -302,7 +304,7 @@ iev.specimenview.prototype.showMetadata = function(){
                 break;
             default:
                 console.log('other');
-                zygIcon = "";
+                zygIcon = this.MIXED_ICON;
                 break;
         }
     }
