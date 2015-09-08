@@ -17,17 +17,24 @@ Examples
 
 """
 
+import os
 import nrrd
 import cv2
 import tempfile
 import numpy as np
 import sys
-from progressbar import ProgressBar, Percentage, Bar
+import SimpleITK as sitk
 
 if sys.platform == "win32" or sys.platform == "win64":
     windows = True
 else:
     windows = False
+
+xtk_opt = {"encoding": "gzip",
+           "space": "left-posterior-superior",
+           "space directions": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+           "kinds": ["domain", "domain", "domain"],
+           "space origin": [0, 0, 0]}
 
 
 def resample(slicegen, scale, nrrd_path):
@@ -45,23 +52,12 @@ def resample(slicegen, scale, nrrd_path):
     # Get dimensions for the memory mapped raw xy file
     xy_scaled_dims = [slicegen.shape()[2]]
 
-    datatype = slicegen.dtype #TODO chage
     first = True
-
-    pbar = ProgressBar(widgets=["-- scaling in xy: ", Percentage(), Bar()], maxval=xy_scaled_dims[0]).start()
 
     for i, z_slice_arr in enumerate(slicegen.slices()):
 
-        # if i == 150:
-        #     plt.imshow(z_slice_arr)
-        #     plt.show()
-
-        pbar.update(i)
-
-        # This might slow things doen by reasigning to the original array. Maybe we jsut need a differnt view on it
-
+        # This might slow things done by re-assigning to the original array
         z_slice_arr = _droppixels(z_slice_arr, scale, scale)
-
         z_slice_resized = cv2.resize(z_slice_arr, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
 
         if first:
@@ -74,27 +70,17 @@ def resample(slicegen, scale, nrrd_path):
         else:
             z_slice_resized.tofile(temp_xy)
 
-    pbar.finish()
-
-    #create memory mapped version of the temporary xy scaled slices
+    # Create memory mapped version of the temporary xy scaled slices
     xy_scaled_mmap = np.memmap(temp_xy, dtype=datatype, mode='r', shape=tuple(xy_scaled_dims))
 
-    #Get dimensions for the memory mapped raw xyz file
+    # Get dimensions for the memory mapped raw xyz file
     xyz_scaled_dims = []
     first = True
 
     # Scale in zy plane
-    pbar = ProgressBar(widgets=["-- scaling in yz: ", Percentage(), Bar()], maxval=xy_scaled_mmap.shape[1]).start()
-
     for y in range(xy_scaled_mmap.shape[1]):
 
-        pbar.update(y)
-
         xz_plane = xy_scaled_mmap[:, y, :]
-
-        # if scaleby_int:
-        #     xz_plane = _droppixels(xz_plane, 1, scale)
-
         scaled_xz = cv2.resize(xz_plane, (0, 0), fx=1, fy=scale, interpolation=cv2.INTER_AREA)
 
         if first:
@@ -108,16 +94,8 @@ def resample(slicegen, scale, nrrd_path):
         else:
             scaled_xz.tofile(temp_xyz)
 
-    pbar.finish()
-
-    #create memory mapped version of the temporary xy scaled slices
+    # Create memory mapped version of the temporary xy scaled slices
     xyz_scaled_mmap = np.memmap(temp_xyz, dtype=datatype, mode='r', shape=tuple(xyz_scaled_dims))
-
-    xtk_opt = {"encoding": "gzip",
-               "space": "left-posterior-superior",
-               "space directions": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-               "kinds": ["domain", "domain", "domain"],
-               "space origin": [0, 0, 0]}
     nrrd.write(nrrd_path, np.swapaxes(xyz_scaled_mmap.T, 1, 2), options=xtk_opt)
 
     temp_xy.close()  # deletes temp file
@@ -133,7 +111,7 @@ def _droppixels(a, scaley, scalex):
     :returns a: the pixel dropped image
     """
 
-    #If New dimension not integral factors of original, drop pixels to make it so they are
+    # If new dimension not integral factors of original, drop pixels to make it so they are
 
     scalex = 1.0/scalex
     scaley = 1.0/scaley
@@ -156,6 +134,25 @@ def _droppixels(a, scaley, scalex):
         b = a
 
     return b
+
+
+def internally_compressed_nrrd(slice_gen, nrrd_path):
+
+    temp_xy = tempfile.TemporaryFile(mode='wb+')
+    for i, z_slice_arr in enumerate(slice_gen.slices()):
+
+        if windows:
+            z_slice_arr.tofile(temp_xy.file)
+        else:
+            z_slice_arr.tofile(temp_xy)
+
+    # Create memory mapped version of the temporary xy scaled slices
+    mmap_shape = list(slice_gen.shape())
+    mmap_shape = [mmap_shape[x] for x in [2, 1, 0]]  # re-order
+    xyz_scaled_mmap = np.memmap(temp_xy, dtype=slice_gen.dtype(), mode='r', shape=tuple(mmap_shape))
+
+    sitk.WriteImage(sitk.GetImageFromArray(xyz_scaled_mmap), nrrd_path, useCompression=True)
+
 
 if __name__ == '__main__':
 

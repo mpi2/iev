@@ -15,7 +15,13 @@
  */
 package org.mousephenotype.dcc.embryo.viewer.webservice;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -29,6 +35,12 @@ import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
 @Stateless
 @Path("volumes")
 public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
+    private String firstSearch;
+    private String secondSearch;
+    private String searchType;
+    private String searchTerm;
+    
+    
 
     public VolumesFacadeREST() {
         super(Preprocessed.class);
@@ -36,33 +48,76 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public VolumesPack all(
-            @QueryParam("colony_id") String colonyId
-            
-    ) {
+    public String all(
+            @QueryParam("colony_id") String colonyId, 
+            @QueryParam("gene_symbol") String geneSymbol,
+            @QueryParam("mgi") String mgi){
         
-        // Get the centreId of the first volume found by colonyId
-        EntityManager emcid = getEntityManager();
-        TypedQuery<Preprocessed> qcid = emcid.createNamedQuery("Preprocessed.findByColonyId", Preprocessed.class);
-        qcid.setParameter("colonyId", colonyId);
-        List<Preprocessed> p = qcid.getResultList();
-        if (p.size() < 1){
-            VolumesPack vp = new VolumesPack();
-            return vp;
-            
+        
+        if (colonyId == null && geneSymbol == null && mgi == null){
+            return "Failed";
         }
-        int centreId = p.get(0).getCid();
-    
+        
+ 
+            if (geneSymbol != null){
+                firstSearch = "Preprocessed.findByGeneSymbol";
+                secondSearch = "Preprocessed.findByGeneSymbolAndWt";
+                searchType = "geneSymbol";
+                searchTerm = geneSymbol;
+            }
+            else if (colonyId != null){
+                firstSearch = "Preprocessed.findByColonyId";
+                secondSearch = "Preprocessed.findByColonyIdAndWt";
+                searchType = "colonyId";
+                searchTerm = colonyId;
+            }
+            else if (mgi != null){
+                firstSearch = "Preprocessed.findByMgi";
+                secondSearch = "Preprocessed.findByMgiAndWt";
+                searchType = "mgi";
+                searchTerm = mgi;
+            }
             
-        // Get data for all mutants with colonyId and all baseslines from the same centre
-        VolumesPack vp = new VolumesPack();
-        EntityManager em = getEntityManager();
-        TypedQuery<Preprocessed> q = em.createNamedQuery("Preprocessed.findByColonyIdAndWt", Preprocessed.class);
-        q.setParameter("colonyId", colonyId);
-        q.setParameter("centreId", centreId);
-        List<Preprocessed> v = q.getResultList();
-        em.close();
-        vp.setDataSet(v);
-        return vp;
+            
+            EntityManager emcid = getEntityManager();
+            TypedQuery<Preprocessed> qcid = emcid.createNamedQuery(firstSearch, Preprocessed.class);
+            qcid.setParameter(searchType, searchTerm);
+            List<Preprocessed> p = qcid.getResultList();
+            if (p.size() < 1){
+                return "failed";
+            }
+           
+            //Get a set of unique centre IDs
+            Set<Integer> set = new HashSet<>();
+            for (Preprocessed p1 : p) {
+                set.add(p1.getCid());
+            }
+            
+            EntityManager em = getEntityManager();
+            HashMap<Integer, List<Preprocessed>> centreResults = new HashMap<>();
+            for (Integer cid : set){
+                
+                TypedQuery<Preprocessed> q = em.createNamedQuery(secondSearch, Preprocessed.class);
+                q.setParameter(searchType, searchTerm);
+                q.setParameter("centreId", cid);
+                List<Preprocessed> v = q.getResultList();
+                centreResults.put(cid, v);
+            }
+       
+            HashMap<String, Object> allResults = new HashMap<>();
+            allResults.put("success", true);
+            allResults.put("num_centres", set.size());
+            allResults.put("centre_data", centreResults);
+            em.close();
+            System.out.println("all");
+            System.out.println(allResults);
+
+        Gson gson = new GsonBuilder()
+                .disableHtmlEscaping()
+                .setPrettyPrinting()
+                .create();
+          
+        String json = gson.toJson(allResults);
+        return json;
     }
 }

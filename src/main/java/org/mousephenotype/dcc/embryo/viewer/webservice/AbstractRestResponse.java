@@ -16,6 +16,7 @@
 package org.mousephenotype.dcc.embryo.viewer.webservice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,33 +24,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 public abstract class AbstractRestResponse<T> {
 
     private boolean success = false;
+    private String test = "not work";
     private long total = 0L; /* if negative, absolute value gives error code */
-    private List<T> dataSet = null;
+    private HashMap<Integer, List<T>> dataSet = null;
 
     public AbstractRestResponse() {
     }
 
-    public List<T> getDataSet() {
+    public  HashMap<Integer, List<T>> getDataSet() {
         return dataSet;
     }
 
-    public void setDataSet(List<T> dataSet) {
+    public void setDataSet(HashMap<Integer, List<T>> dataSet) {
         this.dataSet = dataSet;
         if (dataSet == null || dataSet.isEmpty()) {
             this.success = false;
-            this.dataSet = new ArrayList<>();
+            this.dataSet = new  HashMap<>();
         } else {
             this.success = true;
             this.total = dataSet.size();
         }
     }
 
-    public void setDataSet(List<T> dataSet, long total) {
+    public void setDataSet( HashMap<Integer, List<T>> dataSet, long total) {
         this.dataSet = dataSet;
         if (dataSet == null || dataSet.isEmpty()) {
             this.success = false;
-            this.dataSet = new ArrayList<>();
+            this.dataSet = new HashMap<>();
         } else {
+            this.test = "testingSuccess";
             this.success = true;
             this.total = total;
         }
@@ -75,4 +78,6 @@ public abstract class AbstractRestResponse<T> {
         this.success = false;
         this.total = -401;
     }
+    
+   
 }
