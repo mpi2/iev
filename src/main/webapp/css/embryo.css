@@ -308,6 +308,11 @@ fieldset{
     height: auto;
     padding: 2px 0 0 0;
     float:left;
+    z-index: 1000;
+}
+
+.specimenSelect{
+    z-index: 1000;
 }
 
 #viewHeightSlider {
@@ -354,6 +359,8 @@ fieldset{
     background: url("../images/female_wildtype.png") 0 4px no-repeat;
     background-size: 25px;
   }
+  
+ 
   
 
 
@@ -463,9 +470,9 @@ content: "\f129";
 }*/
 
   
-/////////////////////////
+
   
-/* Centre selector 
+ /*Centre selector*/ 
   .ui-icon.cen_1 {
     background: url("../images/centre_icons/logo_Bcm.png") 0 0 no-repeat;
   }
@@ -496,9 +503,9 @@ content: "\f129";
   .ui-icon.cen_12 {
     background: url("../images/centre_icons/logo_Wtsi.png") 0 0 no-repeat;
   }
-  .ui-icon.centreIcons{
+  .ui-icon.centreSelectIcon{
     background-size: 20px 20px;
-  }*/
+  }
 
   
 

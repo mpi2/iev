@@ -180,6 +180,8 @@ iev.specimenview.prototype.update = function (){
         
 
 iev.specimenview.prototype.updateVolumeSelector = function () {
+    
+    //This custom widget is also used in main. Should define it somewhere else
     $.widget("custom.iconselectmenu", $.ui.selectmenu, {
         _renderItem: function (ul, item) {
             var li = $("<li>", {text: item.label});
@@ -203,6 +205,7 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
 
     // Add the volume options
     var options = [];
+    
     for (var i in this.volumeData) {
         var url = this.volumeData[i]['volume_url'];
         var sex = this.volumeData[i].sex.toLowerCase();
@@ -211,15 +214,15 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
         var idForSexZygosityIcon;
        
         if (this.volumeData[i].colonyId === this.WILDTYPE_COLONYID){
-            idForSexZygosityIcon = sex + '_' + 'wildtype';
+            idForSexZygosityIcon = 'specimenSelectIcon ' + sex + '_' + 'wildtype';
         }else{
-              var idForSexZygosityIcon = sex + '_' + zygosity;
+              var idForSexZygosityIcon = 'specimenSelectIcon ' + sex + '_' + zygosity;
         }
       
         var animalNameForDisplay = this.volumeData[i].animalName.substring(0, 25);
 
         if (url === this.currentVolume['volume_url']) {
-            options.push("<option value='" + url + "' data-class='" + idForSexZygosityIcon + "' selected>" + animalNameForDisplay + "</option>");
+            options.push("<option value='" + url  + "' data-class='" + idForSexZygosityIcon + "' selected>" + animalNameForDisplay + "</option>");
             this.bookmarkHasVolume = false;
         } else {
             options.push("<option value='" + url + "' data-class='" + idForSexZygosityIcon + "'>" + animalNameForDisplay + "</option>");

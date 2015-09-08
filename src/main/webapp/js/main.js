@@ -154,29 +154,52 @@ goog.require('iev.specimenview');
 //            
 //            //Just for testing
 //            // Populate drop down box with available centres
-            function centreLabels () {
+            function availableCentres() {
                 var options = [];
                 for (var key in centreOptions) {
                     if (key in data['centre_data']) {
-                        options.push("<option value='" + key + "'>" + centreOptions[key] + "</option>");
+                        var iconClass = 'centreSelectIcon cen_' + key;
+                        options.push("<option value='" + key + "'" +  "' data-class='" + iconClass + "'>" + centreOptions[key] + "</option>");
                     }
-                    return options;
                 }
+                return options;
             }
-            
-            $('#centre_select')
-                    .append(centreLabels().join(""))
-                    .selectmenu({
-                        width: 30,
-                        height: 20,
-                        change: $.proxy(function (event, ui) {
-                            setCentre(event.currentTarget.innerText);
+            var $centre_select = $('#centre_select');
 
+            $centre_select.append(availableCentres().join(""));
+
+            $centre_select.iconselectmenu()
+                    .iconselectmenu("menuWidget")
+                    .addClass("ui-menu-icons customicons");
+
+             $centre_select
+                    .iconselectmenu({
+                        change: $.proxy(function (event, ui) {
+                                setCentre(event.currentTarget.innerText);
+                            
                         }, this)
-                    });
+                    })
+                    .iconselectmenu("refresh");
+        }
+            
+            
+            
+//            
+//            
+//            $('#centre_select')
+//           
+//                    .append(centreLabels().join(""))
+//                    .selectmenu({
+//                        width: 30,
+//                        height: 20,
+//                        change: $.proxy(function (event, ui) {
+//                            setCentre(event.currentTarget.innerText);
+//
+//                        }, this)
+//                    });
 
             //$('#centre_select').val('4').selectmenu('refresh');
-        }
+        
         
         
         var spinnerOpts = {
@@ -349,7 +372,7 @@ goog.require('iev.specimenview');
                 
                 // Set viewer height
                 if (bookmarkData['h']) {
-                    $viewHeight = $("#viewHeightSlider");
+                    var $viewHeight = $("#viewHeightSlider");
                     $viewHeight.slider('value', bookmarkData['h']);
                     $viewHeight.slider("option", "slide").call($viewHeight, null, { value: bookmarkData['h']});
                 }

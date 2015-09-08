@@ -379,7 +379,7 @@ limitations under the License.
     <script id="slice_controls_template" type="text/x-handlebars-template">      
         <div id="controls_{{id}}"class="controls clear">
             <div class="selectorWrap" id="{{selectorWrapId}}" title="Select an embryo">
-                <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:999'></select>
+                <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:1100'></select>
             </div>
             <div class="wlwrap">
                
