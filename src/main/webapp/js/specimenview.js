@@ -836,7 +836,35 @@ iev.specimenview.prototype.updateSliders = function(renderer) {
     }
 };
 
-
+iev.specimenview.prototype.makeIndexSlider = function($sliderDiv, orientation, max){
+    /*
+     * 
+     * @type {iev.specimenview.volume.dimensions}
+     * orientation: string, 'X', 'Y', 'Z'
+     */
+    
+    var index = 'index' + orientation;
+    
+    $sliderDiv.slider({
+        disabled: false,
+        range: "min",
+        min: 0,
+        max: max,
+        value: this.volume[index],
+        slide: function (event, ui) {
+            if (!this.volume || this.lowPower) return;
+            this.volume[index] = ui.value;
+            console.log(this.id);
+            this.sliceChange(this.id, orientation, this.volume[index]);
+        }.bind(this),
+        stop: function (event, ui){
+            if (this.volume && this.lowPower){
+                this.volume[index] = ui.value;
+                this.sliceChange(this.id, orientation, this.volume[index]);
+            }
+        }.bind(this)
+    });
+}
 
 iev.specimenview.prototype.xtk_showtime = function() {
     /**
@@ -860,67 +888,9 @@ iev.specimenview.prototype.xtk_showtime = function() {
     this.volume.indexY = !isNaN(pos['y']) ? pos['y'] : pos['y']; //Math.floor((dims[1] - 1) / 2);
     this.volume.indexZ = !isNaN(pos['z']) ? pos['z'] : pos['z']; //Math.floor((dims[2] - 1) / 2);
 
-    // make the sliders
-    this.$xSlider.slider({
-        disabled: false,
-        range: "min",
-        min: 0,
-        max: dims[0] - 1,
-        value: this.volume.indexX,
-        slide: function (event, ui) {
-            if (!this.volume || this.lowPower) return;
-            this.volume.indexX = ui.value;
-            this.sliceChange(this.id, 'X', this.volume.indexX);
-        }.bind(this),
-        stop: function (event, ui){
-            if (this.volume && this.lowPower){
-                this.volume.indexX = ui.value;
-                sliceChange(this.id, 'X', this.volume.indexX);
-            }
-        }.bind(this)
-    });
-
-
-    this.$ySlider.slider({
-        disabled: false,
-        range: "min",
-        min: 0,
-        max: dims[1] - 1,
-        value: this.volume.indexY,
-        slide: function (event, ui) {
-            if (!this.volume || this.lowPower) return;
-            this.volume.indexY = ui.value;
-            this.sliceChange(this.id, 'Y', this.volume.indexY);
-        }.bind(this),
-        stop: function (event, ui){
-            if (this.volume && this.lowPower){
-                this.volume.indexY = ui.value;
-                this.sliceChange(this.id, 'Y', this.volume.indexY);
-            }
-        }.bind(this)
-    });
-
-
-    this.$zSlider.slider({
-        disabled: false,
-        range: "min",
-        min: 0,
-        max: dims[2] - 1,
-        value: this.volume.indexZ,
-        slide: function (event, ui) {
-            if (!this.volume || this.lowPower) return;
-            this.volume.indexZ = ui.value;
-            sliceChange(id, 'Z', this.volume.indexZ);
-        }.bind(this),
-        stop: function (event, ui){
-            if (this.volume && this.lowPower){
-                this.volume.indexZ = ui.value;
-                sliceChange(this.id, 'Z', this.volume.indexZ);
-            }
-        }.bind(this)
-    });
-
-
+    this.makeIndexSlider(this.$xSlider, 'X', dims[0] - 1);
+    this.makeIndexSlider(this.$ySlider, 'Y', dims[1] - 1);
+    this.makeIndexSlider(this.$zSlider, 'Z', dims[2] - 1);
 
 
     // Overload onMouseWheel event to control slice sliders

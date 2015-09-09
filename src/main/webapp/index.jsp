@@ -68,9 +68,9 @@ limitations under the License.
             }
 
             var baseUrl = "/data";
-            var solrUrl = 'https://wwwdev.ebi.ac.uk/mi/impc/dev/solr';
-            var drupalBaseUrl = "https://dev.mousephenotype.org";
-            var mediaBaseUrl = "http://wwwdev.ebi.ac.uk/mi/impc/dev/phenotype-archive/media";
+            var solrUrl = '//www.ebi.ac.uk/mi/impc/beta/solr';
+            var drupalBaseUrl = "//beta.mousephenotype.org";
+            var mediaBaseUrl = "//www.ebi.ac.uk/mi/impc/beta/phenotype-archive/media";
             console.log("mediaBaseUrl set="+mediaBaseUrl);
             var pdfThumbnailUrl = "//wwwdev.ebi.ac.uk/mi/media/omero/webgateway/render_thumbnail/119501";
             console.log("pdfThumbnailUrl set="+pdfThumbnailUrl);
@@ -137,7 +137,7 @@ limitations under the License.
         
         
       
-        <div id='wrap' class="noselect">
+        <div id='ievControlsWrap' class="noselect">
             <div id='top_bar'>
                 <div id='topleft'>
                    
@@ -479,13 +479,13 @@ limitations under the License.
          </div>
     </script>
 
-<!--    <script type='text/javascript' src='/data/js/searchAndFacet/searchAndFacetConfig.js?v=20150807'></script>
+    <script type='text/javascript' src='/data/js/searchAndFacet/searchAndFacetConfig.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/utils/tools.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>
 
 
-    <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js?v=20150807"></script>-->
+    <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js?v=20150807"></script>
 
     
 </html>

@@ -31,6 +31,7 @@ goog.require('iev.specimenview');
         var bookmarkReady = false;
         var mgi;
         var gene_symbol;
+        var availableViewHeight; // The window height minus all the header and controls heights
           
         //Give users a warning about using the deprecated colony_id=test url
         if (queryType === 'colony ID' && queryId === 'test'){
@@ -159,7 +160,7 @@ goog.require('iev.specimenview');
                 for (var key in centreOptions) {
                     if (key in data['centre_data']) {
                         var iconClass = 'centreSelectIcon cen_' + key;
-                        options.push("<option value='" + key + "'" +  "' data-class='" + iconClass + "'>" + centreOptions[key] + "</option>");
+                        options.push("<option value='" + key + "'" + "' data-class='" + iconClass + "'>" + centreOptions[key] + "</option>");
                     }
                 }
                 return options;
@@ -172,35 +173,17 @@ goog.require('iev.specimenview');
                     .iconselectmenu("menuWidget")
                     .addClass("ui-menu-icons customicons");
 
-             $centre_select
+            $centre_select
                     .iconselectmenu({
                         change: $.proxy(function (event, ui) {
-                                setCentre(event.currentTarget.innerText);
-                            
+                            setCentre(event.currentTarget.innerText);
+
                         }, this)
                     })
                     .iconselectmenu("refresh");
         }
             
             
-            
-//            
-//            
-//            $('#centre_select')
-//           
-//                    .append(centreLabels().join(""))
-//                    .selectmenu({
-//                        width: 30,
-//                        height: 20,
-//                        change: $.proxy(function (event, ui) {
-//                            setCentre(event.currentTarget.innerText);
-//
-//                        }, this)
-//                    });
-
-            //$('#centre_select').val('4').selectmenu('refresh');
-        
-        
         
         var spinnerOpts = {
             lines: 8 // The number of lines to draw
@@ -1123,14 +1106,33 @@ goog.require('iev.specimenview');
             return count;
         }
         
+        function setBreadCrumb() {
+            /*
+             * Get the dynamically generated menu code. Split into main menu and the login section
+             */
+            
+            var mgi_href = '/data/genes/' + mgi;
+            var b_link = $('#ievBreadCrumbGene').html(gene_symbol).attr('href', mgi_href)
+        }
+        
+    function setInitialViewerHeight(){
+       /*Get the height available for the specimen views*/
+        var sliceViewControlsHeight = 32 + 6; // Currently set in embryo.css the 6 is for padding
+        var windowHeight = $( window.top ).innerHeight();
+        var helpHeight = $('#help').outerHeight();
+        var impcHeaderHeight = $('#header').outerHeight();
+        var subHeaderHeight = $('#iev_subHeader').outerHeight();
+        var mainControlsHeight = $('#ievControlsWrap').outerHeight();
+        availableViewHeight = Math.round((windowHeight - impcHeaderHeight - subHeaderHeight - 
+                mainControlsHeight - helpHeight -( sliceViewControlsHeight * 2 )) / 2);
+        console.log(windowHeight, impcHeaderHeight, subHeaderHeight, mainControlsHeight);
+        /* add a new stylesheet fort the specimen view wrapper height as it's not been created yet */
+        $("<style type='text/css'> .sliceWrap{height:" + availableViewHeight + "px;}</style>").appendTo("head");
+   
+    }
+    
     
     function setViewOrientation(orientation){
-                     
-//            // No orientation controls for single specimen view  
-//            if (wildtypes.length < 1 || mutants.length < 1){
-//                 $("#orientation_radio" ).hide();
-//                 return;
-//            }
           
          if (orientation === 'vertical'){
             horizontalView = true;
@@ -1183,7 +1185,9 @@ goog.require('iev.specimenview');
         
 
     });
-
+    
+    setBreadCrumb();
+    setInitialViewerHeight();
     setActiveModalityButtons();
     loadViewers(container);
     attachEvents();
