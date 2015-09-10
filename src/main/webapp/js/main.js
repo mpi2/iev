@@ -245,10 +245,11 @@ goog.require('iev.specimenview');
                 // Get analysis data, if it exists                
                 for (var j = 0; j < objSize(data['analysis_data'][cen]); j++) {
                     
-                    var ana = data['analysis_data'][cen][j];                    
-                    ana.sex = 'Intersex';
+                    var ana = data['analysis_data'][cen][j];
                     ana.zygosity = 'Mixed';
                     ana.animalName = 'Population average';
+                    ana.sex = '';
+                    ana.geneSymbol = '';
 
                     // Create URLs
                     analysisUrl(ana, 'volume_url', 'average', OUTPUT_FILE_EXT);
@@ -750,7 +751,7 @@ goog.require('iev.specimenview');
             var sex = volData['sex'];
             var geneSymbol = sanitizeFileName(volData['geneSymbol']);
             var animalName = sanitizeFileName(volData['animalName']);
-            var newPath = sex + '_' + animalName + '_' + geneSymbol;
+            var newPath = [sex, gene_symbol, animalName].join('_');
             return newPath;
             
             
@@ -1123,7 +1124,7 @@ goog.require('iev.specimenview');
     
         function sanitizeFileName(dirtyString){
             var cleanString = dirtyString.replace(/[|&;$%@"<>()+,\/]/g, "");
-            return cleanString;
+            return cleanString.replace(" ", "_");
         }
 
         function basename(path) {
