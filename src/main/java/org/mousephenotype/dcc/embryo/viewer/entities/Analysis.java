@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Analysis.findBySid", query = "SELECT a FROM Analysis a WHERE a.sid = :sid"),
     @NamedQuery(name = "Analysis.findByPid", query = "SELECT a FROM Analysis a WHERE a.pid = :pid"),
     @NamedQuery(name = "Analysis.findByQid", query = "SELECT a FROM Analysis a WHERE a.qid = :qid"),
-//    @NamedQuery(name = "Analysis.findByCidGid", query = "SELECT a FROM Analysis a WHERE a.qid = :qid AND a.gid = :gid"),
+    @NamedQuery(name = "Analysis.findByCidGid", query = "SELECT a FROM Analysis a WHERE a.cid = :cid AND a.gid = :gid"),
     @NamedQuery(name = "Analysis.findByStatusId", query = "SELECT a FROM Analysis a WHERE a.statusId = :statusId"),
     @NamedQuery(name = "Analysis.findByActive", query = "SELECT a FROM Analysis a WHERE a.active = :active"),
     @NamedQuery(name = "Analysis.findByDateAnalysed", query = "SELECT a FROM Analysis a WHERE a.dateAnalysed = :dateAnalysed"),

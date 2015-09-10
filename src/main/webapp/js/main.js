@@ -12,10 +12,10 @@ goog.require('iev.specimenview');
           */
         
    
-//        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-//        var ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
-        var IMAGE_SERVER = 'http://localhost:8000/emb/';
-        var ANA_SERVER = 'http://localhost:8000/ana/';
+        var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+        var ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
+//        var IMAGE_SERVER = 'http://localhost:8000/emb/';
+//        var ANA_SERVER = 'http://localhost:8000/ana/';
         var WILDTYPE_COLONYID = 'baseline';
         var OUTPUT_FILE_EXT = '.nrrd';
         var queryId = queryId;
@@ -245,7 +245,7 @@ goog.require('iev.specimenview');
                 // Get analysis data, if it exists
                 var ana = data['analysis_data'][cen];
                 
-                if (ana) {
+                if (ana.length > 0) {
                     
                     ana = ana[0];
                     ana.sex = 'Intersex';

@@ -90,9 +90,11 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
             }
            
             //Get a set of unique centre IDs
+            int gid = -1;
             Set<Integer> set = new HashSet<>();
             for (Preprocessed p1 : p) {
                 set.add(p1.getCid());
+                gid = p1.getGid();
             }
             
             EntityManager em = getEntityManager();
@@ -105,8 +107,9 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
                 List<Preprocessed> v = q.getResultList();
                 centreResults.put(cid, v);
 
-		TypedQuery<Analysis> qAna = em.createNamedQuery("Analysis.findByCid", Analysis.class);
+		TypedQuery<Analysis> qAna = em.createNamedQuery("Analysis.findByCidGid", Analysis.class);
     		qAna.setParameter("cid", cid);
+                qAna.setParameter("gid", gid);
     		List<Analysis> ana = qAna.getResultList();
 		analysisResults.put(cid, ana);
             }
