@@ -1,3 +1,0 @@
-[submodule "lib/google-closure-library"]
-	path = lib/google-closure-library
-	url = https://code.google.com/p/closure-library/

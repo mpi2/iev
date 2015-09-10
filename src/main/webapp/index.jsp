@@ -20,6 +20,7 @@ limitations under the License.
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
     <head>
+        <meta name="google" content="notranslate" />
         <title>Embryo Viewer Web Application</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="chrome=1" />
@@ -28,13 +29,14 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="js/handlebars.min.js"></script>
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
+        <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
         <script type="text/javascript" src="js/xtk.js"></script>
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/specimenview.js"></script>
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
         <script type="text/javascript" src="js/main.js"></script>
         <script type="text/javascript" src="js/sliceview.js"></script>
+        <script type="text/javascript" src="js/localStorage.js"></script>
         <script type="text/javascript" src="js/spin.min.js"></script>
         <script type="text/javascript" src="js/fileDownload.js"></script>
         <script type="text/javascript" src="http://www.mousephenotype.org/data/js/head.min.js?v=2.0.2"></script>

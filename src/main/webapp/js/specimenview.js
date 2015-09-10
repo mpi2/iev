@@ -39,6 +39,7 @@ if (typeof dcc === 'undefined')
     * @type {!number}
     * @protected
     */
+    this.fs_object;
     this.$yContainer;
     this.$zContainer;
     this.$xWrap;
@@ -713,7 +714,6 @@ iev.specimenview.prototype.setupRenderers = function() {
     this.volume = new X.volume();
     this.volume.file = this.currentVolume['volume_url'];
 
-
     // First we render X. Then X.afterRender() calls the loading and rendering of the others
     this.xRen.add(this.volume);
     this.xRen.render(); 
@@ -738,13 +738,13 @@ iev.specimenview.prototype.setReady = function(){
     //remove the progress div
     //
     $('#ievLoading' + this.id).remove();
-    ready = true;
+    this.ready = true;
     this.readyCB();
 }
 
         
 iev.specimenview.prototype.isReady = function(){
-    return ready;
+    return this.ready;
 }
 
 
@@ -866,6 +866,26 @@ iev.specimenview.prototype.makeIndexSlider = function($sliderDiv, orientation, m
     });
 }
 
+//iev.specimenview.prototype.writeVolume = function (volName, rawData) {
+//    this.fs_object.root.getFile(volName, {create: false}, function (fileEntry) {
+//
+//        // Create a FileWriter object for our FileEntry (log.txt).
+//        fileEntry.createWriter(function (fileWriter) {
+//
+//            fileWriter.seek(fileWriter.length); // Start write position at EOF.
+//
+//            // Create a new Blob and write it to log.txt.
+//            var blob = new Blob([rawData], {type: 'text/plain'});
+//
+//            fileWriter.write(blob);
+//
+//        }, errorHandler);
+//
+//    }, errorHandler);
+//
+//
+//};
+
 iev.specimenview.prototype.xtk_showtime = function() {
     /**
      * Gets executed after all files were fully loaded and just before the first rendering attempt.
@@ -873,6 +893,11 @@ iev.specimenview.prototype.xtk_showtime = function() {
      * 
      * @method xtk_showtime
      */
+//    var rawData = this.volume.filedata;
+//    this.writeVolume(this.currentVolume, rawData);
+//    console.log('filedata', rawData);
+    
+   
     this.yRen.add(this.volume);
     this.yRen.render();
     this.zRen.add(this.volume);
@@ -1011,7 +1036,7 @@ iev.specimenview.prototype.setIdxOffset = function(ortho, offset){
     if (ortho === 'X') this.xOffset = offset;
     if (ortho === 'Y') this.yOffset = offset;
     if (ortho === 'Z') this.zOffset = offset;
-}
+};
         
         
 iev.specimenview.prototype.getDimensions = function(){
@@ -1021,7 +1046,7 @@ iev.specimenview.prototype.getDimensions = function(){
      * @return {Array<int>} XYZ dimensions of the current this.volume
      */
     return this.volume.dimensions;
-}
+};
     
     
 iev.specimenview.prototype.getCurrentVolume = function(){
@@ -1029,7 +1054,11 @@ iev.specimenview.prototype.getCurrentVolume = function(){
      * Return the data for the currently viewd image
      */
     return this.currentVolume;
-}     
+};     
+
+iev.specimenview.prototype.setFileSystem = function(fs_object){
+    this.fs_object = fs_object;
+};
 
 
 iev.specimenview.prototype.setVisibleViews = function(viewList, count, horizontalView) {

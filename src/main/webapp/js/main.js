@@ -1,5 +1,6 @@
 
 goog.require('iev.specimenview');
+//goog.require('iev.localStorage');
 
 
 (function () {
@@ -41,7 +42,13 @@ goog.require('iev.specimenview');
             return;
         }
         
-
+        var fileSystem = 'undefined'; 
+        
+      
+                    
+        
+        
+        
         
         /**
          * 
@@ -1172,19 +1179,36 @@ goog.require('iev.specimenview');
     }
     
 
-    // Style the control buttons
+        // Style the control buttons
 
-    $(function () {
-                
-        $( "#help_link" ).button({
-             icons: {
-                 primary: 'ui-icon-help'
-             }
-     
-        }).css({width: '30'});
+        $(function () {
+
+            $("#help_link").button({
+                icons: {
+                    primary: 'ui-icon-help'
+                }
+
+            }).css({width: '30'});
+
+
+        });
+    
+        function getFileSystem() {
+            var localStorage = new iev.localStorage();
+            // pass in success and error callbacks
+            localStorage.checkForHtml5Storage(
+                    function (fs_object) {
+                        console.log(fs_object);
+                        fileSystem = fs_object;
+                        for (var i=0; i < views.length; ++i){
+                            views[i].setFileSystem(fileSystem);   
+                        }
+
+                    }.bind(this));
+        }
+        
         
 
-    });
     
     setBreadCrumb();
     setInitialViewerHeight();
@@ -1192,6 +1216,7 @@ goog.require('iev.specimenview');
     loadViewers(container);
     attachEvents();
     beforeReady();
+    getFileSystem();
     
     
     
