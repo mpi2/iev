@@ -242,12 +242,10 @@ goog.require('iev.specimenview');
                     }
                 }
 
-                // Get analysis data, if it exists
-                var ana = data['analysis_data'][cen];
-                
-                if (ana.length > 0) {
+                // Get analysis data, if it exists                
+                for (var j = 0; j < objSize(data['analysis_data'][cen]); j++) {
                     
-                    ana = ana[0];
+                    var ana = data['analysis_data'][cen][j];                    
                     ana.sex = 'Intersex';
                     ana.zygosity = 'Mixed';
                     ana.animalName = 'Population average';
