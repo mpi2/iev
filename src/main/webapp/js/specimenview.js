@@ -73,7 +73,7 @@ if (typeof dcc === 'undefined')
     this.currentVolume = volumeData[Object.keys(volumeData)[0]];
     this.bookmarkHasVolume = false;
 
-    // If the config has a specimen, select that igit nstead
+    // If the config has a specimen, select that instead
     if (config['specimen']['name'] !== "null") {
         for (var key in volumeData) {
             if (volumeData.hasOwnProperty(key)) {
@@ -81,6 +81,12 @@ if (typeof dcc === 'undefined')
                 if (vol['animalName'] === config['specimen']['name']) {
                     this.currentVolume = vol;
                     this.bookmarkHasVolume = true;
+                    
+                    // If it has overlays specified, set flags
+                    if (config['specimen']['overlay'] !== 'none') {
+                        this.currentLabelmap = config['specimen']['overlay'];
+                    }
+                    
                     break;
                 }
             }
@@ -245,9 +251,14 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
 }
 
 iev.specimenview.prototype.setupOverlayControls = function() {
+
+    // Set the checked button
+    var button = $('input:radio', '#' + this.overlayControl).filter('[value=' + this.currentLabelmap + ']'); // '#' + this.overlayControl, 
+    button.prop('checked', true);
+        
     // Set up overlay controls
     $('#' + this.overlayControl).buttonset();
-   
+    
     // On click
     $('#' + this.overlayControl).click(function(e) {
         var overlay_type = $('input[type=radio]:checked', e.currentTarget).prop("id").split("_")[0];
@@ -358,10 +369,25 @@ iev.specimenview.prototype.setContrastSlider = function() {
 
 iev.specimenview.prototype.setLabelmap = function(overlay_type) {
     if (overlay_type !== "none") {
+
         this.volume.labelmap.file = this.currentVolume[overlay_type + '_overlay'];
         this.volume.labelmap.colortable.file = this.currentVolume[overlay_type + '_cmap'];
+        
+        if (overlay_type === "labelmap") {
+            this.volume.labelmap.opacity = 0.5;
+        }
+                
     }
 }
+
+iev.specimenview.prototype.getLabelmap = function() {
+    if (this.hasLabelmap) {
+        return this.currentLabelmap;
+    } else {
+        return "none";
+    }
+}
+
 
 iev.specimenview.prototype.showHideOverlayControls = function() {
     

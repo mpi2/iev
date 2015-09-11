@@ -251,12 +251,15 @@ goog.require('iev.specimenview');
                     ana.sex = '';
                     ana.geneSymbol = '';
 
-                    // Create URLs
-                    analysisUrl(ana, 'volume_url', 'average', OUTPUT_FILE_EXT);
-                    analysisUrl(ana, 'jacobian_overlay', 'jacobian', OUTPUT_FILE_EXT);
-                    analysisUrl(ana, 'intensity_overlay', 'intensity', OUTPUT_FILE_EXT);
-                    analysisUrl(ana, 'jacobian_cmap', 'jacobian', '.txt');
-                    analysisUrl(ana, 'intensity_cmap', 'intensity', '.txt');
+                    // Create volume/overlay URLs
+                    analysisUrl(ana, 'average', 'volume_url', OUTPUT_FILE_EXT);
+                    analysisUrl(ana, 'jacobian', 'jacobian_overlay', OUTPUT_FILE_EXT)
+                    analysisUrl(ana, 'intensity', 'intensity_overlay', OUTPUT_FILE_EXT)
+                    analysisUrl(ana, 'labelmap', 'labelmap_overlay', OUTPUT_FILE_EXT)
+                    
+                    analysisUrl(ana, 'jacobian', 'jacobian_cmap', '.txt');
+                    analysisUrl(ana, 'intensity', 'intensity_cmap', '.txt');
+                    analysisUrl(ana, 'labelmap', 'labelmap_cmap', '.txt');
 
                     // Add populate average volume to both viewers
                     modData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
@@ -344,7 +347,27 @@ goog.require('iev.specimenview');
             data['volume_url'] = url;
 
             return data;
-        }               
+        }      
+        
+        function analysisUrl(data, name, field, ext){
+            /**
+             * Create url for the analysis data, based on type and extension
+             * @method analysisUrl
+             * @param {json} data Data for colonyID 
+             */
+
+            var url = ANA_SERVER + data.cid + '/' 
+                    + data.lid + '/' 
+                    + data.gid + '/' 
+                    + data.sid + '/' 
+                    + data.pid + '/' 
+                    + data.qid + '/' 
+                    + data.id + '/'
+                    + name + ext;
+            
+            data[field] = url;
+            return data;
+        }
         
         function bookmarkConfigure() {
             
@@ -414,7 +437,10 @@ goog.require('iev.specimenview');
                 + '&ml=' + mutView.getBrightnessLower()
                 + '&mu=' + mutView.getBrightnessUpper()
                 + '&o=' + currentOrientation
-                + '&zoom=' + currentZoom;
+                + '&zoom=' + currentZoom
+                + '&wto=' + wtView.getLabelmap()
+                + '&muto=' + mutView.getLabelmap();
+                
             return bookmark;
         }
 
@@ -442,26 +468,6 @@ goog.require('iev.specimenview');
                 }
             }             
             
-        }
-
-	function analysisUrl(data, field, name, ext){
-            /**
-             * Create url for the analysis data, based on type and extension
-             * @method analysisUrl
-             * @param {json} data Data for colonyID 
-             */
-
-            var url = ANA_SERVER + data.cid + '/' 
-                    + data.lid + '/' 
-                    + data.gid + '/' 
-                    + data.sid + '/' 
-                    + data.pid + '/' 
-                    + data.qid + '/' 
-                    + data.id + '/'
-                    + name + ext;
-            
-            data[field] = url;
-            return data;
         }
         
         function zoomViewsIn() {

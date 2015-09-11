@@ -276,6 +276,7 @@ limitations under the License.
                     h: parseInt(<%= request.getParameter("h")%>),
                     wt: {
                         name: "<%= request.getParameter("wt")%>",
+                        overlay: "<%= request.getParameter("wto")%>",
                         pos: {
                             x: parseInt(<%= request.getParameter("wx")%>),
                             y: parseInt(<%= request.getParameter("wy")%>),
@@ -288,6 +289,7 @@ limitations under the License.
                     },         
                     mut: {
                         name: "<%= request.getParameter("mut")%>",
+                        overlay: "<%= request.getParameter("muto")%>",
                         pos: {
                             x: parseInt(<%= request.getParameter("mx")%>),
                             y: parseInt(<%= request.getParameter("my")%>),
@@ -359,14 +361,17 @@ limitations under the License.
     
             <div class="overlayWrap">
                 <div id="{{overlayId}}" title="Overlay controls" style="display: none;">
-                    <input type="radio" class="none" id="none_{{overlayId}}" name="{{overlayId}}">
+                    <input type="radio" class="none" id="none_{{overlayId}}" name="{{overlayId}}" value="none">
                     <label for="none_{{overlayId}}" class="button_label">None</label>
+            
+                    <input type="radio" class="atlas" id="labelmap_{{overlayId}}" name="{{overlayId}}" value="labelmap">
+                    <label for="labelmap_{{overlayId}}" class="button_label">Labels</label>
 
-                    <input type="radio" class="jacobian" id="jacobian_{{overlayId}}" name="{{overlayId}}" checked="true">
+                    <input type="radio" class="jacobian" id="jacobian_{{overlayId}}" name="{{overlayId}}" value="jacobian">
                     <label for="jacobian_{{overlayId}}" class="button_label">Deformation</label>
 
-                    <input type="radio" class="intensity" id="intensity_{{overlayId}}" name="{{overlayId}}">
-                    <label for="intensity_{{overlayId}}" class="button_label">Intensity</label>
+                    <input type="radio" class="intensity" id="intensity_{{overlayId}}" name="{{overlayId}}" value="intensity">
+                    <label for="intensity_{{overlayId}}" class="button_label">Intensity</label>            
                 </div>
             </div>
     
