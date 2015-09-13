@@ -1,0 +1,5 @@
+Install netbeans - 8.02n works
+
+Install Tomcat server - use 7.0.59
+
+Install mysql-connector - 5.1.34
