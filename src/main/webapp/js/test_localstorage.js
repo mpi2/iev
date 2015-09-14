@@ -1,5 +1,5 @@
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 
 window.onload = function() {
@@ -13,7 +13,7 @@ this.sliceY = null;
 this.sliceZ = null;
 this.volume = null;
 
-this.iev_ = new iev();
+this.iev_ = new iev.idxdb();
 
   //
   // create the 2D renderers
@@ -66,10 +66,10 @@ test.prototype.indexDbSuccesCb = function(){
 
 test.prototype.volumeLoadedCB = function(){
     //hard coded db key. Need to work out how to set unique keys and map to volume names
-    this.iev_.getVolume(2, this.dataLoadedCB.bind(this));
+    this.iev_.getVolume(this.volume.file, this.dataLoadedCB.bind(this));
  };
 
-test.prototype.dataLoadedCB = function(retrievedObj){
+test.prototype.dataLoadedCB = function(retrievedObj, volumeUrl){
     
     //this.sliceX.destroy(); //Can't seem to destroy
    
@@ -78,13 +78,12 @@ test.prototype.dataLoadedCB = function(retrievedObj){
     
     
     this.sliceXn = new X.renderer2D();
-    this.newVol= new X.volume();
-    this.newVol.file = 'dummy.nrrd'; // The needs to be set
-    this.newVol.filedata = retrievedObj.volume.filedata;
-    
     this.sliceXn.container = 'sliceXnew';
     this.sliceXn.orientation = 'X';
     this.sliceXn.init();
+    this.newVol= new X.volume();
+    this.newVol.file = 'dummy.nrrd'; // The needs to be set
+    this.newVol.filedata = retrievedObj;
     this.sliceXn.add(this.newVol);
     this.sliceXn.render();
  };

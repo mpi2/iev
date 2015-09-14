@@ -1,12 +1,15 @@
-
-
+//goog.provide('iev.idxdb');
 
 iev = function(){
+    
+};
+
+iev.idxdb = function(){
     this.idbSupported = false;
     this.db;
 };
 
-iev.prototype.checkForIndexDB = function (successCallback, errorCallback) {
+iev.idxdb.prototype.checkForIndexDB = function (successCallback, errorCallback) {
 
     if("indexedDB" in window) {
         this.idbSupported = true;
@@ -16,13 +19,13 @@ iev.prototype.checkForIndexDB = function (successCallback, errorCallback) {
         var openRequest = indexedDB.open("iev",1);
 
         openRequest.onupgradeneeded = function(e) {
-            console.log("Upgrading...");
+            console.log("Upgrading iev indexedDB");
             var thisDB = e.target.result;
 
             if(!thisDB.objectStoreNames.contains("volumes")) {
                 thisDB.createObjectStore("volumes");
-            }
-        }
+            };
+        };
 
         openRequest.onsuccess = function(e) {
             console.log("Success!");
@@ -33,29 +36,31 @@ iev.prototype.checkForIndexDB = function (successCallback, errorCallback) {
         openRequest.onerror = function(e) {
             console.log("Error");
             console.dir(e);
-        }
+        };
 
     }
 
 };
 
-iev.prototype.addVolume = function(volname, xtkVolume, successCB){
-    console.log('dbbbb', this.db);
+iev.idxdb.prototype.addVolume = function(volUrl, xtkVolume, successCB){
+    
+    if(!this.idbSupported) return;
+    
     var transaction = this.db.transaction(["volumes"],"readwrite");
     var store = transaction.objectStore("volumes");
-
+    var filedata = xtkVolume.filedata;
     //Define a person
     var volume = {
-        name:volname,
-        volume:xtkVolume,
+        name:volUrl,
+        filedata:filedata,
         created:new Date()
     };
 
     //Perform the add
-    var request = store.add(volume, volname);
+    var request = store.add(volume, volUrl);
 
     request.onerror = function(e) {
-        console.log("Error",e.target.error.name);
+        console.log("Error",e.target.error.message);
         //possibly already exists in DB
         successCB();
     };
@@ -66,20 +71,41 @@ iev.prototype.addVolume = function(volname, xtkVolume, successCB){
     };
 };
 
-iev.prototype.getVolume = function(key, successCB){
+iev.idxdb.prototype.getVolume = function(url, successCB){
 
+    if (!this.idbSupported){
+        successCB(this._getVolumeFromServer(url));
+    }
     var transaction = this.db.transaction(["volumes"],"readonly");
     var store = transaction.objectStore("volumes");
 
-    var request = store.get(Number(key));
+    var request = store.get(url);
 
     request.onsuccess = function(e) {
 
         var result = e.target.result;
-        console.dir('newvol', result.volume);
         if(result) {
-        successCB(result);
+        successCB(result.filedata);
+        }
+    };
+    
+    request.onerror = function(e){
+        /*if we failed to get volumes from indexedDB, just fetch from server */
+        successCB(this._getVolumeFromServer(url))
+    };
+};
 
+iev.idxdb.prototype._getVolumeFromServer = function (url) {
+    /*If we can't find volume in indexedDB or indexedDB not supported,
+     * Load the file from an ajax call from the server*/
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.send();
+    xhr.onreadystatechange = function (e) {
+        if (this.readyState === 4) {
+            this.response;
+            
         }
     };
 };
