@@ -10,7 +10,6 @@ target/
 logs/
 phenodcc_backup/
 *.sql
-*.html
 *.pdf
 X/
 *.orig
