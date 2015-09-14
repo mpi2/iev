@@ -752,8 +752,8 @@ iev.specimenview.prototype.overrideRightMouse = function(ren){
             return;
 
         }
-    }
-}
+    };
+};
 
         
 iev.specimenview.prototype.setReady = function(){
@@ -762,12 +762,12 @@ iev.specimenview.prototype.setReady = function(){
     $('#ievLoading' + this.id).remove();
     this.ready = true;
     this.readyCB();
-}
+};
 
         
 iev.specimenview.prototype.isReady = function(){
     return this.ready;
-}
+};
 
 
 iev.specimenview.prototype.invertColour = function(checked) {
@@ -944,17 +944,17 @@ iev.specimenview.prototype.xtk_showtime = function() {
     this.xRen.interactor.onMouseWheel = function (event) {
         this.$xSlider.slider({value: this.volume.indexX});
 
-        this.sliceChange(id, 'X', this.volume.indexX);
+        this.sliceChange(this.id, 'X', this.volume.indexX);
     }.bind(this);
 
     this.yRen.interactor.onMouseWheel = function (event) {
         this.$ySlider.slider({value: this.volume.indexY});
-        this.sliceChange(id, 'Y', this.volume.indexY);
+        this.sliceChange(this.id, 'Y', this.volume.indexY);
     }.bind(this);
 
     this.zRen.interactor.onMouseWheel = function (event) {
         this.$zSlider.slider({value: this.volume.indexZ});
-        this.sliceChange(id, 'Z', this.volume.indexZ);
+        this.sliceChange(this.id, 'Z', this.volume.indexZ);
     }.bind(this);
 
 

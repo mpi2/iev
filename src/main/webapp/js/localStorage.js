@@ -61,15 +61,6 @@ ievLocalStorage.prototype._checkForKey = function (key, exists) {
     var transaction = this.db.transaction(["volumes"],"readonly");
     var store = transaction.objectStore("volumes");
     store.get(key).onsuccess = exists;
-//    var req = store.openCursor(key);
-//    req.onsuccess = function (e) {
-//        var cursor = e.target.target;
-//        if (cursor) { // key already exist
-//            exists(true);
-//        } else { // key not exist
-//            exists(false);
-//        }
-//    };
 };
 
 ievLocalStorage.prototype._addVolume = function(volUrl, filedata){
@@ -120,10 +111,10 @@ ievLocalStorage.prototype._getfromIndexedDb = function(url, successCB){
     
     request.onerror = function(e){
         /*if we failed to get volumes from indexedDB, just fetch from server */
-        consol.log('failed to get from idxdb even though key exists')
+        console.log('failed to get from idxdb even though key exists')
         this._getVolumeFromServer(url, function(filedata){
             successCB(filedata);
-        })
+        });
     };
 };
 
