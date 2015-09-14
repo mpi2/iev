@@ -1,6 +1,7 @@
 
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+goog.require('X.renderer2D');
+goog.require('X.interactor2D');
+//goog.require('iev.idxdb');
 
 goog.provide('iev.specimenview');
 
@@ -11,10 +12,12 @@ goog.provide('iev.specimenview');
  */
 
 iev.specimenview = function(volumeData, id, container, 
-             queryColonyId, indexCB, config, readyCB){
+             queryColonyId, indexCB, config, readyCB, localStorage){
     
 if (typeof dcc === 'undefined')
     dcc = {};
+
+    this.localStorage = localStorage;
 
     /* @type {string} */
     this.queryColonyId = queryColonyId;
@@ -70,7 +73,7 @@ if (typeof dcc === 'undefined')
     this.currentVolume = volumeData[Object.keys(volumeData)[0]];
     this.bookmarkHasVolume = false;
 
-    // If the config has a specimen, select that igit nstead
+    // If the config has a specimen, select that instead
     if (config['specimen']) {
         for (var key in volumeData) {
             if (volumeData.hasOwnProperty(key)) {
@@ -660,6 +663,14 @@ iev.specimenview.prototype.setupRenderers = function() {
      * 
      * @method setupRenderers
      */
+    
+    
+    //testing: Get the filedata to attach to our volume
+    // Check wheter the URL is already saved in the indexedDB if it is retieve it
+    // If not fetch it and write to indexedDB
+    
+    
+    
     this.ready = false;
 
     if (this.objSize(this.volumeData) < 1) return;
@@ -712,14 +723,25 @@ iev.specimenview.prototype.setupRenderers = function() {
 
     // create a X.volume
     this.volume = new X.volume();
-    this.volume.file = this.currentVolume['volume_url'];
+    
+    
+    //this.volume.file = this.currentVolume['volume_url'];
+    
+    //Hack: Need to add dummy filename if we are setting filedata directly
+    this.volume.file = 'dummy.nrrd'
+    this.localStorage.getVolume(this.currentVolume['volume_url'], this.onFetchedData.bind(this));  
+};
 
+
+iev.specimenview.prototype.onFetchedData = function(filedata){
+    this.volume.filedata = filedata;
     // First we render X. Then X.afterRender() calls the loading and rendering of the others
     this.xRen.add(this.volume);
     this.xRen.render(); 
 };
 
-        
+
+
 // Attempting to stop the right mouse zoom functionality
 iev.specimenview.prototype.overrideRightMouse = function(ren){
 
@@ -1132,6 +1154,16 @@ iev.specimenview.prototype.objSize = function(obj) {
     return count;
 }
 
+
+iev.specimenview.prototype.getData = function(volumeUrl){
+    /*
+     * Checks if the data for this url has already been loaded and saved in
+     * indexedDB storage. If it has, we get the x.volume.filedata from it.
+     * Otherwise it is fetched from the server and stored
+     */
+    
+    
+}
         
 
 

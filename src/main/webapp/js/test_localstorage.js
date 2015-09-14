@@ -13,7 +13,7 @@ this.sliceY = null;
 this.sliceZ = null;
 this.volume = null;
 
-this.iev_ = new iev.idxdb();
+this.iev_ = new ievIndDb.idxdb();
 
   //
   // create the 2D renderers
@@ -40,7 +40,7 @@ this.iev_ = new iev.idxdb();
   // create a X.volume
   this.volume = new X.volume();
   
-  this.volume.file = 'http://x.babymri.org/?vol.nrrd';
+  this.volume.file = 'https://www.mousephenotype.org/images/emb/4/8/0/35/203/5439/453903_28.nrrd';
   
   this.sliceX.add(this.volume);
   this.sliceX.render();

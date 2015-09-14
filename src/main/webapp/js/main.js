@@ -41,8 +41,7 @@ goog.require('iev.specimenview');
             $('#' + div).append(template());
             return;
         }
-        
-        var fileSystem = 'undefined'; 
+        var localStorage;
         
       
                     
@@ -474,8 +473,16 @@ goog.require('iev.specimenview');
             bookmarkConfigure();
             
         }  
+        
+        
+        function loadViewers(container){
+            localStorage = new ievLocalStorage(function(){  
+                afterLoadingLocalStorage(container);
+            }); 
+        }
+        
                     
-        function loadViewers(container) {
+        function afterLoadingLocalStorage(container) {
             /**
              * Create instances of SpecimenView and append to views[]. 
              * Get the dimensions of the loaded volumes
@@ -483,7 +490,7 @@ goog.require('iev.specimenview');
              * @param {String} container HTML element to put the specimen viewer in to
              */
             
-            
+          
             // Find first lot of data to use. loop over PIDs in reverse to try CT before OPT
             var pid;
             for (var i in volorder){
@@ -504,14 +511,14 @@ goog.require('iev.specimenview');
             if (objSize(wildtypeData) > 0){
                 var wtConfig = {specimen: bookmarkData['wt'] };
                 wtView = new iev.specimenview(wildtypeData, 'wt', container, 
-                    WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb);
+                    WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb, localStorage);
                 views.push(wtView);
             }
             
             // Set mutant specimen based on bookmark   
             var mutConfig = {specimen: bookmarkData['mut'] };
             mutView = new iev.specimenview(mutantData, 'mut', container, 
-                queryId, sliceChange, mutConfig, loadedCb);
+                queryId, sliceChange, mutConfig, loadedCb, localStorage);
             views.push(mutView);   
             centreSelector();
         };
@@ -1193,20 +1200,20 @@ goog.require('iev.specimenview');
 
         });
     
-        function getFileSystem() {
-            var localStorage = new iev.localStorage();
-            // pass in success and error callbacks
-            localStorage.checkForHtml5Storage(
-                    function (fs_object) {
-                        console.log(fs_object);
-                        fileSystem = fs_object;
-                        for (var i=0; i < views.length; ++i){
-                            views[i].setFileSystem(fileSystem);   
-                        }
-
-                    }.bind(this));
-        }
-        
+//        function getFileSystem() {
+//            var localStorage = new iev.localStorage();
+//            // pass in success and error callbacks
+//            localStorage.checkForHtml5Storage(
+//                    function (fs_object) {
+//                        console.log(fs_object);
+//                        fileSystem = fs_object;
+//                        for (var i=0; i < views.length; ++i){
+//                            views[i].setFileSystem(fileSystem);   
+//                        }
+//
+//                    }.bind(this));
+//        }
+//        
         
 
     
@@ -1216,7 +1223,7 @@ goog.require('iev.specimenview');
     loadViewers(container);
     attachEvents();
     beforeReady();
-    getFileSystem();
+
     
     
     
