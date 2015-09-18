@@ -160,9 +160,8 @@ if (typeof dcc === 'undefined')
     this.updateVolumeSelector();        
     this.jQuerySelectors();        
     this.setupRenderers();
-    //createEventHandlers();
     this.drawScaleBar();        
-}
+};
         
         
 iev.specimenview.prototype.updateData = function (volumes){
@@ -174,13 +173,13 @@ iev.specimenview.prototype.updateData = function (volumes){
     this.volumeData = volumes;
     this.replaceVolume(this.volumeData[Object.keys(this.volumeData)[0]]['volume_url']);
     this.updateVolumeSelector();
-}
+};
         
         
 iev.specimenview.prototype.update = function (){
     this.drawScaleBar();
     this.showMetadata();
-}
+};
         
 
 iev.specimenview.prototype.updateVolumeSelector = function () {
@@ -577,7 +576,7 @@ iev.specimenview.prototype.drawScale = function(ren, scaleId, scaleTextId){
     }
     $scaleouter.show();
 
-    var pixel_size = this.currentVolume["rescaledPixelsize"]; //for now hard code
+    var pixel_size = this.currentVolume["rescaledPixelsize"];
     var bar_size_pixels = (this.scaleBarSize / pixel_size) * ren.normalizedScale;
 
     var outer_height = $('.scale_outer').height();
@@ -602,13 +601,13 @@ iev.specimenview.prototype.rescale = function(scale){
 
     this.scaleBarSize = scale;
     this.drawScaleBar();
-}
+};
         
          
 iev.specimenview.prototype.getVolume = function(){
 
     return this.volume;
-}
+};
 
         
 

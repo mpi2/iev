@@ -50,13 +50,14 @@ limitations under the License.
         
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
         
-        <link type="text/css" rel="stylesheet" href="css/css_FOZ_d3UAptpDgO0Bi3g0O_i_hnW9qo3cnnlJ7zHLIpU.css" media="all" />
+        <link type="text/css" rel="stylesheet" href="css/css_FOZ_d3UAptpDgO0Bi3g0O_i_hnW9qo3cnnlJ7zHLIpU.css" media="all" /> <!--needed?-->
         <link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" media="all" />
         <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" media="all" />
         <link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css" media="all" />
-        <link type="text/css" rel="stylesheet" href="css/css_JbqXNeGT2vW5-6KTgm-ypazaAqvl8n-0h3My8pH_69Q.css" media="all" />
+        <!--<link type="text/css" rel="stylesheet" href="css/css_JbqXNeGT2vW5-6KTgm-ypazaAqvl8n-0h3My8pH_69Q.css" media="all" />-->
+        <link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">
         <link rel="stylesheet" href="css/searchPage.css">
-        <!--<link rel="stylesheet" href="css/font-awesome.min.css">-->
+        <link rel="stylesheet" href="css/font-awesome.min.css">
      
         
         <script>
@@ -105,10 +106,10 @@ limitations under the License.
         <div id="iev">
         <div id="iev_subHeader">
 
-            <div id="iev_breadCrumb">
+<!--            <div id="iev_breadCrumb">
                 <a href="https://dev.mousephenotype.org">Home</a> &raquo;&nbsp;<a href="/data/search">Search</a>&raquo;&nbsp;<a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
-            </div>
-            <div id="iev_searchBox">
+            </div>-->
+<!--            <div id="iev_searchBox">
                 <div class='searchcontent'>
                     <div id='bigsearchbox' class='block'>
                         <div class='content'>
@@ -120,7 +121,30 @@ limitations under the License.
                         </div>
                     </div>
                 </div>
-            </div>        
+
+
+            </div>        -->
+
+<DIV id="DIV_19"><DIV id="DIV_20"><div class="breadcrumb" id="DIV_1">
+                        <a href="//www.mousephenotype.org" id="A_2">Home</a> » <a href="/data/search" id="A_3">Search</a>&nbsp;» <a href="/data/search#q=*:*&amp;facet=gene" id="A_4">Genes</a> » Klf7
+
+                        <div class="searchcontent" id="DIV_5">
+    											<div id="DIV_6" class="block">
+    												<div class="content" id="DIV_7">
+    													<p id="P_8"><i id="I_9" class="fa fa-search"></i></p>
+    													<div class="ui-widget" id="DIV_10">
+    													<span role="status" aria-live="polite" class="ui-helper-hidden-accessible" id="SPAN_11"></span><input id="INPUT_12" class="ui-autocomplete-input" autocomplete="off">
+    														<a id="A_13"><i class="fa fa-info searchExample" data-hasqtip="1881" id="I_14"></i></a>
+    													</div>
+    												</div>
+    											</div>
+    										</div>
+
+                        <div id="DIV_15">
+                        	<a id="A_16" href="/data/batchQuery"><i class="fa fa-th-list batchQuery" id="I_17"></i><span id="SPAN_18">Batch query</span></a>
+                        </div>
+
+                    </div></DIV></DIV>
         </div>
            <div id="help">
                             <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">

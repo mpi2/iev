@@ -15,11 +15,9 @@ goog.require('iev.specimenview');
 
         var IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
         //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
-        var WILDTYPE_COLONYID = 'baseline';
-        var OUTPUT_FILE_EXT = '.NRRD';
+        var WILDTYPE_COLONYID = 'baseline'
         var queryId = queryId;
         var horizontalView;
-        var scaleVisible = true;
         var wtView;
         var mutView;
         var currentModality;
@@ -42,13 +40,7 @@ goog.require('iev.specimenview');
             return;
         }
         var localStorage;
-        
-      
-                    
-        
-        
-        
-        
+
         /**
          * 
          * @type {object} modality_stage_pids
@@ -158,9 +150,7 @@ goog.require('iev.specimenview');
             /*
              * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
              */
-//            
-//            //Just for testing
-//            // Populate drop down box with available centres
+            // Populate drop down box with available centres
             function availableCentres() {
                 var options = [];
                 for (var key in centreOptions) {
@@ -456,7 +446,7 @@ goog.require('iev.specimenview');
         
         
         function beforeReady(){
-            
+            /*Inactivate the modality/stage buttons*/
             $('#modality_stage :input').prop("disabled", true); 
             $("#modality_stage").buttonset('refresh');
         }
@@ -471,6 +461,24 @@ goog.require('iev.specimenview');
             
             // Configure viewer styling based on bookmark data
             bookmarkConfigure();
+                $('#scale_select')
+                .append(scaleLabels().join(""))
+                .selectmenu({
+                    width: 80,
+                    height: 20,
+                    change: $.proxy(function (event, ui) { 
+                        scales.currentBarSize = ui.item.value;
+                        $('.scale_text').text(ui.item.label);
+                        scaleOrthogonalViews();
+                        
+                    }, this)
+                });
+                
+            $('#scale_select').val(scales.currentBarSize).selectmenu('refresh');
+            //Set the scale bar text value to current selected
+            $('.scale_text').text($('#scale_select').find(":selected").text());
+            //attachEvents();
+            scaleOrthogonalViews();
             
         }  
         
@@ -733,12 +741,6 @@ goog.require('iev.specimenview');
              * 
              */
         
-            
-            $('#screenShot').click(function(e) {
-                for (var i = 0; i < views.length; i++) {
-                    views[i].screenShot();
-                }
-            }.bind(this));
           
             $('#low_power_check').button().click(function(e){                               
                 setLowPowerState(e.currentTarget.checked);
@@ -763,6 +765,7 @@ goog.require('iev.specimenview');
                         $(this).removeClass('ievgrey');
                         $(this).addClass('ievInvertedGrey');
                         $(".sliceView").css("background-color", "#FFFFFF");
+                        $(".sliceControls").css("background-color", "#FFFFFF");
                         $('.scale_text').css("color", "#000000");
                         $('.scale').css("background-color", "#000000");
                         checked = true;
@@ -770,6 +773,7 @@ goog.require('iev.specimenview');
                         $(this).removeClass('ievInvertedGrey');
                         $(this).addClass('ievgrey');
                         $(".sliceView").css("background-color", "#000000");
+                        $(".sliceControls").css("background-color", "#000000");
                         $('.scale_text').css("color", "#FFFFFF");
                         $('.scale').css("background-color", "#FFFFFF");
                         checked = false;
@@ -899,21 +903,15 @@ goog.require('iev.specimenview');
             // Scale bar visiblity
             $('#scale_visible').change(function (ev) {
                 if( $(ev.currentTarget).is(':checked') ){
-                    scaleVisible = true;
-                    
                     $('#scale_select').selectmenu("enable");
                     $('.scale_outer').css(
                         {'visibility': 'visible'}
                      );
                 }else{
-                    scaleVisible = false;
                      $('#scale_select').selectmenu("disable");
                       $('.scale_outer').css(
                         {'visibility': 'hidden'}
                      );
-                }
-                for (var i = 0; i < views.length; i++) {
-                    views[i].setScaleVisibility(scaleVisible);
                 }
                 scaleOrthogonalViews();
             }.bind(this));
@@ -922,22 +920,23 @@ goog.require('iev.specimenview');
             /*
              * The selectmenu for the scale bar sizes
              */
-            $('#scale_select')
-                .append(scaleLabels().join(""))
-                .selectmenu({
-                    width: 80,
-                    height: 20,
-                    change: $.proxy(function (event, ui) { 
-                        scales.currentBarSize = ui.item.value;
-                        $('.scale_text').text(ui.item.label);
-                        scaleOrthogonalViews();
-                        
-                    }, this)
-                });
-                
-            $('#scale_select').val(600).selectmenu('refresh');
-            $('.scale_text').text($('#scale_select').find(":selected").text());
-           
+//            $('#scale_select')
+//                .append(scaleLabels().join(""))
+//                .selectmenu({
+//                    width: 80,
+//                    height: 20,
+//                    change: $.proxy(function (event, ui) { 
+//                        scales.currentBarSize = ui.item.value;
+//                        $('.scale_text').text(ui.item.label);
+//                        scaleOrthogonalViews();
+//                        
+//                    }, this)
+//                });
+//                
+//            $('#scale_select').val(scales.currentBarSize).selectmenu('refresh');
+//            //Set the scale bar text value to current selected
+//            $('.scale_text').text($('#scale_select').find(":selected").text());
+     
             
             
             $('.modality_button').change(function (ev) {
@@ -967,7 +966,7 @@ goog.require('iev.specimenview');
                         }, this)
                     }); 
          
-            scaleOrthogonalViews();
+            //scaleOrthogonalViews();
             // Put this here as calling this multiple times does not work
             downloadTableRowSource = $("#downloadTableRowTemplate").html();
         
@@ -1223,7 +1222,7 @@ goog.require('iev.specimenview');
     loadViewers(container);
     attachEvents();
     beforeReady();
-
+  
     
     
     
