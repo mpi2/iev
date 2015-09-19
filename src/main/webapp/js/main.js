@@ -1,13 +1,13 @@
 
-goog.require('iev.specimenview');
+//goog.require('iev.specimenview');
 //goog.require('iev.localStorage');
 
 
 (function () {
-    if (typeof dcc === 'undefined')
-        dcc = {};
+    if (typeof iev === 'undefined')
+        iev = {};
     
-     dcc.EmbryoViewer = function(data, div, queryType, queryId, bookmarkData) {
+     iev.EmbryoViewer = function(data, div, queryType, queryId, bookmarkData) {
          /**
           * @class EmbryoViewer
           * @type String

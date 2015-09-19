@@ -28,9 +28,9 @@ limitations under the License.
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="js/handlebars.min.js"></script>
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <!--<script type="text/javascript" src="js/xtk.js"></script>-->
+        <!--<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>-->
+        <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
+        <script type="text/javascript" src="js/xtk.js"></script>
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/specimenview.js"></script>
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
@@ -106,45 +106,32 @@ limitations under the License.
         <div id="iev">
         <div id="iev_subHeader">
 
-<!--            <div id="iev_breadCrumb">
-                <a href="https://dev.mousephenotype.org">Home</a> &raquo;&nbsp;<a href="/data/search">Search</a>&raquo;&nbsp;<a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
-            </div>-->
-<!--            <div id="iev_searchBox">
-                <div class='searchcontent'>
-                    <div id='bigsearchbox' class='block'>
-                        <div class='content'>
-                            <p><i id='sicon' class='fa fa-search iev'></i></p>
-                            <div class='ui-widget'>
-                                <input id='s' class="ui-autocomplete-input" autocomplete="off">
-                                <a><i class='fa fa-info searchExample' data-hasqtip='255'></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
 
-            </div>        -->
-
-<DIV id="DIV_19"><DIV id="DIV_20"><div class="breadcrumb" id="DIV_1">
+            <DIV id="DIV_19"><DIV id="DIV_20"><div class="breadcrumb" id="DIV_1">
                         <a href="//www.mousephenotype.org" id="A_2">Home</a> » <a href="/data/search" id="A_3">Search</a>&nbsp;» <a href="/data/search#q=*:*&amp;facet=gene" id="A_4">Genes</a> » Klf7
 
                         <div class="searchcontent" id="DIV_5">
-    											<div id="DIV_6" class="block">
-    												<div class="content" id="DIV_7">
-    													<p id="P_8"><i id="I_9" class="fa fa-search"></i></p>
-    													<div class="ui-widget" id="DIV_10">
-    													<span role="status" aria-live="polite" class="ui-helper-hidden-accessible" id="SPAN_11"></span><input id="INPUT_12" class="ui-autocomplete-input" autocomplete="off">
-    														<a id="A_13"><i class="fa fa-info searchExample" data-hasqtip="1881" id="I_14"></i></a>
-    													</div>
-    												</div>
-    											</div>
-    										</div>
+                            <div id="DIV_6" class="block">
+                                <div class="content" id="DIV_7">
+                                    <p id="P_8"><i id="I_9" class="fa fa-search"></i></p>
+                                    <div class="ui-widget" id="DIV_10">
+                                        <span role="status" aria-live="polite" class="ui-helper-hidden-accessible" id="SPAN_11"></span><input id="s" class="ui-autocomplete-input" autocomplete="off">
+                                        <a id="A_13"><i class="fa fa-info searchExample" data-hasqtip="1881" id="I_14"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div id="DIV_15">
-                        	<a id="A_16" href="/data/batchQuery"><i class="fa fa-th-list batchQuery" id="I_17"></i><span id="SPAN_18">Batch query</span></a>
+                            <a id="A_16" href="/data/batchQuery"><i class="fa fa-th-list batchQuery" id="I_17"></i><span id="SPAN_18">Batch query</span></a>
                         </div>
 
                     </div></DIV></DIV>
+
+<!--<div class="breadcrumb"><a href="/">Home</a> » EmbryoViewer</div><div class="searchcontent"><div id="bigsearchbox" class="block"><div class="content"><p><i id="sicon" class="fa fa-search"></i></p><div class="ui-widget"><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input id="s" class="ui-autocomplete-input" autocomplete="off"><a><i class="fa fa-info searchExample" data-hasqtip="289"></i></a></div><p></p></div></div>
+</div>-->
+
         </div>
            <div id="help">
                             <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">
@@ -337,17 +324,17 @@ limitations under the License.
                 if (colonyId !== 'null'){
                     bookmarkData['mode'] = "colony_id";
                     bookmarkData['gene'] = colonyId;
-                    dcc.getVolumesByColonyId(colonyId, bookmarkData);
+                    iev.getVolumesByColonyId(colonyId, bookmarkData);
                 }
                 else if (geneSymbol !== 'null') {
                     bookmarkData['mode'] = "gene_symbol";
                     bookmarkData['gene'] = geneSymbol;
-                    dcc.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
+                    iev.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
                 }
                 else if (mgi !== 'null') {
                     bookmarkData['mode'] = "mgi";
                     bookmarkData['gene'] = mgi;
-                    dcc.getVolumesByMgi(mgi, bookmarkData);
+                    iev.getVolumesByMgi(mgi, bookmarkData);
                 }
                
             });

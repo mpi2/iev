@@ -1,6 +1,6 @@
 #DIV_19 {
     color: rgb(102, 102, 102);
-    height: 6750.78px;
+    height: 50px;
     min-width: 1010px;
     width: 1542px;
     perspective-origin: 771px 3375.39px;
@@ -12,7 +12,7 @@
 
 #DIV_20 {
     color: rgb(102, 102, 102);
-    height: 6157.02px;
+    height: 50px;
     max-width: 1200px;
     min-width: 960px;
     position: relative;
@@ -23,7 +23,7 @@
     font: normal normal normal normal 16px / 20.8px 'Source Sans Pro', Arial, Helvetica, sans-serif;
     margin: 0px 244.859px 0px 244.844px;
     outline: rgb(102, 102, 102) none 0px;
-    padding: 80px 25px 96px;
+    padding: 80px 0 0;
 }/*#DIV_20*/
 
 #DIV_1 {
@@ -156,7 +156,7 @@
     outline: rgb(102, 102, 102) none 0px;
 }/*#SPAN_11*/
 
-#INPUT_12 {
+#s {
     box-sizing: content-box;
     color: rgb(9, 120, 161);
     height: 15px;
