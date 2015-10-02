@@ -1,3 +1,5 @@
+
+
 #DIV_19 {
     color: rgb(102, 102, 102);
     height: 50px;
@@ -13,15 +15,14 @@
 #DIV_20 {
     color: rgb(102, 102, 102);
     height: 50px;
-    max-width: 1200px;
-    min-width: 960px;
+    /*min-width: 960px;*/
     position: relative;
-    width: 1002.3px;
+    width: 100%;
     perspective-origin: 526.141px 3166.5px;
     transform-origin: 526.141px 3166.5px;
     border: 0px none rgb(102, 102, 102);
     font: normal normal normal normal 16px / 20.8px 'Source Sans Pro', Arial, Helvetica, sans-serif;
-    margin: 0px 244.859px 0px 244.844px;
+    /*margin: 0px 20px 0px 0px;*/
     outline: rgb(102, 102, 102) none 0px;
     padding: 80px 0 0;
 }/*#DIV_20*/
@@ -30,7 +31,7 @@
     color: rgb(102, 102, 102);
     height: 27px;
     position: absolute;
-    width: 1052.3px;
+    width: 100%;
     z-index: 0;
     align-self: stretch;
     perspective-origin: 526.141px 13.5px;
@@ -59,7 +60,7 @@
 
 #DIV_5, #DIV_15 {
     color: rgb(102, 102, 102);
-    width: 1052.3px;
+    width: 100%;
     perspective-origin: 526.141px 0px;
     transform-origin: 526.141px 0px;
     border: 0px none rgb(102, 102, 102);
@@ -72,13 +73,14 @@
     float: right;
     height: 29px;
     width: 420px;
-    perspective-origin: 212.5px 17.5px;
-    transform-origin: 212.5px 17.5px;
+    margin-right: 40px !important;
+/*    perspective-origin: 212.5px 17.5px;
+    transform-origin: 212.5px 17.5px;*/
     background: rgb(9, 120, 161) none repeat scroll 0% 0% / auto padding-box border-box;
     border: 0px none rgb(102, 102, 102);
     border-radius: 4px 4px 4px 4px;
     font: normal normal normal normal 12.8px / 0px 'Source Sans Pro', Arial, Helvetica, sans-serif;
-    margin: -28px 50px 0px 0px;
+    margin: -28px 0px 0px 0px;
     outline: rgb(102, 102, 102) none 0px;
     padding: 3px 3px 3px 2px;
 }/*#DIV_6*/
@@ -223,6 +225,7 @@
     font: normal normal normal normal 12.8px / 20.8px 'Source Sans Pro', Arial, Helvetica, sans-serif;
     margin: -20px 20px 0px 0px;
     outline: rgb(9, 120, 161) none 0px;
+    width: auto;
 }/*#A_16*/
 
 #I_17 {
@@ -244,7 +247,7 @@
 #I_17:before {
     color: rgb(9, 120, 161);
     cursor: pointer;
-    content: "\f00b";
+    /*content: "\f00b";*/
     border: 0px none rgb(9, 120, 161);
     font: normal normal normal normal 12.8px / 12.8px FontAwesome;
     outline: rgb(9, 120, 161) none 0px;
@@ -418,16 +421,16 @@ body{
 }
 
 fieldset{
-    display:inline;
-  -moz-border-radius:10px;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-    margin: 5px;
+    display:inline !important;
+  -moz-border-radius:10px !important;
+  border-radius: 10px !important;
+  -webkit-border-radius: 10px !important;
+    margin: 5px !important;
     padding: 2px 7px 2px 7px !important;
-    border-color:white;
-    border-style: solid;
-    height: 45px;
-    font-size: 12px;
+    border-color:white !important;
+    border-style: solid !important;
+    height: 45px !important;
+    font-size: 12px !important;
  
    
   
@@ -492,14 +495,18 @@ fieldset{
 }
 
 .nodata {
-    font: 2em arial, sans-serif;
+    font: 1.5em arial, sans-serif;
     top: 50%;
     position: relative;
-    background-color: #E6E6E6;
+    /*background-color: #E6E6E6;*/
     height: 300px;
     width: 100%;
     text-align: center;
     padding: 25px;
+}
+
+#browser_icons{
+    margin-top: 60px;
 }
 
 .wlwrap{
@@ -608,7 +615,7 @@ fieldset{
     background: url("../images/female_het.png") 0 4px no-repeat;
     background-size: 25px;
   }
-
+  
 
 .ui-icon.male_homozygous {
     background: url("../images/male_hom.png") 0 4px no-repeat;
@@ -627,6 +634,25 @@ fieldset{
 
 .ui-icon.female_wildtype {
     background: url("../images/female_wildtype.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+  
+ 
+/*
+Specimens that have uindetermined sex
+*/
+.ui-icon.no_data_homozygous {
+    background: url("../images/no_data_hom.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+  
+.ui-icon.no_data_heterozygous {
+    background: url("../images/no_data_het.png") 0 4px no-repeat;
+    background-size: 25px;
+  }
+
+.ui-icon.no_data_wildtype {
+    background: url("../images/no_data_wildtype.png") 0 4px no-repeat;
     background-size: 25px;
   }
   

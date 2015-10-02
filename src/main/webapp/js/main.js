@@ -171,6 +171,7 @@
 
             $centre_select
                     .iconselectmenu({
+                        width: '60px',
                         change: $.proxy(function (event, ui) {
                             setCentre(event.currentTarget.innerText);
 
@@ -461,23 +462,39 @@
             
             // Configure viewer styling based on bookmark data
             bookmarkConfigure();
-                $('#scale_select')
-                .append(scaleLabels().join(""))
-                .selectmenu({
-                    width: 80,
-                    height: 20,
-                    change: $.proxy(function (event, ui) { 
-                        scales.currentBarSize = ui.item.value;
-                        $('.scale_text').text(ui.item.label);
-                        scaleOrthogonalViews();
-                        
-                    }, this)
-                });
+            
+            // Set the scale bar drop down list
+//            $('#scale_select')
+//            .append(scaleLabels().join(""))
+//            .selectmenu({
+//                width: 80,
+//                height: 20,
+//                change: $.proxy(function (event, ui) { 
+//                    scales.currentBarSize = ui.item.value;
+//                    $('.scale_text').text(ui.item.label);
+//                    scaleOrthogonalViews();
+//
+//                }, this)
+//            });
                 
             $('#scale_select').val(scales.currentBarSize).selectmenu('refresh');
             //Set the scale bar text value to current selected
             $('.scale_text').text($('#scale_select').find(":selected").text());
             //attachEvents();
+            
+             $(".linkCheck").change(function(e){
+              
+                if ($(e.target).hasClass('X')) {
+                    linkViews('X', e.currentTarget.checked);
+                }
+                else if ($(e.target).hasClass('Y')) {
+                    linkViews('Y', e.currentTarget.checked);
+                }
+                else if ($(e.target).hasClass('Z')) {
+                    linkViews('Z', e.currentTarget.checked);
+                }
+                        
+            }.bind(this)); 
             scaleOrthogonalViews();
             
         }  
@@ -614,7 +631,7 @@
         function setStageModality(pid){
             /*
              * 
-             * @param {string} 
+             * Switch to another modality
              */
             beforeReady();
             currentModality = pid;
@@ -728,6 +745,9 @@
              */
             var path = volData['volume_url'];
             var sex = volData['sex'];
+            if(sex === 'No data'){
+                sex = 'undeterminedSex';
+            };
             var geneSymbol = sanitizeFileName(volData['geneSymbol']);
             var animalName = sanitizeFileName(volData['animalName']);
             var newPath = sex + '_' + animalName + '_' + geneSymbol;
@@ -854,22 +874,7 @@
             /*
              * ********************************************
              */
-
-      
-            $(".linkCheck").change(function(e){
-              
-                if ($(e.target).hasClass('X')) {
-                    linkViews('X', e.currentTarget.checked);
-                }
-                else if ($(e.target).hasClass('Y')) {
-                    linkViews('Y', e.currentTarget.checked);
-                }
-                else if ($(e.target).hasClass('Z')) {
-                    linkViews('Z', e.currentTarget.checked);
-                }
-                        
-            }.bind(this)); 
-             
+  
            
             
             // Hide/show slice views from the checkboxes
@@ -1009,6 +1014,7 @@
                         var bg = '#FFFFFF';
                         if ($.inArray(remotePath, currentlyViewed)  > -1) bg = '#ef7b0b';
                         var data = {
+                            // We add the display name to the rest request to give a name for the downloads 
                             remotePath: remotePath + ";" + displayName,
                             volDisplayName: displayName,
                             bg: bg
@@ -1128,6 +1134,7 @@
             var b_link = $('#ievBreadCrumbGene').html(gene_symbol).attr('href', mgi_href)
         }
         
+        
     function setInitialViewerHeight(){
        /*Get the height available for the specimen views*/
         var sliceViewControlsHeight = 32 + 6; // Currently set in embryo.css the 6 is for padding
@@ -1140,7 +1147,10 @@
                 mainControlsHeight - helpHeight -( sliceViewControlsHeight * 2 )) / 2);
         console.log(windowHeight, impcHeaderHeight, subHeaderHeight, mainControlsHeight);
         /* add a new stylesheet fort the specimen view wrapper height as it's not been created yet */
-        $("<style type='text/css'> .sliceWrap{height:" + availableViewHeight + "px;}</style>").appendTo("head");
+        //If we are on a laptop we may not want to set the minimum size too small
+        var viewHeight = availableViewHeight < 200 ? 200 : availableViewHeight;
+        
+        $("<style type='text/css'> .sliceWrap{height:" + viewHeight + "px;}</style>").appendTo("head");
    
     }
     
@@ -1214,14 +1224,55 @@
 //        }
 //        
         
+    function setScaleSelect(){
+          $('#scale_select')
+            .append(scaleLabels().join(""))
+            .selectmenu({
+                width: 80,
+                height: 20,
+                change: $.proxy(function (event, ui) { 
+                    scales.currentBarSize = ui.item.value;
+                    $('.scale_text').text(ui.item.label);
+                    scaleOrthogonalViews();
 
+                }, this)
+            });
+    }
     
+    
+    function isInternetExplorer(){
+        /*
+         * XTK currently fails with IE. Check if we are using IE
+         */
+        
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+           return true;
+        }
+            
+        else{                 // If another browser, return 0
+            return false;
+        }
+        
+    }
+    
+    
+    if (isInternetExplorer()){
+        var source = $("#ie_warning_template").html();
+        var template = Handlebars.compile(source);
+        $('#' + div).append(template(data));
+        return;
+    };
+
     setBreadCrumb();
     setInitialViewerHeight();
     setActiveModalityButtons();
     loadViewers(container);
     attachEvents();
     beforeReady();
+    setScaleSelect();
   
     
     

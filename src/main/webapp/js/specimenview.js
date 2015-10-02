@@ -1,4 +1,3 @@
-//
 //goog.require('X.renderer2D');
 //goog.require('X.interactor2D');
 ////goog.require('iev.idxdb');
@@ -100,6 +99,8 @@ if (typeof dcc === 'undefined')
     this.FEMALE_ICON = "female.png";
     /** @const */ 
     this.MALE_ICON = "male.png";
+    
+    this.NDSEX_ICON = "unknown_sex.png"
     /** @const */ 
     this.HOM_ICON = 'hom.png';
     /** @const */ 
@@ -213,6 +214,7 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
         var url = this.volumeData[i]['volume_url'];
         var sex = this.volumeData[i].sex.toLowerCase();
         var zygosity = this.volumeData[i].zygosity.toLowerCase();
+        if (sex === 'no data') sex ='no_data';
         
         var idForSexZygosityIcon;
        
@@ -267,8 +269,11 @@ iev.specimenview.prototype.showMetadata = function(){
     if (this.currentVolume.sex.toLowerCase() === 'female'){
        sexIconPath = this.IMG_DIR + this.FEMALE_ICON;
     }
-    else{
+    else if (this.currentVolume.sex.toLowerCase() === 'male'){
         sexIconPath = this.IMG_DIR + this.MALE_ICON;
+    }
+    else if (this.currentVolume.sex.toLowerCase() === 'no data'){
+         sexIconPath = this.IMG_DIR + this.NDSEX_ICON;
     }
 
     // Set the zygosity icon for mutants or the 'WT' icon for baselines 
@@ -453,9 +458,7 @@ iev.specimenview.prototype.createHTML = function() {
     $viewsContainer.append($specimenView);
 };
         
-        
-        
-        
+            
 iev.specimenview.prototype.progressStop = function(){
     this.spinner.stop();
      $("#progressMsg").empty();

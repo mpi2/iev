@@ -20,6 +20,8 @@ limitations under the License.
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
     <head>
+        
+        <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
         <meta name="google" content="notranslate" />
         <title>Embryo Viewer Web Application</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -35,7 +37,7 @@ limitations under the License.
         <script type="text/javascript" src="js/specimenview.js"></script>
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
         <script type="text/javascript" src="js/main.js"></script>
-        <script type="text/javascript" src="js/sliceview.js"></script>
+        <!--<script type="text/javascript" src="js/sliceview.js"></script>-->
         <script type="text/javascript" src="js/localStorage.js"></script>
         <script type="text/javascript" src="js/spin.min.js"></script>
         <script type="text/javascript" src="js/fileDownload.js"></script>
@@ -57,7 +59,7 @@ limitations under the License.
         <!--<link type="text/css" rel="stylesheet" href="css/css_JbqXNeGT2vW5-6KTgm-ypazaAqvl8n-0h3My8pH_69Q.css" media="all" />-->
         <link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">
         <link rel="stylesheet" href="css/searchPage.css">
-        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <!--<link rel="stylesheet" href="css/font-awesome.min.css">-->
      
         
         <script>
@@ -109,7 +111,7 @@ limitations under the License.
 
 
             <DIV id="DIV_19"><DIV id="DIV_20"><div class="breadcrumb" id="DIV_1">
-                        <a href="//www.mousephenotype.org" id="A_2">Home</a> » <a href="/data/search" id="A_3">Search</a>&nbsp;» <a href="/data/search#q=*:*&amp;facet=gene" id="A_4">Genes</a> » Klf7
+                        <a href="https://mousephenotype.org">Home</a> &raquo;&nbsp;<a href="/data/search">Search</a>&raquo;&nbsp;<a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
 
                         <div class="searchcontent" id="DIV_5">
                             <div id="DIV_6" class="block">
@@ -343,6 +345,8 @@ limitations under the License.
             /*
              * Get the dynamically generated menu code. Split into main menu and the login section
              */
+                var protocol = window.location.protocol === "https:"? 'https' : 'http';
+                
                 var header_menu_source;
                 //Set the correct menu depending on which sub-domain we're on
                 switch (location.hostname) {
@@ -350,13 +354,13 @@ limitations under the License.
                         header_menu_source = 'menudisplaycombinedrendered.html';
                         break;
                     case 'mousephenotype.org':
-                        header_menu_source = 'http://www.mousephenotype.org/menudisplaycombinedrendered';
+                        header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
                         break;
                     case 'beta.mousephenotype.org':
-                        header_menu_source = 'http://beta.mousephenotype.org/menudisplaycombinedrendered';
+                        header_menu_source = protocol + '://beta.mousephenotype.org/menudisplaycombinedrendered';
                         break;
                     case 'dev.mousephenotype.org':
-                        header_menu_source = 'http://dev.mousephenotype.org/menudisplaycombinedrendered';
+                        header_menu_source = protocol + '://dev.mousephenotype.org/menudisplaycombinedrendered';
                         break;
                 }
                 $.get(header_menu_source, function (data) {
@@ -450,6 +454,17 @@ limitations under the License.
         </div>
     </script>
     
+   <!--IE template template-->
+    <script id="ie_warning_template" type="text/x-handlebars-template">
+        <div class="nodata">
+        <p>We do not currently support Internet Explorer, but are looking at supporting it in the near future.</p>
+        <p>For now, We recommend using Chrome of Firefox</p>
+        <div id='browser_icons'>
+            <a href='https://www.mozilla.org/en-GB/firefox/new/'><img src='images/firefox.png'></a>
+            <a href='https://www.google.co.uk/chrome/browser/desktop/'><img src='images/chrome.png'></a>
+        </div>
+        </div>
+    </script>
    
         <!--redirect from test template-->
     <script id="redirect_test_template" type="text/x-handlebars-template">
