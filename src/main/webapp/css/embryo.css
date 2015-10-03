@@ -3,8 +3,8 @@
 #DIV_19 {
     color: rgb(102, 102, 102);
     height: 50px;
-    min-width: 1010px;
-    width: 1542px;
+    /*min-width: 1010px;*/
+    width: 100%;
     perspective-origin: 771px 3375.39px;
     transform-origin: 771px 3375.39px;
     border: 0px none rgb(102, 102, 102);
