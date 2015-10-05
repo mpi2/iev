@@ -59,6 +59,7 @@ if (typeof dcc === 'undefined')
     this.lowPower = false;
     this.windowLevel = 'windowLevel_' + id;
     this.vselector = 'volumeSelector_' + id;
+    this.inverted = false;
     this.xOffset = 0;
     this.yOffset = 0;
     this.zOffset = 0;
@@ -178,6 +179,7 @@ iev.specimenview.prototype.updateData = function (volumes){
         
         
 iev.specimenview.prototype.update = function (){
+    this.invertColour(this.inverted);
     this.drawScaleBar();
     this.showMetadata();
 };
@@ -333,7 +335,7 @@ iev.specimenview.prototype.setContrastSlider = function() {
      * Makes contrast slider for specimen view
      * @method setContrastSlider
      */
-    console.log(this.volume.min);
+//    console.log(this.volume.min);
 
     this.$windowLevel.slider({
         range: true,
@@ -782,6 +784,8 @@ iev.specimenview.prototype.invertColour = function(checked) {
 
     if (!this.volume)
         return;
+    
+    this.inverted = checked;
 
     if (checked) {
         this.volume.maxColor = [0, 0, 0];
@@ -878,7 +882,7 @@ iev.specimenview.prototype.makeIndexSlider = function($sliderDiv, orientation, m
         slide: function (event, ui) {
             if (!this.volume || this.lowPower) return;
             this.volume[index] = ui.value;
-            console.log(this.id);
+//            console.log(this.id);
             this.sliceChange(this.id, orientation, this.volume[index]);
         }.bind(this),
         stop: function (event, ui){
