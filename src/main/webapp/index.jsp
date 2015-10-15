@@ -350,10 +350,11 @@ limitations under the License.
                 var header_menu_source;
                 //Set the correct menu depending on which sub-domain we're on
                 switch (location.hostname) {
+                    
                     case 'localhost':
                         header_menu_source = 'menudisplaycombinedrendered.html';
                         break;
-                    case 'mousephenotype.org':
+                    case 'www.mousephenotype.org':
                         header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
                         break;
                     case 'beta.mousephenotype.org':
