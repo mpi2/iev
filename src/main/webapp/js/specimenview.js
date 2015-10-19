@@ -17,6 +17,8 @@ if (typeof dcc === 'undefined')
     dcc = {};
 
     this.localStorage = localStorage;
+    
+    this.xtkLoadError = false;
 
     /* @type {string} */
     this.queryColonyId = queryColonyId;
@@ -733,17 +735,65 @@ iev.specimenview.prototype.setupRenderers = function() {
     
     //Hack: Need to add dummy filename if we are setting filedata directly
     this.volume.file = 'dummy.nrrd'
-    this.localStorage.getVolume(this.currentVolume['volume_url'], this.onFetchedData.bind(this));  
+    this.localStorage.getVolume(this.currentVolume['volume_url'], 
+                                new Date(this.currentVolume['lastUpdate']),
+                                this.onFetchedData.bind(this));  
+    };
+
+
+iev.specimenview.prototype.onFetchedData = function (filedata) {
+    //Filedata is null if not found on server
+    if (!filedata) {
+        // Remove the loading indicator
+        $('#ievLoading' + this.id).remove();
+        var data = {geneOrColonyId: this.queryColonyId,
+            animalId: this.currentVolume.animalName};
+
+        var $specimenView = $('#' + this.id);
+        var dataNotFoundSource = $("#dataNotFoundTemplate").html();
+        var dataNotFoundTemplate = Handlebars.compile(dataNotFoundSource);
+        var $notFound = dataNotFoundTemplate(data);
+        $specimenView.append($notFound);
+    } else {
+        this.volume.filedata = filedata;
+        // First we render X. Then X.afterRender() calls the loading and rendering of the others
+        this.xRen.add(this.volume);
+        this.checkLoading();
+        this.xRen.render();
+    }
 };
 
 
-iev.specimenview.prototype.onFetchedData = function(filedata){
-    this.volume.filedata = filedata;
-    // First we render X. Then X.afterRender() calls the loading and rendering of the others
-    this.xRen.add(this.volume);
-    this.xRen.render(); 
-};
+iev.specimenview.prototype.checkLoading = function () {
+    /*
+     * XTK does not have a on data load error function
+     * Check periodically for successful loading of data
+     * If data loaded, return
+     * If data not loaded, check for XTX load error caut by window.onerror
+     */
+    var tid = setInterval(function () {
+        console.log('carrots');
+        if (this.ready) {
+            clearInterval(tid);
+        }
+        else if (this.xtkLoadError) {
+            $('#ievLoading' + this.id).remove();
+            var data = {geneOrColonyId: this.queryColonyId,
+                animalId: "Seems to be a corrupted file."};
 
+            var $specimenView = $('#' + this.id);
+            var dataNotFoundSource = $("#dataNotFoundTemplate").html();
+            var dataNotFoundTemplate = Handlebars.compile(dataNotFoundSource);
+            var $notFound = dataNotFoundTemplate(data);
+            $specimenView.append($notFound);
+            clearInterval(tid);
+            //Remove the offending volume from indexedDB
+            this.localStorage.removeVolume(this.currentVolume.volume_url);
+            console.log(this.currentVolume.volume_url);
+            this.xtkLoadError = false;
+        }
+    }.bind(this), 5000);
+};
 
 
 // Attempting to stop the right mouse zoom functionality
@@ -764,6 +814,7 @@ iev.specimenview.prototype.setReady = function(){
     //remove the progress div
     //
     $('#ievLoading' + this.id).remove();
+    $('#noData').remove();
     this.ready = true;
     this.readyCB();
 };
@@ -1167,9 +1218,11 @@ iev.specimenview.prototype.getData = function(volumeUrl){
      * indexedDB storage. If it has, we get the x.volume.filedata from it.
      * Otherwise it is fetched from the server and stored
      */
-    
-    
-}
+};
+
+iev.specimenview.prototype.caughtXtkLoadError = function(){
+    this.xtkLoadError = true;
+};
         
 
 

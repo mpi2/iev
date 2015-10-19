@@ -446,6 +446,16 @@ limitations under the License.
             </div>
         </div>
     </script>
+    
+    
+    <script id="dataNotFoundTemplate" type="text/x-handlebars-template">
+        <div class="ievLoading" id="noData{{id}}">
+            <div class="ievLoadingMsg" id="noDataMsg{{id}}">
+            Cannot find data for {{geneOrColony}}: {{animalId}} 
+            </div>
+        </div>
+    </script>
+
 
 
     <!--No data template-->

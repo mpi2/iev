@@ -7,6 +7,9 @@
     if (typeof iev === 'undefined')
         iev = {};
     
+    
+
+    
      iev.EmbryoViewer = function(data, div, queryType, queryId, bookmarkData) {
          /**
           * @class EmbryoViewer
@@ -156,7 +159,7 @@
                 for (var key in centreOptions) {
                     if (key in data['centre_data']) {
                         var iconClass = 'centreSelectIcon cen_' + key;
-                        options.push("<option value='" + key + "'" + "' data-class='" + iconClass + "'>" + centreOptions[key] + "</option>");
+                        options.push("<option  value='" + key + "'" + "' data-class='" + iconClass + "'>" + centreOptions[key] + "</option>");
                     }
                 }
                 return options;
@@ -173,7 +176,7 @@
                     .iconselectmenu({
                         width: '60px',
                         change: $.proxy(function (event, ui) {
-                            setCentre(event.currentTarget.innerText);
+                            setCentre(ui.item.value);
 
                         }, this)
                     })
@@ -1265,7 +1268,23 @@
         $('#' + div).append(template(data));
         return;
     };
+    
+    function catchXtkLoadError() {
+        //This is an attempt to catch error messages from XTK loading errors as it does not have a error function to hook into
+        window.onerror = function (errorMsg, url, lineNumber) {
+            console.log(errorMsg);
+            if (errorMsg === 'Uncaught Error: input buffer is broken' ||
+                errorMsg === 'Uncaught Error: Loading failed' ||
+                errorMsg === 'Uncaught Error: invalid file signature') 
+            {
+                for (var i=0; i < views.length; ++i){
+                    views[i].caughtXtkLoadError();   
+                }
+            }
+        };
+    };
 
+    catchXtkLoadError();
     setBreadCrumb();
     setInitialViewerHeight();
     setActiveModalityButtons();
