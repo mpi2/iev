@@ -504,6 +504,7 @@
                         
             }.bind(this)); 
             scaleOrthogonalViews();
+            $('.scale_outer').draggable();
             
         }  
         
@@ -759,10 +760,6 @@
 
                 });
                 
-               
-                
-            $('.scale_outer').draggable();
-            
             
             $("#zoomIn")
                 .button()
@@ -872,7 +869,7 @@
                         {'visibility': 'hidden'}
                      );
                 }
-                scaleOrthogonalViews();
+                //scaleOrthogonalViews();
             }.bind(this));
             
            

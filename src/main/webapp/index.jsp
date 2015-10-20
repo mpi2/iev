@@ -451,7 +451,8 @@ limitations under the License.
     <script id="dataNotFoundTemplate" type="text/x-handlebars-template">
         <div class="ievLoading" id="noData{{id}}">
             <div class="ievLoadingMsg" id="noDataMsg{{id}}">
-            Cannot find data for {{geneOrColony}}: {{animalId}} 
+            Sorry. This data could not be loaded<br>
+    Please contact us at sig@har.mrc.ac.uk <br>quoting {{colonyId}}:{{animalId}}. Thanks 
             </div>
         </div>
     </script>

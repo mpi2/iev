@@ -778,8 +778,11 @@ iev.specimenview.prototype.checkLoading = function () {
         }
         else if (this.xtkLoadError) {
             $('#ievLoading' + this.id).remove();
-            var data = {geneOrColonyId: this.queryColonyId,
-                animalId: "Seems to be a corrupted file."};
+            
+            var data = {
+                colonyId: this.currentVolume.colonyId,
+                animalId: this.currentVolume.animalName
+            };
 
             var $specimenView = $('#' + this.id);
             var dataNotFoundSource = $("#dataNotFoundTemplate").html();
