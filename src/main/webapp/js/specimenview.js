@@ -170,7 +170,7 @@ if (typeof dcc === 'undefined')
         
 iev.specimenview.prototype.updateData = function (volumes){
     /*
-     * Chnage the current stage/modality being viewed
+     * Change the current stage/modality/centre being viewed
      * 
      */
 

@@ -153,9 +153,11 @@
             /*
              * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
              */
+
             // Populate drop down box with available centres
             function availableCentres() {
                 var options = [];
+                
                 for (var key in centreOptions) {
                     if (key in data['centre_data']) {
                         var iconClass = 'centreSelectIcon cen_' + key;
@@ -164,6 +166,7 @@
                 }
                 return options;
             }
+            
             var $centre_select = $('#centre_select');
 
             $centre_select.append(availableCentres().join(""));
@@ -177,10 +180,11 @@
                         width: '60px',
                         change: $.proxy(function (event, ui) {
                             setCentre(ui.item.value);
-
                         }, this)
-                    })
-                    .iconselectmenu("refresh");
+                        
+                    });
+                   
+            $centre_select.val(currentCentreId).iconselectmenu('refresh', true);
         }
             
             
@@ -564,61 +568,7 @@
             }
             onReady();
         }
-        
-        
-        
-
-
-            ////////////////////testing
-//            $.widget("custom.iconselectmenu", $.ui.selectmenu, {
-//                _renderItem: function (ul, item) {
-//                    var li = $("<li>", {text: item.label});
-//                    if (item.disabled) {
-//                        li.addClass("ui-state-disabled");
-//                    }
-//
-//                    $("<span>", {
-//                        style: item.element.attr("data-style"),
-//                        "class": "ui-icon " + item.element.attr("data-class")
-//                    })
-//                            .appendTo(li);
-//                    return li.appendTo(ul);
-//                }
-//            });
-//            //remove any current options
-//            $('#centre_select')
-//                    .find('option')
-//                    .remove()
-//                    .end();
-//
-//            // Add the volume options
-//            var options = [];
-//            for (var cen in data['centre_data']){
-//                var iconUrl = ICONS_DIR + centreIcons[cen];
-//                options.push('<option value="' + cen + '" data-class="cen_'+ cen + ' centreIcons"></option>');
-//            }
-//
-//
-//            $('#centre_select')
-//                    .append(options.join("")).val(currentCentreId);
-//
-//
-//            $('#centre_select').iconselectmenu()
-//                    .iconselectmenu("menuWidget")
-//                    .addClass("ui-menu-icons customicons");
-//
-//            $('#centre_select')
-//                    .iconselectmenu({
-//                        change: $.proxy(function (event, ui) {
-//                            setCentre(ui.item.value);
-//                        }, this)
-//                    })         
-//            }
-          
-               
-//            
-        
-        
+                           
         
         function setCentre(cid){
             /*
