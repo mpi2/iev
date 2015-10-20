@@ -183,7 +183,8 @@
                         }, this)
                         
                     });
-                   
+                
+            // Set the current centre
             $centre_select.val(currentCentreId).iconselectmenu('refresh', true);
         }
             
