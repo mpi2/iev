@@ -37,7 +37,7 @@ limitations under the License.
         <script type="text/javascript" src="js/specimenview.js"></script>
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
         <script type="text/javascript" src="js/main.js"></script>
-        <!--<script type="text/javascript" src="js/sliceview.js"></script>-->
+        <script type="text/javascript" src="js/sliceview.js"></script>
         <script type="text/javascript" src="js/localStorage.js"></script>
         <script type="text/javascript" src="js/spin.min.js"></script>
         <script type="text/javascript" src="js/fileDownload.js"></script>

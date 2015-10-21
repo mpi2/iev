@@ -1,6 +1,6 @@
 
 //goog.require('iev.specimenview');
-//goog.require('iev.localStorage');
+//goog.require('ievLocalStorage');
 
 
 (function () {

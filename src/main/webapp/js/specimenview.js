@@ -1,8 +1,11 @@
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+goog.provide('iev.specimenview');
+
+goog.require('X.renderer2D');
+goog.require('X.interactor2D');
+
 ////goog.require('iev.idxdb');
 //
-//goog.provide('iev.specimenview');
+
 
 /**
  * Create a specimen view that displays three orthogonal views
@@ -43,6 +46,9 @@ if (typeof dcc === 'undefined')
     * @type {!number}
     * @protected
     */
+   
+    
+   
     this.fs_object;
     this.$yContainer;
     this.$zContainer;
@@ -948,25 +954,6 @@ iev.specimenview.prototype.makeIndexSlider = function($sliderDiv, orientation, m
     });
 }
 
-//iev.specimenview.prototype.writeVolume = function (volName, rawData) {
-//    this.fs_object.root.getFile(volName, {create: false}, function (fileEntry) {
-//
-//        // Create a FileWriter object for our FileEntry (log.txt).
-//        fileEntry.createWriter(function (fileWriter) {
-//
-//            fileWriter.seek(fileWriter.length); // Start write position at EOF.
-//
-//            // Create a new Blob and write it to log.txt.
-//            var blob = new Blob([rawData], {type: 'text/plain'});
-//
-//            fileWriter.write(blob);
-//
-//        }, errorHandler);
-//
-//    }, errorHandler);
-//
-//
-//};
 
 iev.specimenview.prototype.xtk_showtime = function() {
     /**
