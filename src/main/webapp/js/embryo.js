@@ -1,3 +1,5 @@
+//goog.require('iev.EmbryoViewer');
+
 (function() {
     /* this is the global variable where we expose the public interfaces */
     if (typeof iev === 'undefined')

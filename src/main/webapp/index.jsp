@@ -32,7 +32,7 @@ limitations under the License.
         <script src="js/handlebars.min.js"></script>
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
         <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <!--<script type="text/javascript" src="js/xtk.js"></script>-->
+        <script type="text/javascript" src="js/xtk.js"></script>
         <script type="text/javascript" src="js/embryo.js"></script>
         <script type="text/javascript" src="js/specimenview.js"></script>
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
