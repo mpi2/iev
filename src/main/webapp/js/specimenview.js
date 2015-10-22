@@ -1,7 +1,6 @@
 goog.provide('iev.specimenview');
-
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 ////goog.require('iev.idxdb');
 //
@@ -46,8 +45,6 @@ if (typeof dcc === 'undefined')
     * @type {!number}
     * @protected
     */
-   
-    
    
     this.fs_object;
     this.$yContainer;

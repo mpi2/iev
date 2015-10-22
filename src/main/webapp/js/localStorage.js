@@ -5,7 +5,7 @@
  * 
  */
 
-//goog.provide('ievLocalStorage');
+goog.provide('ievLocalStorage');
 
 ievLocalStorage = function(finished){
     this.idbSupported = true;
@@ -181,8 +181,8 @@ ievLocalStorage.prototype._getFromServer = function (url, success) {
 
 ievLocalStorage.prototype.removeVolume = function(url){
     var request = this.db.transaction(["volumes"],"readwrite")
-            .objectStore("volumes")
-            .delete(url);
+            .objectStore("volumes").delete(url);
+            
     request.onerror = function(e){
         console.log('Error deleting corrupted image from IndexedDB storage');
     };
