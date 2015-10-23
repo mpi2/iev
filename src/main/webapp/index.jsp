@@ -33,14 +33,14 @@ limitations under the License.
         <script src="js/handlebars.min.js"></script>
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
         <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <!--<script type="text/javascript" src="js/iev_deps.js"></script>-->
+        <script type="text/javascript" src="iev/iev_deps.js"></script>
         <!--<script type="text/javascript" src="js/xtk.js"></script>-->
-        <script type="text/javascript" src="iev/embryo.js"></script>
+        <!--<script type="text/javascript" src="iev/embryo.js"></script>-->
         <!--<script type="text/javascript" src="js/specimenview.js"></script>-->
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
         <!--<script type="text/javascript" src="js/main.js"></script>-->
         <!--<script type="text/javascript" src="js/sliceview.js"></script>-->
-        <script type="text/javascript" src="js/localStorage.js"></script>
+        <!--<script type="text/javascript" src="js/localStorage.js"></script>-->
         <script type="text/javascript" src="js/spin.min.js"></script>
         <script type="text/javascript" src="js/fileDownload.js"></script>
         <script type="text/javascript" src="http://www.mousephenotype.org/data/js/head.min.js?v=2.0.2"></script>
@@ -256,9 +256,14 @@ limitations under the License.
         </div>
             </div> <!-- iev -->
         
+            <script>
+                 goog.require('iev.embryo');
+            </script>
         <script>
             window.addEventListener('load', function () {
                 
+               
+             
                 
                 var geneSymbol = "<%= request.getParameter("gene_symbol")%>";
                 var colonyId = "<%= request.getParameter("colony_id")%>";
@@ -326,20 +331,23 @@ limitations under the License.
                     orientation: "<%= request.getParameter("o")%>"
                 };
                 
+                
+                var dccGetter = new iev.embryo();
+                
                 if (colonyId !== 'null'){
                     bookmarkData['mode'] = "colony_id";
                     bookmarkData['gene'] = colonyId;
-                    dcc.getVolumesByColonyId(colonyId, bookmarkData);
+                    dccGetter.getVolumesByColonyId(colonyId, bookmarkData);
                 }
                 else if (geneSymbol !== 'null') {
                     bookmarkData['mode'] = "gene_symbol";
                     bookmarkData['gene'] = geneSymbol;
-                    dcc.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
+                    dccGetter.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
                 }
                 else if (mgi !== 'null') {
                     bookmarkData['mode'] = "mgi";
                     bookmarkData['gene'] = mgi;
-                    dcc.getVolumesByMgi(mgi, bookmarkData);
+                    dccGetter.getVolumesByMgi(mgi, bookmarkData);
                 }
                
             });

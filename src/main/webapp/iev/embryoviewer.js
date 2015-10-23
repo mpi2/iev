@@ -14,7 +14,7 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
 
    this.IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
    //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
-   this.this.WILDTYPE_COLONYID = 'baseline'
+   this.WILDTYPE_COLONYID = 'baseline'
    this.queryId = queryId;
    this.horizontalView;
    this.wtView;
@@ -50,6 +50,20 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
     // {centreId: modalitydata}
    this.centreData = {};
 
+    this.ortho = { // rename
+       'X': {
+           visible: true,
+           linked: true
+       },
+       'Y': {
+           visible: true,
+           linked: true
+       },
+       'Z': {
+           visible: true,
+           linked: true
+       }
+   };
 
 
    this.volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
@@ -91,6 +105,30 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
        11: 'UCD',
        12: 'Wtsi'
    };
+   
+      this.spinnerOpts = {
+       lines: 8 // The number of lines to draw
+       , length: 6 // The length of each line
+       , width: 6 // The line thickness
+       , radius: 8 // The radius of the inner circle
+       , scale: 1 // Scales overall size of the spinner
+       , corners: 1 // Corner roundness (0..1)
+       , color: '#ef7b0b' // #rgb or #rrggbb or array of colors
+       , opacity: 0.2 // Opacity of the lines
+       , rotate: 0 // The rotation offset
+       , direction: 1 // 1: clockwise, -1: counterclockwise
+       , speed: 1 // Rounds per second
+       , trail: 50 // Afterglow percentage
+       , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+       , zIndex: 2e9 // The z-index (defaults to 2000000000)
+       , className: 'spinner' // The CSS class to assign to the spinner
+       , top: '50%' // Top position relative to parent
+       , left: '70%' // Left position relative to parent
+       , shadow: false // Whether to render a shadow
+       , hwaccel: true // Whether to use hardware acceleration
+       , position: 'absolute' // Element positioning
+   };
+
 
 
    this.ICONS_DIR = "images/centre_icons/"; //not used??
@@ -113,98 +151,79 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
     this.attachEvents();
     this.beforeReady();
     this.setScaleSelect();
+    
+};
 
-    iev.embryoviewer.prototype.getModalityData = function(){
-       
-        return {
-       203: {
-           'id': 'CT E14.5/15.5',
-           'vols': {
-               'mutant': {},
-               'wildtype': {}
-           }
-       },
-       204: {
-           'id': 'CT E18.5',
-           'vols':{
-               'mutant': {},
-               'wildtype': {}
-           }
-       },
-       202:{
-           'id': 'OPT 9.5',
-           'vols':{
-               'mutant': {},
-               'wildtype': {}
-           }
+
+iev.embryoviewer.prototype.getModalityData = function(){
+
+    return {
+   203: {
+       'id': 'CT E14.5/15.5',
+       'vols': {
+           'mutant': {},
+           'wildtype': {}
        }
-   };
+   },
+   204: {
+       'id': 'CT E18.5',
+       'vols':{
+           'mutant': {},
+           'wildtype': {}
+       }
+   },
+   202:{
+       'id': 'OPT 9.5',
+       'vols':{
+           'mutant': {},
+           'wildtype': {}
+       }
+   }
+};
 }
 
 
-   iev.embryoviewer.prototype.centreSelector = function() {
-       /*
-        * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
-        */
+iev.embryoviewer.prototype.centreSelector = function() {
+    /*
+     * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
+     */
 
-       // Populate drop down box with available centres
-       function availableCentres() {
-           var options = [];
+    // Populate drop down box with available centres
+    function availableCentres() {
+        var options = [];
 
-           for (var key in this.centreOptions) {
-               if (key in data['centre_data']) {
-                   var iconClass = 'centreSelectIcon cen_' + key;
-                   options.push("<option  value='" + key + "'" + "' data-class='" + iconClass + "'>" + this.centreOptions[key] + "</option>");
-               }
-           }
-           return options;
-       }
+        for (var key in this.centreOptions) {
+            if (key in data['centre_data']) {
+                var iconClass = 'centreSelectIcon cen_' + key;
+                options.push("<option  value='" + key + "'" + "' data-class='" + iconClass + "'>" + this.centreOptions[key] + "</option>");
+            }
+        }
+        return options;
+    }
 
-       var $centre_select = $('#centre_select');
+    var $centre_select = $('#centre_select');
 
-       $centre_select.append(availableCentres().join(""));
+    $centre_select.append(availableCentres().join(""));
 
-       $centre_select.iconselectmenu()
-               .iconselectmenu("menuWidget")
-               .addClass("ui-menu-icons customicons");
+    $centre_select.iconselectmenu()
+            .iconselectmenu("menuWidget")
+            .addClass("ui-menu-icons customicons");
 
-       $centre_select
-               .iconselectmenu({
-                   width: '60px',
-                   change: $.proxy(function (event, ui) {
-                       setCentre(ui.item.value);
-                   }, this)
+    $centre_select
+            .iconselectmenu({
+                width: '60px',
+                change: $.proxy(function (event, ui) {
+                    setCentre(ui.item.value);
+                }, this)
 
-               });
+            });
 
-       // Set the current centre
-       $centre_select.val(this.currentCentreId).iconselectmenu('refresh', true);
-   }
+    // Set the current centre
+    $centre_select.val(this.currentCentreId).iconselectmenu('refresh', true);
+}
 
 
 
-   var spinnerOpts = {
-       lines: 8 // The number of lines to draw
-       , length: 6 // The length of each line
-       , width: 6 // The line thickness
-       , radius: 8 // The radius of the inner circle
-       , scale: 1 // Scales overall size of the spinner
-       , corners: 1 // Corner roundness (0..1)
-       , color: '#ef7b0b' // #rgb or #rrggbb or array of colors
-       , opacity: 0.2 // Opacity of the lines
-       , rotate: 0 // The rotation offset
-       , direction: 1 // 1: clockwise, -1: counterclockwise
-       , speed: 1 // Rounds per second
-       , trail: 50 // Afterglow percentage
-       , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-       , zIndex: 2e9 // The z-index (defaults to 2000000000)
-       , className: 'spinner' // The CSS class to assign to the spinner
-       , top: '50%' // Top position relative to parent
-       , left: '70%' // Left position relative to parent
-       , shadow: false // Whether to render a shadow
-       , hwaccel: true // Whether to use hardware acceleration
-       , position: 'absolute' // Element positioning
-   };
 
 
    /**
@@ -272,20 +291,6 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
     * Linked: are the corresponding ortho views from the different specimens linked
     * Max dimensions for each orthogonal view
     */
-   var ortho = {
-       'X': {
-           visible: true,
-           linked: true
-       },
-       'Y': {
-           visible: true,
-           linked: true
-       },
-       'Z': {
-           visible: true,
-           linked: true
-       }
-   };
 
 
    iev.embryoviewer.prototype.setActiveModalityButtons = function(){
@@ -370,9 +375,9 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
        var currentUrl = window.location.href;
        var hostname = currentUrl.split('?')[0];
 
-       var s =  ortho['X']['visible'] ? 'on' : 'off';
-       var c = ortho['Y']['visible'] ? 'on' : 'off';
-       var a = ortho['Z']['visible'] ? 'on' : 'off';
+       var s =  this.ortho['X']['visible'] ? 'on' : 'off';
+       var c = this.ortho['Y']['visible'] ? 'on' : 'off';
+       var a = this.ortho['Z']['visible'] ? 'on' : 'off';
 
        var bookmark = hostname
            + '?' + bookmarkData['mode'] + '=' + bookmarkData['gene']
@@ -611,13 +616,13 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
        for (var i = 0; i < views.length; i++) {
            if (views[i].id === id) continue; //this is the views that changed
 
-           if (orientation === 'X' && ortho['X'].linked) {
+           if (orientation === 'X' && this.ortho['X'].linked) {
                views[i].setXindex(index);
 
-           } else if (orientation === 'Y' && ortho['Y'].linked) {
+           } else if (orientation === 'Y' && this.ortho['Y'].linked) {
                views[i].setYindex(index);
 
-           } else if (orientation === 'Z' && ortho['Z'].linked) {
+           } else if (orientation === 'Z' && this.ortho['Z'].linked) {
                views[i].setZindex(index);
            }
        }
@@ -817,11 +822,11 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
            //Count the number of checked boxes so we can work out a new width
            for (var i = 0; i < slice_list.length; i++) {
                if ($('#' + slice_list[i]).is(':checked')) {
-                   ortho[slice_list[i].charAt(0)].visible = true;
+                   this.ortho[slice_list[i].charAt(0)].visible = true;
                    count++;
                }
                else {
-                   ortho[slice_list[i].charAt(0)].visible = false;
+                   this.ortho[slice_list[i].charAt(0)].visible = false;
                }
            }
            for (var i = 0; i < views.length; i++) {
@@ -1002,7 +1007,7 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
    iev.embryoviewer.prototype.progressIndicator = function(msg){
 
        var target =  document.getElementById("progressSpin");
-       this.spinner = new Spinner(spinnerOpts).spin(target);
+       this.spinner = new Spinner(this.spinnerOpts).spin(target);
        $("#progressMsg").text(msg);   
    }
 
@@ -1084,8 +1089,8 @@ iev.embryoviewer.prototype.setViewOrientation = function(orientation){
 
        this.horizontalView = false;
        var numVisible = 0;
-       for(var item in ortho){
-           if(ortho[item].visible) ++ numVisible;
+       for(var item in this.ortho){
+           if(this.ortho[item].visible) ++ numVisible;
        }
 
        $('.specimen_view').css({
@@ -1135,31 +1140,30 @@ iev.embryoviewer.prototype.setScaleSelect = function(){
 }
 
 
-    iev.embryoviewer.prototype.isInternetExplorer = function(){
-   /*
-    * XTK currently fails with IE. Check if we are using IE
-    */
+iev.embryoviewer.prototype.isInternetExplorer = function () {
+    /*
+     * XTK currently fails with IE. Check if we are using IE
+     */
 
-   var ua = window.navigator.userAgent;
-   var msie = ua.indexOf("MSIE ");
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
 
-   if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-      return true;
-   }
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+        var source = $("#ie_warning_template").html();
+        var template = Handlebars.compile(source);
+        $('#' + div).append(template(data));
 
-   else{                 // If another browser, return 0
-       return false;
-   }
+        return true;
+    }
 
-}
+    else {                 // If another browser, return 0
+        return false;
+    }
 
-
-if (isInternetExplorer()){
-   var source = $("#ie_warning_template").html();
-   var template = Handlebars.compile(source);
-   $('#' + div).append(template(data));
-   return;
 };
+
+
+
 
 iev.embryoviewer.prototype.catchXtkLoadError = function() {
    //This is an attempt to catch error messages from XTK loading errors as it does not have a error function to hook into
@@ -1175,7 +1179,7 @@ iev.embryoviewer.prototype.catchXtkLoadError = function() {
        }
    };
 };
-}//EmbryoViewer
+
 
    
     
