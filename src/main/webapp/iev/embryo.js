@@ -1,11 +1,15 @@
 //goog.provide(iev);
-goog.require('iev.embryoviewer');
+
+
 
 (function() {
+    goog.require('iev.embryoviewer');
     /* this is the global variable where we expose the public interfaces */
 //    if (typeof iev === 'undefined')
 //        iev = {};
-
+if (typeof dcc === 'undefined')
+        dcc = {};
+alert('cat');
     /**
      * Retrieves data using asynchronous HTTP request.
      *
@@ -26,27 +30,27 @@ goog.require('iev.embryoviewer');
         request.send(null);
     }
 
-    iev.getVolumesByColonyId = function(colonyId, bookmarkData) {   
+    dcc.getVolumesByColonyId = function(colonyId, bookmarkData) {   
         dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
             function(data) {   
-                iev.embryoViewer(data, 'viewer', 'colony ID', colonyId, bookmarkData);     
+                iev.embryoviewer(data, 'viewer', 'colony ID', colonyId, bookmarkData);     
         });
     };
     
     
-    iev.getVolumesByGeneSymbol = function(geneSymbol, bookmarkData) {
+    dcc.getVolumesByGeneSymbol = function(geneSymbol, bookmarkData) {
         dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
             function(data) {   
-                iev.embryoViewer(data, 'viewer', 'gene symbol', geneSymbol, bookmarkData);     
+                iev.embryoviewer(data, 'viewer', 'gene symbol', geneSymbol, bookmarkData);     
         });
     };
     
-    iev.getVolumesByMgi = function(mgi, bookmarkData) {
+    dcc.getVolumesByMgi = function(mgi, bookmarkData) {
         console.log('gettigng by mgi');
         console.log(mgi);
         dcc_get("rest/volumes" + (mgi === undefined ? "" : "?mgi=" + mgi), 
             function(data) {   
-                iev.embryoViewer(data, 'viewer', 'mgi', mgi, bookmarkData);  
+                iev.embryoviewer(data, 'viewer', 'mgi', mgi, bookmarkData);  
                
         });
     };

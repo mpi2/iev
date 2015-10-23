@@ -1,8 +1,8 @@
-
+goog.provide('iev.embryoviewer');
 goog.require('iev.specimenview');
-goog.require('ievLocalStorage');
+goog.require('iev.LocalStorage');
 
-goog.provide('iev.embryoiewer');
+
 
 
     

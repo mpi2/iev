@@ -16,6 +16,7 @@ limitations under the License.
 
 
 
+
 <!DOCTYPE html>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
@@ -32,12 +33,13 @@ limitations under the License.
         <script src="js/handlebars.min.js"></script>
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
         <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <script type="text/javascript" src="js/xtk.js"></script>
-        <script type="text/javascript" src="js/embryo.js"></script>
-        <script type="text/javascript" src="js/specimenview.js"></script>
+        <!--<script type="text/javascript" src="js/iev_deps.js"></script>-->
+        <!--<script type="text/javascript" src="js/xtk.js"></script>-->
+        <script type="text/javascript" src="iev/embryo.js"></script>
+        <!--<script type="text/javascript" src="js/specimenview.js"></script>-->
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
-        <script type="text/javascript" src="js/main.js"></script>
-        <script type="text/javascript" src="js/sliceview.js"></script>
+        <!--<script type="text/javascript" src="js/main.js"></script>-->
+        <!--<script type="text/javascript" src="js/sliceview.js"></script>-->
         <script type="text/javascript" src="js/localStorage.js"></script>
         <script type="text/javascript" src="js/spin.min.js"></script>
         <script type="text/javascript" src="js/fileDownload.js"></script>
@@ -257,6 +259,7 @@ limitations under the License.
         <script>
             window.addEventListener('load', function () {
                 
+                
                 var geneSymbol = "<%= request.getParameter("gene_symbol")%>";
                 var colonyId = "<%= request.getParameter("colony_id")%>";
                 var mgi = "<%= request.getParameter("mgi")%>";
@@ -326,17 +329,17 @@ limitations under the License.
                 if (colonyId !== 'null'){
                     bookmarkData['mode'] = "colony_id";
                     bookmarkData['gene'] = colonyId;
-                    iev.getVolumesByColonyId(colonyId, bookmarkData);
+                    dcc.getVolumesByColonyId(colonyId, bookmarkData);
                 }
                 else if (geneSymbol !== 'null') {
                     bookmarkData['mode'] = "gene_symbol";
                     bookmarkData['gene'] = geneSymbol;
-                    iev.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
+                    dcc.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
                 }
                 else if (mgi !== 'null') {
                     bookmarkData['mode'] = "mgi";
                     bookmarkData['gene'] = mgi;
-                    iev.getVolumesByMgi(mgi, bookmarkData);
+                    dcc.getVolumesByMgi(mgi, bookmarkData);
                 }
                
             });

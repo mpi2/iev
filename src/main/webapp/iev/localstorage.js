@@ -5,9 +5,9 @@
  * 
  */
 
-goog.provide('ievLocalStorage');
+goog.provide('iev.LocalStorage');
 
-ievLocalStorage = function(finished){
+iev.LocalStorage = function(finished){
     this.idbSupported = true;
    
     this.db = null;
@@ -52,7 +52,7 @@ ievLocalStorage = function(finished){
 };
 
 
-ievLocalStorage.prototype.getVolume = function (url, lastUpdated, callback) {
+iev.LocalStorage.prototype.getVolume = function (url, lastUpdated, callback) {
     //First check if already present in store
     /*
      * url: path to volume on server
@@ -96,7 +96,7 @@ ievLocalStorage.prototype.getVolume = function (url, lastUpdated, callback) {
 };
 
 
-ievLocalStorage.prototype._checkForKey = function (key, lastUpdated, idxdbSuccess) {
+iev.LocalStorage.prototype._checkForKey = function (key, lastUpdated, idxdbSuccess) {
     /*
      * Check for presence of volume in local storage and  whether we have older version
      */
@@ -105,7 +105,7 @@ ievLocalStorage.prototype._checkForKey = function (key, lastUpdated, idxdbSucces
     store.get(key).onsuccess = idxdbSuccess;
 };
 
-ievLocalStorage.prototype._addVolume = function(volUrl, lastUpdated, filedata){
+iev.LocalStorage.prototype._addVolume = function(volUrl, lastUpdated, filedata){
     /*
      * Add a volume to indexedDB local storage
      */
@@ -133,7 +133,7 @@ ievLocalStorage.prototype._addVolume = function(volUrl, lastUpdated, filedata){
     };
 };
 
-ievLocalStorage.prototype._getfromIndexedDb = function(url, successCB){
+iev.LocalStorage.prototype._getfromIndexedDb = function(url, successCB){
  
     // If indexedDB not supported, just get the file from the server
     if (!this.idbSupported){
@@ -162,7 +162,7 @@ ievLocalStorage.prototype._getfromIndexedDb = function(url, successCB){
     };
 };
 
-ievLocalStorage.prototype._getFromServer = function (url, success) {
+iev.LocalStorage.prototype._getFromServer = function (url, success) {
     /*If we can't find volume in indexedDB or indexedDB not supported,
      * Load the file from an ajax call from the server*/
     var xhr = new XMLHttpRequest();
@@ -179,7 +179,7 @@ ievLocalStorage.prototype._getFromServer = function (url, success) {
 };
 
 
-ievLocalStorage.prototype.removeVolume = function(url){
+iev.LocalStorage.prototype.removeVolume = function(url){
     var request = this.db.transaction(["volumes"],"readwrite")
             .objectStore("volumes").delete(url);
             

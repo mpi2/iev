@@ -15,8 +15,7 @@ goog.provide('iev.specimenview');
 iev.specimenview = function(volumeData, id, container, 
              queryColonyId, indexCB, config, readyCB, localStorage){
     
-if (typeof dcc === 'undefined')
-    dcc = {};
+
 
     this.localStorage = localStorage;
     
@@ -1211,10 +1210,14 @@ iev.specimenview.prototype.caughtXtkLoadError = function(){
     this.xtkLoadError = true;
 };
         
-
-
-
-       
-    
-
-
+// export symbols (required for advanced compilation)
+goog.exportSymbol('X.volume', iev.specimenview);
+goog.exportSymbol('iev.specimenview.prototype.updateData', iev.specimenview.prototype.updateData);
+goog.exportSymbol('iev.specimenview.prototype.reset', iev.specimenview.prototype.reset );
+goog.exportSymbol('iev.specimenview.prototype.getCurrentVolume', iev.specimenview.prototype.getCurrentVolume);
+goog.exportSymbol('iev.specimenview.prototype.getIndex', iev.specimenview.prototype.getIndex);
+goog.exportSymbol('iev.specimenview.getBrightnessLower', iev.specimenview.getBrightnessLower);
+goog.exportSymbol('iev.specimenview.getBrightnessupper', iev.specimenview.getBrightnessUpper);
+goog.exportSymbol('iev.specimenview.prototype.zoomIn', iev.specimenview.prototype.zoomIn);
+goog.exportSymbol('iev.specimenview.prototype.zoomOut', iev.specimenview.prototype.zoomOut);
+goog.exportSymbol('iev.specimenview.prototype.getIndex', iev.specimenview.prototype.getIndex);
