@@ -956,7 +956,7 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
             this.getZippedVolumes();
         }.bind(this));
     }.bind(this));
-}.bind(this);
+};
 
 
 
