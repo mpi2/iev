@@ -1,6 +1,6 @@
 goog.provide('iev.specimenview');
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+goog.require('X.renderer2D');
+goog.require('X.interactor2D');
 
 ////goog.require('iev.idxdb');
 //
@@ -16,7 +16,7 @@ iev.specimenview = function(volumeData, id, container,
              queryColonyId, indexCB, config, readyCB, localStorage){
     
 
-
+    console.log('id', id);
     this.localStorage = localStorage;
     
     this.xtkLoadError = false;
@@ -24,7 +24,7 @@ iev.specimenview = function(volumeData, id, container,
     /* @type {string} */
     this.queryColonyId = queryColonyId;
     
-   /*@type {?Object}*/
+
     this.config = config;
     
    
@@ -45,7 +45,6 @@ iev.specimenview = function(volumeData, id, container,
     * @protected
     */
    
-    this.fs_object;
     this.$yContainer;
     this.$zContainer;
     this.$xWrap;
@@ -69,7 +68,8 @@ iev.specimenview = function(volumeData, id, container,
     this.zOffset = 0;
     this.ready = false;
     this.progressSpinner;
-    this.contrast = config['specimen']['brightness'];
+    console.log(config, id);
+    this.contrast = config['specimen'].brightness;
     /** @const */ 
     this.WILDTYPE_COLONYID = 'baseline';
 
@@ -331,7 +331,7 @@ iev.specimenview.prototype.showMetadata = function(){
     //Clear any current metadata
     $("#metadata_" + this.id).empty();
     $("#metadata_" + this.id).append($metaDataHtml);
-}
+};
         
         
 iev.specimenview.prototype.setContrastSlider = function() {
@@ -379,7 +379,7 @@ iev.specimenview.prototype.setBookmarkContrast = function() {
     // Set slider values
     this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);            
 
-}
+};
 
 
 iev.specimenview.prototype.reset = function(){
@@ -417,7 +417,7 @@ iev.specimenview.prototype.reset = function(){
         });
 
     this.update();
-}
+};
 
 
 iev.specimenview.prototype.createHTML = function() {
@@ -495,7 +495,7 @@ iev.specimenview.prototype.createSliceView = function(orient){
     var source = $("#slice_view_template").html();
     var template = Handlebars.compile(source);
     return template(data);
-}
+};
         
            
         
@@ -516,7 +516,7 @@ iev.specimenview.prototype.jQuerySelectors = function(){
     this.$yWrap = $('#sliceWrap_Y_' + this.id);
     this.$zWrap = $('#sliceWrap_Z_' + this.id);
     this.$windowLevel = $('#' + this.windowLevel);
-}
+};
         
         
         
@@ -1121,10 +1121,6 @@ iev.specimenview.prototype.getCurrentVolume = function(){
     return this.currentVolume;
 };     
 
-iev.specimenview.prototype.setFileSystem = function(fs_object){
-    this.fs_object = fs_object;
-};
-
 
 iev.specimenview.prototype.setVisibleViews = function(viewList, count, horizontalView) {
     /**
@@ -1211,7 +1207,6 @@ iev.specimenview.prototype.caughtXtkLoadError = function(){
 };
         
 // export symbols (required for advanced compilation)
-goog.exportSymbol('X.volume', iev.specimenview);
 goog.exportSymbol('iev.specimenview.prototype.updateData', iev.specimenview.prototype.updateData);
 goog.exportSymbol('iev.specimenview.prototype.reset', iev.specimenview.prototype.reset );
 goog.exportSymbol('iev.specimenview.prototype.getCurrentVolume', iev.specimenview.prototype.getCurrentVolume);
