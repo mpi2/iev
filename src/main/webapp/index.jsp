@@ -30,23 +30,25 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-        <script src="js/handlebars.min.js"></script>
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <script type="text/javascript" src="X/xtk-deps.js"></script>
-        <script type="text/javascript" src="iev/iev_deps.js"></script>
-        <!--<script type="text/javascript" src="js/xtk.js"></script>-->
+        <script src="lib/handlebars.min.js"></script>
+        <!--<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>-->
+        <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
+        <script type="text/javascript" src="lib/xtk.js"></script>
+        <!--<script type="text/javascript" src="iev/iev_deps.js"></script>-->
+        <script type="text/javascript" src="iev/iev_compiled.js"></script>
+        
         <!--<script type="text/javascript" src="iev/embryo.js"></script>-->
         <!--<script type="text/javascript" src="js/specimenview.js"></script>-->
         <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
         <!--<script type="text/javascript" src="js/main.js"></script>-->
         <!--<script type="text/javascript" src="js/sliceview.js"></script>-->
         <!--<script type="text/javascript" src="js/localStorage.js"></script>-->
-        <script type="text/javascript" src="js/spin.min.js"></script>
-        <script type="text/javascript" src="js/fileDownload.js"></script>
+        <script type="text/javascript" src="lib/spin.min.js"></script>
+        <script type="text/javascript" src="lib/fileDownload.js"></script>
         <script type="text/javascript" src="http://www.mousephenotype.org/data/js/head.min.js?v=2.0.2"></script>
-        <script type="text/javascript" src="js/jquery.qtip.min.js"></script>
-        <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="js/dataTables.tableTools.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="lib/dataTables.tableTools.min.js"></script>
 
 
         
@@ -257,7 +259,7 @@ limitations under the License.
             </div> <!-- iev -->
         
             <script>
-                 goog.require('iev.embryo');
+//                 goog.require('iev.embryo');
             </script>
         <script>
             window.addEventListener('load', function () {

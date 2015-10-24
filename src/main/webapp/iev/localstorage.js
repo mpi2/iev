@@ -5,7 +5,7 @@
  * 
  */
 
-goog.provide('iev.LocalStorage');
+//goog.provide('iev.LocalStorage');
 
 iev.LocalStorage = function(finished){
     this.idbSupported = true;

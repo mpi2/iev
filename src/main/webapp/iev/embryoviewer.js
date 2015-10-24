@@ -1,8 +1,6 @@
-goog.provide('iev.embryoviewer');
-goog.require('iev.specimenview');
-goog.require('iev.LocalStorage');
-
-
+//goog.provide('iev.embryoviewer');
+//goog.require('iev.specimenview');
+//goog.require('iev.LocalStorage');
 
 
     
@@ -446,7 +444,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
        /*Inactivate the modality/stage buttons*/
        $('#modality_stage :input').prop("disabled", true); 
        $("#modality_stage").buttonset('refresh');
-   }
+   };
 
    iev.embryoviewer.prototype.onReady = function(){
 
@@ -511,7 +509,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
            }
        }
 
-       this.mutView = pid;
+       this.currentModality  = pid;
 
        //Check the modality button
        $("#modality_stage input[id^=" + pid + "]:radio").attr('checked',true);
@@ -554,8 +552,8 @@ iev.embryoviewer.prototype.centreSelector = function() {
         * 
         */
       this.currentCentreId = cid;
-      setStageModality(this.mutView);
-   }
+      this.setStageModality(this.currentModality);
+   };
 
 
    iev.embryoviewer.prototype.setStageModality = function(pid){
@@ -563,8 +561,8 @@ iev.embryoviewer.prototype.centreSelector = function() {
         * 
         * Switch to another modality
         */
-       beforeReady();
-       this.mutView = pid;
+       this.beforeReady();
+       this.currentModality = pid;
 
        if (typeof this.wtView !== 'undefined'){
            var wtVolumes = this.centreData[this.currentCentreId][pid]['vols'].wildtype;
@@ -650,15 +648,15 @@ iev.embryoviewer.prototype.centreSelector = function() {
    }
 
 
-   iev.embryoviewer.prototype.setLowPowerState = function(state){
-       /*
-        * Switches the low power option on or off
-        */
+iev.embryoviewer.prototype.setLowPowerState = function(state){
+    /*
+     * Switches the low power option on or off
+     */
 
-       for (var i = 0; i < this.views.length; i++) {
-           this.views[i].setLowPowerState(state);
-       } 
-   }
+    for (var i = 0; i < this.views.length; i++) {
+        this.views[i].setLowPowerState(state);
+    } 
+};
 
 
    iev.embryoviewer.prototype.getNewFileName = function(volData){
@@ -673,18 +671,18 @@ iev.embryoviewer.prototype.centreSelector = function() {
 
        Returns: String
         */
-       var path = volData['volume_url'];
+       //var path = volData['volume_url'];
        var sex = volData['sex'];
        if(sex === 'No data'){
            sex = 'undeterminedSex';
        };
-       var geneSymbol = sanitizeFileName(volData['geneSymbol']);
-       var animalName = sanitizeFileName(volData['animalName']);
+       var geneSymbol = this.sanitizeFileName(volData['geneSymbol']);
+       var animalName = this.sanitizeFileName(volData['animalName']);
        var newPath = sex + '_' + animalName + '_' + geneSymbol;
        return newPath;
 
 
-   }
+   };
 
    iev.embryoviewer.prototype.attachEvents = function() {
        /**
@@ -860,8 +858,8 @@ iev.embryoviewer.prototype.centreSelector = function() {
 
        $('.modality_button').change(function (ev) {
            var checkedStageModality = ev.currentTarget.id;
-           setStageModality(checkedStageModality);
-       });
+           this.setStageModality(checkedStageModality);
+       }.bind(this));
 
        $(".button").button();
 
@@ -906,10 +904,10 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
 
     dlg.load('download_dialog.html', function () {
         for (var pid in this.centreData[this.currentCentreId]) {
-            if (pid !== this.mutView)
+            if (pid !== this.currentModality)
                 continue;  // Only supply current modality data for download
-            var vols = this.centreData[this.currentCentreId][this.mutView]['vols'];
-            condole.log('vols', vols);
+            var vols = this.centreData[this.currentCentreId][this.currentModality]['vols'];
+            console.log('vols', vols);
             var currentlyViewed = [];
             for (var i = 0; i < this.views.length; ++i) {
                 currentlyViewed.push(this.views[i].getCurrentVolume()['volume_url'])
@@ -918,7 +916,7 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
             for (var vol in vols['mutant']) {
 
                 var volData = vols['mutant'][vol];
-                var displayName = getNewFileName(volData);
+                var displayName = this.getNewFileName(volData);
                 var remotePath = volData['volume_url'];
                 var bg = '#FFFFFF';
                 if ($.inArray(remotePath, currentlyViewed) > -1)
@@ -934,7 +932,7 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
             }
             for (var vol in vols['wildtype']) {
                 var volData = vols['wildtype'][vol];
-                var displayName = getNewFileName(volData);
+                var displayName = this.getNewFileName(volData);
                 var remotePath = volData['volume_url'];
                 var bg = '#FFFFFF';
                 if ($.inArray(remotePath, currentlyViewed) > -1)
@@ -980,19 +978,16 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
        // Start the progress spinner
 
 
-       progressIndicator('preparing zip');
+       this.progressIndicator('preparing zip');
 
        $.fileDownload(restURL, {
            successCallback: function (url) {
-               progressStop();
-           },
+               this.progressStop();
+           }.bind(this),
            failCallback: function (html, url) {
-
                alert('There was an error downloading the images' );
            }
        });
-
-
    };
 
    iev.embryoviewer.prototype.progressStop = function(){
@@ -1150,7 +1145,7 @@ iev.embryoviewer.prototype.isInternetExplorer = function () {
 iev.embryoviewer.prototype.catchXtkLoadError = function() {
    //This is an attempt to catch error messages from XTK loading errors as it does not have a error function to hook into
    window.onerror = function (errorMsg, url, lineNumber) {
-       console.log(errorMsg);
+       console.log(errorMsg, url, lineNumber);
        if (errorMsg === 'Uncaught Error: input buffer is broken' ||
            errorMsg === 'Uncaught Error: Loading failed' ||
            errorMsg === 'Uncaught Error: invalid file signature') 

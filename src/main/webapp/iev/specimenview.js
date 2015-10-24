@@ -1,9 +1,6 @@
-goog.provide('iev.specimenview');
-goog.require('X.renderer2D');
-goog.require('X.interactor2D');
-
-////goog.require('iev.idxdb');
-//
+//goog.provide('iev.specimenview');
+//goog.require('X.renderer2D');
+//goog.require('X.interactor2D');
 
 
 /**
@@ -1164,7 +1161,7 @@ iev.specimenview.prototype.setVisibleViews = function(viewList, count, horizonta
     } else {
         this.$zWrap.hide();
     }
-}
+};
 
 
 iev.specimenview.prototype.basename = function(path) {

@@ -1,5 +1,6 @@
-goog.provide('iev.embryo');
-goog.require('iev.embryoviewer');
+//goog.provide('iev.embryo');
+//goog.require('iev.embryoviewer');
+
 
 
 iev.embryo = function(){
