@@ -1,6 +1,6 @@
-//goog.provide('iev.embryo');
-//goog.require('iev.embryoviewer');
-
+goog.provide('iev.embryo');
+goog.require('iev.embryoviewer');
+//goog.require('iev');
 
 
 iev.embryo = function(){
@@ -47,3 +47,6 @@ iev.embryo.prototype.getVolumesByMgi = function(mgi, bookmarkData) {
     });
 };
 
+goog.exportSymbol('iev.embryo.prototype.getVolumesByMgi', iev.embryo.prototype.getVolumesByMgi);
+goog.exportSymbol('iev.embryo.prototype.getVolumesByGeneSymbol', iev.embryo.prototype.getVolumesByGeneSymbol);
+goog.exportSymbol('iev.embryo.prototype.getVolumesByColonyId', iev.embryo.prototype.getVolumesByColonyId);

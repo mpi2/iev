@@ -1,6 +1,6 @@
-//goog.provide('iev.embryoviewer');
-//goog.require('iev.specimenview');
-//goog.require('iev.LocalStorage');
+goog.provide('iev.embryoviewer');
+goog.require('iev.specimenview');
+goog.require('iev.LocalStorage');
 
 
     
@@ -422,7 +422,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
    iev.embryoviewer.prototype.zoomViewsOut = function() {
        this.wtView.zoomOut();
        this.mutView.zoomOut();
-   }
+   };
 
 
    iev.embryoviewer.prototype.scaleOrthogonalViews = function(){
@@ -435,9 +435,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
        for (var i=0; i < this.views.length; ++i){
            this.views[i].rescale(this.scales.currentBarSize);   
        }
-
-       window.dispatchEvent(new Event('resize')); 
-   }
+   };
 
 
    iev.embryoviewer.prototype.beforeReady = function(){
@@ -479,14 +477,14 @@ iev.embryoviewer.prototype.centreSelector = function() {
        this.scaleOrthogonalViews();
        $('.scale_outer').draggable();
 
-   }  
+   };  
 
 
-   iev.embryoviewer.prototype.loadViewers = function(){
-       this.localStorage = new iev.LocalStorage(function(){  
-           this.afterLoadingLocalStorage(this.container);
-       }.bind(this)); 
-   }
+iev.embryoviewer.prototype.loadViewers = function(){
+    this.localStorage = new iev.LocalStorage(function(){  
+        this.afterLoadingLocalStorage(this.container);
+    }.bind(this)); 
+};
 
 
    iev.embryoviewer.prototype.afterLoadingLocalStorage = function() {
@@ -517,15 +515,35 @@ iev.embryoviewer.prototype.centreSelector = function() {
        // only load if baseline data available
        if (this.objSize(wildtypeData) > 0){
            var wtConfig = {'specimen': this.bookmarkData['wt'] };
-           this.wtView = new iev.specimenview(wildtypeData, 'wt', this.container, 
-               this.WILDTYPE_COLONYID, this.sliceChange.bind(this), wtConfig, this.loadedCb.bind(this), this.localStorage);
+           this.wtView = new iev.specimenview(
+                   wildtypeData, 
+                   'wt', 
+                   this.container, 
+                   this.WILDTYPE_COLONYID, 
+                   this.onWtXChange.bind(this), 
+                   this.onWtYChange.bind(this),
+                   this.onWtZChange.bind(this),
+                   wtConfig, 
+                   this.loadedCb.bind(this), 
+                   this.localStorage
+                   );
            this.views.push(this.wtView);
        }
 
        // Set mutant specimen based on bookmark   
        var mutConfig = {'specimen': this.bookmarkData['mut'] };
-       this.mutView = new iev.specimenview(mutantData, 'mut', this.container, 
-           this.queryId, this.sliceChange.bind(this), mutConfig, this.loadedCb.bind(this), this.localStorage);
+       this.mutView = new iev.specimenview(
+                    mutantData, 
+                    'mut', 
+                    this.container, 
+                    this.queryId, 
+                    this.onMutXChange.bind(this), 
+                    this.onMutYChange.bind(this),
+                    this.onMutZChange.bind(this), 
+                    mutConfig, 
+                    this.loadedCb.bind(this), 
+                    this.localStorage
+                    );
        this.views.push(this.mutView);   
        this.centreSelector();
    };
@@ -586,66 +604,70 @@ iev.embryoviewer.prototype.centreSelector = function() {
                $("#mut").hide();
            }
        }    
-   }
+   };
+
+   
+iev.embryoviewer.prototype.onMutXChange = function(index){
+
+          this.wtView.setXindex(index);
+};
+
+iev.embryoviewer.prototype.onMutYChange = function(index){
+
+          this.wtView.setYindex(index);
+};
+
+iev.embryoviewer.prototype.onMutZChange = function(index){
+
+    this.wtView.setZindex(index);
+};
+
+   iev.embryoviewer.prototype.onWtXChange = function(index){
+
+          this.mutView.setXindex(index);
+};
+
+iev.embryoviewer.prototype.onWtYChange = function(index){
+
+          this.mutView.setYindex(index);
+};
+
+iev.embryoviewer.prototype.onWtZChange = function(index){
+
+          this.mutView.setZindex(index);
+};
 
 
 
-   iev.embryoviewer.prototype.sliceChange = function(id, orientation, index) {
-       /**
-        * Callback for the slice change events from the SpecimenViews.
-        * Calls the other SpecimenViews with index change if required
-        * @method sliceChange
-        * @param {String} id ID ofd the calling SpecimenView
-        * @param {String} orientation ('X', 'Y', 'Z')
-        * @param {int} index Slice index
-        */
+iev.embryoviewer.prototype.linkViews = function(orthoView, isLink){
+    /**
+     *Match the slice indices between the SpecimenViews
+     *@method linkViews
+     *@param {String} orthoView('X', 'Y' or 'Z')
+     *@param {bool} isLink Are these orthogonal viewsd linked?
+     * 
+     */
+    var wtIdx;
+    var mutIdx;
 
+    $('.' + orthoView).prop('checked', isLink);
 
-       for (var i = 0; i < this.views.length; i++) {
-           if (this.views[i].id === id) continue; //this is the views that changed
+    ortho[orthoView].linked = isLink;
 
-           if (orientation === 'X' && this.ortho['X'].linked) {
-               this.views[i].setXindex(index);
-
-           } else if (orientation === 'Y' && this.ortho['Y'].linked) {
-               this.views[i].setYindex(index);
-
-           } else if (orientation === 'Z' && this.ortho['Z'].linked) {
-               this.views[i].setZindex(index);
-           }
-       }
-   }
-
-
-   iev.embryoviewer.prototype.linkViews = function(orthoView, isLink){
-       /**
-        *Match the slice indices between the SpecimenViews
-        *@method linkViews
-        *@param {String} orthoView('X', 'Y' or 'Z')
-        *@param {bool} isLink Are these orthogonal viewsd linked?
-        * 
-        */
-       var wtIdx;
-       var mutIdx;
-
-       $('.' + orthoView).prop('checked', isLink);
-
-       ortho[orthoView].linked = isLink;
-
-       for (var i = 0; i < this.views.length; i++) {
-           // Set/unset the link buttons
-           if(this.views[i].id === 'wt'){
-               wtIdx = this.views[i].getIndex(orthoView);
-           }else if (this.views[i].id === 'mut'){
-               mutIdx = this.views[i].getIndex(orthoView);
-           }
-       }
-       for (var i = 0; i < this.views.length; i++) {
-           if (this.views[i].id === 'mut'){
-               this.views[i].setIdxOffset(orthoView, wtIdx - mutIdx);
-           }
-       }  
-   }
+    for (var i = 0; i < this.views.length; i++) {
+        // Set/unset the link buttons
+        if(this.views[i].id === 'wt'){
+            wtIdx = this.views[i].getIndex(orthoView);
+        }else if (this.views[i].id === 'mut'){
+            mutIdx = this.views[i].getIndex(orthoView);
+        }
+    }
+    for (var i = 0; i < this.views.length; i++) {
+        if (this.views[i].id === 'mut'){
+            this.views[i].setIdxOffset(orthoView, wtIdx - mutIdx);
+        }
+    }  
+};
 
 
 iev.embryoviewer.prototype.setLowPowerState = function(state){
@@ -659,30 +681,30 @@ iev.embryoviewer.prototype.setLowPowerState = function(state){
 };
 
 
-   iev.embryoviewer.prototype.getNewFileName = function(volData){
-       /* .. function:: loadxhtml(url, data, reqtype, mode)
-         The file names in the Preprocessed db are just procedure performed? 
-         We need domething more informative downloading
+iev.embryoviewer.prototype.getNewFileName = function(volData){
+    /* .. function:: loadxhtml(url, data, reqtype, mode)
+      The file names in the Preprocessed db are just procedure performed? 
+      We need domething more informative downloading
 
-       Parameters:
+    Parameters:
 
-       * `volData`: object
-           containing al the data from the database for this volume
+    * `volData`: object
+        containing al the data from the database for this volume
 
-       Returns: String
-        */
-       //var path = volData['volume_url'];
-       var sex = volData['sex'];
-       if(sex === 'No data'){
-           sex = 'undeterminedSex';
-       };
-       var geneSymbol = this.sanitizeFileName(volData['geneSymbol']);
-       var animalName = this.sanitizeFileName(volData['animalName']);
-       var newPath = sex + '_' + animalName + '_' + geneSymbol;
-       return newPath;
+    Returns: String
+     */
+    //var path = volData['volume_url'];
+    var sex = volData['sex'];
+    if(sex === 'No data'){
+        sex = 'undeterminedSex';
+    };
+    var geneSymbol = this.sanitizeFileName(volData['geneSymbol']);
+    var animalName = this.sanitizeFileName(volData['animalName']);
+    var newPath = sex + '_' + animalName + '_' + geneSymbol;
+    return newPath;
 
 
-   };
+};
 
    iev.embryoviewer.prototype.attachEvents = function() {
        /**
@@ -852,7 +874,6 @@ iev.embryoviewer.prototype.setLowPowerState = function(state){
                    {'visibility': 'hidden'}
                 );
            }
-           //scaleOrthogonalViews();
        }.bind(this));
 
 
@@ -878,7 +899,7 @@ iev.embryoviewer.prototype.setLowPowerState = function(state){
                    }, this)
                }); 
 
-       //scaleOrthogonalViews();
+       ;
        // Put this here as calling this multiple times does not work
        this.downloadTableRowSource = $("#downloadTableRowTemplate").html();
 
@@ -907,7 +928,6 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
             if (pid !== this.currentModality)
                 continue;  // Only supply current modality data for download
             var vols = this.centreData[this.currentCentreId][this.currentModality]['vols'];
-            console.log('vols', vols);
             var currentlyViewed = [];
             for (var i = 0; i < this.views.length; ++i) {
                 currentlyViewed.push(this.views[i].getCurrentVolume()['volume_url'])
@@ -1050,7 +1070,6 @@ iev.embryoviewer.prototype.setInitialViewerHeight = function(){
    var mainControlsHeight = $('#ievControlsWrap').outerHeight();
    this.availableViewHeight = Math.round((windowHeight - impcHeaderHeight - subHeaderHeight - 
            mainControlsHeight - helpHeight -( sliceViewControlsHeight * 2 )) / 2);
-   console.log(windowHeight, impcHeaderHeight, subHeaderHeight, mainControlsHeight);
    /* add a new stylesheet fort the specimen view wrapper height as it's not been created yet */
    //If we are on a laptop we may not want to set the minimum size too small
    var viewHeight = this.availableViewHeight < 200 ? 200 : this.availableViewHeight;
@@ -1100,9 +1119,7 @@ iev.embryoviewer.prototype.setViewOrientation = function(orientation){
     }
 };
 
-
-
-     
+   
 iev.embryoviewer.prototype.setScaleSelect = function(){
      $('#scale_select')
        .append(this.scaleLabels().join(""))
@@ -1145,7 +1162,7 @@ iev.embryoviewer.prototype.isInternetExplorer = function () {
 iev.embryoviewer.prototype.catchXtkLoadError = function() {
    //This is an attempt to catch error messages from XTK loading errors as it does not have a error function to hook into
    window.onerror = function (errorMsg, url, lineNumber) {
-       console.log(errorMsg, url, lineNumber);
+     
        if (errorMsg === 'Uncaught Error: input buffer is broken' ||
            errorMsg === 'Uncaught Error: Loading failed' ||
            errorMsg === 'Uncaught Error: invalid file signature') 

@@ -31,11 +31,11 @@ limitations under the License.
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="lib/handlebars.min.js"></script>
-        <!--<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>-->
+        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
         <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
         <script type="text/javascript" src="lib/xtk.js"></script>
-        <!--<script type="text/javascript" src="iev/iev_deps.js"></script>-->
-        <script type="text/javascript" src="iev/iev_compiled.js"></script>
+        <script type="text/javascript" src="iev/iev_deps.js"></script>
+        <!--<script type="text/javascript" src="iev/iev_compiled.js"></script>-->
         
         <!--<script type="text/javascript" src="iev/embryo.js"></script>-->
         <!--<script type="text/javascript" src="js/specimenview.js"></script>-->
@@ -259,7 +259,7 @@ limitations under the License.
             </div> <!-- iev -->
         
             <script>
-//                 goog.require('iev.embryo');
+                 goog.require('iev.embryo');
             </script>
         <script>
             window.addEventListener('load', function () {

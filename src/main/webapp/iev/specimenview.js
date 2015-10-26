@@ -1,4 +1,4 @@
-//goog.provide('iev.specimenview');
+goog.provide('iev.specimenview');
 //goog.require('X.renderer2D');
 //goog.require('X.interactor2D');
 
@@ -10,10 +10,9 @@
  */
 
 iev.specimenview = function(volumeData, id, container, 
-             queryColonyId, indexCB, config, readyCB, localStorage){
+             queryColonyId, xCb, yCb, zCb, config, readyCB, localStorage){
     
 
-    console.log('id', id);
     this.localStorage = localStorage;
     
     this.xtkLoadError = false;
@@ -24,8 +23,10 @@ iev.specimenview = function(volumeData, id, container,
 
     this.config = config;
     
-   
-    this.indexCB = indexCB;
+   // The callbacks to embryoviewer for when slice indices change
+    this.xCb = xCb;
+    this.yCb = yCb;
+    this.zCb = zCb;
     
     /** @type {string} */
     this.id = id;
@@ -65,7 +66,6 @@ iev.specimenview = function(volumeData, id, container,
     this.zOffset = 0;
     this.ready = false;
     this.progressSpinner;
-    console.log(config, id);
     this.contrast = config['specimen'].brightness;
     /** @const */ 
     this.WILDTYPE_COLONYID = 'baseline';
@@ -291,15 +291,12 @@ iev.specimenview.prototype.showMetadata = function(){
 
         switch (this.currentVolume.zygosity.toLowerCase()){
             case 'homozygous':
-                console.log('hello');
                 zygIcon = this.HOM_ICON;
                 break;
             case 'heterozygous':
-                console.log('hettttt');
                 zygIcon = this.HET_ICON;
                 break;
             case 'hemizygous':
-                console.log('hemiiiii');
                 zygIcon = this.HEMI_ICON;
                 break;
         }
@@ -564,6 +561,7 @@ iev.specimenview.prototype.zoomOut = function(){
 iev.specimenview.prototype.drawScaleBar = function() {   
     // After resizing the window or doing a zoomIn or zoomOut, we need to wait for renderer2D to call
     // render_(). Otherwose normalizScale will not have been set
+    
      setTimeout(function () {
         this.drawScale(this.yRen, 'scale_' + 'Y' + this.id, 'scaletext_' + 'Y' + this.id);
         this.drawScale(this.zRen, 'scale_' + 'Z' + this.id, 'scaletext_' + 'Z' + this.id);
@@ -604,7 +602,7 @@ iev.specimenview.prototype.drawScale = function(ren, scaleId, scaleTextId){
         
               
 iev.specimenview.prototype.rescale = function(scale){
-
+ 
     this.scaleBarSize = scale;
     this.drawScaleBar();
 };
@@ -771,7 +769,7 @@ iev.specimenview.prototype.checkLoading = function () {
      * If data not loaded, check for XTX load error caut by window.onerror
      */
     var tid = setInterval(function () {
-        console.log('carrots');
+        
         if (this.ready) {
             clearInterval(tid);
         }
@@ -864,7 +862,7 @@ iev.specimenview.prototype.invertColour = function(checked) {
         
         
         
-iev.specimenview.prototype.sliceChange = function(id, ortho, index){
+iev.specimenview.prototype.sliceChangeX = function(index){
     /**
      * Called when the slice index is changed either from the slider of the mouse scroll button
      * 
@@ -872,9 +870,29 @@ iev.specimenview.prototype.sliceChange = function(id, ortho, index){
      * @param {String} id The ID of the this SpecimenView class
      * @param {String} ortho The orthogonal view that was changed ('X', 'Y', or 'Z')
      */
-     if (ortho === 'X') this.indexCB(id, ortho, index + this.xOffset );
-     else if (ortho === 'Y') this.indexCB(id, ortho, index + this.yOffset );
-     else if (ortho === 'Z') this.indexCB(id, ortho, index + this.zOffset );
+     this.xCb(index + this.xOffset );
+};
+
+iev.specimenview.prototype.sliceChangeY = function(index){
+    /**
+     * Called when the slice index is changed either from the slider of the mouse scroll button
+     * 
+     * @method sliceChange
+     * @param {String} id The ID of the this SpecimenView class
+     * @param {String} ortho The orthogonal view that was changed ('X', 'Y', or 'Z')
+     */
+     this.yCb(index + this.yOffset );
+};
+
+iev.specimenview.prototype.sliceChangeZ = function(index){
+    /**
+     * Called when the slice index is changed either from the slider of the mouse scroll button
+     * 
+     * @method sliceChange
+     * @param {String} id The ID of the this SpecimenView class
+     * @param {String} ortho The orthogonal view that was changed ('X', 'Y', or 'Z')
+     */
+     this.zCb(index + this.zOffset );
 };
        
        
@@ -890,7 +908,7 @@ iev.specimenview.prototype.setLowPowerState = function(state){
 iev.specimenview.prototype.updateSliders = function(renderer) {
     /**
      * Update the slice index or contrast sliders.
-     * If the shift key is down, we want to move the other orthogonal views index correspondingly
+     * If the shift key is down, we want to move the other orthogonal views idices correspondingly
      * If the left mouse button is down, we are changing the contrast, so update the contrast sliders
      * 
      *  @method updateSliders
@@ -908,9 +926,9 @@ iev.specimenview.prototype.updateSliders = function(renderer) {
         this.$zSlider.slider("value", this.volume.indexZ);
 
         //Set the index in the other linked views
-        this.sliceChange(this.id, 'X', this.volume.indexX);
-        this.sliceChange(this.id, 'Y', this.volume.indexY);
-        this.sliceChange(this.id, 'Z', this.volume.indexZ);
+        this.sliceChangeX(this.volume.indexX);
+        this.sliceChangeY(this.volume.indexY);
+        this.sliceChangeZ(this.volume.indexZ);
     }
     else if(renderer.interactor.leftButtonDown){
           this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);
@@ -926,6 +944,17 @@ iev.specimenview.prototype.makeIndexSlider = function($sliderDiv, orientation, m
     
     var index = 'index' + orientation;
     
+    var sliceChangeFunction;
+    if (orientation === 'X'){
+        sliceChangeFunction = this.sliceChangeX.bind(this);
+    }
+    else if (orientation === 'Y'){
+        sliceChangeFunction = this.sliceChangeY.bind(this);
+    }
+    else if (orientation === 'Z'){
+        sliceChangeFunction = this.sliceChangeZ.bind(this);
+    }
+    
     $sliderDiv.slider({
         disabled: false,
         range: "min",
@@ -935,17 +964,16 @@ iev.specimenview.prototype.makeIndexSlider = function($sliderDiv, orientation, m
         slide: function (event, ui) {
             if (!this.volume || this.lowPower) return;
             this.volume[index] = ui.value;
-//            console.log(this.id);
-            this.sliceChange(this.id, orientation, this.volume[index]);
+            sliceChangeFunction(this.volume[index]);
         }.bind(this),
         stop: function (event, ui){
             if (this.volume && this.lowPower){
                 this.volume[index] = ui.value;
-                this.sliceChange(this.id, orientation, this.volume[index]);
+                sliceChangeFunction(this.volume[index]);
             }
         }.bind(this)
     });
-}
+};
 
 
 iev.specimenview.prototype.xtk_showtime = function() {
@@ -984,17 +1012,17 @@ iev.specimenview.prototype.xtk_showtime = function() {
     this.xRen.interactor.onMouseWheel = function (event) {
         this.$xSlider.slider({value: this.volume.indexX});
 
-        this.sliceChange(this.id, 'X', this.volume.indexX);
+        this.sliceChangeX(this.volume.indexX);
     }.bind(this);
 
     this.yRen.interactor.onMouseWheel = function (event) {
         this.$ySlider.slider({value: this.volume.indexY});
-        this.sliceChange(this.id, 'Y', this.volume.indexY);
+        this.sliceChangeY(this.volume.indexY);
     }.bind(this);
 
     this.zRen.interactor.onMouseWheel = function (event) {
         this.$zSlider.slider({value: this.volume.indexZ});
-        this.sliceChange(this.id, 'Z', this.volume.indexZ);
+        this.sliceChangeZ(this.volume.indexZ);
     }.bind(this);
 
 

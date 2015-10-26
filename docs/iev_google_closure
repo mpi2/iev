@@ -1,0 +1,6 @@
+To use simple optimizations, remove whitespace and rename internal functions, use the following command.
+Before this you need to comment out the goog.require and goog.provide statements (used in debugging mode) from the top of the scripts
+Any new scripts made need to be added to the command as well. Order of scripts in command is important.
+
+java -jar ../X/lib/google-closure-compiler/compiler.jar --js iev.js --js embryo.js --js localstorage.js --js embryoviewer.js --js specimenview.js --js_output_file iev_compiled.js --language_in=ECMASCRIPT5
+

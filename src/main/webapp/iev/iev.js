@@ -1,6 +1,6 @@
 // entry point
 // namespace
-//goog.provide('iev');
+goog.provide('iev');
 
 /**
  * The XTK namespace.
