@@ -359,13 +359,13 @@ iev.specimenview.prototype.setBookmarkContrast = function() {
     // Set lower contrast level
     var lower = parseInt(this.volume.windowLow);
     if ('l' in this.config) {
-        lower = Math.max(this.config['l'], parseInt(this.volume.windowLow));                
+        lower = Math.max(parseInt(this.config['l']), parseInt(this.volume.windowLow));                
     }
 
     // Set upper contrast level
     var upper = parseInt(this.volume.windowHigh);
     if ('u' in this.config) {
-        upper = Math.min(this.config['u'], parseInt(this.volume.windowHigh));                             
+        upper = Math.min(parseInt(this.config['u']), parseInt(this.volume.windowHigh));                             
     }
 
     // Set this.volume modifed
@@ -988,9 +988,9 @@ iev.specimenview.prototype.xtk_showtime = function() {
 
     // Let main know of the new dimensions of the orthogonal views
     // It appears that dimensins are in yxz order. At least with nii loading
-    this.volume.indexX = 'x' in this.config ? this.config['x'] : Math.floor((dims[0] - 1) / 2);
-    this.volume.indexY = 'y' in this.config ? this.config['y'] : Math.floor((dims[1] - 1) / 2);
-    this.volume.indexZ = 'z' in this.config ? this.config['z'] : Math.floor((dims[2] - 1) / 2);
+    this.volume.indexX = 'x' in this.config ? parseInt(this.config['x']) : Math.floor((dims[0] - 1) / 2);
+    this.volume.indexY = 'y' in this.config ? parseInt(this.config['y']) : Math.floor((dims[1] - 1) / 2);
+    this.volume.indexZ = 'z' in this.config ? parseInt(this.config['z']) : Math.floor((dims[2] - 1) / 2);
 
     this.makeIndexSlider(this.$xSlider, 'X', dims[0] - 1);
     this.makeIndexSlider(this.$ySlider, 'Y', dims[1] - 1);

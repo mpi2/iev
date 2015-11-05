@@ -364,6 +364,11 @@
                     $viewHeight.slider('value', bookmarkData['h']);
                     $viewHeight.slider("option", "slide").call($viewHeight, null, { value: bookmarkData['h']});
                 }
+                
+                // Set scale bar
+                if (bookmarkData['sb']) {
+                    
+                }
 
                 // Set ready
                 bookmarkReady = true;
