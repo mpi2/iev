@@ -286,42 +286,26 @@ limitations under the License.
                     }
                 };
                 
+                jQuery.extend({
+                    getQueryParameters : function(str) {
+                        return (str || document.location.search).replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
+                    }
+                });
                 
-                var bookmarkData = {
-                    mode: null,
-                    gene: null,
-                    modality: "<%= request.getParameter("mod")%>",
-                    h: parseInt(<%= request.getParameter("h")%>),
-                    wt: {
-                        name: "<%= request.getParameter("wt")%>",
-                        pos: {
-                            x: parseInt(<%= request.getParameter("wx")%>),
-                            y: parseInt(<%= request.getParameter("wy")%>),
-                            z: parseInt(<%= request.getParameter("wz")%>)
-                        },
-                        brightness: {
-                            lower: <%= request.getParameter("wl")%>,
-                            upper: <%= request.getParameter("wu")%>
+                var queryParams = $.getQueryParameters();
+                var bookmarkData = {'wt': {}, 'mut': {}};
+                
+                for (var k in queryParams) {
+                    if (queryParams.hasOwnProperty(k)) {                        
+                        if (k.startsWith('w')) {                             
+                            bookmarkData['wt'][k.substring(1)] = queryParams[k];
+                        } else if (k.startsWith('m')) {
+                            bookmarkData['mut'][k.substring(1)] = queryParams[k];
+                        } else {
+                            bookmarkData[k] = queryParams[k];
                         }
-                    },         
-                    mut: {
-                        name: "<%= request.getParameter("mut")%>",
-                        pos: {
-                            x: parseInt(<%= request.getParameter("mx")%>),
-                            y: parseInt(<%= request.getParameter("my")%>),
-                            z: parseInt(<%= request.getParameter("mz")%>)
-                        },
-                        brightness: {
-                            lower: <%= request.getParameter("ml")%>,
-                            upper: <%= request.getParameter("mu")%>
-                        }
-                    },
-                    s: "<%= request.getParameter("s")%>",
-                    c: "<%= request.getParameter("c")%>",
-                    a: "<%= request.getParameter("a")%>",
-                    zoom: parseInt(<%= request.getParameter("zoom")%>),
-                    orientation: "<%= request.getParameter("o")%>"
-                };
+                    }
+                }
                 
                 if (colonyId !== 'null'){
                     bookmarkData['mode'] = "colony_id";

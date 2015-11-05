@@ -82,8 +82,8 @@
         
         var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
         
-        if (bookmarkData['modality'] !== "null") {
-            volorder.unshift(bookmarkData['modality']);
+        if ('mod' in bookmarkData) {
+            volorder.unshift(bookmarkData['mod']);
         }
           
         
@@ -351,7 +351,7 @@
                 }
 
                 // Set orientation
-                if (bookmarkData['orientation'] === 'vertical') {
+                if (bookmarkData['o'] === 'vertical') {
                     $("#orientation_button").trigger("click");
                 }
 
@@ -385,23 +385,24 @@
                 + '?' + bookmarkData['mode'] + '=' + bookmarkData['gene']
                 + '&mod=' + currentModality
                 + '&h=' + currentViewHeight
-                + '&wt=' + wtView.getCurrentVolume()['animalName']
-                + '&mut=' + mutView.getCurrentVolume()['animalName']
                 + '&s=' + s
                 + '&c=' + c
                 + '&a=' + a
+                + '&o=' + currentOrientation
+                + '&zoom=' + currentZoom
+                + '&sb=' + scales.currentBarSize
+                + '&w=' + wtView.getCurrentVolume()['animalName']        
                 + '&wx=' + wtView.getIndex('X')
                 + '&wy=' + wtView.getIndex('Y')
                 + '&wz=' + wtView.getIndex('Z')
-                + '&mx=' + mutView.getIndex('X')
-                + '&my=' + mutView.getIndex('Y')
-                + '&mz=' + mutView.getIndex('Z')                
                 + '&wl=' + wtView.getBrightnessLower()
                 + '&wu=' + wtView.getBrightnessUpper()
+                + '&m=' + mutView.getCurrentVolume()['animalName']                
+                + '&mx=' + mutView.getIndex('X')
+                + '&my=' + mutView.getIndex('Y')
+                + '&mz=' + mutView.getIndex('Z')
                 + '&ml=' + mutView.getBrightnessLower()
-                + '&mu=' + mutView.getBrightnessUpper()
-                + '&o=' + currentOrientation
-                + '&zoom=' + currentZoom;
+                + '&mu=' + mutView.getBrightnessUpper();
             return bookmark;
         }
                 
@@ -550,7 +551,7 @@
             }
             
             // Set mutant specimen based on bookmark   
-            var mutConfig = {specimen: bookmarkData['mut'] };
+            var mutConfig = {specimen: bookmarkData['mut']};
             mutView = new iev.specimenview(mutantData, 'mut', container, 
                 queryId, sliceChange, mutConfig, loadedCb, localStorage);
             views.push(mutView);   
