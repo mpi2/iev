@@ -29,7 +29,7 @@
         var spinner; // Progress spinner
         var currentZoom = 0;
         var currentOrientation = 'horizontal';
-        var currentViewHeight;
+        var currentViewHeight = 500;
         var bookmarkReady = false;
         var mgi;
         var gene_symbol;
@@ -391,13 +391,13 @@
                 + '&o=' + currentOrientation
                 + '&zoom=' + currentZoom
                 + '&sb=' + scales.currentBarSize
-                + '&w=' + wtView.getCurrentVolume()['animalName']        
+                + '&wn=' + wtView.getCurrentVolume()['animalName']        
                 + '&wx=' + wtView.getIndex('X')
                 + '&wy=' + wtView.getIndex('Y')
                 + '&wz=' + wtView.getIndex('Z')
                 + '&wl=' + wtView.getBrightnessLower()
                 + '&wu=' + wtView.getBrightnessUpper()
-                + '&m=' + mutView.getCurrentVolume()['animalName']                
+                + '&mn=' + mutView.getCurrentVolume()['animalName']                
                 + '&mx=' + mutView.getIndex('X')
                 + '&my=' + mutView.getIndex('Y')
                 + '&mz=' + mutView.getIndex('Z')
@@ -544,14 +544,14 @@
             
             // only load if baseline data available
             if (objSize(wildtypeData) > 0){
-                var wtConfig = {specimen: bookmarkData['wt'] };
+                var wtConfig = bookmarkData['wt'];
                 wtView = new iev.specimenview(wildtypeData, 'wt', container, 
                     WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb, localStorage);
                 views.push(wtView);
             }
             
             // Set mutant specimen based on bookmark   
-            var mutConfig = {specimen: bookmarkData['mut']};
+            var mutConfig = bookmarkData['mut'];
             mutView = new iev.specimenview(mutantData, 'mut', container, 
                 queryId, sliceChange, mutConfig, loadedCb, localStorage);
             views.push(mutView);   
@@ -912,7 +912,7 @@
                     .slider({
                         min: 200,
                         max: 1920,
-                        value: 500,
+                        value: currentViewHeight,
                         slide: $.proxy(function (event, ui) {
                             currentViewHeight = ui.value;
                             $('.sliceWrap').css('height', ui.value);                            

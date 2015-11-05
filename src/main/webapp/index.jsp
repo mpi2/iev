@@ -297,7 +297,7 @@ limitations under the License.
                 
                 for (var k in queryParams) {
                     if (queryParams.hasOwnProperty(k)) {                        
-                        if (k.startsWith('w')) {                             
+                        if (k.startsWith('w')) {                            
                             bookmarkData['wt'][k.substring(1)] = queryParams[k];
                         } else if (k.startsWith('m')) {
                             bookmarkData['mut'][k.substring(1)] = queryParams[k];
