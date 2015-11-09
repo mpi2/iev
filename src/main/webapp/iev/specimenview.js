@@ -1,6 +1,6 @@
 goog.provide('iev.specimenview');
-//goog.require('X.renderer2D');
-//goog.require('X.interactor2D');
+goog.require('X.renderer2D');
+goog.require('X.interactor2D');
 
 
 /**

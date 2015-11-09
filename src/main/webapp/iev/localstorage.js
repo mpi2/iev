@@ -7,18 +7,27 @@
 
 goog.provide('iev.LocalStorage');
 
-iev.LocalStorage = function(finished){
+iev.LocalStorage = function(isBrowserIE){
     this.idbSupported = true;
    
     this.db = null;
     this.id = Math.random();
 
-    if(!"indexedDB" in window) {
+    if(!"indexedDB" in window || isBrowserIE) {
         this.idbSupported = false;
         console.log('indexedDB not supported. Loading volumes from server')
-        return;
-    }
+        
+    };
+    
+};
 
+
+iev.LocalStorage.prototype.setup = function(finished){
+    
+    if (!this.idbSupported){
+        finished();
+    };
+    
     var openRequest = indexedDB.open("ievTest", 2); // On our version 2 of the indexedDB db
 
     openRequest.onupgradeneeded = function(e) {

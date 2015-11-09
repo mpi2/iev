@@ -1,22 +1,3 @@
-<!--
-Copyright 2015 Medical Research Council Harwell.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-
-
-
-
 <!DOCTYPE html>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
@@ -32,17 +13,10 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="lib/handlebars.min.js"></script>
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
-        <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
-        <script type="text/javascript" src="lib/xtk.js"></script>
+        <script type="text/javascript" src="X/xtk-deps.js"></script>
+        <!--<script type="text/javascript" src="lib/xtk.js"></script>-->
         <script type="text/javascript" src="iev/iev_deps.js"></script>
         <!--<script type="text/javascript" src="iev/iev_compiled.js"></script>-->
-        
-        <!--<script type="text/javascript" src="iev/embryo.js"></script>-->
-        <!--<script type="text/javascript" src="js/specimenview.js"></script>-->
-        <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
-        <!--<script type="text/javascript" src="js/main.js"></script>-->
-        <!--<script type="text/javascript" src="js/sliceview.js"></script>-->
-        <!--<script type="text/javascript" src="js/localStorage.js"></script>-->
         <script type="text/javascript" src="lib/spin.min.js"></script>
         <script type="text/javascript" src="lib/fileDownload.js"></script>
         <script type="text/javascript" src="http://www.mousephenotype.org/data/js/head.min.js?v=2.0.2"></script>
@@ -354,35 +328,35 @@ limitations under the License.
                
             });
             
-            (function setupImpcMenus() {
-            /*
-             * Get the dynamically generated menu code. Split into main menu and the login section
-             */
-                var protocol = window.location.protocol === "https:"? 'https' : 'http';
-                
-                var header_menu_source;
-                //Set the correct menu depending on which sub-domain we're on
-                switch (location.hostname) {
-                    
-                    case 'localhost':
-                        header_menu_source = 'menudisplaycombinedrendered.html';
-                        break;
-                    case 'www.mousephenotype.org':
-                        header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                    case 'beta.mousephenotype.org':
-                        header_menu_source = protocol + '://beta.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                    case 'dev.mousephenotype.org':
-                        header_menu_source = protocol + '://dev.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                }
-                $.get(header_menu_source, function (data) {
-                    var menuItems = data.split("MAIN*MENU*BELOW");
-                    $('#block-menu-block-1').append(menuItems[1]);
-                    $('#tn').append(menuItems[0]);
-                });
-              })()
+//            (function setupImpcMenus() {
+//            /*
+//             * Get the dynamically generated menu code. Split into main menu and the login section
+//             */
+//                var protocol = window.location.protocol === "https:"? 'https' : 'http';
+//                
+//                var header_menu_source;
+//                //Set the correct menu depending on which sub-domain we're on
+//                switch (location.hostname) {
+//                    
+//                    case 'localhost':
+//                        header_menu_source = 'menudisplaycombinedrendered.html';
+//                        break;
+//                    case 'www.mousephenotype.org':
+//                        header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
+//                        break;
+//                    case 'beta.mousephenotype.org':
+//                        header_menu_source = protocol + '://beta.mousephenotype.org/menudisplaycombinedrendered';
+//                        break;
+//                    case 'dev.mousephenotype.org':
+//                        header_menu_source = protocol + '://dev.mousephenotype.org/menudisplaycombinedrendered';
+//                        break;
+//                }
+//                $.get(header_menu_source, function (data) {
+//                    var menuItems = data.split("MAIN*MENU*BELOW");
+//                    $('#block-menu-block-1').append(menuItems[1]);
+//                    $('#tn').append(menuItems[0]);
+//                });
+//              })()
         </script>
 <!--        <script>
             (function (i, s, o, g, r, a, m) {

@@ -29,6 +29,16 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
    this.gene_symbol;
    this.availableViewHeight; // The window height minus all the header and controls heights
    this.bookmarkData = bookmarkData;
+   this.isBrowserIE = this.isInternetExplorer();
+   
+    if (this.isBrowserIE === 'oldIe') {
+        console.log('IEV does not support Internet Explorer <v11')
+        var source = $("#ie_warning_template").html();
+        var template = Handlebars.compile(source);
+        $('#' + div).append(template(data));
+        return;
+    };
+ 
 
    //Give users a warning about using the deprecated colony_id=test url
    if (queryType === 'colony ID' && this.queryId === 'test'){
@@ -37,7 +47,7 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
        $('#' + div).append(template());
        return;
    }
-   this.localStorage;
+   this.localStorage = 'carrots';
 
    /**
     * 
@@ -369,10 +379,10 @@ iev.embryoviewer.prototype.centreSelector = function() {
 
        var bookmark = hostname
            + '?' + this.bookmarkData['mode'] + '=' + this.bookmarkData['gene']
-           + '&mod=' + this.mutView
+           + '&mod=' + this.currentModality
            + '&h=' + this.currentViewHeight
            + '&wt=' + this.wtView.getCurrentVolume()['animalName']
-           + '&mut=' + mutView.getCurrentVolume()['animalName']
+           + '&mut=' + this.mutView.getCurrentVolume()['animalName']
            + '&s=' + s
            + '&c=' + c
            + '&a=' + a
@@ -387,7 +397,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
            + '&ml=' + this.mutView.getBrightnessLower()
            + '&mu=' + this.mutView.getBrightnessUpper()
            + '&o=' + this.currentOrientation
-           + '&zoom=' + currentZoom;
+           + '&zoom=' + this.currentZoom;
        return bookmark;
    };
 
@@ -476,14 +486,20 @@ iev.embryoviewer.prototype.centreSelector = function() {
        }.bind(this)); 
        this.scaleOrthogonalViews();
        $('.scale_outer').draggable();
+//               {containment: $('.sliceView')});
 
    };  
 
 
 iev.embryoviewer.prototype.loadViewers = function(){
-    this.localStorage = new iev.LocalStorage(function(){  
+    
+    this.localStorage = new iev.LocalStorage(this.isBrowserIE);
+    
+    this.localStorage.setup(function(){  
         this.afterLoadingLocalStorage(this.container);
     }.bind(this)); 
+    
+    console.log('somethimg');
 };
 
 
@@ -799,13 +815,15 @@ iev.embryoviewer.prototype.getNewFileName = function(volData){
 
        // Create bookmark when clicked
        $('#createBookmark').click(function (e) {
+           console.log('bmbmbmbm');
            if (!this.bookmarkReady) { 
                return;
            }
+           console.log('oeoeoe');
            e.preventDefault();
-           var newBookmark = generateBookmark();   
+           var newBookmark = this.generateBookmark();   
            window.prompt("Bookmark created!\nCopy to clipboard (Ctrl/Cmd+C + Enter)", newBookmark);   
-       });            
+       }.bind(this));            
 
        $("#modality_stage" ).buttonset();
        $("#orthogonal_views_buttons").buttonset();
@@ -1139,19 +1157,20 @@ iev.embryoviewer.prototype.setScaleSelect = function(){
 iev.embryoviewer.prototype.isInternetExplorer = function () {
     /*
      * XTK currently fails with IE. Check if we are using IE
+     * Return True if using any IE version
+     * If using < 11, display not supported message
      */
 
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf("MSIE ");
+    if (navigator.userAgent.indexOf('MSIE') !== -1) {
 
-    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-        var source = $("#ie_warning_template").html();
-        var template = Handlebars.compile(source);
-        $('#' + div).append(template(data));
-
-        return true;
+        return 'oldIe';
     }
 
+    else if (navigator.appVersion.indexOf('Trident/') > 0 ) {
+        console.log('using IE 11');
+        return 'ie11';
+    }
+        
     else {                 // If another browser, return 0
         return false;
     }
