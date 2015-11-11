@@ -28,7 +28,7 @@ iev.LocalStorage.prototype.setup = function(finished){
         finished();
     };
     
-    var openRequest = indexedDB.open("ievTest", 2); // On our version 2 of the indexedDB db
+    var openRequest = indexedDB.open("ievTest", 3); // On our version 2 of the indexedDB db
 
     openRequest.onupgradeneeded = function(e) {
         console.log("Upgrading iev indexedDB");

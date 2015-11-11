@@ -330,9 +330,12 @@ iev.embryoviewer.prototype.centreSelector = function() {
    }               
 
    iev.embryoviewer.prototype.bookmarkConfigure = function() {
+       /*
+        * Setup the viewers based on bookmark data
+        */
 
        if (!this.bookmarkReady) {               
-
+           console.log('setting bookmark options');
            // Set views       
            if (this.bookmarkData['s'] === 'off') {
                $('#X_check').trigger('click');
@@ -366,7 +369,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
 
        }
 
-   }
+   }.bind(this);
 
    iev.embryoviewer.prototype.generateBookmark = function() {
 
@@ -407,7 +410,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
        if (times < 0) {
            while (times < 0) {                    
                setTimeout(function() {
-                   zoomViewsOut();
+                   this.zoomViewsOut();
                }, 1000);   
                times++;
            }
@@ -416,7 +419,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
        if (times > 0) {
            while (times > 0) { 
                setTimeout(function() {
-                   zoomViewsIn();
+                   this.zoomViewsIn();
                }, 1000);   
                times--;
            }
@@ -624,33 +627,33 @@ iev.embryoviewer.prototype.loadViewers = function(){
 
    
 iev.embryoviewer.prototype.onMutXChange = function(index){
-
-          this.wtView.setXindex(index);
+           
+    if (this.ortho['X'].linked) this.wtView.setXindex(index);
 };
 
 iev.embryoviewer.prototype.onMutYChange = function(index){
 
-          this.wtView.setYindex(index);
+    if (this.ortho['Y'].linked) this.wtView.setYindex(index);
 };
 
 iev.embryoviewer.prototype.onMutZChange = function(index){
 
-    this.wtView.setZindex(index);
+    if (this.ortho['Z'].linked) this.wtView.setZindex(index);
 };
 
-   iev.embryoviewer.prototype.onWtXChange = function(index){
+iev.embryoviewer.prototype.onWtXChange = function(index){
 
-          this.mutView.setXindex(index);
+    if (this.ortho['X'].linked) this.mutView.setXindex(index);
 };
 
 iev.embryoviewer.prototype.onWtYChange = function(index){
 
-          this.mutView.setYindex(index);
+    if (this.ortho['Y'].linked) this.mutView.setYindex(index);
 };
 
 iev.embryoviewer.prototype.onWtZChange = function(index){
 
-          this.mutView.setZindex(index);
+    if (this.ortho['Z'].linked) this.mutView.setZindex(index);
 };
 
 
@@ -668,7 +671,7 @@ iev.embryoviewer.prototype.linkViews = function(orthoView, isLink){
 
     $('.' + orthoView).prop('checked', isLink);
 
-    ortho[orthoView].linked = isLink;
+    this.ortho[orthoView].linked = isLink;
 
     for (var i = 0; i < this.views.length; i++) {
         // Set/unset the link buttons
