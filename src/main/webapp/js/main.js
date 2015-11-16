@@ -367,7 +367,7 @@
                 
                 // Set scale bar
                 if (bookmarkData['sb']) {
-                    
+                    scales.currentBarSize = bookmarkData['sb'];
                 }
 
                 // Set ready
