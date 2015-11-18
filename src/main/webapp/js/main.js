@@ -457,6 +457,7 @@
             }
            
             window.dispatchEvent(new Event('resize')); 
+            currentZoom = 0;
         }
         
         
@@ -1149,6 +1150,7 @@
            
             window.dispatchEvent(new Event('resize'));      
          }
+         currentZoom = 0;
     }
     
 
