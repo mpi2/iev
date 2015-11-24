@@ -1,6 +1,7 @@
 goog.provide('iev.embryoviewer');
 goog.require('iev.specimenview');
 goog.require('iev.LocalStorage');
+//goog.require('iev.templates')
 
 
     
@@ -280,7 +281,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
             .iconselectmenu({
                 width: '60px',
                 change: $.proxy(function (event, ui) {
-                    setCentre(ui.item.value);
+                    this.setCentre(ui.item.value);
                 }, this)
 
             });
@@ -369,7 +370,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
 
        }
 
-   }.bind(this);
+   };
 
    iev.embryoviewer.prototype.generateBookmark = function() {
 
@@ -411,7 +412,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
            while (times < 0) {                    
                setTimeout(function() {
                    this.zoomViewsOut();
-               }, 1000);   
+               }.bind(this), 1000);   
                times++;
            }
        }
@@ -420,17 +421,17 @@ iev.embryoviewer.prototype.centreSelector = function() {
            while (times > 0) { 
                setTimeout(function() {
                    this.zoomViewsIn();
-               }, 1000);   
+               }.bind(this), 1000);   
                times--;
            }
        }             
 
-   }
+   };
 
    iev.embryoviewer.prototype.zoomViewsIn = function() {
        this.wtView.zoomIn();
        this.mutView.zoomIn();
-   }
+   };
 
    iev.embryoviewer.prototype.zoomViewsOut = function() {
        this.wtView.zoomOut();
@@ -500,9 +501,7 @@ iev.embryoviewer.prototype.loadViewers = function(){
     
     this.localStorage.setup(function(){  
         this.afterLoadingLocalStorage(this.container);
-    }.bind(this)); 
-    
-    console.log('somethimg');
+    }.bind(this));
 };
 
 
@@ -568,62 +567,62 @@ iev.embryoviewer.prototype.loadViewers = function(){
    };
 
 
-   iev.embryoviewer.prototype.loadedCb = function(){
-       /*
-        * called when each specimenView has finished loading
-        * @param {type} container
-        * @return {undefined}
-        */
+iev.embryoviewer.prototype.loadedCb = function(){
+    /*
+     * called when each specimenView has finished loading
+     * @param {type} container
+     * @return {undefined}
+     */
 
-       for (var i = 0; i < this.views.length; i++){
-           if (!this.views[i].isReady()) return;
-       }
-       this.onReady();
-   };
-
-
-   iev.embryoviewer.prototype.setCentre = function(cid){
-       /*
-        * Change the centre. Only works if there is data from multiple centres.
-        * Such as with reference lines
-        * 
-        */
-      this.currentCentreId = cid;
-      this.setStageModality(this.currentModality);
-   };
+    for (var i = 0; i < this.views.length; i++){
+        if (!this.views[i].isReady()) return;
+    }
+    this.onReady();
+};
 
 
-   iev.embryoviewer.prototype.setStageModality = function(pid){
-       /*
-        * 
-        * Switch to another modality
-        */
-       this.beforeReady();
-       this.currentModality = pid;
+iev.embryoviewer.prototype.setCentre = function(cid){
+    /*
+     * Change the centre. Only works if there is data from multiple centres.
+     * Such as with reference lines
+     * 
+     */
+   this.currentCentreId = cid;
+   this.setStageModality(this.currentModality);
+};
 
-       if (typeof this.wtView !== 'undefined'){
-           var wtVolumes = this.centreData[this.currentCentreId][pid]['vols'].wildtype;
 
-           if (Object.keys(wtVolumes).length > 0) {
-               $("#wt").show();
-               this.wtView.updateData(wtVolumes);
-               this.wtView.reset();
-           } else {
-               $("#wt").hide();                    
-           }
-       }
-       if (typeof this.mutView !== 'undefined'){
-           var mutVolumes = this.centreData[this.currentCentreId][pid]['vols'].mutant;
+iev.embryoviewer.prototype.setStageModality = function(pid){
+    /*
+     * 
+     * Switch to another modality
+     */
+    this.beforeReady();
+    this.currentModality = pid;
 
-           if (Object.keys(mutVolumes).length > 0) {
-               $("#mut").show();
-               this.mutView.updateData(mutVolumes);
-               this.mutView.reset();
-           } else {
-               $("#mut").hide();
-           }
-       }    
-   };
+    if (typeof this.wtView !== 'undefined'){
+        var wtVolumes = this.centreData[this.currentCentreId][pid]['vols'].wildtype;
+
+        if (Object.keys(wtVolumes).length > 0) {
+            $("#wt").show();
+            this.wtView.updateData(wtVolumes);
+            this.wtView.reset();
+        } else {
+            $("#wt").hide();                    
+        }
+    }
+    if (typeof this.mutView !== 'undefined'){
+        var mutVolumes = this.centreData[this.currentCentreId][pid]['vols'].mutant;
+
+        if (Object.keys(mutVolumes).length > 0) {
+            $("#mut").show();
+            this.mutView.updateData(mutVolumes);
+            this.mutView.reset();
+        } else {
+            $("#mut").hide();
+        }
+    }    
+};
 
    
 iev.embryoviewer.prototype.onMutXChange = function(index){
@@ -732,7 +731,7 @@ iev.embryoviewer.prototype.getNewFileName = function(volData){
 
 
        $('#low_power_check').button().click(function(e){                               
-           setLowPowerState(e.currentTarget.checked);
+           this.setLowPowerState(e.currentTarget.checked);
        }.bind(this));
 
          // Style the control buttons
@@ -818,11 +817,9 @@ iev.embryoviewer.prototype.getNewFileName = function(volData){
 
        // Create bookmark when clicked
        $('#createBookmark').click(function (e) {
-           console.log('bmbmbmbm');
            if (!this.bookmarkReady) { 
                return;
            }
-           console.log('oeoeoe');
            e.preventDefault();
            var newBookmark = this.generateBookmark();   
            window.prompt("Bookmark created!\nCopy to clipboard (Ctrl/Cmd+C + Enter)", newBookmark);   
@@ -941,10 +938,10 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
     });
 
 
-
     var template = Handlebars.compile(this.downloadTableRowSource);
-
+    
     dlg.load('download_dialog.html', function () {
+     
         for (var pid in this.centreData[this.currentCentreId]) {
             if (pid !== this.currentModality)
                 continue;  // Only supply current modality data for download
@@ -987,6 +984,7 @@ iev.embryoviewer.prototype.setupDownloadTable = function () {
                 $("#wt_table tbody").append(template(data));
             }
         }
+            
         dlg.dialog('open');
 
         // Once selected on download dialog, download volumes

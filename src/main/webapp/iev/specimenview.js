@@ -1,4 +1,5 @@
 goog.provide('iev.specimenview');
+//goog.require('iev.templates')
 //goog.require('X.renderer2D');
 //goog.require('X.interactor2D');
 
@@ -87,7 +88,10 @@ iev.specimenview = function(volumeData, id, container,
             }
         }           
     }
-
+    
+    // The html source for the Handelbar template
+    var progressSource   = $("#progress_template").html();
+    this.progressTemplate = Handlebars.compile(progressSource);
 
     /*
      * 
@@ -445,9 +449,7 @@ iev.specimenview.prototype.createHTML = function() {
     $specimenView.append(this.createSliceView('Y'));
     $specimenView.append(this.createSliceView('Z'));
 
-    var progressSource   = $("#progress_template").html();
-    var progressTemplate = Handlebars.compile(progressSource);
-    var $progress = $(progressTemplate(data));
+    var $progress = $(this.progressTemplate(data));
 
     $specimenView.append($progress);
     this.spinner = new Spinner(this.spinnerOpts).spin();
@@ -627,9 +629,8 @@ iev.specimenview.prototype.replaceVolume = function(volumePath) {
         id: this.id
     };
     var $specimenView = $('#' + this.id);
-    var progressSource   = $("#progress_template").html();
-    var progressTemplate = Handlebars.compile(progressSource);
-    var $progress = $(progressTemplate(data));
+//    var progressSource   = $("#progress_template").html();
+    var $progress = $(this.progressTemplate(data));
 
     $specimenView.append($progress);
     this.spinner = new Spinner(this.spinnerOpts).spin();

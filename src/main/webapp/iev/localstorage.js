@@ -28,7 +28,7 @@ iev.LocalStorage.prototype.setup = function(finished){
         finished();
     };
     
-    var openRequest = indexedDB.open("ievTest", 3); // On our version 2 of the indexedDB db
+    var openRequest = indexedDB.open("ievTest", 4); //
 
     openRequest.onupgradeneeded = function(e) {
         console.log("Upgrading iev indexedDB");
@@ -61,7 +61,7 @@ iev.LocalStorage.prototype.setup = function(finished){
 };
 
 
-iev.LocalStorage.prototype.getVolume = function (url, lastUpdated, callback) {
+iev.LocalStorage.prototype.getVolume = function (url, remoteDate, callback) {
     //First check if already present in store
     /*
      * url: path to volume on server
@@ -69,49 +69,64 @@ iev.LocalStorage.prototype.getVolume = function (url, lastUpdated, callback) {
      * callbac: where to send the resulting volume data
      */
     if (this.idbSupported) {
-        this._checkForKey(url, lastUpdated, function (e) {
-            if (e.target.result) { 
+        this._checkForKey(url, function (key_exists) {
+            if (key_exists) { 
                 //We get a volume result back from idxDB. Now check if we have a newer version on the server
-
+                console.log('key exists oh yeah!!')
                 this._getfromIndexedDb(url, function (idxdbResult) {
                     // Check if there's a newer version on server
                     var localDate = new Date(idxdbResult.lastUpdate)
+                    console.log('local__date', localDate, 'remoteDAT', remoteDate);
+                    //console.log(idxdbResult);
                     
-                    if (localDate < lastUpdated) { //we have a newer version on the server
+                    if (localDate < remoteDate) { //we have a newer version on the server
                         console.log('newer data available on the server');
                         this._getFromServer(url, function (filedata) {
-                            this._addVolume(url, lastUpdated, filedata)
+                            this._addVolume(url, remoteDate, filedata)
                             callback(filedata);
                         }.bind(this));
                     }else{ // The local data is up to date so use it
                          callback(idxdbResult.filedata);
                     }    
-                });
+                }.bind(this));
             }
             else {
+                console.log('key does not exist. Boo!')
                 this._getFromServer(url, function (filedata) {
-                    this._addVolume(url, lastUpdated, filedata)
+                    this._addVolume(url, remoteDate, filedata)
                     callback(filedata);
                 }.bind(this));
 
             }
         }.bind(this));
     } else {
+        
         this._getFromServer(url, function (filedata) {
-            this._addVolume(url, lastUpdated, filedata)
+            this._addVolume(url, remoteDate, filedata)
             callback(filedata);
         }.bind(this));
     }
 };
 
 
-iev.LocalStorage.prototype._checkForKey = function (key, lastUpdated, idxdbSuccess) {
+iev.LocalStorage.prototype._checkForKey = function (key, idxdbSuccess) {
     /*
      * Check for presence of volume in local storage and  whether we have older version
      */
     var transaction = this.db.transaction(["volumes"],"readonly");
     var store = transaction.objectStore("volumes");
-    store.get(key).onsuccess = idxdbSuccess;
+    
+    var req = store.get(key);    
+    req.onsuccess = function(event){
+         var myResult = event.target.result;
+         idxdbSuccess(myResult)
+         //console.log('checked for key', key, myResult)
+          
+    }
+    req.onerror = function(event) {
+          alert("key not in local storage!");
+    };
+            
 };
 
 iev.LocalStorage.prototype._addVolume = function(volUrl, lastUpdated, filedata){
@@ -124,22 +139,21 @@ iev.LocalStorage.prototype._addVolume = function(volUrl, lastUpdated, filedata){
     var volume = {
         name:volUrl, // Path to file on server
         filedata:filedata,  //ArrayBuffer
-        created:lastUpdated // Data object
+        lastUpdate:lastUpdated // Data object
     };
-
-    //Perform the add
+    
     var transaction = this.db.transaction(["volumes"],"readwrite");
     var store = transaction.objectStore("volumes");
-    var request = store.add(volume, volUrl);
-
+    var request = store.put(volume, volUrl);
+    
     request.onerror = function(e) {
-        console.log("Error",e.target.error.message);
-        //possibly already exists in DB
+        console.log("Could not 'put' volume into local storage: ", e.target.error.message);
     };
 
     request.onsuccess = function(e) {
-        console.log("Woot! Did it");
-    };
+        console.log("Successfully added volume to local storage");
+    };    
+  
 };
 
 iev.LocalStorage.prototype._getfromIndexedDb = function(url, successCB){
