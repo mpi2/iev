@@ -559,7 +559,7 @@ iev.embryoviewer.prototype.loadViewers = function(){
        }
 
        // Set mutant specimen based on bookmark   
-       var mutConfig = {'specimen': this.bookmarkData['mut'] };
+       var mutConfig = this.bookmarkData['mut'];
        this.mutView = new iev.specimenview(
                     mutantData, 
                     'mut', 
