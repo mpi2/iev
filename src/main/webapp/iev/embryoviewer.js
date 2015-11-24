@@ -24,7 +24,7 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
    this.spinner; // Progress spinner
    this.currentZoom = 0;
    this.currentOrientation = 'horizontal';
-   this.currentViewHeight;
+   this.currentViewHeight = 500;
    this.bookmarkReady = false;
    this.mgi;
    this.gene_symbol;
@@ -78,8 +78,8 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
 
    this.volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
 
-   if (this.bookmarkData['modality'] !== "null") {
-       this.volorder.unshift(this.bookmarkData['modality']);
+   if (this.bookmarkData['pid']) {
+       this.volorder.unshift(this.bookmarkData['pid']);
    }
 
 
@@ -351,7 +351,7 @@ iev.embryoviewer.prototype.centreSelector = function() {
            }
 
            // Set orientation
-           if (this.bookmarkData['orientation'] === 'vertical') {
+           if (this.bookmarkData['o'] === 'vertical') {
                $("#orientation_button").trigger("click");
            }
 
@@ -364,6 +364,11 @@ iev.embryoviewer.prototype.centreSelector = function() {
                $viewHeight.slider('value', this.bookmarkData['h']);
                $viewHeight.slider("option", "slide").call($viewHeight, null, { value: this.bookmarkData['h']});
            }
+           
+           // Set scale bar
+            if (this.bookmarkData['sb']) {
+                this.scales.currentBarSize = this.bookmarkData['sb'];
+            }
 
            // Set ready
            this.bookmarkReady = true;
@@ -377,32 +382,33 @@ iev.embryoviewer.prototype.centreSelector = function() {
        var currentUrl = window.location.href;
        var hostname = currentUrl.split('?')[0];
 
-       var s =  this.ortho['X']['visible'] ? 'on' : 'off';
+       var s = this.ortho['X']['visible'] ? 'on' : 'off';
        var c = this.ortho['Y']['visible'] ? 'on' : 'off';
        var a = this.ortho['Z']['visible'] ? 'on' : 'off';
 
        var bookmark = hostname
-           + '?' + this.bookmarkData['mode'] + '=' + this.bookmarkData['gene']
-           + '&mod=' + this.currentModality
-           + '&h=' + this.currentViewHeight
-           + '&wt=' + this.wtView.getCurrentVolume()['animalName']
-           + '&mut=' + this.mutView.getCurrentVolume()['animalName']
-           + '&s=' + s
-           + '&c=' + c
-           + '&a=' + a
-           + '&wx=' + this.wtView.getIndex('X')
-           + '&wy=' + this.wtView.getIndex('Y')
-           + '&wz=' + this.wtView.getIndex('Z')
-           + '&mx=' + this.mutView.getIndex('X')
-           + '&my=' + this.mutView.getIndex('Y')
-           + '&mz=' + this.mutView.getIndex('Z')                
-           + '&wl=' + this.wtView.getBrightnessLower()
-           + '&wu=' + this.wtView.getBrightnessUpper()
-           + '&ml=' + this.mutView.getBrightnessLower()
-           + '&mu=' + this.mutView.getBrightnessUpper()
-           + '&o=' + this.currentOrientation
-           + '&zoom=' + this.currentZoom;
-       return bookmark;
+                + '?' + this.bookmarkData['mode'] + '=' + this.bookmarkData['gene']
+                + '&pid=' + this.currentModality
+                + '&h=' + this.currentViewHeight
+                + '&s=' + s
+                + '&c=' + c
+                + '&a=' + a
+                + '&o=' + this.currentOrientation
+                + '&zoom=' + this.currentZoom
+                + '&sb=' + this.scales.currentBarSize
+                + '&wn=' + this.wtView.getCurrentVolume()['animalName']        
+                + '&wx=' + this.wtView.getIndex('X')
+                + '&wy=' + this.wtView.getIndex('Y')
+                + '&wz=' + this.wtView.getIndex('Z')
+                + '&wl=' + this.wtView.getBrightnessLower()
+                + '&wu=' + this.wtView.getBrightnessUpper()
+                + '&mn=' + this.mutView.getCurrentVolume()['animalName']                
+                + '&mx=' + this.mutView.getIndex('X')
+                + '&my=' + this.mutView.getIndex('Y')
+                + '&mz=' + this.mutView.getIndex('Z')
+                + '&ml=' + this.mutView.getBrightnessLower()
+                + '&mu=' + this.mutView.getBrightnessUpper();
+            return bookmark;
    };
 
 
@@ -449,6 +455,10 @@ iev.embryoviewer.prototype.centreSelector = function() {
        for (var i=0; i < this.views.length; ++i){
            this.views[i].rescale(this.scales.currentBarSize);   
        }
+       
+       //test do we need?
+       //window.dispatchEvent(new Event('resize'));
+       //currentZoom = 0;
    };
 
 
@@ -532,7 +542,7 @@ iev.embryoviewer.prototype.loadViewers = function(){
 
        // only load if baseline data available
        if (this.objSize(wildtypeData) > 0){
-           var wtConfig = {'specimen': this.bookmarkData['wt'] };
+           var wtConfig =  this.bookmarkData['wt'];
            this.wtView = new iev.specimenview(
                    wildtypeData, 
                    'wt', 
@@ -906,7 +916,7 @@ iev.embryoviewer.prototype.getNewFileName = function(volData){
                .slider({
                    min: 200,
                    max: 1920,
-                   value: 500,
+                   value: this.currentViewHeight,
                    slide: $.proxy(function (event, ui) {
                        this.currentViewHeight = ui.value;
                        $('.sliceWrap').css('height', ui.value);                            
@@ -1092,7 +1102,7 @@ iev.embryoviewer.prototype.setInitialViewerHeight = function(){
    /* add a new stylesheet fort the specimen view wrapper height as it's not been created yet */
    //If we are on a laptop we may not want to set the minimum size too small
    var viewHeight = this.availableViewHeight < 200 ? 200 : this.availableViewHeight;
-
+   this.currentViewHeight = viewHeight;
    $("<style type='text/css'> .sliceWrap{height:" + viewHeight + "px;}</style>").appendTo("head");
 
 };
@@ -1136,6 +1146,7 @@ iev.embryoviewer.prototype.setViewOrientation = function(orientation){
 
        window.dispatchEvent(new Event('resize'));      
     }
+      this.currentZoom = 0; //reset zoom
 };
 
    

@@ -67,7 +67,7 @@ iev.specimenview = function(volumeData, id, container,
     this.zOffset = 0;
     this.ready = false;
     this.progressSpinner;
-    this.contrast = config['specimen'].brightness;
+ 
     /** @const */ 
     this.WILDTYPE_COLONYID = 'baseline';
 
@@ -76,11 +76,11 @@ iev.specimenview = function(volumeData, id, container,
     this.bookmarkHasVolume = false;
 
     // If the config has a specimen, select that instead
-    if (config['specimen']) {
+     if (config.hasOwnProperty('n')) {
         for (var key in volumeData) {
             if (volumeData.hasOwnProperty(key)) {
                 var vol = volumeData[key];
-                if (vol['animalName'] === config['specimen']['name']) {
+                if (vol['animalName'] === config['n']) {
                     this.currentVolume = vol;
                     this.bookmarkHasVolume = true;
                     break;
@@ -359,14 +359,14 @@ iev.specimenview.prototype.setBookmarkContrast = function() {
 
     // Set lower contrast level
     var lower = parseInt(this.volume.windowLow);
-    if (this.contrast['lower'] !== null) {
-        lower = Math.max(this.contrast['lower'], parseInt(this.volume.windowLow));                
+    if ('l' in this.config) {
+        lower = Math.max(parseInt(this.config['l']), parseInt(this.volume.windowLow));                
     }
 
     // Set upper this.contrast level
     var upper = parseInt(this.volume.windowHigh);
-    if (this.contrast['upper'] !== null) {
-        upper = Math.min(this.contrast['upper'], parseInt(this.volume.windowHigh));                             
+    if ('u' in this.config) {
+        upper = Math.min(parseInt(this.config['u']), parseInt(this.volume.windowHigh));                             
     }
 
     // Set this.volume modifed
@@ -999,10 +999,9 @@ iev.specimenview.prototype.xtk_showtime = function() {
     // Let main know of the new dimensions of the orthogonal views
 
     // It appears that dimensins are in yxz order. At least with nii loading
-    var pos = this.config['specimen']['pos'];
-    this.volume.indexX = !isNaN(pos['x']) ? pos['x'] : pos['x']; //Math.floor((dims[0] - 1) / 2);
-    this.volume.indexY = !isNaN(pos['y']) ? pos['y'] : pos['y']; //Math.floor((dims[1] - 1) / 2);
-    this.volume.indexZ = !isNaN(pos['z']) ? pos['z'] : pos['z']; //Math.floor((dims[2] - 1) / 2);
+    this.volume.indexX = 'x' in this.config ? parseInt(this.config['x']) : Math.floor((dims[0] - 1) / 2);
+    this.volume.indexY = 'y' in this.config ? parseInt(this.config['y']) : Math.floor((dims[1] - 1) / 2);
+    this.volume.indexZ = 'z' in this.config ? parseInt(this.config['z']) : Math.floor((dims[2] - 1) / 2);
 
     this.makeIndexSlider(this.$xSlider, 'X', dims[0] - 1);
     this.makeIndexSlider(this.$ySlider, 'Y', dims[1] - 1);

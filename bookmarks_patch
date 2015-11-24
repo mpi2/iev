@@ -1,78 +1,26 @@
 diff --git a/src/main/webapp/index.jsp b/src/main/webapp/index.jsp
-index b0ee794..f47cc15 100755
+index 5ce4a72..b0ee794 100755
 --- a/src/main/webapp/index.jsp
 +++ b/src/main/webapp/index.jsp
-@@ -286,26 +286,42 @@ limitations under the License.
-                     }
-                 };
+@@ -297,7 +297,7 @@ limitations under the License.
                  
--                jQuery.extend({
--                    getQueryParameters : function(str) {
--                        return (str || document.location.search).replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
--                    }
--                });
-                 
--                var queryParams = $.getQueryParameters();
--                var bookmarkData = {'wt': {}, 'mut': {}};
--                
--                for (var k in queryParams) {
--                    if (queryParams.hasOwnProperty(k)) {                        
--                        if (k.startsWith('w')) {                            
--                            bookmarkData['wt'][k.substring(1)] = queryParams[k];
--                        } else if (k.startsWith('m')) {
--                            bookmarkData['mut'][k.substring(1)] = queryParams[k];
--                        } else {
--                            bookmarkData[k] = queryParams[k];
-+                var bookmarkData = {
-+                    mode: null,
-+                    gene: null,
-+                    modality: "<%= request.getParameter("mod")%>",
-+                    h: parseInt(<%= request.getParameter("h")%>),
-+                    wt: {
-+                        name: "<%= request.getParameter("wt")%>",
-+                        pos: {
-+                            x: parseInt(<%= request.getParameter("wx")%>),
-+                            y: parseInt(<%= request.getParameter("wy")%>),
-+                            z: parseInt(<%= request.getParameter("wz")%>)
-+                        },
-+                        brightness: {
-+                            lower: <%= request.getParameter("wl")%>,
-+                            upper: <%= request.getParameter("wu")%>
-                         }
--                    }
--                }
-+                    },         
-+                    mut: {
-+                        name: "<%= request.getParameter("mut")%>",
-+                        pos: {
-+                            x: parseInt(<%= request.getParameter("mx")%>),
-+                            y: parseInt(<%= request.getParameter("my")%>),
-+                            z: parseInt(<%= request.getParameter("mz")%>)
-+                        },
-+                        brightness: {
-+                            lower: <%= request.getParameter("ml")%>,
-+                            upper: <%= request.getParameter("mu")%>
-+                        }
-+                    },
-+                    s: "<%= request.getParameter("s")%>",
-+                    c: "<%= request.getParameter("c")%>",
-+                    a: "<%= request.getParameter("a")%>",
-+                    zoom: parseInt(<%= request.getParameter("zoom")%>),
-+                    orientation: "<%= request.getParameter("o")%>"
-+                };
-                 
-                 if (colonyId !== 'null'){
-                     bookmarkData['mode'] = "colony_id";
+                 for (var k in queryParams) {
+                     if (queryParams.hasOwnProperty(k)) {                        
+-                        if (k.startsWith('w')) {                             
++                        if (k.startsWith('w')) {                            
+                             bookmarkData['wt'][k.substring(1)] = queryParams[k];
+                         } else if (k.startsWith('m')) {
+                             bookmarkData['mut'][k.substring(1)] = queryParams[k];
 diff --git a/src/main/webapp/js/main.js b/src/main/webapp/js/main.js
-index 921f7bc..58a7e50 100755
+index 04c0466..921f7bc 100755
 --- a/src/main/webapp/js/main.js
 +++ b/src/main/webapp/js/main.js
 @@ -29,7 +29,7 @@
          var spinner; // Progress spinner
          var currentZoom = 0;
          var currentOrientation = 'horizontal';
--        var currentViewHeight = 500;
-+        var currentViewHeight;
+-        var currentViewHeight;
++        var currentViewHeight = 500;
          var bookmarkReady = false;
          var mgi;
          var gene_symbol;
@@ -80,227 +28,207 @@ index 921f7bc..58a7e50 100755
          
          var volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
          
--        if ('pid' in bookmarkData) {
--            volorder.unshift(bookmarkData['pid']);
-+        if (bookmarkData['modality'] !== "null") {
-+            volorder.unshift(bookmarkData['modality']);
+-        if ('mod' in bookmarkData) {
+-            volorder.unshift(bookmarkData['mod']);
++        if ('pid' in bookmarkData) {
++            volorder.unshift(bookmarkData['pid']);
          }
            
          
-@@ -351,7 +351,7 @@
-                 }
- 
-                 // Set orientation
--                if (bookmarkData['o'] === 'vertical') {
-+                if (bookmarkData['orientation'] === 'vertical') {
-                     $("#orientation_button").trigger("click");
-                 }
- 
-@@ -364,11 +364,6 @@
+@@ -364,6 +364,11 @@
                      $viewHeight.slider('value', bookmarkData['h']);
                      $viewHeight.slider("option", "slide").call($viewHeight, null, { value: bookmarkData['h']});
                  }
--                
--                // Set scale bar
--                if (bookmarkData['sb']) {
--                    scales.currentBarSize = bookmarkData['sb'];
--                }
++                
++                // Set scale bar
++                if (bookmarkData['sb']) {
++                    scales.currentBarSize = bookmarkData['sb'];
++                }
  
                  // Set ready
                  bookmarkReady = true;
-@@ -388,26 +383,25 @@
+@@ -383,7 +388,7 @@
              
              var bookmark = hostname
                  + '?' + bookmarkData['mode'] + '=' + bookmarkData['gene']
--                + '&pid=' + currentModality
-+                + '&mod=' + currentModality
+-                + '&mod=' + currentModality
++                + '&pid=' + currentModality
                  + '&h=' + currentViewHeight
-+                + '&wt=' + wtView.getCurrentVolume()['animalName']
-+                + '&mut=' + mutView.getCurrentVolume()['animalName']
                  + '&s=' + s
                  + '&c=' + c
-                 + '&a=' + a
--                + '&o=' + currentOrientation
--                + '&zoom=' + currentZoom
--                + '&sb=' + scales.currentBarSize
--                + '&wn=' + wtView.getCurrentVolume()['animalName']        
+@@ -391,13 +396,13 @@
+                 + '&o=' + currentOrientation
+                 + '&zoom=' + currentZoom
+                 + '&sb=' + scales.currentBarSize
+-                + '&w=' + wtView.getCurrentVolume()['animalName']        
++                + '&wn=' + wtView.getCurrentVolume()['animalName']        
                  + '&wx=' + wtView.getIndex('X')
                  + '&wy=' + wtView.getIndex('Y')
                  + '&wz=' + wtView.getIndex('Z')
--                + '&wl=' + wtView.getBrightnessLower()
--                + '&wu=' + wtView.getBrightnessUpper()
--                + '&mn=' + mutView.getCurrentVolume()['animalName']                
+                 + '&wl=' + wtView.getBrightnessLower()
+                 + '&wu=' + wtView.getBrightnessUpper()
+-                + '&m=' + mutView.getCurrentVolume()['animalName']                
++                + '&mn=' + mutView.getCurrentVolume()['animalName']                
                  + '&mx=' + mutView.getIndex('X')
                  + '&my=' + mutView.getIndex('Y')
--                + '&mz=' + mutView.getIndex('Z')
-+                + '&mz=' + mutView.getIndex('Z')                
-+                + '&wl=' + wtView.getBrightnessLower()
-+                + '&wu=' + wtView.getBrightnessUpper()
-                 + '&ml=' + mutView.getBrightnessLower()
--                + '&mu=' + mutView.getBrightnessUpper();
-+                + '&mu=' + mutView.getBrightnessUpper()
-+                + '&o=' + currentOrientation
-+                + '&zoom=' + currentZoom;
-             return bookmark;
-         }
-                 
-@@ -456,8 +450,7 @@
+                 + '&mz=' + mutView.getIndex('Z')
+@@ -451,7 +456,8 @@
                  views[i].rescale(scales.currentBarSize);   
              }
             
--            window.dispatchEvent(new Event('resize'));
--            currentZoom = 0;
-+            window.dispatchEvent(new Event('resize')); 
+-            window.dispatchEvent(new Event('resize')); 
++            window.dispatchEvent(new Event('resize'));
++            currentZoom = 0;
          }
          
          
-@@ -550,14 +543,14 @@
+@@ -544,14 +550,14 @@
              
              // only load if baseline data available
              if (objSize(wildtypeData) > 0){
--                var wtConfig = bookmarkData['wt'];
-+                var wtConfig = {specimen: bookmarkData['wt'] };
+-                var wtConfig = {specimen: bookmarkData['wt'] };
++                var wtConfig = bookmarkData['wt'];
                  wtView = new iev.specimenview(wildtypeData, 'wt', container, 
                      WILDTYPE_COLONYID, sliceChange, wtConfig, loadedCb, localStorage);
                  views.push(wtView);
              }
              
              // Set mutant specimen based on bookmark   
--            var mutConfig = bookmarkData['mut'];
-+            var mutConfig = {specimen: bookmarkData['mut'] };
+-            var mutConfig = {specimen: bookmarkData['mut']};
++            var mutConfig = bookmarkData['mut'];
              mutView = new iev.specimenview(mutantData, 'mut', container, 
                  queryId, sliceChange, mutConfig, loadedCb, localStorage);
              views.push(mutView);   
-@@ -854,7 +847,8 @@
+@@ -848,8 +854,7 @@
                  for (var i = 0; i < views.length; i++) {
                      views[i].setVisibleViews(ortho, count, horizontalView);
                  }
--                window.dispatchEvent(new Event('resize'));                
-+                window.dispatchEvent(new Event('resize'));
-+                
+-                window.dispatchEvent(new Event('resize'));
+-                
++                window.dispatchEvent(new Event('resize'));                
                  currentZoom = 0; // necessary as the zoom resets on change
  
              });
-@@ -917,7 +911,7 @@
+@@ -912,7 +917,7 @@
                      .slider({
                          min: 200,
                          max: 1920,
--                        value: currentViewHeight,
-+                        value: 500,
+-                        value: 500,
++                        value: currentViewHeight,
                          slide: $.proxy(function (event, ui) {
                              currentViewHeight = ui.value;
                              $('.sliceWrap').css('height', ui.value);                            
-@@ -1106,7 +1100,6 @@
+@@ -1101,6 +1106,7 @@
          /* add a new stylesheet fort the specimen view wrapper height as it's not been created yet */
          //If we are on a laptop we may not want to set the minimum size too small
          var viewHeight = availableViewHeight < 200 ? 200 : availableViewHeight;
--        currentViewHeight = viewHeight;
++        currentViewHeight = viewHeight;
          
          $("<style type='text/css'> .sliceWrap{height:" + viewHeight + "px;}</style>").appendTo("head");
     
-@@ -1122,14 +1115,13 @@
+@@ -1116,13 +1122,14 @@
                  width: '50%',
                  clear: 'none'
                         
--            });
--            $('.sliceWrap').css({
--                   width: '100%'
--            });
--            window.dispatchEvent(new Event('resize')); 
-+                });
-+                $('.sliceWrap').css({
-+                       width: '100%'
-+                });
-+                window.dispatchEvent(new Event('resize')); 
+-                });
+-                $('.sliceWrap').css({
+-                       width: '100%'
+-                });
+-                window.dispatchEvent(new Event('resize')); 
++            });
++            $('.sliceWrap').css({
++                   width: '100%'
++            });
++            window.dispatchEvent(new Event('resize')); 
         
           }
--         
++         
           if (orientation === 'horizontal'){
               
              horizontalView = false;
-@@ -1149,11 +1141,8 @@
+@@ -1142,8 +1149,11 @@
  
              });
             
--            window.dispatchEvent(new Event('resize'));
--            
-+            window.dispatchEvent(new Event('resize'));      
+-            window.dispatchEvent(new Event('resize'));      
++            window.dispatchEvent(new Event('resize'));
++            
           }
--         
--         currentZoom = 0; //reset zoom
++         
++         currentZoom = 0; //reset zoom
      }
      
  
 diff --git a/src/main/webapp/js/specimenview.js b/src/main/webapp/js/specimenview.js
-index 53f5dc8..bf80951 100755
+index bf80951..53f5dc8 100755
 --- a/src/main/webapp/js/specimenview.js
 +++ b/src/main/webapp/js/specimenview.js
 @@ -67,7 +67,7 @@ if (typeof dcc === 'undefined')
      this.zOffset = 0;
      this.ready = false;
      this.progressSpinner;
--
-+    this.contrast = config['specimen']['brightness'];
+-    this.contrast = config['specimen']['brightness'];
++
      /** @const */ 
      this.WILDTYPE_COLONYID = 'baseline';
  
-@@ -76,18 +76,19 @@ if (typeof dcc === 'undefined')
+@@ -76,19 +76,18 @@ if (typeof dcc === 'undefined')
      this.bookmarkHasVolume = false;
  
      // If the config has a specimen, select that instead
--    if (config.hasOwnProperty('n')) {
-+    if (config['specimen']) {
+-    if (config['specimen']) {
++    if (config.hasOwnProperty('n')) {
          for (var key in volumeData) {
              if (volumeData.hasOwnProperty(key)) {
                  var vol = volumeData[key];
--                if (vol['animalName'] === config['n']) {
-+                if (vol['animalName'] === config['specimen']['name']) {
+-                if (vol['animalName'] === config['specimen']['name']) {
++                if (vol['animalName'] === config['n']) {
                      this.currentVolume = vol;
                      this.bookmarkHasVolume = true;
                      break;
                  }
              }
--        }
--    }           
-+        }           
-+    }
-+
+-        }           
+-    }
+-
++        }
++    }           
  
      /*
       * 
-@@ -358,14 +359,14 @@ iev.specimenview.prototype.setBookmarkContrast = function() {
+@@ -359,14 +358,14 @@ iev.specimenview.prototype.setBookmarkContrast = function() {
  
      // Set lower contrast level
      var lower = parseInt(this.volume.windowLow);
--    if ('l' in this.config) {
--        lower = Math.max(parseInt(this.config['l']), parseInt(this.volume.windowLow));                
-+    if (this.contrast['lower'] !== null) {
-+        lower = Math.max(this.contrast['lower'], parseInt(this.volume.windowLow));                
+-    if (this.contrast['lower'] !== null) {
+-        lower = Math.max(this.contrast['lower'], parseInt(this.volume.windowLow));                
++    if ('l' in this.config) {
++        lower = Math.max(parseInt(this.config['l']), parseInt(this.volume.windowLow));                
      }
  
--    // Set upper contrast level
-+    // Set upper this.contrast level
+-    // Set upper this.contrast level
++    // Set upper contrast level
      var upper = parseInt(this.volume.windowHigh);
--    if ('u' in this.config) {
--        upper = Math.min(parseInt(this.config['u']), parseInt(this.volume.windowHigh));                             
-+    if (this.contrast['upper'] !== null) {
-+        upper = Math.min(this.contrast['upper'], parseInt(this.volume.windowHigh));                             
+-    if (this.contrast['upper'] !== null) {
+-        upper = Math.min(this.contrast['upper'], parseInt(this.volume.windowHigh));                             
++    if ('u' in this.config) {
++        upper = Math.min(parseInt(this.config['u']), parseInt(this.volume.windowHigh));                             
      }
  
      // Set this.volume modifed
-@@ -987,10 +988,12 @@ iev.specimenview.prototype.xtk_showtime = function() {
+@@ -988,12 +987,10 @@ iev.specimenview.prototype.xtk_showtime = function() {
      var dims = this.volume.dimensions;           
  
      // Let main know of the new dimensions of the orthogonal views
-+
+-
      // It appears that dimensins are in yxz order. At least with nii loading
--    this.volume.indexX = 'x' in this.config ? parseInt(this.config['x']) : Math.floor((dims[0] - 1) / 2);
--    this.volume.indexY = 'y' in this.config ? parseInt(this.config['y']) : Math.floor((dims[1] - 1) / 2);
--    this.volume.indexZ = 'z' in this.config ? parseInt(this.config['z']) : Math.floor((dims[2] - 1) / 2);
-+    var pos = this.config['specimen']['pos'];
-+    this.volume.indexX = !isNaN(pos['x']) ? pos['x'] : pos['x']; //Math.floor((dims[0] - 1) / 2);
-+    this.volume.indexY = !isNaN(pos['y']) ? pos['y'] : pos['y']; //Math.floor((dims[1] - 1) / 2);
-+    this.volume.indexZ = !isNaN(pos['z']) ? pos['z'] : pos['z']; //Math.floor((dims[2] - 1) / 2);
+-    var pos = this.config['specimen']['pos'];
+-    this.volume.indexX = !isNaN(pos['x']) ? pos['x'] : pos['x']; //Math.floor((dims[0] - 1) / 2);
+-    this.volume.indexY = !isNaN(pos['y']) ? pos['y'] : pos['y']; //Math.floor((dims[1] - 1) / 2);
+-    this.volume.indexZ = !isNaN(pos['z']) ? pos['z'] : pos['z']; //Math.floor((dims[2] - 1) / 2);
++    this.volume.indexX = 'x' in this.config ? parseInt(this.config['x']) : Math.floor((dims[0] - 1) / 2);
++    this.volume.indexY = 'y' in this.config ? parseInt(this.config['y']) : Math.floor((dims[1] - 1) / 2);
++    this.volume.indexZ = 'z' in this.config ? parseInt(this.config['z']) : Math.floor((dims[2] - 1) / 2);
  
      this.makeIndexSlider(this.$xSlider, 'X', dims[0] - 1);
      this.makeIndexSlider(this.$ySlider, 'Y', dims[1] - 1);
