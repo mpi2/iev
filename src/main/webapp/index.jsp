@@ -387,7 +387,7 @@
     <!--Slice view template-->
     <script id="slice_view_template" type="text/x-handlebars-template">
         <div class="sliceWrap noselect" id="{{sliceWrapId}}">
-            <div class='scale_outer scale_outer_{{id}}' >
+            <div id="scale_outer{{id}}{{orientation}}"  class='scale_outer scale_outer_{{id}}' >
                 <div class="scale" id="{{scaleId}}">
                 </div>
                 <div class='scale_text' id="{{scaleTextId}}"></div>

@@ -565,42 +565,45 @@ iev.specimenview.prototype.drawScaleBar = function() {
     // render_(). Otherwose normalizScale will not have been set
     
      setTimeout(function () {
-        this.drawScale(this.yRen, 'scale_' + 'Y' + this.id, 'scaletext_' + 'Y' + this.id);
-        this.drawScale(this.zRen, 'scale_' + 'Z' + this.id, 'scaletext_' + 'Z' + this.id);
-        this.drawScale(this.xRen, 'scale_' + 'X' + this.id, 'scaletext_' + 'X' + this.id );
+        this.drawScale(this.yRen);
+        this.drawScale(this.zRen);
+        this.drawScale(this.xRen);
     }.bind(this), 20);  
 };
         
             
-iev.specimenview.prototype.drawScale = function(ren, scaleId, scaleTextId){
+iev.specimenview.prototype.drawScale = function(ren){
 
-    var $scaleouter =  $('.scale_outer_' + this.id);
+	var $scaleouter =  $('#scale_outer' + this.id + ren.orientation);
+	var $scaleId = $('#scale_' + ren.orientation + this.id);
+	var $scaletext = $('#scaletext_' + ren.orientation + this.id);
+    
 
-    if (this.currentVolume["rescaledPixelsize"] === null ||  this.currentVolume["rescaledPixelsize"] === 0){
-        $scaleouter.hide();
-        return;
-    }
-    $scaleouter.show();
+	if (this.currentVolume["rescaledPixelsize"] === null ||  this.currentVolume["rescaledPixelsize"] === 0){
+		$scaleouter.hide();
+		return;
+	}
+	$scaleouter.show();
 
-    var pixel_size = this.currentVolume["rescaledPixelsize"];
-    var bar_size_pixels = (this.scaleBarSize / pixel_size) * ren.normalizedScale;
+	var pixel_size = this.currentVolume["rescaledPixelsize"];
+	var bar_size_pixels = (this.scaleBarSize / pixel_size) * ren.normalizedScale;
 
-    var outer_height = $('.scale_outer').height();
-    var top = (outer_height - bar_size_pixels) / 2;
-
-    $('#'+ scaleId).css(
-       {'height': bar_size_pixels, 
-        'width': '2px',
-        'position': 'absolute',
-        'top': top
-    });
-    $('#' + scaleTextId).css(
-        {
-        'position': 'absolute',
-        'top': top - 20,
-        'font-size': '10px'
-    });
-};      
+	var outer_height = $scaleouter.height();
+	var top = (outer_height - bar_size_pixels) / 2;
+   
+	$scaleId.css(
+	   {'height': bar_size_pixels, 
+		'width': '2px',
+		'position': 'absolute',
+		'top': top
+	});
+	$scaletext.css(
+		{
+		'position': 'absolute',
+		'top': top - 20,
+		'font-size': '10px'
+	});
+};         
         
               
 iev.specimenview.prototype.rescale = function(scale){
@@ -1189,6 +1192,7 @@ iev.specimenview.prototype.setVisibleViews = function(viewList, count, horizonta
     } else {
         this.$zWrap.hide();
     }
+    this.drawScaleBar();
 };
 
 
