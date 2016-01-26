@@ -14,7 +14,7 @@
 
 #DIV_20 {
     color: rgb(102, 102, 102);
-/*    height: 50px;*/
+    height: 50px;
     /*min-width: 960px;*/
     position: relative;
     width: 100%;
@@ -498,7 +498,6 @@ fieldset{
     /*height: auto;*/
 }
 
-
 .overlayWrap {
     height: 100%;
     position: relative;
@@ -510,7 +509,6 @@ fieldset{
     
     padding: 2px 2px 2px 2px;
 }
-
 
 .windowLevel{
     float: left;
@@ -649,10 +647,7 @@ Specimens that have uindetermined sex
   
  
   
-  .selectmenu{
-      position:relative;
-      z-index: 2000;
-  }
+
 
 /* select with custom icons */
   .ui-selectmenu-menu .ui-menu.customicons .ui-menu-item {

@@ -193,10 +193,10 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
                     ana.geneSymbol = '';
 
                     // Create volume/overlay URLs
-                    ana['volume_url'] = analysisUrl(ana, 'average', OUTPUT_FILE_EXT);
-                    ana['jacobian'] = analysisUrl(ana, 'jacobian', OUTPUT_FILE_EXT);
-                    ana['intensity'] = analysisUrl(ana, 'intensity', OUTPUT_FILE_EXT);
-                    ana['labelmap'] = analysisUrl(ana, 'labelmap', OUTPUT_FILE_EXT);
+                    ana['volume_url'] = this.analysisUrl(ana, 'average', this.OUTPUT_FILE_EXT);
+                    ana['jacobian'] = this.analysisUrl(ana, 'jacobian', this.OUTPUT_FILE_EXT);
+                    ana['intensity'] = this.analysisUrl(ana, 'intensity', this.OUTPUT_FILE_EXT);
+                    ana['labelmap'] = this.analysisUrl(ana, 'labelmap', this.OUTPUT_FILE_EXT);
 
                     // Add populate average volume
                     modData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
@@ -242,7 +242,7 @@ iev.embryoviewer.prototype.analysisUrl = function(data, name, ext){
      * @param {json} data Data for colonyID 
      */
 
-    var url = ANA_SERVER + data.cid + '/' 
+    var url = this.ANA_SERVER + data.cid + '/' 
             + data.lid + '/' 
             + data.gid + '/' 
             + data.sid + '/' 
@@ -789,7 +789,7 @@ iev.embryoviewer.prototype.getNewFileName = function(volData){
 
        $('#analysis_button').click(function(e) {
                 this.wtView.showAnalysisData();
-            }.bind(this));
+       }.bind(this));
 
 
         $("#help_link").button({

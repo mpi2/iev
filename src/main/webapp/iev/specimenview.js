@@ -71,7 +71,7 @@ iev.specimenview = function(volumeData, id, container,
     this.zOffset = 0;
     this.ready = false;
     this.progressSpinner;
-    this.contrast = config['specimen']['brightness'];
+    //this.contrast = config['specimen']['brightness'];
     /** @const */ 
     this.WILDTYPE_COLONYID = 'baseline';
 
@@ -79,22 +79,37 @@ iev.specimenview = function(volumeData, id, container,
     this.currentVolume = volumeData[Object.keys(volumeData)[0]];
     this.bookmarkHasVolume = false;
 
-    // If the config has a specimen, select that instead
-    if (config.hasOwnProperty('n')) {
-        for (var key in volumeData) {
-            if (volumeData.hasOwnProperty(key)) {
-                var vol = volumeData[key];
-                if (vol['animalName'] === config['n']) {
-                    this.currentVolume = vol;
-                    this.bookmarkHasVolume = true;
-                    break;
-                }
-            }
-            if (this.currentLabelmap in vol) {
-                this.analysisVolume = key;
-            }
+//    // If the config has a specimen, select that instead
+//    if (config.hasOwnProperty('n')) {
+//        for (var key in volumeData) {
+//            if (volumeData.hasOwnProperty(key)) {
+//                var vol = volumeData[key];
+//                if (vol['animalName'] === config['n']) {
+//                    this.currentVolume = vol;
+//                    this.bookmarkHasVolume = true;
+//                    break;
+//                }
+//            }
+//            if (this.currentLabelmap in vol) {
+//                this.analysisVolume = key;
+//            }
+//        }
+//    }
+
+
+    for (var key in volumeData) {
+        var vol = volumeData[key];
+
+        if (config['specimen'] && vol['animalName'] === config['specimen']['name']) {
+            this.currentVolume = vol;
+            this.bookmarkHasVolume = true;
         }
-    }
+        
+        if (this.currentLabelmap in vol) {
+            this.analysisVolume = key;
+        }
+                     
+    }           
     
     // The html source for the Handelbar template
     var progressSource   = $("#progress_template").html();

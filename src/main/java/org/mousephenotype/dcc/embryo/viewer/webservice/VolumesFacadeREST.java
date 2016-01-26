@@ -17,6 +17,7 @@ package org.mousephenotype.dcc.embryo.viewer.webservice;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -105,12 +106,19 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
                 q.setParameter("centreId", cid);
                 List<Preprocessed> v = q.getResultList();
                 centreResults.put(cid, v);
-
-		TypedQuery<Analysis> qAna = em.createNamedQuery("Analysis.findByCidGid", Analysis.class);
-    		qAna.setParameter("cid", cid);
-                qAna.setParameter("gid", gid);
-    		List<Analysis> ana = qAna.getResultList();
-		analysisResults.put(cid, ana);
+                
+                try{
+                    EntityManager emA = getEntityManager();
+                    TypedQuery<Analysis> qAna = emA.createNamedQuery("Analysis.findByCidGid", Analysis.class);
+                    qAna.setParameter("cid", cid);
+                    qAna.setParameter("gid", gid);
+                    List<Analysis> ana = qAna.getResultList();
+                    analysisResults.put(cid, ana);
+                }catch (Exception e){
+                    //"NamedQuery of name: Analysis.findByCidGid not found."
+                    System.out.println("Analysis opps");
+                }
+    		
             }
 	    
        
