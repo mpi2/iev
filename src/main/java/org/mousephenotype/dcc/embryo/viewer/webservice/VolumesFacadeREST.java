@@ -31,6 +31,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.mousephenotype.dcc.embryo.viewer.entities.Preprocessed;
+import org.mousephenotype.dcc.embryo.viewer.entities.Analysis;
+
 
 @Stateless
 @Path("volumes")
@@ -88,26 +90,36 @@ public class VolumesFacadeREST extends AbstractFacade<Preprocessed> {
             }
            
             //Get a set of unique centre IDs
+            int gid = -1;
             Set<Integer> set = new HashSet<>();
             for (Preprocessed p1 : p) {
                 set.add(p1.getCid());
+                gid = p1.getGid();
             }
             
             EntityManager em = getEntityManager();
             HashMap<Integer, List<Preprocessed>> centreResults = new HashMap<>();
-            for (Integer cid : set){
-                
+	    HashMap<Integer, List<Analysis>> analysisResults = new HashMap<>();
+            for (Integer cid : set){                
                 TypedQuery<Preprocessed> q = em.createNamedQuery(secondSearch, Preprocessed.class);
                 q.setParameter(searchType, searchTerm);
                 q.setParameter("centreId", cid);
                 List<Preprocessed> v = q.getResultList();
                 centreResults.put(cid, v);
+
+		TypedQuery<Analysis> qAna = em.createNamedQuery("Analysis.findByCidGid", Analysis.class);
+    		qAna.setParameter("cid", cid);
+                qAna.setParameter("gid", gid);
+    		List<Analysis> ana = qAna.getResultList();
+		analysisResults.put(cid, ana);
             }
+	    
        
             HashMap<String, Object> allResults = new HashMap<>();
             allResults.put("success", true);
             allResults.put("num_centres", set.size());
             allResults.put("centre_data", centreResults);
+	    allResults.put("analysis_data", analysisResults);
             em.close();
             System.out.println("all");
             System.out.println(allResults);

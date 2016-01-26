@@ -12,8 +12,9 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
      */
    this.data = data;
    this.IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-   //var IMAGE_SERVER = 'http://localhost:8000/'; // For testing localhost
-   this.WILDTYPE_COLONYID = 'baseline'
+   this.ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
+   this.WILDTYPE_COLONYID = 'baseline';
+   this.OUTPUT_FILE_EXT = '.nrrd';
    this.queryId = queryId;
    this.horizontalView;
    this.wtView;
@@ -179,6 +180,28 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
                     }
                 }
             }
+                            // Get analysis data, if it exists         
+                for (var j = 0; j < this.objSize(data['analysis_data'][cen]); j++) {
+                    
+                    $('#analysis_button').removeClass('disabled');
+                    $('#analysis_button').prop('title', 'Display analysis');
+                    
+                    var ana = data['analysis_data'][cen][j];
+                    ana.zygosity = 'Mixed';
+                    ana.animalName = 'Population average';
+                    ana.sex = 'no data';
+                    ana.geneSymbol = '';
+
+                    // Create volume/overlay URLs
+                    ana['volume_url'] = analysisUrl(ana, 'average', OUTPUT_FILE_EXT);
+                    ana['jacobian'] = analysisUrl(ana, 'jacobian', OUTPUT_FILE_EXT);
+                    ana['intensity'] = analysisUrl(ana, 'intensity', OUTPUT_FILE_EXT);
+                    ana['labelmap'] = analysisUrl(ana, 'labelmap', OUTPUT_FILE_EXT);
+
+                    // Add populate average volume
+                    modData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
+                    modData[ana.pid]['vols']['mutant'][ana.volume_url] = ana;
+                }                
             this.centreData[cen] = modData;
 
         }
@@ -212,6 +235,24 @@ iev.embryoviewer = function(data, div, queryType, queryId, bookmarkData) {
     
 };  // Constructor
 
+iev.embryoviewer.prototype.analysisUrl = function(data, name, ext){
+    /**
+     * Create url for the analysis data, based on type and extension
+     * @method analysisUrl
+     * @param {json} data Data for colonyID 
+     */
+
+    var url = ANA_SERVER + data.cid + '/' 
+            + data.lid + '/' 
+            + data.gid + '/' 
+            + data.sid + '/' 
+            + data.pid + '/' 
+            + data.qid + '/' 
+            + data.id + '/'
+            + name + ext;
+
+    return url;
+};
 
 iev.embryoviewer.prototype.scaleLabels = function(){
           
@@ -408,6 +449,8 @@ iev.embryoviewer.prototype.centreSelector = function() {
                 + '&mz=' + this.mutView.getIndex('Z')
                 + '&ml=' + this.mutView.getBrightnessLower()
                 + '&mu=' + this.mutView.getBrightnessUpper();
+                + '&wto=' + this.wtView.getLabelmap()
+                + '&muto=' + this.mutView.getLabelmap();
             return bookmark;
    };
 
@@ -744,9 +787,10 @@ iev.embryoviewer.prototype.getNewFileName = function(volData){
            this.setLowPowerState(e.currentTarget.checked);
        }.bind(this));
 
-         // Style the control buttons
+       $('#analysis_button').click(function(e) {
+                this.wtView.showAnalysisData();
+            }.bind(this));
 
-       
 
         $("#help_link").button({
             icons: {
@@ -755,8 +799,6 @@ iev.embryoviewer.prototype.getNewFileName = function(volData){
 
         }).css({width: '30'});
 
-
-    
 
        $("#reset")
 

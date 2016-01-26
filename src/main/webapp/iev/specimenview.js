@@ -57,9 +57,13 @@ iev.specimenview = function(volumeData, id, container,
     this.yRen;
     this.zRen;
     this.volume;
+    this.analysisVolume;
+    this.hasLabelmap = false;
+    this.currentLabelmap = 'jacobian';
     this.scaleBarSize;
     this.lowPower = false;
     this.windowLevel = 'windowLevel_' + id;
+    this.overlayControl = 'overlayControl_' + id;
     this.vselector = 'volumeSelector_' + id;
     this.inverted = false;
     this.xOffset = 0;
@@ -67,7 +71,7 @@ iev.specimenview = function(volumeData, id, container,
     this.zOffset = 0;
     this.ready = false;
     this.progressSpinner;
- 
+    this.contrast = config['specimen']['brightness'];
     /** @const */ 
     this.WILDTYPE_COLONYID = 'baseline';
 
@@ -76,7 +80,7 @@ iev.specimenview = function(volumeData, id, container,
     this.bookmarkHasVolume = false;
 
     // If the config has a specimen, select that instead
-     if (config.hasOwnProperty('n')) {
+    if (config.hasOwnProperty('n')) {
         for (var key in volumeData) {
             if (volumeData.hasOwnProperty(key)) {
                 var vol = volumeData[key];
@@ -86,7 +90,10 @@ iev.specimenview = function(volumeData, id, container,
                     break;
                 }
             }
-        }           
+            if (this.currentLabelmap in vol) {
+                this.analysisVolume = key;
+            }
+        }
     }
     
     // The html source for the Handelbar template
@@ -105,6 +112,8 @@ iev.specimenview = function(volumeData, id, container,
     this.FEMALE_ICON = "female.png";
     /** @const */ 
     this.MALE_ICON = "male.png";
+    /** @const */ 
+    this.MIXED_ICON = 'mixed.png';
     
     this.NDSEX_ICON = "unknown_sex.png"
     /** @const */ 
@@ -165,11 +174,19 @@ iev.specimenview = function(volumeData, id, container,
     
     this.createHTML();
     this.updateVolumeSelector();        
-    this.jQuerySelectors();        
+    this.jQuerySelectors();
+    this.setupOverlayControls();        
     this.setupRenderers();
     this.drawScaleBar();        
 };
-        
+
+iev.specimenview.prototype.showAnalysisData = function() {
+    if (this.analysisVolume && this.currentVolume['volume_url'] !== this.analysisVolume) {
+        $('#' + this.vselector).val(this.analysisVolume);
+        $('#' + this.vselector).iconselectmenu("refresh");     
+        this.replaceVolume(this.analysisVolume);
+    }
+};
         
 iev.specimenview.prototype.updateData = function (volumes){
     /*
@@ -221,14 +238,14 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
         var url = this.volumeData[i]['volume_url'];
         var sex = this.volumeData[i].sex.toLowerCase();
         var zygosity = this.volumeData[i].zygosity.toLowerCase();
-        if (sex === 'no data') sex ='no_data';
+        if (sex === 'no data') sex = 'no_data';
         
         var idForSexZygosityIcon;
        
         if (this.volumeData[i].colonyId === this.WILDTYPE_COLONYID){
             idForSexZygosityIcon = 'specimenSelectIcon ' + sex + '_' + 'wildtype';
-        }else{
-              var idForSexZygosityIcon = 'specimenSelectIcon ' + sex + '_' + zygosity;
+        } else {
+            idForSexZygosityIcon = 'specimenSelectIcon ' + sex + '_' + zygosity;
         }
       
         var animalNameForDisplay = this.volumeData[i].animalName.substring(0, 25);
@@ -260,12 +277,33 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
             })
             .iconselectmenu("refresh");                  
 }
+
+iev.specimenview.prototype.setupOverlayControls = function() {
+
+    // Set the checked button
+    var button = $('input:radio', '#' + this.overlayControl).filter('[value=' + this.currentLabelmap + ']'); // '#' + this.overlayControl, 
+    button.prop('checked', true);
         
-        
+    // Set up overlay controls
+    $('#' + this.overlayControl).buttonset();
+    
+    // On click
+    $('#' + this.overlayControl).click(function(e) {
+        var overlay_type = $('input[type=radio]:checked', e.currentTarget).prop("value");
+        if (this.currentLabelmap !== overlay_type) {  // check if anything changed
+            this.currentLabelmap = overlay_type;        
+            this.replaceVolume(this.currentVolume['volume_url']);
+        }
+    }.bind(this));
+};
         
 iev.specimenview.prototype.showMetadata = function(){
 
-    var date = new Date(this.currentVolume.experimentDate)
+    if (this.currentVolume.experimentDate) {
+        var date = new Date(this.currentVolume.experimentDate);
+    } else {
+        var date = new Date(this.currentVolume.dateAnalysed);
+    }
 
     var displayDate = this.monthNames[date.getMonth()];
 
@@ -279,7 +317,7 @@ iev.specimenview.prototype.showMetadata = function(){
     else if (this.currentVolume.sex.toLowerCase() === 'male'){
         sexIconPath = this.IMG_DIR + this.MALE_ICON;
     }
-    else if (this.currentVolume.sex.toLowerCase() === 'no data'){
+    else {
          sexIconPath = this.IMG_DIR + this.NDSEX_ICON;
     }
 
@@ -302,6 +340,9 @@ iev.specimenview.prototype.showMetadata = function(){
                 break;
             case 'hemizygous':
                 zygIcon = this.HEMI_ICON;
+                break;
+            default:
+                zygIcon = this.HOM_ICON;
                 break;
         }
     }
@@ -354,6 +395,40 @@ iev.specimenview.prototype.setContrastSlider = function() {
 };
 
 
+iev.specimenview.prototype.setLabelmap = function(overlay_type) {
+    if (overlay_type !== "none") {
+        
+        var labelmap = this.currentVolume[overlay_type];
+        var cmap = labelmap.slice(0, -5) + '.txt';
+        
+        this.volume.labelmap.file = labelmap;
+        this.volume.labelmap.colortable.file = cmap;
+
+        if (overlay_type === "labelmap") {
+            this.volume.labelmap.opacity = 0.5;
+        }
+                
+    }
+}
+
+iev.specimenview.prototype.getLabelmap = function() {
+    if (this.hasLabelmap) {
+        return this.currentLabelmap;
+    } else {
+        return "none";
+    }
+}
+
+
+iev.specimenview.prototype.showHideOverlayControls = function() {
+    
+    if (this.hasLabelmap) {
+        this.$overlayControl.show();
+    } else {
+        this.$overlayControl.hide();
+    }
+
+};
         
 iev.specimenview.prototype.setBookmarkContrast = function() {
 
@@ -512,7 +587,8 @@ iev.specimenview.prototype.jQuerySelectors = function(){
     this.$yWrap = $('#sliceWrap_Y_' + this.id);
     this.$zWrap = $('#sliceWrap_Z_' + this.id);
     this.$windowLevel = $('#' + this.windowLevel);
-};
+    this.$overlayControl = $('#' + this.overlayControl);
+}
         
         
         
@@ -530,7 +606,8 @@ iev.specimenview.prototype.controls_tab = function() {
         controlsButtonsId: "controlsButtons_" + this.id,
         selectorWrapId: "selectorWrap_" + this.id,
         vselectorId: this.vselector,
-        windowLevelId: this.windowLevel 
+        windowLevelId: this.windowLevel,
+	overlayId: this.overlayControl
     };
 
     var source   = $("#slice_controls_template").html();
@@ -699,11 +776,14 @@ iev.specimenview.prototype.setupRenderers = function() {
         }                           
     }.bind(this);
     
+    // Set flag if overlay exists (checks by jacobian)      
+    this.hasLabelmap = 'jacobian' in this.currentVolume;
 
     this.xRen.onShowtime = function(){   
         // we have to wait before volumes have fully loaded before we
         // can extract intesity information                
-        this.setContrastSlider();                
+        this.setContrastSlider();   
+	this.showHideOverlayControls();              
         this.setReady();                
     }.bind(this);
 
@@ -739,6 +819,10 @@ iev.specimenview.prototype.setupRenderers = function() {
     this.localStorage.getVolume(this.currentVolume['volume_url'], 
                                 new Date(this.currentVolume['lastUpdate']),
                                 this.onFetchedData.bind(this));  
+// add jacobian overlay by default (if it exists)            
+    if (this.hasLabelmap) {
+        this.setLabelmap(this.currentLabelmap);
+    }
     };
 
 
