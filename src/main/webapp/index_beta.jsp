@@ -30,25 +30,24 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-        <script src="lib/handlebars.min.js"></script>
-        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
+        <script src="js/handlebars.min.js"></script>
+        <!--<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>-->
         <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
-        <script type="text/javascript" src="lib/xtk.js"></script>
-        <script type="text/javascript" src="iev/iev_deps.js"></script>
-        <!--<script type="text/javascript" src="iev/iev_compiled.js"></script>-->
-        <script type="text/javascript" src="lib/spin.min.js"></script>
-        <script type="text/javascript" src="lib/fileDownload.js"></script>
+        <script type="text/javascript" src="js/xtk.js"></script>
+        <script type="text/javascript" src="js/embryo.js"></script>
+        <script type="text/javascript" src="js/specimenview.js"></script>
+        <!--<script type="text/javascript" src="js/specimenview_gc_min.js"></script>-->
+        <script type="text/javascript" src="js/main.js"></script>
+        <!--<script type="text/javascript" src="js/sliceview.js"></script>-->
+        <script type="text/javascript" src="js/localStorage.js"></script>
+        <script type="text/javascript" src="js/spin.min.js"></script>
+        <script type="text/javascript" src="js/fileDownload.js"></script>
         <script type="text/javascript" src="http://www.mousephenotype.org/data/js/head.min.js?v=2.0.2"></script>
-        <script type="text/javascript" src="lib/jquery.qtip.min.js"></script>
-        <script type="text/javascript" src="lib/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="lib/dataTables.tableTools.min.js"></script>
-
-
+        <script type="text/javascript" src="js/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="js/dataTables.tableTools.min.js"></script>
         
-
-        
-        <link rel="stylesheet" type="text/css" href="css/embryo.css">
-        
+        <link rel="stylesheet" type="text/css" href="css/embryo.css">        
         <link type="text/css" rel="stylesheet" href="css/css_FOZ_d3UAptpDgO0Bi3g0O_i_hnW9qo3cnnlJ7zHLIpU.css" media="all" /> <!--needed?-->
         <link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" media="all" />
         <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" media="all" />
@@ -155,21 +154,22 @@ limitations under the License.
                    
              
                     
+            </div>
+            <fieldset id="orthogonal_views_buttons_fieldset">
+                <legend>Views</legend>
+                <div id="orthogonal_views_buttons">
+                    <input type="checkbox" id="X_check" class='toggle_slice' title="Sagittal" checked>
+                    <label for="X_check" id='X_check_label'>S</label>
+                    <input type="checkbox" id="Y_check" class='toggle_slice' title="Coronal" checked>
+                    <label for="Y_check" id='Y_check_label'>C</label>
+                    <input type="checkbox" id="Z_check" class='toggle_slice' title="Axial" checked>
+                    <label for="Z_check" id='Z_check_label'>A</label>
+
+                    <div id='orientation_buttons'>
+                    <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation"></div>
+                  </div>    
                 </div>
-                <fieldset id="orthogonal_views_buttons_fieldset">
-                    <legend>Views</legend>
-                    <div id="orthogonal_views_buttons">
-                        <input type="checkbox" id="X_check" class='toggle_slice' title="Sagittal" checked>
-                        <label for="X_check" id='X_check_label'>S</label>
-                        <input type="checkbox" id="Y_check" class='toggle_slice' title="Coronal" checked>
-                        <label for="Y_check" id='Y_check_label'>C</label>
-                        <input type="checkbox" id="Z_check" class='toggle_slice' title="Axial" checked>
-                        <label for="Z_check" id='Z_check_label'>A</label>
-                   
-                        <div id='orientation_buttons'>
-                        <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation"></div>
-                 
-                </fieldset>
+            </fieldset>
                 
             <fieldset id="scale_fieldset" title="Configure scale bar">
                 <legend>Scale bar
@@ -184,7 +184,6 @@ limitations under the License.
                     <select name="centre_select" id="centre_select">
                     </select>                
             </fieldset>
-               
             
             <fieldset id="heightslider_fieldset" title="Increase/decrease height">
                 <legend>View height</legend>
@@ -240,8 +239,6 @@ limitations under the License.
 
                         <input type="radio" id="204" name="project" class="modality_button">
                         <label for="204" class="button_label">&#956;CT E18.5</label>
-
-
                     </div>
                 </fieldset>
             </div>
@@ -256,9 +253,6 @@ limitations under the License.
         </div>
             </div> <!-- iev -->
         
-            <script>
-                 goog.require('iev.embryo');
-            </script>
         <script>
             window.addEventListener('load', function () {
                 
@@ -291,42 +285,59 @@ limitations under the License.
                     }
                 };
                 
-                jQuery.extend({
-                    getQueryParameters : function(str) {
-                        return (str || document.location.search).replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
-                    }
-                });
                 
-                var queryParams = $.getQueryParameters();
-                var bookmarkData = {'wt': {}, 'mut': {}};
-                
-                for (var k in queryParams) {
-                    if (queryParams.hasOwnProperty(k)) {                        
-                        if (k.startsWith('w')) {                            
-                            bookmarkData['wt'][k.substring(1)] = queryParams[k];
-                        } else if (k.startsWith('m')) {
-                            bookmarkData['mut'][k.substring(1)] = queryParams[k];
-                        } else {
-                            bookmarkData[k] = queryParams[k];
+                var bookmarkData = {
+                    mode: null,
+                    gene: null,
+                    modality: "<%= request.getParameter("mod")%>",
+                    h: parseInt(<%= request.getParameter("h")%>),
+                    wt: {
+                        name: "<%= request.getParameter("wt")%>",
+                        overlay: "<%= request.getParameter("wto")%>",
+                        pos: {
+                            x: parseInt(<%= request.getParameter("wx")%>),
+                            y: parseInt(<%= request.getParameter("wy")%>),
+                            z: parseInt(<%= request.getParameter("wz")%>)
+                        },
+                        brightness: {
+                            lower: <%= request.getParameter("wl")%>,
+                            upper: <%= request.getParameter("wu")%>
                         }
-                    }
-                }
-                var dccGetter = new iev.embryo();
+                    },         
+                    mut: {
+                        name: "<%= request.getParameter("mut")%>",
+                        overlay: "<%= request.getParameter("muto")%>",
+                        pos: {
+                            x: parseInt(<%= request.getParameter("mx")%>),
+                            y: parseInt(<%= request.getParameter("my")%>),
+                            z: parseInt(<%= request.getParameter("mz")%>)
+                        },
+                        brightness: {
+                            lower: <%= request.getParameter("ml")%>,
+                            upper: <%= request.getParameter("mu")%>
+                        }
+                    },
+                    s: "<%= request.getParameter("s")%>",
+                    c: "<%= request.getParameter("c")%>",
+                    a: "<%= request.getParameter("a")%>",
+                    zoom: parseInt(<%= request.getParameter("zoom")%>),
+                    orientation: "<%= request.getParameter("o")%>"
+                };
                 
                 if (colonyId !== 'null'){
                     bookmarkData['mode'] = "colony_id";
                     bookmarkData['gene'] = colonyId;
-                    dccGetter.getVolumesByColonyId(colonyId, bookmarkData);
+                    iev.getVolumesByColonyId(colonyId, bookmarkData);
                 }
                 else if (geneSymbol !== 'null') {
                     bookmarkData['mode'] = "gene_symbol";
                     bookmarkData['gene'] = geneSymbol;
-                    dccGetter.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
+                    iev.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
                 }
                 else if (mgi !== 'null') {
                     bookmarkData['mode'] = "mgi";
                     bookmarkData['gene'] = mgi;
-                    dccGetter.getVolumesByMgi(mgi, bookmarkData);
+                    iev.getVolumesByMgi(mgi, bookmarkData);
                 }
                
             });
@@ -340,11 +351,10 @@ limitations under the License.
                 var header_menu_source;
                 //Set the correct menu depending on which sub-domain we're on
                 switch (location.hostname) {
-                    
                     case 'localhost':
                         header_menu_source = 'menudisplaycombinedrendered.html';
                         break;
-                    case 'www.mousephenotype.org':
+                    case 'mousephenotype.org':
                         header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
                         break;
                     case 'beta.mousephenotype.org':
@@ -389,10 +399,8 @@ limitations under the License.
             <div class="selectorWrap" id="{{selectorWrapId}}" title="Select an embryo">
                 <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:1100'></select>
             </div>
-            <div class="wlwrap">
-               
-                <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
-             
+            <div class="wlwrap">               
+                <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>             
             </div>
     
             <div class="overlayWrap">
@@ -452,17 +460,6 @@ limitations under the License.
             </div>
         </div>
     </script>
-    
-    
-    <script id="dataNotFoundTemplate" type="text/x-handlebars-template">
-        <div class="ievLoading" id="noData{{id}}">
-            <div class="ievLoadingMsg" id="noDataMsg{{id}}">
-            Sorry. This data could not be loaded<br>
-    Please contact us at sig@har.mrc.ac.uk <br>quoting {{colonyId}}:{{animalId}}. Thanks 
-            </div>
-        </div>
-    </script>
-
 
 
     <!--No data template-->
