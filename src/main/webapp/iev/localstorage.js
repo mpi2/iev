@@ -68,6 +68,22 @@ iev.LocalStorage.prototype.getVolume = function (url, remoteDate, callback) {
      * lastUpdated: last time volume was modified on server
      * callbac: where to send the resulting volume data
      */
+    
+    // For chrome
+    var test = navigator.webkitTemporaryStorage;
+    if (typeof navigator.webkitTemporaryStorage != 'undefined'){
+        navigator.webkitTemporaryStorage.queryUsageAndQuota ( 
+        function(usedBytes, grantedBytes) {  
+            var used_gb = usedBytes / 1024 / 1024 / 1024;
+            used_gb = used_gb.toFixed(2)
+            var granted_gb = grantedBytes / 1024 / 1024 / 1024;
+            granted_gb = granted_gb.toFixed(2);
+            console.log('we are using ', used_gb, ' of ', granted_gb, 'Gigabytes');
+        }, 
+        function(e) { console.log('Error', e);  }
+        );
+    }
+    
     if (this.idbSupported) {
         this._checkForKey(url, function (key_exists) {
             if (key_exists) { 
