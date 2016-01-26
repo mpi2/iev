@@ -59,7 +59,7 @@ iev.specimenview = function(volumeData, id, container,
     this.volume;
     this.analysisVolume;
     this.hasLabelmap = false;
-    this.currentLabelmap = 'jacobian';
+    this.currentLabelmap = 'ov' in config ? config['ov'] : 'jacobian';
     this.scaleBarSize;
     this.lowPower = false;
     this.windowLevel = 'windowLevel_' + id;
@@ -79,33 +79,16 @@ iev.specimenview = function(volumeData, id, container,
     this.currentVolume = volumeData[Object.keys(volumeData)[0]];
     this.bookmarkHasVolume = false;
 
-//    // If the config has a specimen, select that instead
-//    if (config.hasOwnProperty('n')) {
-//        for (var key in volumeData) {
-//            if (volumeData.hasOwnProperty(key)) {
-//                var vol = volumeData[key];
-//                if (vol['animalName'] === config['n']) {
-//                    this.currentVolume = vol;
-//                    this.bookmarkHasVolume = true;
-//                    break;
-//                }
-//            }
-//            if (this.currentLabelmap in vol) {
-//                this.analysisVolume = key;
-//            }
-//        }
-//    }
-
-
     for (var key in volumeData) {
         var vol = volumeData[key];
-
-        if (config['specimen'] && vol['animalName'] === config['specimen']['name']) {
+        
+        if ('n' in config && vol['animalName'] === config['n']) {
             this.currentVolume = vol;
             this.bookmarkHasVolume = true;
+            break;
         }
-        
-        if (this.currentLabelmap in vol) {
+
+        if (this.currentLabelmap in vol) {       
             this.analysisVolume = key;
         }
                      
@@ -291,7 +274,7 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
                 }, this)
             })
             .iconselectmenu("refresh");                  
-}
+};
 
 iev.specimenview.prototype.setupOverlayControls = function() {
 
@@ -834,11 +817,12 @@ iev.specimenview.prototype.setupRenderers = function() {
     this.localStorage.getVolume(this.currentVolume['volume_url'], 
                                 new Date(this.currentVolume['lastUpdate']),
                                 this.onFetchedData.bind(this));  
-// add jacobian overlay by default (if it exists)            
+                                
+    // Add jacobian overlay by default (if it exists)            
     if (this.hasLabelmap) {
         this.setLabelmap(this.currentLabelmap);
     }
-    };
+};
 
 
 iev.specimenview.prototype.onFetchedData = function (filedata) {

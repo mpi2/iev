@@ -232,7 +232,7 @@ limitations under the License.
                 <fieldset id="modality_stage_fieldset">
                     <legend>Modality/stage selection</legend>
                     <div id="modality_stage" title="Change modality">
-                        <input type="radio" id="202" class=low"modality_button" name="project">
+                        <input type="radio" id="202" class="modality_button" name="project">
                         <label for="202" class="button_label">OPT E9.5</label>
                         
                         <input type="radio" id="203" name="project" class="modality_button">
