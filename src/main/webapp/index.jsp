@@ -468,7 +468,11 @@ limitations under the License.
     <!--No data template-->
     <script id="no_data_template" type="text/x-handlebars-template">
         <div class="nodata">
-        <p>There are no data currently available for {{queryType}}: {{colonyId}}</p>
+        <p>&nbsp;</p>
+        <p>There are no data currently available for {{queryType}}: <strong>{{colonyId}}</strong></p>
+        
+        <p>Click <a target="none" href="https://www.mousephenotype.org/data/search/gene?kw=*&fq=(embryo_data_available:%22true%22)">here</a> to see all available data</p> 
+
         </div>
     </script>
     
@@ -487,7 +491,8 @@ limitations under the License.
         <!--redirect from test template-->
     <script id="redirect_test_template" type="text/x-handlebars-template">
         <div class="nodata">
-        <p>This test no longer works. Try this one:<br> <a href="https://beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7" target="_top">beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7</a></p>
+        <p>This test no longer works. Try this one:</p>
+        <p><a href="https://www.mousephenotype.org/embryoviewer?gene_symbol=Klf7" target="_top">beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7</a></p>
         </div>
     </script>
     

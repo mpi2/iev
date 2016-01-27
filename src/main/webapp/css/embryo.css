@@ -475,7 +475,8 @@ fieldset{
 }
 
 .nodata {
-    font: 1.5em arial, sans-serif;
+    vertical-align: middle;
+    font-size: 46px;
     top: 50%;
     position: relative;
     /*background-color: #E6E6E6;*/
