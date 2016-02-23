@@ -506,6 +506,15 @@ limitations under the License.
 
     </script>
     
+    <script id="downloadTableRowTemplateHighRes" type="text/x-handlebars-template">
+     
+       <tr>
+       <td style="background-color: {{bg}}">{{volDisplayName}}</td>
+       <td><a href={{remotePath}}>Download</a></td>
+       </tr>
+
+    </script>
+    
     
             <!--Specimen metadata template-->
     <script id="specimenMetdataTemplate" type="text/x-handlebars-template">

@@ -1,6 +1,7 @@
 goog.provide('iev.embryoviewer');
 goog.require('iev.specimenview');
 goog.require('iev.LocalStorage');
+goog.require('iev.Download');
 //goog.require('iev.templates')
 
 
@@ -21,7 +22,8 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
     this.mutView;
     this.currentModality;
     this.currentCentreId;
-    this.downloadTableRowSource;
+    this.downloadTableRowSourceLow;
+    this.downloadTableRowSourceHigh;
     this.spinner; // Progress spinner
     this.currentZoom = 0;
     this.currentOrientation = 'horizontal';
@@ -32,6 +34,7 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
     this.availableViewHeight; // The window height minus all the header and controls heights
     this.bookmarkData = bookmarkData;
     this.isBrowserIE = this.isInternetExplorer();
+    this.downloader = new iev.Download(this);
 
     if (this.isBrowserIE === 'oldIe') {
         console.log('IEV does not support Internet Explorer <v11')
@@ -115,30 +118,6 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
         11: 'UCD',
         12: 'Wtsi'
     };
-
-    this.spinnerOpts = {
-        lines: 8 // The number of lines to draw
-        , length: 6 // The length of each line
-        , width: 6 // The line thickness
-        , radius: 8 // The radius of the inner circle
-        , scale: 1 // Scales overall size of the spinner
-        , corners: 1 // Corner roundness (0..1)
-        , color: '#ef7b0b' // #rgb or #rrggbb or array of colors
-        , opacity: 0.2 // Opacity of the lines
-        , rotate: 0 // The rotation offset
-        , direction: 1 // 1: clockwise, -1: counterclockwise
-        , speed: 1 // Rounds per second
-        , trail: 50 // Afterglow percentage
-        , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-        , zIndex: 2e9 // The z-index (defaults to 2000000000)
-        , className: 'spinner' // The CSS class to assign to the spinner
-        , top: '50%' // Top position relative to parent
-        , left: '70%' // Left position relative to parent
-        , shadow: false // Whether to render a shadow
-        , hwaccel: true // Whether to use hardware acceleration
-        , position: 'absolute' // Element positioning
-    };
-
 
 
     this.ICONS_DIR = "images/centre_icons/"; //not used??
@@ -354,17 +333,25 @@ iev.embryoviewer.prototype.buildUrl = function (data) {
      * @method buildUrl
      * @param {json} data Data for colonyID 
      */
-
-    var url = this.IMAGE_SERVER + data.cid + '/'
+    var root = this.IMAGE_SERVER + data.cid + '/'
             + data.lid + '/'
             + data.gid + '/'
             + data.sid + '/'
             + data.pid + '/'
-            + data.qid + '/'
-            + data.imageForDisplay;
-    //+ data.url;
-
-    data['volume_url'] = url;
+            + data.qid + '/';
+    
+    //Low res just need relative path to image as it's zipped server side
+    var lowResUrl = root + data.imageForDisplay;
+    var lowResName = data.imageForDisplay.split('.')[0];
+    var base = lowResName.split('_')[0];
+    var ext = data.imageForDisplay.split('.')[1];
+    
+    // High res need full link to image on server
+    var highResName = base + '_download.' + ext;
+    var highResUrl = root + highResName;
+    
+    data['volume_url'] = lowResUrl;
+    data['volume_url_high_res'] = highResUrl;
 
     return data;
 }
@@ -755,31 +742,7 @@ iev.embryoviewer.prototype.setLowPowerState = function (state) {
 };
 
 
-iev.embryoviewer.prototype.getNewFileName = function (volData) {
-    /* .. function:: loadxhtml(url, data, reqtype, mode)
-     The file names in the Preprocessed db are just procedure performed? 
-     We need domething more informative downloading
-     
-     Parameters:
-     
-     * `volData`: object
-     containing al the data from the database for this volume
-     
-     Returns: String
-     */
-    //var path = volData['volume_url'];
-    var sex = volData['sex'];
-    if (sex === 'No data') {
-        sex = 'undeterminedSex';
-    }
-    ;
-    var geneSymbol = this.sanitizeFileName(volData['geneSymbol']);
-    var animalName = this.sanitizeFileName(volData['animalName']);
-    var newPath = sex + '_' + animalName + '_' + geneSymbol;
-    return newPath;
 
-
-};
 
 iev.embryoviewer.prototype.attachEvents = function () {
     /**
@@ -869,7 +832,8 @@ iev.embryoviewer.prototype.attachEvents = function () {
     // Set up the table for available downloads
     $('#download').click(function (e) {
         e.preventDefault();
-        this.setupDownloadTable(e);
+        this.downloader.setupDownloadTable()
+//        this.setupDownloadTable(e);
     }.bind(this));
 
     // Create bookmark when clicked
@@ -973,133 +937,7 @@ iev.embryoviewer.prototype.attachEvents = function () {
             });
 
     ;
-    // Put this here as calling this multiple times does not work
-    this.downloadTableRowSource = $("#downloadTableRowTemplate").html();
 
-};
-
-
-iev.embryoviewer.prototype.setupDownloadTable = function () {
-
-    var dlg = $('#download_dialog').dialog({
-        title: 'Select volumes for download',
-        resizable: true,
-        autoOpen: false,
-        modal: true,
-        hide: 'fade',
-        width: 700,
-        height: 550,
-        position: {my: "left bottom", at: "left top", of: $('#top_bar')}
-    });
-
-
-    var template = Handlebars.compile(this.downloadTableRowSource);
-
-    dlg.load('download_dialog.html', function () {
-
-        for (var pid in this.centreData[this.currentCentreId]) {
-            if (pid !== this.currentModality)
-                continue;  // Only supply current modality data for download
-            var vols = this.centreData[this.currentCentreId][this.currentModality]['vols'];
-            var currentlyViewed = [];
-            for (var i = 0; i < this.views.length; ++i) {
-                currentlyViewed.push(this.views[i].getCurrentVolume()['volume_url'])
-            }
-
-            for (var vol in vols['mutant']) {
-
-                var volData = vols['mutant'][vol];
-                var displayName = this.getNewFileName(volData);
-                var remotePath = volData['volume_url'];
-                var bg = '#FFFFFF';
-                if ($.inArray(remotePath, currentlyViewed) > -1)
-                    bg = '#ef7b0b';
-                var data = {
-                    // We add the display name to the rest request to give a name for the downloads 
-                    remotePath: remotePath + ";" + displayName,
-                    volDisplayName: displayName,
-                    bg: bg
-                };
-
-                $("#mutant_table tbody").append(template(data));
-            }
-            for (var vol in vols['wildtype']) {
-                var volData = vols['wildtype'][vol];
-                var displayName = this.getNewFileName(volData);
-                var remotePath = volData['volume_url'];
-                var bg = '#FFFFFF';
-                if ($.inArray(remotePath, currentlyViewed) > -1)
-                    bg = '#ef7b0b';
-                var data = {
-                    remotePath: remotePath + ";" + displayName,
-                    volDisplayName: displayName,
-                    bg: bg
-                };
-
-                $("#wt_table tbody").append(template(data));
-            }
-        }
-
-        dlg.dialog('open');
-
-        // Once selected on download dialog, download volumes
-        $('#download_dialog_button').click(function () {
-            dlg.dialog('close');
-            this.getZippedVolumes();
-        }.bind(this));
-    }.bind(this));
-};
-
-
-
-iev.embryoviewer.prototype.getZippedVolumes = function (event) {
-    /* Just try zipping one volume for now
-     * 
-     */
-    // Jsut try with one volume for now
-    var volumeURLs = "";
-    var checked = $('#wt_table').find('input[type="checkbox"]:checked')
-    for (var i = 0; i < checked.length; ++i) {
-        var url = checked[i]['name'];
-        volumeURLs += url + ',';
-    }
-    var checked = $('#mutant_table').find('input[type="checkbox"]:checked')
-    for (var i = 0; i < checked.length; ++i) {
-        var url = checked[i]['name'];
-        volumeURLs += url + ',';
-    }
-    var restURL = 'rest/zip?vol=' + volumeURLs;
-    // Start the progress spinner
-
-
-    this.progressIndicator('preparing zip');
-
-    $.fileDownload(restURL, {
-        successCallback: function (url) {
-            this.progressStop();
-        }.bind(this),
-        failCallback: function (html, url) {
-            alert('There was an error downloading the images');
-        }
-    });
-};
-
-iev.embryoviewer.prototype.progressStop = function () {
-    this.spinner.stop();
-    $("#progressMsg").empty();
-};
-
-iev.embryoviewer.prototype.progressIndicator = function (msg) {
-
-    var target = document.getElementById("progressSpin");
-    this.spinner = new Spinner(this.spinnerOpts).spin(target);
-    $("#progressMsg").text(msg);
-};
-
-
-iev.embryoviewer.prototype.sanitizeFileName = function (dirtyString) {
-    var cleanString = dirtyString.replace(/[|&;$%@"<>()+,\/]/g, "");
-    return cleanString;
 };
 
 iev.embryoviewer.prototype.basename = function (path) {

@@ -1103,32 +1103,8 @@ background-color: #DEDEDE;
     background: blue;
 }
 
-///// download table
-#mutant_table{
-    margin-bottom: 10px;
+#close_dialog_button, highlight_msg{
+    margin: 10px;
 }
 
 
-#progress{
-    position:absolute;
-    top: 50px;
-    z-index: 999;
-    height: 30px;
-    width: 30px;
-    
-}
-#progressMsg{
-    color: #ef7b0b;
-    opacity: 0.7;
-    font-size: 12pt;
-    display: table-cell;
-    vertical-align: bottom;
-    height: 70px;
-}
-
-////////// Scale bar //////////////
-#scale {
-    left: 20px;
-    font-size: 0.6em;
-    position: absolute;
-}
