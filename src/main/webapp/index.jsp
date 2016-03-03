@@ -118,7 +118,12 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                         <p><i id="sicon" class="fa fa-search"></i></p>
                         <div class="ui-widget">
                             <input id="s" value="search">
-                            <a><i class="fa fa-question-circle fa-2x searchExample" data-hasqtip="391"></i></a>
+                            <!--for dev-->
+                            <!--<a><i class="fa fa-question-circle fa-2x searchExample" data-hasqtip="391"></i></a>-->
+                            
+                            <!--for live-->
+                            <a><i class='fa fa-info searchExample'></i></a>
+                            
                         </div>
                     </div>
                 </div>
