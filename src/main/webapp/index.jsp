@@ -38,46 +38,48 @@ limitations under the License.
         <!--<script type="text/javascript" src="iev/iev_compiled.js"></script>-->
         <script type="text/javascript" src="lib/spin.min.js"></script>
         <script type="text/javascript" src="lib/fileDownload.js"></script>
-        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/head.min.js?v=2.0.2"></script>
-        <script type="text/javascript" src="lib/jquery.qtip.min.js"></script>
-        <script type="text/javascript" src="lib/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="lib/dataTables.tableTools.min.js"></script>
-
-
+            
+        <!--from duncan-->
+        <script type="text/javascript" src="/data/js/vendor/DataTables-1.10.4/media/js/jquery.dataTables.min.js?v=20150707"></script>
+        <script type="text/javascript" src="/data/js/vendor/DataTables-1.10.4/extensions/TableTools/js/dataTables.tableTools.min.js?v=20150707"></script>
+        <script type="text/javascript" src="/data/js/vendor/jquery.jeditable.js?v=20150707"></script>
+        <!--[if lt IE 9 ]><script type="text/javascript" src="js/selectivizr-min.js"></script><![endif]-->
+        <script type="text/javascript" src="/data/js/vendor/jquery/jquery.qtip-2.2/jquery.qtip.min.js?v=20150707"></script>
+        <script type="text/javascript" src="/data/js/vendor/jquery/jquery.fancybox-2.1.5/jquery.fancybox.pack.js?v=20150707"></script>
+        <script type="text/javascript" src="/data/js/vendor/jquery/jquery.tablesorter.min.js?v=20150707"></script>
+        <script type='text/javascript' src='/data/js/charts/highcharts.js?v=20150707'></script>
+        <script type='text/javascript' src='/data/js/charts/highcharts-more.js?v=20150707'></script>
+        <script type='text/javascript' src='/data/js/charts/exporting.js?v=20150707'></script>
+        <script type='text/javascript' src="/data/js/general/toggle.js?v=20150707"></script>
         
-
+  
+        
+       <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js"></script>
+        <!--<link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">-->
         
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
         
-        <link type="text/css" rel="stylesheet" href="css/css_FOZ_d3UAptpDgO0Bi3g0O_i_hnW9qo3cnnlJ7zHLIpU.css" media="all" /> <!--needed?-->
-        <link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" media="all" />
-        <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" media="all" />
-        <link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css" media="all" />
-        <!--<link type="text/css" rel="stylesheet" href="css/css_JbqXNeGT2vW5-6KTgm-ypazaAqvl8n-0h3My8pH_69Q.css" media="all" />-->
-        <link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">
-        <link rel="stylesheet" href="css/searchPage.css">
-        <!--<link rel="stylesheet" href="css/font-awesome.min.css">-->
+        <!--<link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">-->
+        <link rel="stylesheet" href="/data/css/searchPage.css">
+        <link rel="stylesheet" href="/data/css/default.css">
+        <link rel="stylesheet" href="/data/css/vendor/font-awesome/font-awesome.min.css">
      
         
-        <script>
-            
-            try {
-                console.log(" ");
-            } catch (err) {
-                var console = {};
-                console.log = console.error = console.info = console.debug = console.warn = console.trace = console.dir = console.dirxml = console.group = console.groupEnd = console.time = console.timeEnd = console.assert = console.profile = function () {
-                };
-            }
+<script>
+ var baseUrl = '/data';
+ var solrUrl = null;
 
-            var baseUrl = "/data";
-            var solrUrl = '//www.ebi.ac.uk/mi/impc/beta/solr';
-            var drupalBaseUrl = "//beta.mousephenotype.org";
-            var mediaBaseUrl = "//www.ebi.ac.uk/mi/impc/beta/phenotype-archive/media";
-            console.log("mediaBaseUrl set="+mediaBaseUrl);
-            var pdfThumbnailUrl = "//wwwdev.ebi.ac.uk/mi/media/omero/webgateway/render_thumbnail/119501";
-            console.log("pdfThumbnailUrl set="+pdfThumbnailUrl);
-
-        </script>
+ if ( window.location.hostname == 'dev.mousephenotype.org' ){
+  solrUrl = '/mi/impc/dev/solr';
+}
+else if ( window.location.hostname == 'beta.mousephenotype.org' ){
+  solrUrl = '/mi/impc/beta/solr';
+}
+else  if (window.location.hostname == 'www.mousephenotype.org' ){
+  solrUrl = '/mi/impc/solr';
+}
+//$(".menu-mlid-3127").removeClass( "active" );
+</script>
     </head>
     <body>
         <!-- Got the menu and header code from https://github.com/mpi2/PhenotypeData/ -->
@@ -106,28 +108,27 @@ limitations under the License.
         <div id="iev_subHeader">
 
 
+        <div class="breadcrumb">
 
-            <DIV id="DIV_19"><DIV id="DIV_20"><div class="breadcrumb" id="DIV_1">
-                        <a href="https://mousephenotype.org">Home</a> &raquo;&nbsp;<a href="/data/search">Search</a>&raquo;&nbsp;<a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
+            <a href="//dev.mousephenotype.org">Home</a> » <a href="/data/search">Search</a>&nbsp;» <a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
 
-                        <div class="searchcontent" id="DIV_5">
-                            <div id="DIV_6" class="block">
-                                <div class="content" id="DIV_7">
-                                    <p id="P_8"><i id="I_9" class="fa fa-search"></i></p>
-                                    <div class="ui-widget" id="DIV_10">
-                                        <span role="status" aria-live="polite" class="ui-helper-hidden-accessible" id="SPAN_11"></span><input id="s" class="ui-autocomplete-input" autocomplete="off">
-                                        <a id="A_13"><i class="fa fa-info searchExample" data-hasqtip="1881" id="I_14"></i></a>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="searchcontent">
+                <div id="bigsearchbox" class="block">
+                    <div class="content">
+                        <p><i id="sicon" class="fa fa-search"></i></p>
+                        <div class="ui-widget">
+                            <input id="s" value="search">
+                            <a><i class="fa fa-question-circle fa-2x searchExample" data-hasqtip="391"></i></a>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div id="DIV_15">
-                            <a id="A_16" href="/data/batchQuery"><i class="fa fa-th-list batchQuery" id="I_17"></i><span id="SPAN_18">Batch query</span></a>
-                        </div>
+            <div id="batchQryLink">
+                    <a id="batchquery" href="/data/batchQuery"><i class="fa fa-th-list batchQuery"></i><span id="bqry">Batch search</span></a>
+            </div>
 
-                    </div></DIV></DIV>
-
+        </div>
 <!--<div class="breadcrumb"><a href="/">Home</a> » EmbryoViewer</div><div class="searchcontent"><div id="bigsearchbox" class="block"><div class="content"><p><i id="sicon" class="fa fa-search"></i></p><div class="ui-widget"><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input id="s" class="ui-autocomplete-input" autocomplete="off"><a><i class="fa fa-info searchExample" data-hasqtip="289"></i></a></div><p></p></div></div>
 </div>-->
 
@@ -539,13 +540,10 @@ limitations under the License.
          </div>
     </script>
 
-    <script type='text/javascript' src='/data/js/searchAndFacet/searchAndFacetConfig.js?v=20150807'></script>
-    <script type='text/javascript' src='/data/js/utils/tools.js?v=20150807'></script>
+<!--    <script type='text/javascript' src='/data/js/searchAndFacet/breadcrumbSearchBox.js'></script>-->
+    <script type='text/javascript' src='/data/js/utils/tools.js'></script><!--
     <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
-    <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>
-
-
-    <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js?v=20150807"></script>
+    <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>-->
 
     
 </html>
