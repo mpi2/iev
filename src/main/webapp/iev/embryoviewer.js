@@ -6,7 +6,7 @@ goog.require('iev.Download');
 
 
 
-iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
+iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData, nosql=false) {
     /**
      * @class EmbryoViewer
      * @type String
@@ -38,8 +38,8 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
 
     if (this.isBrowserIE === 'oldIe') {
         console.log('IEV does not support Internet Explorer <v11')
-        var source = $("#ie_warning_template").html();
-        var template = Handlebars.compile(source);
+//        var source = $("#ie_warning_template").html();
+        var template = Handlebars.template['ie_warning_template'];
         $('#' + div).append(template(data));
         return;
     }
@@ -48,8 +48,8 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
 
     //Give users a warning about using the deprecated colony_id=test url
     if (queryType === 'colony ID' && this.queryId === 'test') {
-        var source = $("#redirect_test_template").html();
-        var template = Handlebars.compile(source);
+//        var source = $("#redirect_test_template").html();
+        var template = Handlebars.template['redirect_test_template'];
         $('#' + div).append(template());
         return;
     }
@@ -83,7 +83,7 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
 
     this.volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
 
-    if (this.bookmarkData['pid']) {
+    if (this.bookmarkData != null &&  this.bookmarkData['pid']) {
         this.volorder.unshift(this.bookmarkData['pid']);
     }
 
@@ -142,7 +142,7 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
 
                 var obj = data['centre_data'][cen][i];
 
-                this.buildUrl(obj);
+                if (!nosql) this.buildUrl(obj);  // Do not build url for IMPC_media, it's already made
 
                 if (obj.colonyId === this.WILDTYPE_COLONYID) {
                     modData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
@@ -192,8 +192,8 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
             queryType: queryType
         };
 
-        var source = $("#no_data_template").html();
-        var template = Handlebars.compile(source);
+//        var source = $("#no_data_template").html();
+        var template = Handlebars.template['no_data_template'];
         $('#' + div).append(template(data));
     }
 

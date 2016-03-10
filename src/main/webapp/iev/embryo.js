@@ -3,6 +3,9 @@ goog.require('iev.embryoviewer');
 //goog.require('iev');
 
 
+$("#iev").load("iev/viewer.html");
+//$("#iev").load("iev/templates.html");
+
 iev.embryo = function(){
    
 };

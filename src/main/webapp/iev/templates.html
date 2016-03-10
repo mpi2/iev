@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-    
-   <!--Slice controls template-->
+ <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
         <div id="controls_{{id}}"class="controls clear">
             <div class="selectorWrap" id="{{selectorWrapId}}" title="Select an embryo">
@@ -25,6 +9,22 @@ and open the template in the editor.
                 <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
              
             </div>
+    
+            <div class="overlayWrap">
+
+                <div class="overlayToggle" id="{{overlayId}}" style="display: none;">
+                    <input type="radio" id="none_{{overlayId}}" name="{{overlayId}}" value="none">
+                    <label for="none_{{overlayId}}" class="button_label">None</label>
+
+                    <input type="radio" id="jacobian_{{overlayId}}" name="{{overlayId}}" value="jacobian">
+                    <label for="jacobian_{{overlayId}}" class="button_label">Volume</label>
+
+                    <input type="radio" id="intensity_{{overlayId}}" name="{{overlayId}}" value="intensity">
+                    <label for="intensity_{{overlayId}}" class="button_label">Intensity</label>
+                </div>
+        
+            </div>
+    
             <div class="metadata" id="metadata_{{id}}">
             
             <div>
@@ -42,7 +42,7 @@ and open the template in the editor.
     <!--Slice view template-->
     <script id="slice_view_template" type="text/x-handlebars-template">
         <div class="sliceWrap noselect" id="{{sliceWrapId}}">
-            <div class='scale_outer scale_outer_{{id}}' >
+            <div id="scale_outer{{id}}{{orientation}}"  class='scale_outer scale_outer_{{id}}' >
                 <div class="scale" id="{{scaleId}}">
                 </div>
                 <div class='scale_text' id="{{scaleTextId}}"></div>
@@ -83,7 +83,11 @@ and open the template in the editor.
     <!--No data template-->
     <script id="no_data_template" type="text/x-handlebars-template">
         <div class="nodata">
-        <p>There are no data currently available for {{queryType}}: {{colonyId}}</p>
+        <p>&nbsp;</p>
+        <p>There are no data currently available for {{queryType}}: <strong>{{colonyId}}</strong></p>
+        
+        <p>Click <a target="none" href="https://www.mousephenotype.org/data/search/gene?kw=*&fq=(embryo_data_available:%22true%22)">here</a> to see all available data</p> 
+
         </div>
     </script>
     
@@ -102,7 +106,8 @@ and open the template in the editor.
         <!--redirect from test template-->
     <script id="redirect_test_template" type="text/x-handlebars-template">
         <div class="nodata">
-        <p>This test no longer works. Try this one:<br> <a href="https://beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7" target="_top">beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7</a></p>
+        <p>This test no longer works. Try this one:</p>
+        <p><a href="https://www.mousephenotype.org/embryoviewer?gene_symbol=Klf7" target="_top">beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7</a></p>
         </div>
     </script>
     
@@ -112,6 +117,15 @@ and open the template in the editor.
        <tr>
        <td style="background-color: {{bg}}">{{volDisplayName}}</td>
        <td><input type='checkbox' name={{remotePath}}></td>
+       </tr>
+
+    </script>
+    
+    <script id="downloadTableRowTemplateHighRes" type="text/x-handlebars-template">
+     
+       <tr>
+       <td style="background-color: {{bg}}">{{volDisplayName}}</td>
+       <td><a href={{remotePath}}>Download</a></td>
        </tr>
 
     </script>
@@ -139,6 +153,3 @@ and open the template in the editor.
             </div>
          </div>
     </script>
-  
-</html>
-    <!--Slice controls template-->

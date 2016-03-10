@@ -31,6 +31,7 @@ limitations under the License.
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
         <script src="lib/handlebars.min.js"></script>
+        <script src="iev/templates.js"></script>
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
         <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
         <script type="text/javascript" src="lib/xtk.js"></script>
@@ -38,12 +39,12 @@ limitations under the License.
         <!--<script type="text/javascript" src="iev/iev_compiled.js"></script>-->
         <script type="text/javascript" src="lib/spin.min.js"></script>
         <script type="text/javascript" src="lib/fileDownload.js"></script>
-            
-        <!--from duncan-->
-        <script type="text/javascript" src="/data/js/vendor/DataTables-1.10.4/media/js/jquery.dataTables.min.js?v=20150707"></script>
+
+        <!--uncommentfor deployment-->
+<!--        <script type="text/javascript" src="/data/js/vendor/DataTables-1.10.4/media/js/jquery.dataTables.min.js?v=20150707"></script>
         <script type="text/javascript" src="/data/js/vendor/DataTables-1.10.4/extensions/TableTools/js/dataTables.tableTools.min.js?v=20150707"></script>
         <script type="text/javascript" src="/data/js/vendor/jquery.jeditable.js?v=20150707"></script>
-        <!--[if lt IE 9 ]><script type="text/javascript" src="js/selectivizr-min.js"></script><![endif]-->
+        [if lt IE 9 ]><script type="text/javascript" src="js/selectivizr-min.js"></script><![endif]
         <script type="text/javascript" src="/data/js/vendor/jquery/jquery.qtip-2.2/jquery.qtip.min.js?v=20150707"></script>
         <script type="text/javascript" src="/data/js/vendor/jquery/jquery.fancybox-2.1.5/jquery.fancybox.pack.js?v=20150707"></script>
         <script type="text/javascript" src="/data/js/vendor/jquery/jquery.tablesorter.min.js?v=20150707"></script>
@@ -51,18 +52,32 @@ limitations under the License.
         <script type='text/javascript' src='/data/js/charts/highcharts-more.js?v=20150707'></script>
         <script type='text/javascript' src='/data/js/charts/exporting.js?v=20150707'></script>
         <script type='text/javascript' src="/data/js/general/toggle.js?v=20150707"></script>
-        
-  
-        
-       <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js"></script>
-        <!--<link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">-->
-        
+        <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js"></script>
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
-        
-        <!--<link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">-->
         <link rel="stylesheet" href="/data/css/searchPage.css">
         <link rel="stylesheet" href="/data/css/default.css">
-        <link rel="stylesheet" href="/data/css/vendor/font-awesome/font-awesome.min.css">
+        <link rel="stylesheet" href="/data/css/vendor/font-awesome/font-awesome.min.css">-->
+
+
+        <!--for local testing-->
+
+        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/vendor/DataTables-1.10.4/media/js/jquery.dataTables.min.js?v=20150707"></script>
+        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/vendor/DataTables-1.10.4/extensions/TableTools/js/dataTables.tableTools.min.js?v=20150707"></script>
+        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/vendor/jquery.jeditable.js?v=20150707"></script>
+        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/vendor/jquery/jquery.qtip-2.2/jquery.qtip.min.js?v=20150707"></script>
+        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/vendor/jquery/jquery.fancybox-2.1.5/jquery.fancybox.pack.js?v=20150707"></script>
+        <script type="text/javascript" src="http://www.mousephenotype.org/data/js/vendor/jquery/jquery.tablesorter.min.js?v=20150707"></script>
+        <script type='text/javascript' src='http://www.mousephenotype.org/data/js/charts/highcharts.js?v=20150707'></script>
+        <script type='text/javascript' src='http://www.mousephenotype.org/data/js/charts/highcharts-more.js?v=20150707'></script>
+        <script type='text/javascript' src='http://www.mousephenotype.org/data/js/charts/exporting.js?v=20150707'></script>
+        <script type='text/javascript' src="http://www.mousephenotype.org/data/js/general/toggle.js?v=20150707"></script>
+        <script type='text/javascript' src="http://www.mousephenotype.org/data/js/searchAndFacet/breadcrumbSearchBox.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/embryo.css">
+        <link rel="stylesheet" href="http://www.mousephenotype.org/data/css/searchPage.css">
+        <link rel="stylesheet" href="http://www.mousephenotype.org/data/css/default.css">
+        <link rel="stylesheet" href="http://www.mousephenotype.org/data/css/vendor/font-awesome/font-awesome.min.css">
+
+
      
         
 <script>
@@ -104,7 +119,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                 </nav>
             </div>
         </header>
-        <div id="iev">
+
         <div id="iev_subHeader">
 
 
@@ -154,112 +169,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
 <!-- -->
         
         
-      
-        <div id='ievControlsWrap' class="noselect">
-            <div id='top_bar'>
-                <div id='topleft'>
-                   
-             
-                    
-                </div>
-                <fieldset id="orthogonal_views_buttons_fieldset">
-                    <legend>Views</legend>
-                    <div id="orthogonal_views_buttons">
-                        <input type="checkbox" id="X_check" class='toggle_slice' title="Sagittal" checked>
-                        <label for="X_check" id='X_check_label'>S</label>
-                        <input type="checkbox" id="Y_check" class='toggle_slice' title="Coronal" checked>
-                        <label for="Y_check" id='Y_check_label'>C</label>
-                        <input type="checkbox" id="Z_check" class='toggle_slice' title="Axial" checked>
-                        <label for="Z_check" id='Z_check_label'>A</label>
-                   
-                        <div id='orientation_buttons'>
-                        <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation"></div>
-                 
-                </fieldset>
-                
-            <fieldset id="scale_fieldset" title="Configure scale bar">
-                <legend>Scale bar
-                <input type="checkbox" id="scale_visible" name="radio" checked="checked">
-                </legend>
-                <select name="scale_select" id="scale_select"></select>  
-            </fieldset>
-                
-            
-            <fieldset id="centres_fieldset" title="Switch center">
-                <legend>Centres</legend>
-                    <select name="centre_select" id="centre_select">
-                    </select>                
-            </fieldset>
-               
-            
-            <fieldset id="heightslider_fieldset" title="Increase/decrease height">
-                <legend>View height</legend>
-                <div id="viewHeightSlider"></div>
-            </fieldset>
-
-             <fieldset id="zoom_fieldset" title="Zoom views in/out">
-                <legend>Zoom</legend>
-                <span class="button" id="zoomIn">+</span>
-                <span class="button" id ="zoomOut">-</span>   
-                <!--<span class="button" id ="screenShot">c</span>--> 
-            </fieldset>
-
-            <fieldset id="analysis_fieldset">
-                <legend>Analysis</legend>  
-                <div id="analysis_button" class="hoverable disabled"  title="No analysis data available">
-                </div>
-            </fieldset>
-
-            <fieldset id="bookmark_fieldset">
-                <legend>Share</legend>
-                <div id="createBookmark" class="hoverable" title="Generate URL for current view" >
-                    <img src="images/bookmark.png" id="bookmark_img">
-                </div>
-            </fieldset>
-                
-            <fieldset id="color_fieldset">
-                <legend>Other</legend>
-
-                <div id="invertColours" class="ievgrey hoverable" title="Invert colours"></div>   
-                <div id="reset" class="hoverable">
-                      <img src="images/reload.png" title="Restore default view">
-                </div>
-                <div id="download" class="hoverable"  title="Download embryo data">
-                    <img src="images/download.png" id="download_img">
-                </div>
-
-                <div id='lowcpu' title="Toggle dynamic/static slicing">
-                    <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle static/dynamic rendering">
-                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label> 
-                </div>
-
-            </fieldset>
-                
-                <fieldset id="modality_stage_fieldset">
-                    <legend>Modality/stage selection</legend>
-                    <div id="modality_stage" title="Change modality">
-                        <input type="radio" id="202" class="modality_button" name="project">
-                        <label for="202" class="button_label">OPT E9.5</label>
-                        
-                        <input type="radio" id="203" name="project" class="modality_button">
-                        <label for="203" class="button_label">&#956;CT E14/E15.5</label>
-
-                        <input type="radio" id="204" name="project" class="modality_button">
-                        <label for="204" class="button_label">&#956;CT E18.5</label>
-
-
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <div id="viewer" class="noselect">
-            
-            <div id="progress">
-                <div id="progressSpin"></div>
-                <div id="progressMsg"></div>
-            </div>
-        </div>
+            <div id="iev">
             </div> <!-- iev -->
         
             <script>
@@ -336,36 +246,36 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                 }
                
             });
-            
-            (function setupImpcMenus() {
-            /*
-             * Get the dynamically generated menu code. Split into main menu and the login section
-             */
-                var protocol = window.location.protocol === "https:"? 'https' : 'http';
-                
-                var header_menu_source;
-                //Set the correct menu depending on which sub-domain we're on
-                switch (location.hostname) {
-                    
-                    case 'localhost':
-                        header_menu_source = 'menudisplaycombinedrendered.html';
-                        break;
-                    case 'www.mousephenotype.org':
-                        header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                    case 'beta.mousephenotype.org':
-                        header_menu_source = protocol + '://beta.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                    case 'dev.mousephenotype.org':
-                        header_menu_source = protocol + '://dev.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                }
-                $.get(header_menu_source, function (data) {
-                    var menuItems = data.split("MAIN*MENU*BELOW");
-                    $('#block-menu-block-1').append(menuItems[1]);
-                    $('#tn').append(menuItems[0]);
-                });
-              })()
+//            
+//            (function setupImpcMenus() {
+//            /*
+//             * Get the dynamically generated menu code. Split into main menu and the login section
+//             */
+//                var protocol = window.location.protocol === "https:"? 'https' : 'http';
+//                
+//                var header_menu_source;
+//                //Set the correct menu depending on which sub-domain we're on
+//                switch (location.hostname) {
+//                    
+//                    case 'localhost':
+//                        header_menu_source = 'menudisplaycombinedrendered.html';
+//                        break;
+//                    case 'www.mousephenotype.org':
+//                        header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
+//                        break;
+//                    case 'beta.mousephenotype.org':
+//                        header_menu_source = protocol + '://beta.mousephenotype.org/menudisplaycombinedrendered';
+//                        break;
+//                    case 'dev.mousephenotype.org':
+//                        header_menu_source = protocol + '://dev.mousephenotype.org/menudisplaycombinedrendered';
+//                        break;
+//                }
+//                $.get(header_menu_source, function (data) {
+//                    var menuItems = data.split("MAIN*MENU*BELOW");
+//                    $('#block-menu-block-1').append(menuItems[1]);
+//                    $('#tn').append(menuItems[0]);
+//                });
+//              })()
         </script>
 <!--        <script>
             (function (i, s, o, g, r, a, m) {
@@ -386,167 +296,10 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
         <!-- This is where the download dialog goes -->
         <div id="download_dialog"><div>
     </body>
-    
-
-
-    <!--Slice controls template-->
-    <script id="slice_controls_template" type="text/x-handlebars-template">      
-        <div id="controls_{{id}}"class="controls clear">
-            <div class="selectorWrap" id="{{selectorWrapId}}" title="Select an embryo">
-                <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:1100'></select>
-            </div>
-            <div class="wlwrap">
-               
-                <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
-             
-            </div>
-    
-            <div class="overlayWrap">
-
-                <div class="overlayToggle" id="{{overlayId}}" style="display: none;">
-                    <input type="radio" id="none_{{overlayId}}" name="{{overlayId}}" value="none">
-                    <label for="none_{{overlayId}}" class="button_label">None</label>
-
-                    <input type="radio" id="jacobian_{{overlayId}}" name="{{overlayId}}" value="jacobian">
-                    <label for="jacobian_{{overlayId}}" class="button_label">Volume</label>
-
-                    <input type="radio" id="intensity_{{overlayId}}" name="{{overlayId}}" value="intensity">
-                    <label for="intensity_{{overlayId}}" class="button_label">Intensity</label>
-                </div>
-        
-            </div>
-    
-            <div class="metadata" id="metadata_{{id}}">
-            
-            <div>
-        </div>
-    </script>
-
-    <!--Specimen view template-->
-    <script id="specimen_view_template" type="text/x-handlebars-template">  
-        
-        <div id="{{id}}" class='specimen_view noselect'></div>
-
-    </script>
-
-
-    <!--Slice view template-->
-    <script id="slice_view_template" type="text/x-handlebars-template">
-        <div class="sliceWrap noselect" id="{{sliceWrapId}}">
-            <div id="scale_outer{{id}}{{orientation}}"  class='scale_outer scale_outer_{{id}}' >
-                <div class="scale" id="{{scaleId}}">
-                </div>
-                <div class='scale_text' id="{{scaleTextId}}"></div>
-            </div>
-           
-        <div id="{{sliceContainerID}}" class ="sliceView"></div>
-        <div class="sliceControls">
-            <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
-                <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
-                <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
-
-        </div>
-        </div>
-    </script>
-    
-    
-    
-    <script id="progress_template" type="text/x-handlebars-template">
-        <div class="ievLoading" id="ievLoading{{id}}">
-            <div class="ievLoadingMsg" id="ievLoadingMsg{{id}}">
-            Images loading
-            </div>
-        </div>
-    </script>
-    
-    
-    <script id="dataNotFoundTemplate" type="text/x-handlebars-template">
-        <div class="ievLoading" id="noData{{id}}">
-            <div class="ievLoadingMsg" id="noDataMsg{{id}}">
-            Sorry. This data could not be loaded<br>
-    Please contact us at sig@har.mrc.ac.uk <br>quoting {{colonyId}}:{{animalId}}. Thanks 
-            </div>
-        </div>
-    </script>
-
-
-
-    <!--No data template-->
-    <script id="no_data_template" type="text/x-handlebars-template">
-        <div class="nodata">
-        <p>&nbsp;</p>
-        <p>There are no data currently available for {{queryType}}: <strong>{{colonyId}}</strong></p>
-        
-        <p>Click <a target="none" href="https://www.mousephenotype.org/data/search/gene?kw=*&fq=(embryo_data_available:%22true%22)">here</a> to see all available data</p> 
-
-        </div>
-    </script>
-    
-   <!--IE template template-->
-    <script id="ie_warning_template" type="text/x-handlebars-template">
-        <div class="nodata">
-        <p>We do not currently support Internet Explorer, but are looking at supporting it in the near future.</p>
-        <p>For now, We recommend using Chrome of Firefox</p>
-        <div id='browser_icons'>
-            <a href='https://www.mozilla.org/en-GB/firefox/new/'><img src='images/firefox.png'></a>
-            <a href='https://www.google.co.uk/chrome/browser/desktop/'><img src='images/chrome.png'></a>
-        </div>
-        </div>
-    </script>
    
-        <!--redirect from test template-->
-    <script id="redirect_test_template" type="text/x-handlebars-template">
-        <div class="nodata">
-        <p>This test no longer works. Try this one:</p>
-        <p><a href="https://www.mousephenotype.org/embryoviewer?gene_symbol=Klf7" target="_top">beta.mousephenotype.org/embryoviewer?gene_symbol=Klf7</a></p>
-        </div>
-    </script>
-    
-            <!--Download table row template-->
-    <script id="downloadTableRowTemplate" type="text/x-handlebars-template">
-     
-       <tr>
-       <td style="background-color: {{bg}}">{{volDisplayName}}</td>
-       <td><input type='checkbox' name={{remotePath}}></td>
-       </tr>
-
-    </script>
-    
-    <script id="downloadTableRowTemplateHighRes" type="text/x-handlebars-template">
-     
-       <tr>
-       <td style="background-color: {{bg}}">{{volDisplayName}}</td>
-       <td><a href={{remotePath}}>Download</a></td>
-       </tr>
-
-    </script>
-    
-    
-            <!--Specimen metadata template-->
-    <script id="specimenMetdataTemplate" type="text/x-handlebars-template">
-         <div class="centre_logo" id="centre_logo_{{id}}">
-            <img class="logo_img" src="{{centreLogoPath}}"/>
-         </div>
-         <div class="metadata_c1" id="metadata_c1_{{id}}">
-            <div>
-                ID:{{animalId}}
-            </div>
-            <div>
-                Date:{{date}}
-            </div>
-         </div>
-         <div class="metadata_c2" id="metadata_c2_{{id}}">
-            <div>
-                <img class="sexIcon" src="{{sexIconPath}}"/>
-            </div>
-             <div>
-                <img class="zygIcon" src="{{zygIconPath}}"/>
-            </div>
-         </div>
-    </script>
 
 <!--    <script type='text/javascript' src='/data/js/searchAndFacet/breadcrumbSearchBox.js'></script>-->
-    <script type='text/javascript' src='/data/js/utils/tools.js'></script><!--
+<!--    <script type='text/javascript' src='http://www.mousephenotype.org/data/js/utils/tools.js'></script>
     <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>-->
 

@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <meta name="google" content="notranslate" />
+        <title>Interactive Embryo Viewer</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+        <meta name="google" content="notranslate" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+        <script src="lib/handlebars.min.js"></script>
+        <script src="iev/templates.js"></script>
+        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
+        <script type="text/javascript" src="lib/xtk.js"></script>
+        <script type="text/javascript" src="iev/iev_deps.js"></script>
+        <script type="text/javascript" src="lib/spin.min.js"></script>
+        <script type="text/javascript" src="lib/fileDownload.js"></script>
+        <script type="text/javascript" src="lib/js-yaml.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/embryo.css">
+
+</head>
+<body>
+Hello IEV
+    
+<div id='iev'></div>    
+    
+    <script>
+
+
+    goog.require('iev.fileGetter');
+    </script>
+    <script>
+        window.addEventListener('load', function () {          
+            var fileGetter = new iev.fileGetter();
+            fileGetter.loadFilesFromConfig('cbx4');
+        });
+
+    </script>
+    
+</body>
+</html>

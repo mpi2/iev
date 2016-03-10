@@ -95,37 +95,39 @@ iev.specimenview = function(volumeData, id, container,
     }           
     
     // The html source for the Handelbar template
-    var progressSource   = $("#progress_template").html();
-    this.progressTemplate = Handlebars.compile(progressSource);
+    //var progressSource   = $("#progress_template").html();
+    //this.progressTemplate = Handlebars.compile(progressSource);
+    this.progressTemplate = Handlebars.templates['progress_template'];
+
 
     /*
-     * 
+     *
      * A temporary fix to map cid to centre logo icon
      */
-    /** @const */ 
+    /** @const */
     this.ICONS_DIR = "images/centre_icons/";
-    /** @const */ 
+    /** @const */
     this.IMG_DIR = "images/";
-    /** @const */ 
+    /** @const */
     this.FEMALE_ICON = "female.png";
-    /** @const */ 
+    /** @const */
     this.MALE_ICON = "male.png";
-    /** @const */ 
+    /** @const */
     this.MIXED_ICON = 'mixed.png';
-    
+
     this.NDSEX_ICON = "unknown_sex.png"
-    /** @const */ 
+    /** @const */
     this.HOM_ICON = 'hom.png';
-    /** @const */ 
+    /** @const */
     this.HET_ICON = 'het.png';
-    /** @const */ 
+    /** @const */
     this.HEMI_ICON = 'het.png';
-    /** @const */ 
+    /** @const */
     this.WT_ICON = 'wildtype.png';
 
     this.specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
 
-    /** @const */ 
+    /** @const */
     this.centreIcons ={
         1: "logo_Bcm.png",
         3: "logo_Gmc.png",
@@ -140,8 +142,8 @@ iev.specimenview = function(volumeData, id, container,
     }
 
     this.spinner;
-    
-    /** @const */ 
+
+    /** @const */
     this.spinnerOpts = {
         lines: 8 // The number of lines to draw
         , length: 6 // The length of each line
@@ -165,48 +167,48 @@ iev.specimenview = function(volumeData, id, container,
         , position: 'relative' // Element positioning
     };
 
-    /** @const */ 
+    /** @const */
     this.monthNames = ["Jan", "Feb", "Mar", "April", "May", "June",
         "July", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
-    
+
     this.createHTML();
-    this.updateVolumeSelector();        
+    this.updateVolumeSelector();
     this.jQuerySelectors();
-    this.setupOverlayControls();        
+    this.setupOverlayControls();
     this.setupRenderers();
-    this.drawScaleBar();        
+    this.drawScaleBar();
 };
 
 iev.specimenview.prototype.showAnalysisData = function() {
     if (this.analysisVolume && this.currentVolume['volume_url'] !== this.analysisVolume) {
         $('#' + this.vselector).val(this.analysisVolume);
-        $('#' + this.vselector).iconselectmenu("refresh");     
+        $('#' + this.vselector).iconselectmenu("refresh");
         this.replaceVolume(this.analysisVolume);
     }
 };
-        
+
 iev.specimenview.prototype.updateData = function (volumes){
     /*
      * Change the current stage/modality/centre being viewed
-     * 
+     *
      */
 
     this.volumeData = volumes;
     this.replaceVolume(this.volumeData[Object.keys(this.volumeData)[0]]['volume_url']);
     this.updateVolumeSelector();
 };
-        
-        
+
+
 iev.specimenview.prototype.update = function (){
     this.invertColour(this.inverted);
     this.drawScaleBar();
     this.showMetadata();
 };
-        
+
 
 iev.specimenview.prototype.updateVolumeSelector = function () {
-    
+
     //This custom widget is also used in main. Should define it somewhere else
     $.widget("custom.iconselectmenu", $.ui.selectmenu, {
         _renderItem: function (ul, item) {
@@ -231,21 +233,21 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
 
     // Add the volume options
     var options = [];
-    
+
     for (var i in this.volumeData) {
         var url = this.volumeData[i]['volume_url'];
         var sex = this.volumeData[i].sex.toLowerCase();
         var zygosity = this.volumeData[i].zygosity.toLowerCase();
         if (sex === 'no data') sex = 'no_data';
-        
+
         var idForSexZygosityIcon;
-       
+
         if (this.volumeData[i].colonyId === this.WILDTYPE_COLONYID){
             idForSexZygosityIcon = 'specimenSelectIcon ' + sex + '_' + 'wildtype';
         } else {
             idForSexZygosityIcon = 'specimenSelectIcon ' + sex + '_' + zygosity;
         }
-      
+
         var animalNameForDisplay = this.volumeData[i].animalName.substring(0, 25);
 
         if (url === this.currentVolume['volume_url']) {
@@ -273,28 +275,28 @@ iev.specimenview.prototype.updateVolumeSelector = function () {
                     }
                 }, this)
             })
-            .iconselectmenu("refresh");                  
+            .iconselectmenu("refresh");
 };
 
 iev.specimenview.prototype.setupOverlayControls = function() {
 
     // Set the checked button
-    var button = $('input:radio', '#' + this.overlayControl).filter('[value=' + this.currentLabelmap + ']'); // '#' + this.overlayControl, 
+    var button = $('input:radio', '#' + this.overlayControl).filter('[value=' + this.currentLabelmap + ']'); // '#' + this.overlayControl,
     button.prop('checked', true);
-        
+
     // Set up overlay controls
     $('#' + this.overlayControl).buttonset();
-    
+
     // On click
     $('#' + this.overlayControl).click(function(e) {
         var overlay_type = $('input[type=radio]:checked', e.currentTarget).prop("value");
         if (this.currentLabelmap !== overlay_type) {  // check if anything changed
-            this.currentLabelmap = overlay_type;        
+            this.currentLabelmap = overlay_type;
             this.replaceVolume(this.currentVolume['volume_url']);
         }
     }.bind(this));
 };
-        
+
 iev.specimenview.prototype.showMetadata = function(){
 
     if (this.currentVolume.experimentDate) {
@@ -319,7 +321,7 @@ iev.specimenview.prototype.showMetadata = function(){
          sexIconPath = this.IMG_DIR + this.NDSEX_ICON;
     }
 
-    // Set the zygosity icon for mutants or the 'WT' icon for baselines 
+    // Set the zygosity icon for mutants or the 'WT' icon for baselines
     var zygIconPath;
     var zygIcon;
 
@@ -361,7 +363,7 @@ iev.specimenview.prototype.showMetadata = function(){
         centreLogoPath: centreLogoPath
     };
 
-    var template = Handlebars.compile(this.specimenMetaTemplateSource);
+    var template = Handlebars.templates[this.specimenMetaTemplateSource];
 
     var $metaDataHtml = $(template(data));
 
@@ -369,8 +371,8 @@ iev.specimenview.prototype.showMetadata = function(){
     $("#metadata_" + this.id).empty();
     $("#metadata_" + this.id).append($metaDataHtml);
 };
-        
-        
+
+
 iev.specimenview.prototype.setContrastSlider = function() {
     /**
      * Makes contrast slider for specimen view
@@ -395,17 +397,17 @@ iev.specimenview.prototype.setContrastSlider = function() {
 
 iev.specimenview.prototype.setLabelmap = function(overlay_type) {
     if (overlay_type !== "none") {
-        
+
         var labelmap = this.currentVolume[overlay_type];
         var cmap = labelmap.slice(0, -5) + '.txt';
-        
+
         this.volume.labelmap.file = labelmap;
         this.volume.labelmap.colortable.file = cmap;
 
         if (overlay_type === "labelmap") {
             this.volume.labelmap.opacity = 0.5;
         }
-                
+
     }
 }
 
@@ -419,7 +421,7 @@ iev.specimenview.prototype.getLabelmap = function() {
 
 
 iev.specimenview.prototype.showHideOverlayControls = function() {
-    
+
     if (this.hasLabelmap) {
         this.$overlayControl.show();
     } else {
@@ -427,19 +429,19 @@ iev.specimenview.prototype.showHideOverlayControls = function() {
     }
 
 };
-        
+
 iev.specimenview.prototype.setBookmarkContrast = function() {
 
     // Set lower contrast level
     var lower = parseInt(this.volume.windowLow);
     if ('l' in this.config) {
-        lower = Math.max(parseInt(this.config['l']), parseInt(this.volume.windowLow));                
+        lower = Math.max(parseInt(this.config['l']), parseInt(this.volume.windowLow));
     }
 
     // Set upper this.contrast level
     var upper = parseInt(this.volume.windowHigh);
     if ('u' in this.config) {
-        upper = Math.min(parseInt(this.config['u']), parseInt(this.volume.windowHigh));                             
+        upper = Math.min(parseInt(this.config['u']), parseInt(this.volume.windowHigh));
     }
 
     // Set this.volume modifed
@@ -448,7 +450,7 @@ iev.specimenview.prototype.setBookmarkContrast = function() {
     this.volume.modified(false);
 
     // Set slider values
-    this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);            
+    this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);
 
 };
 
@@ -476,7 +478,7 @@ iev.specimenview.prototype.reset = function(){
     //reset the window level
     this.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);
 
-    // Put scale bars back in place            
+    // Put scale bars back in place
     $('.scale_outer').css(
        {
         'height': '100%',
@@ -495,9 +497,9 @@ iev.specimenview.prototype.createHTML = function() {
     /**
      * Creates the html needed for the specimen view to live in.
      * Uses handlebar.js to generate from templates
-     * 
+     *
      * @method createHtml
-     * 
+     *
      */
 
     var $viewsContainer = $("#" + this.viewContainer);
@@ -510,8 +512,8 @@ iev.specimenview.prototype.createHTML = function() {
         id:this.id
     };
 
-    var source   = $("#specimen_view_template").html();
-    var template = Handlebars.compile(source);
+//    var source   = $("#specimen_view_template").html();
+    var template = Handlebars.templates['specimen_view_template'];
 
     var $specimenView = $(template(data));
 
@@ -532,14 +534,14 @@ iev.specimenview.prototype.createHTML = function() {
 
     $viewsContainer.append($specimenView);
 };
-        
-            
+
+
 iev.specimenview.prototype.progressStop = function(){
     this.spinner.stop();
      $("#progressMsg").empty();
 };
-        
-        
+
+
 iev.specimenview.prototype.createSliceView = function(orient){
     /**
      * Create the HTML for the elements containing the slice view
@@ -561,18 +563,18 @@ iev.specimenview.prototype.createSliceView = function(orient){
 
     };
 
-    var source = $("#slice_view_template").html();
-    var template = Handlebars.compile(source);
+//    var source = $("#slice_view_template").html();
+    var template = Handlebars.templates['slice_view_template'];
     return template(data);
 };
-        
-           
-        
+
+
+
 iev.specimenview.prototype.jQuerySelectors = function(){
     /**
      * Get Jquery handles on elements that need to be accessed multiple times
      * Should speed things up not having to query the DOM all the time
-     * 
+     *
      * @method jQuerySelectors
      */
     this.$xContainer =  $('#X_' + this.id);
@@ -587,16 +589,16 @@ iev.specimenview.prototype.jQuerySelectors = function(){
     this.$windowLevel = $('#' + this.windowLevel);
     this.$overlayControl = $('#' + this.overlayControl);
 }
-        
-        
-        
+
+
+
 iev.specimenview.prototype.controls_tab = function() {
     /**
      * Use handlebars.js to the controls tab HTML for the specimen view
      * Controls tab contains zoom buttons contrst slider etc.
-     * 
+     *
      * @method controls_tab
-     * 
+     *
      */
 
     var data = {
@@ -608,12 +610,12 @@ iev.specimenview.prototype.controls_tab = function() {
 	overlayId: this.overlayControl
     };
 
-    var source   = $("#slice_controls_template").html();
-    var template = Handlebars.compile(source);
+    //var source   = $("#slice_controls_template").html();
+    var template = Handlebars.templates['slice_controls_template'];
     return template(data);
 };
-        
-        
+
+
 iev.specimenview.prototype.zoomIn = function(){
    this.xRen.camera.zoomIn(false);
    this.yRen.camera.zoomIn(false);
@@ -621,38 +623,38 @@ iev.specimenview.prototype.zoomIn = function(){
    this.drawScaleBar();
 };
 
-        
+
 iev.specimenview.prototype.zoomOut = function(){
     //Prevent over out-zooming
     if (this.xRen.normalizedScale < 1.0 || this.yRen.normalizedScale < 1.0 || this.zRen.normalizedScale < 1.0){
        return false;
-    }            
+    }
     this.xRen.camera.zoomOut(false);
     this.yRen.camera.zoomOut(false);
     this.zRen.camera.zoomOut(false);
-    this.drawScaleBar();        
+    this.drawScaleBar();
     return true;
 };
 
 
-iev.specimenview.prototype.drawScaleBar = function() {   
+iev.specimenview.prototype.drawScaleBar = function() {
     // After resizing the window or doing a zoomIn or zoomOut, we need to wait for renderer2D to call
     // render_(). Otherwose normalizScale will not have been set
-    
+
      setTimeout(function () {
         this.drawScale(this.yRen);
         this.drawScale(this.zRen);
         this.drawScale(this.xRen);
-    }.bind(this), 20);  
+    }.bind(this), 20);
 };
-        
-            
+
+
 iev.specimenview.prototype.drawScale = function(ren){
 
 	var $scaleouter =  $('#scale_outer' + this.id + ren.orientation);
 	var $scaleId = $('#scale_' + ren.orientation + this.id);
 	var $scaletext = $('#scaletext_' + ren.orientation + this.id);
-    
+
 
 	if (this.currentVolume["rescaledPixelsize"] === null ||  this.currentVolume["rescaledPixelsize"] === 0){
 		$scaleouter.hide();
@@ -665,9 +667,9 @@ iev.specimenview.prototype.drawScale = function(ren){
 
 	var outer_height = $scaleouter.height();
 	var top = (outer_height - bar_size_pixels) / 2;
-   
+
 	$scaleId.css(
-	   {'height': bar_size_pixels, 
+	   {'height': bar_size_pixels,
 		'width': '2px',
 		'position': 'absolute',
 		'top': top
@@ -678,28 +680,28 @@ iev.specimenview.prototype.drawScale = function(ren){
 		'top': top - 20,
 		'font-size': '10px'
 	});
-};         
-        
-              
+};
+
+
 iev.specimenview.prototype.rescale = function(scale){
- 
+
     this.scaleBarSize = scale;
     this.drawScaleBar();
 };
-        
-         
+
+
 iev.specimenview.prototype.getVolume = function(){
 
     return this.volume;
 };
 
-        
+
 
 iev.specimenview.prototype.replaceVolume = function(volumePath) {
     /**
      * Replace current specimen volume with another.
      * Destroys current object (not sure is necessary) add new path and call setupoRenderers
-     * 
+     *
      * @method replaceVolume
      * @param {String} VolumePath path to new volume to load into viewer
      */
@@ -735,24 +737,24 @@ iev.specimenview.prototype.replaceVolume = function(volumePath) {
     this.currentVolume = this.volumeData[volumePath];
     this.setupRenderers();
 };
-        
+
 
 
 
 iev.specimenview.prototype.setupRenderers = function() {
     /**
      * Call the XTK functions that are required to get our volume rendered in 2D
-     * 
+     *
      * @method setupRenderers
      */
-    
-    
+
+
     //testing: Get the filedata to attach to our volume
     // Check wheter the URL is already saved in the indexedDB if it is retieve it
     // If not fetch it and write to indexedDB
-    
-    
-    
+
+
+
     this.ready = false;
 
     if (this.objSize(this.volumeData) < 1) return;
@@ -763,26 +765,26 @@ iev.specimenview.prototype.setupRenderers = function() {
     /*
      * Sagittal scaling bug fix.
      * also see fix in X.renderer2D.render_
-     */ 
+     */
     this.xRen.firstRender = true;
 
-    this.xRen.afterRender = function(){   
+    this.xRen.afterRender = function(){
         if (this.xRen.firstRender){
            this.xRen.resetViewAndRender();
            this.xRen.firstRender = false;
            this.xtk_showtime();
-        }                           
+        }
     }.bind(this);
-    
-    // Set flag if overlay exists (checks by jacobian)      
+
+    // Set flag if overlay exists (checks by jacobian)
     this.hasLabelmap = 'jacobian' in this.currentVolume;
 
-    this.xRen.onShowtime = function(){   
+    this.xRen.onShowtime = function(){
         // we have to wait before volumes have fully loaded before we
-        // can extract intesity information                
-        this.setContrastSlider();   
-	this.showHideOverlayControls();              
-        this.setReady();                
+        // can extract intesity information
+        this.setContrastSlider();
+	this.showHideOverlayControls();
+        this.setReady();
     }.bind(this);
 
 
@@ -808,17 +810,17 @@ iev.specimenview.prototype.setupRenderers = function() {
 
     // create a X.volume
     this.volume = new X.volume();
-    
-    
+
+
     //this.volume.file = this.currentVolume['volume_url'];
-    
+
     //Hack: Need to add dummy filename if we are setting filedata directly
     this.volume.file = 'dummy.nrrd'
-    this.localStorage.getVolume(this.currentVolume['volume_url'], 
+    this.localStorage.getVolume(this.currentVolume['volume_url'],
                                 new Date(this.currentVolume['lastUpdate']),
-                                this.onFetchedData.bind(this));  
-                                
-    // Add jacobian overlay by default (if it exists)            
+                                this.onFetchedData.bind(this));
+
+    // Add jacobian overlay by default (if it exists)
     if (this.hasLabelmap) {
         this.setLabelmap(this.currentLabelmap);
     }
@@ -834,8 +836,8 @@ iev.specimenview.prototype.onFetchedData = function (filedata) {
             animalId: this.currentVolume.animalName};
 
         var $specimenView = $('#' + this.id);
-        var dataNotFoundSource = $("#dataNotFoundTemplate").html();
-        var dataNotFoundTemplate = Handlebars.compile(dataNotFoundSource);
+        //var dataNotFoundSource = $("#dataNotFoundTemplate").html();
+        var dataNotFoundTemplate = Handlebars.templates['dataNotFoundTemplate'];
         var $notFound = dataNotFoundTemplate(data);
         $specimenView.append($notFound);
     } else {
@@ -856,21 +858,21 @@ iev.specimenview.prototype.checkLoading = function () {
      * If data not loaded, check for XTX load error caut by window.onerror
      */
     var tid = setInterval(function () {
-        
+
         if (this.ready) {
             clearInterval(tid);
         }
         else if (this.xtkLoadError) {
             $('#ievLoading' + this.id).remove();
-            
+
             var data = {
                 colonyId: this.currentVolume.colonyId,
                 animalId: this.currentVolume.animalName
             };
 
             var $specimenView = $('#' + this.id);
-            var dataNotFoundSource = $("#dataNotFoundTemplate").html();
-            var dataNotFoundTemplate = Handlebars.compile(dataNotFoundSource);
+            //var dataNotFoundSource = $("#dataNotFoundTemplate").html();
+            var dataNotFoundTemplate = Handlebars.templates[dataNotFoundTemplate];
             var $notFound = dataNotFoundTemplate(data);
             $specimenView.append($notFound);
             clearInterval(tid);
@@ -1137,7 +1139,7 @@ iev.specimenview.prototype.xtk_showtime = function() {
 
 
     // Set bookmark contrast and selected volume in menu
-    this.setBookmarkContrast();
+    //this.setBookmarkContrast();
 
     this.update();
 

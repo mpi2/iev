@@ -1,0 +1,103 @@
+        <div id='ievControlsWrap' class="noselect">
+            <div id='top_bar'>
+                <div id='topleft'>
+                    
+                </div>
+                <fieldset id="orthogonal_views_buttons_fieldset">
+                    <legend>Views</legend>
+                    <div id="orthogonal_views_buttons">
+                        <input type="checkbox" id="X_check" class='toggle_slice' title="Sagittal" checked>
+                        <label for="X_check" id='X_check_label'>S</label>
+                        <input type="checkbox" id="Y_check" class='toggle_slice' title="Coronal" checked>
+                        <label for="Y_check" id='Y_check_label'>C</label>
+                        <input type="checkbox" id="Z_check" class='toggle_slice' title="Axial" checked>
+                        <label for="Z_check" id='Z_check_label'>A</label>
+                   
+                        <div id='orientation_buttons'>
+                        <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation"></div>
+                 
+                </fieldset>
+                
+            <fieldset id="scale_fieldset" title="Configure scale bar">
+                <legend>Scale bar
+                <input type="checkbox" id="scale_visible" name="radio" checked="checked">
+                </legend>
+                <select name="scale_select" id="scale_select"></select>  
+            </fieldset>
+                
+            
+            <fieldset id="centres_fieldset" title="Switch center">
+                <legend>Centres</legend>
+                    <select name="centre_select" id="centre_select">
+                    </select>                
+            </fieldset>
+               
+            
+            <fieldset id="heightslider_fieldset" title="Increase/decrease height">
+                <legend>View height</legend>
+                <div id="viewHeightSlider"></div>
+            </fieldset>
+
+             <fieldset id="zoom_fieldset" title="Zoom views in/out">
+                <legend>Zoom</legend>
+                <span class="button" id="zoomIn">+</span>
+                <span class="button" id ="zoomOut">-</span>   
+                <!--<span class="button" id ="screenShot">c</span>--> 
+            </fieldset>
+
+            <fieldset id="analysis_fieldset">
+                <legend>Analysis</legend>  
+                <div id="analysis_button" class="hoverable disabled"  title="No analysis data available">
+                </div>
+            </fieldset>
+
+            <fieldset id="bookmark_fieldset">
+                <legend>Share</legend>
+                <div id="createBookmark" class="hoverable" title="Generate URL for current view" >
+                    <img src="images/bookmark.png" id="bookmark_img">
+                </div>
+            </fieldset>
+                
+            <fieldset id="color_fieldset">
+                <legend>Other</legend>
+
+                <div id="invertColours" class="ievgrey hoverable" title="Invert colours"></div>   
+                <div id="reset" class="hoverable">
+                      <img src="images/reload.png" title="Restore default view">
+                </div>
+                <div id="download" class="hoverable"  title="Download embryo data">
+                    <img src="images/download.png" id="download_img">
+                </div>
+
+                <div id='lowcpu' title="Toggle dynamic/static slicing">
+                    <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle static/dynamic rendering">
+                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label> 
+                </div>
+
+            </fieldset>
+                
+                <fieldset id="modality_stage_fieldset">
+                    <legend>Modality/stage selection</legend>
+                    <div id="modality_stage" title="Change modality">
+                        <input type="radio" id="202" class="modality_button" name="project">
+                        <label for="202" class="button_label">OPT E9.5</label>
+                        
+                        <input type="radio" id="203" name="project" class="modality_button">
+                        <label for="203" class="button_label">&#956;CT E14/E15.5</label>
+
+                        <input type="radio" id="204" name="project" class="modality_button">
+                        <label for="204" class="button_label">&#956;CT E18.5</label>
+
+
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div id="viewer" class="noselect">
+            
+            <div id="progress">
+                <div id="progressSpin"></div>
+                <div id="progressMsg"></div>
+            </div>
+        </div>
