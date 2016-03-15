@@ -81,6 +81,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
 //$(".menu-mlid-3127").removeClass( "active" );
 </script>
     </head>
+    
     <body>
         <!-- Got the menu and header code from https://github.com/mpi2/PhenotypeData/ -->
         <header id="header">
@@ -151,151 +152,45 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
         
         
 
-<!-- -->
-        
-        
-      
-        <div id='ievControlsWrap' class="noselect">
-            <div id='top_bar'>
-                <div id='topleft'>
-                   
-             
-                    
-                </div>
-                <fieldset id="orthogonal_views_buttons_fieldset">
-                    <legend>Views</legend>
-                    <div id="orthogonal_views_buttons">
-                        <input type="checkbox" id="X_check" class='toggle_slice' title="Sagittal" checked>
-                        <label for="X_check" id='X_check_label'>S</label>
-                        <input type="checkbox" id="Y_check" class='toggle_slice' title="Coronal" checked>
-                        <label for="Y_check" id='Y_check_label'>C</label>
-                        <input type="checkbox" id="Z_check" class='toggle_slice' title="Axial" checked>
-                        <label for="Z_check" id='Z_check_label'>A</label>
-                   
-                        <div id='orientation_buttons'>
-                        <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation"></div>
-                 
-                </fieldset>
-                
-            <fieldset id="scale_fieldset" title="Configure scale bar">
-                <legend>Scale bar
-                <input type="checkbox" id="scale_visible" name="radio" checked="checked">
-                </legend>
-                <select name="scale_select" id="scale_select"></select>  
-            </fieldset>
-                
-            
-            <fieldset id="centres_fieldset" title="Switch center">
-                <legend>Centres</legend>
-                    <select name="centre_select" id="centre_select">
-                    </select>                
-            </fieldset>
-               
-            
-            <fieldset id="heightslider_fieldset" title="Increase/decrease height">
-                <legend>View height</legend>
-                <div id="viewHeightSlider"></div>
-            </fieldset>
+<!-- Overall wrapper around slice and volume rendering tabs -->
+<div id="ievTabs">
 
-             <fieldset id="zoom_fieldset" title="Zoom views in/out">
-                <legend>Zoom</legend>
-                <span class="button" id="zoomIn">+</span>
-                <span class="button" id ="zoomOut">-</span>   
-                <!--<span class="button" id ="screenShot">c</span>--> 
-            </fieldset>
-
-            <fieldset id="analysis_fieldset">
-                <legend>Analysis</legend>  
-                <div id="analysis_button" class="hoverable disabled"  title="No analysis data available">
-                </div>
-            </fieldset>
-
-            <fieldset id="bookmark_fieldset">
-                <legend>Share</legend>
-                <div id="createBookmark" class="hoverable" title="Generate URL for current view" >
-                    <img src="images/bookmark.png" id="bookmark_img">
-                </div>
-            </fieldset>
-                
-            <fieldset id="color_fieldset">
-                <legend>Other</legend>
-
-                <div id="invertColours" class="ievgrey hoverable" title="Invert colours"></div>   
-                <div id="reset" class="hoverable">
-                      <img src="images/reload.png" title="Restore default view">
-                </div>
-                <div id="download" class="hoverable"  title="Download embryo data">
-                    <img src="images/download.png" id="download_img">
-                </div>
-
-                <div id='lowcpu' title="Toggle dynamic/static slicing">
-                    <input type="checkbox" id="low_power_check" class='toggle_slice' title="Toggle static/dynamic rendering">
-                    <label for="low_power_check" id='low_power_check_label'>Low CPU</label> 
-                </div>
-
-            </fieldset>
-                
-                <fieldset id="modality_stage_fieldset">
-                    <legend>Modality/stage selection</legend>
-                    <div id="modality_stage" title="Change modality">
-                        <input type="radio" id="202" class="modality_button" name="project">
-                        <label for="202" class="button_label">OPT E9.5</label>
-                        
-                        <input type="radio" id="203" name="project" class="modality_button">
-                        <label for="203" class="button_label">&#956;CT E14/E15.5</label>
-
-                        <input type="radio" id="204" name="project" class="modality_button">
-                        <label for="204" class="button_label">&#956;CT E18.5</label>
-
-
-                    </div>
-                </fieldset>
-            </div>
-        </div>
+    <ul>
+        <li><a href="#sliceViewMain">2D</a></li>
+        <li><a href="#volumeRenderingMain">3D</a></li>
+    </ul>
+    
+    <div id="help">
+        <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">
+            <input type="submit" value="?" id="help_link" >
+        </form>
+    </div>
+    
+    <div id="controlPanel"></div>
+    
+    <div id="sliceViewMain">    
+       
         <div class="clear"></div>
         <div id="viewer" class="noselect">
-            
-            <div id="progress">
-                <div id="progressSpin"></div>
-                <div id="progressMsg"></div>
-            </div>
-        </div>
-            </div> <!-- iev -->
-        
-            <script>
-                 goog.require('iev.embryo');
-            </script>
-        <script>
-            window.addEventListener('load', function () {
-                
-                var geneSymbol = "<%= request.getParameter("gene_symbol")%>";
-                var colonyId = "<%= request.getParameter("colony_id")%>";
-                var mgi = "<%= request.getParameter("mgi")%>";
-                
 
-                var modalityData = {
-                    203: {
-                        'id': 'CT E14.5/15.5',
-                        'vols': {
-                            'mutant': {},
-                            'wildtype': {}
-                        }
-                    },
-                    204: {
-                        'id': 'CT E18.5',
-                        'vols':{
-                            'mutant': {},
-                            'wildtype': {}
-                        }
-                    },
-                    202:{
-                        'id': 'OPT 9.5',
-                        'vols':{
-                            'mutant': {},
-                            'wildtype': {}
-                        }
-                    }
-                };
+        </div>
+    </div> <!-- main slice view end -->
+    
+    
+    <div id="volumeRenderingMain">
+        
+        <div class="clear"></div>
+        <div id="volumeRenderer" class="noselect">
+
+        </div>
+    </div>
+    
+</div>
+    
+    <!-- URL query string handling and handlebars -->
+        <script>
+            goog.require('iev.embryo');
+            window.addEventListener('load', function () {
                 
                 jQuery.extend({
                     getQueryParameters : function(str) {
@@ -303,69 +198,16 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                     }
                 });
                 
-                var queryParams = $.getQueryParameters();
-                var bookmarkData = {'wt': {}, 'mut': {}};
-                
-                for (var k in queryParams) {
-                    if (queryParams.hasOwnProperty(k)) {                        
-                        if (k.startsWith('w')) {                            
-                            bookmarkData['wt'][k.substring(1)] = queryParams[k];
-                        } else if (k.startsWith('m')) {
-                            bookmarkData['mut'][k.substring(1)] = queryParams[k];
-                        } else {
-                            bookmarkData[k] = queryParams[k];
-                        }
-                    }
-                }
                 var dccGetter = new iev.embryo();
                 
-                if (colonyId !== 'null'){
-                    bookmarkData['mode'] = "colony_id";
-                    bookmarkData['gene'] = colonyId;
-                    dccGetter.getVolumesByColonyId(colonyId, bookmarkData);
-                }
-                else if (geneSymbol !== 'null') {
-                    bookmarkData['mode'] = "gene_symbol";
-                    bookmarkData['gene'] = geneSymbol;
-                    dccGetter.getVolumesByGeneSymbol(geneSymbol, bookmarkData);
-                }
-                else if (mgi !== 'null') {
-                    bookmarkData['mode'] = "mgi";
-                    bookmarkData['gene'] = mgi;
-                    dccGetter.getVolumesByMgi(mgi, bookmarkData);
-                }
-               
-            });
-            
-            (function setupImpcMenus() {
-            /*
-             * Get the dynamically generated menu code. Split into main menu and the login section
-             */
-                var protocol = window.location.protocol === "https:"? 'https' : 'http';
+                var colonyId = "<%= request.getParameter("colony_id")%>";
+                var geneSymbol = "<%= request.getParameter("gene_symbol")%>";
+                var mgi = "<%= request.getParameter("mgi")%>";
+                var queryParams = $.getQueryParameters();
                 
-                var header_menu_source;
-                //Set the correct menu depending on which sub-domain we're on
-                switch (location.hostname) {
-                    
-                    case 'localhost':
-                        header_menu_source = 'menudisplaycombinedrendered.html';
-                        break;
-                    case 'www.mousephenotype.org':
-                        header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                    case 'beta.mousephenotype.org':
-                        header_menu_source = protocol + '://beta.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                    case 'dev.mousephenotype.org':
-                        header_menu_source = protocol + '://dev.mousephenotype.org/menudisplaycombinedrendered';
-                        break;
-                }
-                $.get(header_menu_source, function (data) {
-                    var menuItems = data.split("MAIN*MENU*BELOW");
-                    $('#block-menu-block-1').append(menuItems[1]);
-                    $('#tn').append(menuItems[0]);
-                });
-              })()
+                dccGetter.run(colonyId, geneSymbol, mgi, queryParams);
+
+            });           
         </script>
 <!--        <script>
             (function (i, s, o, g, r, a, m) {
@@ -387,7 +229,98 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
         <div id="download_dialog"><div>
     </body>
     
+    
+    <script id="main_controls_template" type="text/x-handlebars-template">
+        
+        <div class='ievControlsWrap' class="noselect">
+            
+            <div id='top_bar'>
+                <div id='topleft'></div>
+                <fieldset id="orthogonal_views_buttons_fieldset">
+                    <legend>Views</legend>
+                    <div id="orthogonal_views_buttons">
+                        <input type="checkbox" id="X_check" class='toggle_slice' title="Sagittal" checked>
+                        <label for="X_check" id='X_check_label'>S</label>
+                        <input type="checkbox" id="Y_check" class='toggle_slice' title="Coronal" checked>
+                        <label for="Y_check" id='Y_check_label'>C</label>
+                        <input type="checkbox" id="Z_check" class='toggle_slice' title="Axial" checked>
+                        <label for="Z_check" id='Z_check_label'>A</label>
 
+                        <div id='orientation_buttons'>
+                        <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation">
+
+                    </div>
+
+                </fieldset>
+                
+                <fieldset id="scale_fieldset" title="Configure scale bar">
+                    <legend>Scale bar
+                    <input type="checkbox" id="scale_visible" name="radio" checked="checked">
+                    </legend>
+                    <select name="scale_select" id="scale_select">
+                    </select>  
+                </fieldset>
+
+                <fieldset id="centres_fieldset">
+                    <legend>Centres</legend>
+                    <select name="centre_select" id="centre_select">
+                    </select>                
+                </fieldset>
+
+                <fieldset id="heightslider_fieldset">
+                    <legend>View height</legend>
+                    <div id="viewHeightSlider"></div>
+                </fieldset>
+
+                 <fieldset id="zoom_fieldset">
+                    <legend>Zoom</legend>
+                    <span class="button" id="zoomIn">+</span>
+                    <span class="button" id ="zoomOut">-</span>   
+                    <!--<span class="button" id ="screenShot">c</span>--> 
+                </fieldset>
+
+                <fieldset id="analysis_fieldset">
+                    <legend>Analysis</legend>  
+                    <div id="analysis_button" class="hoverable disabled"  title="No analysis data available">
+                    </div>
+                </fieldset>
+
+                <fieldset id="color_fieldset">
+                    <legend>Other</legend>
+                    <div id="invertColours" class="ievgrey hoverable" title="Invert colours"></div>
+                    <div id="reset">
+                          <img src="images/reload.png" height="25" class="hoverable" title="Restore default view">
+                    </div>
+
+                    <div id="download">
+                        <img src="images/download.png" height="25" id="download_img" class="hoverable" title="Download embryo data">
+                    </div>
+                </fieldset>       
+
+                <fieldset id="bookmark_fieldset">
+                    <legend>Save</legend>
+                    <div id="createBookmark">
+                        <img src="images/bookmark.png" height="25" id="bookmark_img" title="Generate URL for current view" class="hoverable">
+                    </div>
+                </fieldset>
+
+                <fieldset id="modality_stage_fieldset">
+                    <legend>Modality/stage selection</legend>
+                    <div id="modality_stage" title="Change modality">
+                        <input type="radio" id="202" class=low"modality_button" name="project">
+                        <label for="202" class="button_label">OPT E9.5</label>
+                        
+                        <input type="radio" id="203" name="project" class="modality_button">
+                        <label for="203" class="button_label">&#956;CT E14/E15.5</label>
+
+                        <input type="radio" id="204" name="project" class="modality_button">
+                        <label for="204" class="button_label">&#956;CT E18.5</label>
+
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </script>
 
     <!--Slice controls template-->
     <script id="slice_controls_template" type="text/x-handlebars-template">      
@@ -449,12 +382,15 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
         </div>
     </script>
     
-    
+    <script id="volume_view_template" type="text/x-handlebars-template">
+        <div class="volWrap noselect" id="vol_{{id}}">
+        </div>
+    </script>
     
     <script id="progress_template" type="text/x-handlebars-template">
         <div class="ievLoading" id="ievLoading{{id}}">
             <div class="ievLoadingMsg" id="ievLoadingMsg{{id}}">
-            Images loading
+                {{msg}}
             </div>
         </div>
     </script>

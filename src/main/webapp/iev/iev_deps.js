@@ -2,8 +2,10 @@
 // Please do not edit.
 goog.addDependency('../../../../../iev/iev.js', ['iev'], []);
 goog.addDependency('../../../../../iev/localstorage.js', ['iev.LocalStorage'], []);
+goog.addDependency('../../../../../iev/viewer2D.js', ['iev.viewer2D'], ['iev.LocalStorage', 'iev.specimen2D']);
+goog.addDependency('../../../../../iev/viewer3D.js', ['iev.viewer3D'], ['iev.LocalStorage', 'iev.specimen3D']);
+goog.addDependency('../../../../../iev/specimenPanel.js', ['iev.specimenPanel'], ['iev.specimen2D', 'iev.specimen3D']);
+goog.addDependency('../../../../../iev/specimen2D.js', ['iev.specimen2D'], []);
+goog.addDependency('../../../../../iev/specimen3D.js', ['iev.specimen3D'], []);
+goog.addDependency('../../../../../iev/embryo.js', ['iev.embryo'], ['iev.viewer2D', 'iev.viewer3D']);
 goog.addDependency('../../../../../iev/download.js', ['iev.Download'], []);
-goog.addDependency('../../../../../iev/embryoviewer.js', ['iev.embryoviewer'], ['iev.LocalStorage', 'iev.specimenview']);
-goog.addDependency('../../../../../iev/specimenview.js', ['iev.specimenview'], []);
-goog.addDependency('../../../../../iev/embryo.js', ['iev.embryo'], ['iev.embryoviewer']);
-

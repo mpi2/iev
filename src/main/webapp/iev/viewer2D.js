@@ -1,12 +1,12 @@
-goog.provide('iev.embryoviewer');
-goog.require('iev.specimenview');
+goog.provide('iev.viewer2D');
+goog.require('iev.specimen2D');
 goog.require('iev.LocalStorage');
 goog.require('iev.Download');
 //goog.require('iev.templates')
 
 
 
-iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
+iev.viewer2D = function (data, container, queryType, queryId) {
     /**
      * @class EmbryoViewer
      * @type String
@@ -32,15 +32,16 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
     this.mgi;
     this.gene_symbol;
     this.availableViewHeight; // The window height minus all the header and controls heights
-    this.bookmarkData = bookmarkData;
     this.isBrowserIE = this.isInternetExplorer();
     this.downloader = new iev.Download(this);
+    this.container = container;
+    this.$container = $('#' + this.container);
 
     if (this.isBrowserIE === 'oldIe') {
-        console.log('IEV does not support Internet Explorer <v11')
+        console.log('IEV does not support Internet Explorer <v11');
         var source = $("#ie_warning_template").html();
         var template = Handlebars.compile(source);
-        $('#' + div).append(template(data));
+        this.$container.append(template(data));
         return;
     }
     ;
@@ -50,7 +51,7 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
     if (queryType === 'colony ID' && this.queryId === 'test') {
         var source = $("#redirect_test_template").html();
         var template = Handlebars.compile(source);
-        $('#' + div).append(template());
+        this.$container.append(template());
         return;
     }
     this.localStorage = 'carrots';
@@ -83,10 +84,6 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
 
     this.volorder = ["203", "204", "202"]; //At startup, search in this order for modality data to display first
 
-    if (this.bookmarkData['pid']) {
-        this.volorder.unshift(this.bookmarkData['pid']);
-    }
-
 
     /*
      * Map micrometer scale bar sizes to labels
@@ -105,7 +102,6 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
         }
     };
 
-
     this.centreOptions = {
         1: 'BCM',
         3: 'GMC',
@@ -118,6 +114,30 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
         11: 'UCD',
         12: 'Wtsi'
     };
+
+    this.spinnerOpts = {
+        lines: 8 // The number of lines to draw
+        , length: 6 // The length of each line
+        , width: 6 // The line thickness
+        , radius: 8 // The radius of the inner circle
+        , scale: 1 // Scales overall size of the spinner
+        , corners: 1 // Corner roundness (0..1)
+        , color: '#ef7b0b' // #rgb or #rrggbb or array of colors
+        , opacity: 0.2 // Opacity of the lines
+        , rotate: 0 // The rotation offset
+        , direction: 1 // 1: clockwise, -1: counterclockwise
+        , speed: 1 // Rounds per second
+        , trail: 50 // Afterglow percentage
+        , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+        , zIndex: 2e9 // The z-index (defaults to 2000000000)
+        , className: 'spinner' // The CSS class to assign to the spinner
+        , top: '50%' // Top position relative to parent
+        , left: '70%' // Left position relative to parent
+        , shadow: false // Whether to render a shadow
+        , hwaccel: true // Whether to use hardware acceleration
+        , position: 'absolute' // Element positioning
+    };
+
 
 
     this.ICONS_DIR = "images/centre_icons/"; //not used??
@@ -194,26 +214,18 @@ iev.embryoviewer = function (data, div, queryType, queryId, bookmarkData) {
 
         var source = $("#no_data_template").html();
         var template = Handlebars.compile(source);
-        $('#' + div).append(template(data));
+        this.$container.append(template(data));
     }
 
-
-    this.container = div;
     this.views = [];
-
 
     this.catchXtkLoadError();
     this.setBreadCrumb();
     this.setInitialViewerHeight();
-    this.setActiveModalityButtons();
-    this.loadViewers();
-    this.attachEvents();
-    this.beforeReady();
-    this.setScaleSelect();
 
 };  // Constructor
 
-iev.embryoviewer.prototype.analysisUrl = function (data, name, ext) {
+iev.viewer2D.prototype.analysisUrl = function (data, name, ext) {
     /**
      * Create url for the analysis data, based on type and extension
      * @method analysisUrl
@@ -228,21 +240,19 @@ iev.embryoviewer.prototype.analysisUrl = function (data, name, ext) {
             + data.qid + '/'
             + data.id + '/'
             + name + ext;
-
     return url;
 };
 
-iev.embryoviewer.prototype.scaleLabels = function () {
+iev.viewer2D.prototype.scaleLabels = function () {
 
     var options = [];
     for (var key in this.scales.options) {
-
         options.push("<option value='" + this.scales.options[key] + "'>" + key + "</option>");
     }
     return options;
 }
 
-iev.embryoviewer.prototype.getModalityData = function () {
+iev.viewer2D.prototype.getModalityData = function () {
 
     return {
         203: {
@@ -270,7 +280,7 @@ iev.embryoviewer.prototype.getModalityData = function () {
 };
 
 
-iev.embryoviewer.prototype.centreSelector = function () {
+iev.viewer2D.prototype.centreSelector = function () {
     /*
      * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
      */
@@ -286,11 +296,8 @@ iev.embryoviewer.prototype.centreSelector = function () {
         }
     }
 
-
-
     var $centre_select = $('#centre_select');
-
-    $centre_select.append(options.join(""));
+    $centre_select.find('option').remove().end().append(options.join(""));
 
     $centre_select.iconselectmenu()
             .iconselectmenu("menuWidget")
@@ -311,7 +318,7 @@ iev.embryoviewer.prototype.centreSelector = function () {
 
 
 
-iev.embryoviewer.prototype.setActiveModalityButtons = function () {
+iev.viewer2D.prototype.setActiveModalityButtons = function () {
     /*
      * Check which modalities we have data for and inactivate buttons for which we have no data
      */
@@ -325,7 +332,7 @@ iev.embryoviewer.prototype.setActiveModalityButtons = function () {
 }
 
 
-iev.embryoviewer.prototype.buildUrl = function (data) {
+iev.viewer2D.prototype.buildUrl = function (data) {
     /**
      * Create a url from the data returned by querying database for a colonyID
      * URL should point us towards the correct place on the image server.
@@ -339,24 +346,23 @@ iev.embryoviewer.prototype.buildUrl = function (data) {
             + data.sid + '/'
             + data.pid + '/'
             + data.qid + '/';
-    
+
     //Low res just need relative path to image as it's zipped server side
     var lowResUrl = root + data.imageForDisplay;
     var lowResName = data.imageForDisplay.split('.')[0];
     var base = lowResName.split('_')[0];
     var ext = data.imageForDisplay.split('.')[1];
-    
+
     // High res need full link to image on server
     var highResName = base + '_download.' + ext;
     var highResUrl = root + highResName;
-    
+
     data['volume_url'] = lowResUrl;
     data['volume_url_high_res'] = highResUrl;
-
     return data;
 }
 
-iev.embryoviewer.prototype.bookmarkConfigure = function () {
+iev.viewer2D.prototype.bookmarkConfigure = function () {
     /*
      * Setup the viewers based on bookmark data
      */
@@ -398,12 +404,11 @@ iev.embryoviewer.prototype.bookmarkConfigure = function () {
 
         // Set ready
         this.bookmarkReady = true;
-
     }
 
 };
 
-iev.embryoviewer.prototype.generateBookmark = function () {
+iev.viewer2D.prototype.generateBookmark = function () {
 
     var currentUrl = window.location.href;
     var hostname = currentUrl.split('?')[0];
@@ -414,6 +419,7 @@ iev.embryoviewer.prototype.generateBookmark = function () {
 
     var bookmark = hostname
             + '?' + this.bookmarkData['mode'] + '=' + this.bookmarkData['gene']
+            + '&v=' + '2d'
             + '&pid=' + this.currentModality
             + '&h=' + this.currentViewHeight
             + '&s=' + s
@@ -433,14 +439,13 @@ iev.embryoviewer.prototype.generateBookmark = function () {
             + '&my=' + this.mutView.getIndex('Y')
             + '&mz=' + this.mutView.getIndex('Z')
             + '&ml=' + this.mutView.getBrightnessLower()
-            + '&mu=' + this.mutView.getBrightnessUpper()
-            + '&wov=' + this.wtView.getLabelmap()
+            + '&mu=' + this.mutView.getBrightnessUpper();
+            +'&wov=' + this.wtView.getLabelmap()
             + '&mov=' + this.mutView.getLabelmap();
     return bookmark;
 };
 
-
-iev.embryoviewer.prototype.zoomBy = function (times) {
+iev.viewer2D.prototype.zoomBy = function (times) {
 
     if (times < 0) {
         while (times < 0) {
@@ -462,18 +467,18 @@ iev.embryoviewer.prototype.zoomBy = function (times) {
 
 };
 
-iev.embryoviewer.prototype.zoomViewsIn = function () {
+iev.viewer2D.prototype.zoomViewsIn = function () {
     this.wtView.zoomIn();
     this.mutView.zoomIn();
 };
 
-iev.embryoviewer.prototype.zoomViewsOut = function () {
+iev.viewer2D.prototype.zoomViewsOut = function () {
     this.wtView.zoomOut();
     this.mutView.zoomOut();
 };
 
 
-iev.embryoviewer.prototype.scaleOrthogonalViews = function () {
+iev.viewer2D.prototype.scaleOrthogonalViews = function () {
     /**
      * Set the largest extent for each of the dimensions
      *@method setLargestDimesions
@@ -490,28 +495,27 @@ iev.embryoviewer.prototype.scaleOrthogonalViews = function () {
 };
 
 
-iev.embryoviewer.prototype.beforeReady = function () {
+iev.viewer2D.prototype.beforeReady = function () {
     /*Inactivate the modality/stage buttons*/
     $('#modality_stage :input').prop("disabled", true);
     $("#modality_stage").buttonset('refresh');
 };
 
-iev.embryoviewer.prototype.onReady = function () {
+iev.viewer2D.prototype.onReady = function () {
 
     this.setActiveModalityButtons();
     //$('#modality_stage :input').prop('disabled', false);
     $("#modality_stage").buttonset('refresh');
+    $('#help').show();
 
     this.currentZoom = 0;
 
     // Configure viewer styling based on bookmark data
     this.bookmarkConfigure();
 
-
     $('#scale_select').val(this.scales.currentBarSize).selectmenu('refresh');
     //Set the scale bar text value to current selected
     $('.scale_text').text($('#scale_select').find(":selected").text());
-    //attachEvents();
 
     $(".linkCheck").change(function (e) {
 
@@ -524,28 +528,47 @@ iev.embryoviewer.prototype.onReady = function () {
         }
 
     }.bind(this));
+
     this.scaleOrthogonalViews();
     $('.scale_outer').draggable();
-//               {containment: $('.sliceView')});
 
 };
 
+iev.viewer2D.prototype.onDestroy = function () {
 
-iev.embryoviewer.prototype.loadViewers = function () {
+    // Loop through views and destroy the renderers
+    for (var i = 0; i < this.objSize(this.views); i++) {
+        this.views[i].destroyRenderer();
+    }
+
+    this.$container.empty(); // clear the template HTML
+    this.views = [];
+
+};
+
+iev.viewer2D.prototype.onTab = function (config) {
+
+    this.bookmarkData = config;
+    if (this.bookmarkData['pid']) {
+        this.volorder.unshift(this.bookmarkData['pid']);
+    }
 
     this.localStorage = new iev.LocalStorage(this.isBrowserIE);
 
     this.localStorage.setup(function () {
         this.afterLoadingLocalStorage(this.container);
     }.bind(this));
+
+    this.attachEvents();
+    this.beforeReady();
+
 };
 
 
-iev.embryoviewer.prototype.afterLoadingLocalStorage = function () {
+iev.viewer2D.prototype.afterLoadingLocalStorage = function () {
     /**
      * Create instances of SpecimenView and append to views[]. 
      * Get the dimensions of the loaded volumes
-     * @method loadViewers
      * @param {String} container HTML element to put the specimen viewer in to
      */
 
@@ -569,7 +592,7 @@ iev.embryoviewer.prototype.afterLoadingLocalStorage = function () {
     // only load if baseline data available
     if (this.objSize(wildtypeData) > 0) {
         var wtConfig = this.bookmarkData['wt'];
-        this.wtView = new iev.specimenview(
+        this.wtView = new iev.specimen2D(
                 wildtypeData,
                 'wt',
                 this.container,
@@ -586,7 +609,7 @@ iev.embryoviewer.prototype.afterLoadingLocalStorage = function () {
 
     // Set mutant specimen based on bookmark   
     var mutConfig = this.bookmarkData['mut'];
-    this.mutView = new iev.specimenview(
+    this.mutView = new iev.specimen2D(
             mutantData,
             'mut',
             this.container,
@@ -603,7 +626,7 @@ iev.embryoviewer.prototype.afterLoadingLocalStorage = function () {
 };
 
 
-iev.embryoviewer.prototype.loadedCb = function () {
+iev.viewer2D.prototype.loadedCb = function () {
     /*
      * called when each specimenView has finished loading
      * @param {type} container
@@ -618,7 +641,7 @@ iev.embryoviewer.prototype.loadedCb = function () {
 };
 
 
-iev.embryoviewer.prototype.setCentre = function (cid) {
+iev.viewer2D.prototype.setCentre = function (cid) {
     /*
      * Change the centre. Only works if there is data from multiple centres.
      * Such as with reference lines
@@ -629,7 +652,7 @@ iev.embryoviewer.prototype.setCentre = function (cid) {
 };
 
 
-iev.embryoviewer.prototype.setStageModality = function (pid) {
+iev.viewer2D.prototype.setStageModality = function (pid) {
     /*
      * 
      * Switch to another modality
@@ -643,7 +666,6 @@ iev.embryoviewer.prototype.setStageModality = function (pid) {
         if (Object.keys(wtVolumes).length > 0) {
             $("#wt").show();
             this.wtView.updateData(wtVolumes);
-            this.wtView.reset();
         } else {
             $("#wt").hide();
         }
@@ -654,7 +676,6 @@ iev.embryoviewer.prototype.setStageModality = function (pid) {
         if (Object.keys(mutVolumes).length > 0) {
             $("#mut").show();
             this.mutView.updateData(mutVolumes);
-            this.mutView.reset();
         } else {
             $("#mut").hide();
         }
@@ -662,45 +683,37 @@ iev.embryoviewer.prototype.setStageModality = function (pid) {
 };
 
 
-iev.embryoviewer.prototype.onMutXChange = function (index) {
-
+iev.viewer2D.prototype.onMutXChange = function (index) {
     if (this.ortho['X'].linked)
         this.wtView.setXindex(index);
 };
 
-iev.embryoviewer.prototype.onMutYChange = function (index) {
-
+iev.viewer2D.prototype.onMutYChange = function (index) {
     if (this.ortho['Y'].linked)
         this.wtView.setYindex(index);
 };
 
-iev.embryoviewer.prototype.onMutZChange = function (index) {
-
+iev.viewer2D.prototype.onMutZChange = function (index) {
     if (this.ortho['Z'].linked)
         this.wtView.setZindex(index);
 };
 
-iev.embryoviewer.prototype.onWtXChange = function (index) {
-
+iev.viewer2D.prototype.onWtXChange = function (index) {
     if (this.ortho['X'].linked)
         this.mutView.setXindex(index);
 };
 
-iev.embryoviewer.prototype.onWtYChange = function (index) {
-
+iev.viewer2D.prototype.onWtYChange = function (index) {
     if (this.ortho['Y'].linked)
         this.mutView.setYindex(index);
 };
 
-iev.embryoviewer.prototype.onWtZChange = function (index) {
-
+iev.viewer2D.prototype.onWtZChange = function (index) {
     if (this.ortho['Z'].linked)
         this.mutView.setZindex(index);
 };
 
-
-
-iev.embryoviewer.prototype.linkViews = function (orthoView, isLink) {
+iev.viewer2D.prototype.linkViews = function (orthoView, isLink) {
     /**
      *Match the slice indices between the SpecimenViews
      *@method linkViews
@@ -731,7 +744,7 @@ iev.embryoviewer.prototype.linkViews = function (orthoView, isLink) {
 };
 
 
-iev.embryoviewer.prototype.setLowPowerState = function (state) {
+iev.viewer2D.prototype.setLowPowerState = function (state) {
     /*
      * Switches the low power option on or off
      */
@@ -742,30 +755,33 @@ iev.embryoviewer.prototype.setLowPowerState = function (state) {
 };
 
 
-
-
-iev.embryoviewer.prototype.attachEvents = function () {
-    /**
-     * Once all the html has been created. Do the styling etc.
+iev.viewer2D.prototype.getNewFileName = function (volData) {
+    /* .. function:: loadxhtml(url, data, reqtype, mode)
+     The file names in the Preprocessed db are just procedure performed? 
+     We need domething more informative downloading
+     
+     Parameters:
+     
+     * `volData`: object
+     containing al the data from the database for this volume
+     
+     Returns: String
      */
+    //var path = volData['volume_url'];
+    var sex = volData['sex'];
+    if (sex === 'No data') {
+        sex = 'undeterminedSex';
+    }
+    ;
+    var geneSymbol = this.sanitizeFileName(volData['geneSymbol']);
+    var animalName = this.sanitizeFileName(volData['animalName']);
+    var newPath = sex + '_' + animalName + '_' + geneSymbol;
+    return newPath;
+
+};
 
 
-    $('#low_power_check').button().click(function (e) {
-        this.setLowPowerState(e.currentTarget.checked);
-    }.bind(this));
-
-    $('#analysis_button').click(function (e) {
-        this.wtView.showAnalysisData();
-    }.bind(this));
-
-
-    $("#help_link").button({
-        icons: {
-            primary: 'ui-icon-help'
-        }
-
-    }).css({width: '30'});
-
+iev.viewer2D.prototype.attachEvents = function () {
 
     $("#reset")
 
@@ -775,35 +791,34 @@ iev.embryoviewer.prototype.attachEvents = function () {
                 }
             }, this));
 
-
     $("#invertColours")
-            .click(function (e) {
-                e.preventDefault();
-                //First change the background colors and scale colors
-                var checked;
-                if ($(e.target).hasClass('ievgrey')) {
-                    $(e.target).removeClass('ievgrey');
-                    $(e.target).addClass('ievInvertedGrey');
-                    $(".sliceView").css("background-color", "#FFFFFF");
-                    $(".sliceControls").css("background-color", "#FFFFFF");
-                    $('.scale_text').css("color", "#000000");
-                    $('.scale').css("background-color", "#000000");
-                    checked = true;
-                } else if ($(e.target).hasClass('ievInvertedGrey')) {
-                    $(e.target).removeClass('ievInvertedGrey');
-                    $(e.target).addClass('ievgrey');
-                    $(".sliceView").css("background-color", "#000000");
-                    $(".sliceControls").css("background-color", "#000000");
-                    $('.scale_text').css("color", "#FFFFFF");
-                    $('.scale').css("background-color", "#FFFFFF");
-                    checked = false;
-                }
-                //Now get the SpecimenViews to reset
-                for (var i = 0; i < this.views.length; i++) {
-                    this.views[i].invertColour(checked);
-                }
+        .click(function (e) {
+            e.preventDefault();
+            //First change the background colors and scale colors
+            var checked;
+            if ($(e.target).hasClass('ievgrey')) {
+                $(e.target).removeClass('ievgrey');
+                $(e.target).addClass('ievInvertedGrey');
+                $(".sliceView").css("background-color", "#FFFFFF");
+                $(".sliceControls").css("background-color", "#FFFFFF");
+                $('.scale_text').css("color", "#000000");
+                $('.scale').css("background-color", "#000000");
+                checked = true;
+            } else if ($(e.target).hasClass('ievInvertedGrey')) {
+                $(e.target).removeClass('ievInvertedGrey');
+                $(e.target).addClass('ievgrey');
+                $(".sliceView").css("background-color", "#000000");
+                $(".sliceControls").css("background-color", "#000000");
+                $('.scale_text').css("color", "#FFFFFF");
+                $('.scale').css("background-color", "#FFFFFF");
+                checked = false;
+            }
+            //Now get the SpecimenViews to reset
+            for (var i = 0; i < this.views.length; i++) {
+                this.views[i].invertColour(checked);
+            }
 
-            }.bind(this));
+        }.bind(this));
 
 
     $("#zoomIn")
@@ -837,7 +852,7 @@ iev.embryoviewer.prototype.attachEvents = function () {
     }.bind(this));
 
     // Create bookmark when clicked
-    $('#createBookmark').click(function (e) {
+    $('#createBookmark').unbind('click').click(function (e) {
         if (!this.bookmarkReady) {
             return;
         }
@@ -852,7 +867,6 @@ iev.embryoviewer.prototype.attachEvents = function () {
     /*
      * Orientation buttons *************************
      */
-
     $("#orientation_button").click(function (e) {
         e.preventDefault();
         if ($(e.target).hasClass('vertical')) {
@@ -871,8 +885,6 @@ iev.embryoviewer.prototype.attachEvents = function () {
     /*
      * ********************************************
      */
-
-
 
     // Hide/show slice views from the checkboxes
     $('.toggle_slice').change(function () {
@@ -896,9 +908,10 @@ iev.embryoviewer.prototype.attachEvents = function () {
 
         this.currentZoom = 0; // necessary as the zoom resets on change
 
-    }.bind(this));
+    }.bind(this)).button('enable');
 
     // Scale bar visiblity
+    this.setScaleSelect(); // creates widget
     $('#scale_visible').change(function (ev) {
         if ($(ev.currentTarget).is(':checked')) {
             $('#scale_select').selectmenu("enable");
@@ -913,8 +926,12 @@ iev.embryoviewer.prototype.attachEvents = function () {
         }
     }.bind(this));
 
+    $('#scale_visible').prop("checked", true) // check
+            .trigger('change') // trigger change
+            .prop("disabled", false); // enabled checkbox
 
-    $('.modality_button').change(function (ev) {
+    // Modality
+    $('.modality_button').unbind('change').change(function (ev) {
         var checkedStageModality = ev.currentTarget.id;
         this.setStageModality(checkedStageModality);
     }.bind(this));
@@ -922,25 +939,28 @@ iev.embryoviewer.prototype.attachEvents = function () {
     $(".button").button();
 
     $("#viewHeightSlider")
-            .slider({
-                min: 200,
-                max: 1920,
-                value: this.currentViewHeight,
-                slide: $.proxy(function (event, ui) {
-                    this.currentViewHeight = ui.value;
-                    $('.sliceWrap').css('height', ui.value);
-                    this.scaleOrthogonalViews();
-                    var evt = document.createEvent('UIEvents');
-                    evt.initUIEvent('resize', true, false, window, 0);
-                    window.dispatchEvent(evt);
-                }, this)
-            });
-
-    ;
+        .slider({
+            disabled: false,
+            min: 200,
+            max: 1920,
+            value: this.currentViewHeight,
+            slide: $.proxy(function (event, ui) {
+                this.currentViewHeight = ui.value;
+                $('.sliceWrap').css('height', ui.value);
+                this.scaleOrthogonalViews();
+                var evt = document.createEvent('UIEvents');
+                evt.initUIEvent('resize', true, false, window, 0);
+                window.dispatchEvent(evt);
+            }, this)
+    });
+    
+    $('#analysis_button').click(function(e) {
+        this.wtView.showAnalysisData();
+    }.bind(this));
 
 };
 
-iev.embryoviewer.prototype.basename = function (path) {
+iev.viewer2D.prototype.basename = function (path) {
     /**
      * Extract the basename from a path
      * @method basename
@@ -949,8 +969,7 @@ iev.embryoviewer.prototype.basename = function (path) {
     return path.split(/[\\/]/).pop();
 };
 
-
-iev.embryoviewer.prototype.objSize = function (obj) {
+iev.viewer2D.prototype.objSize = function (obj) {
     var count = 0;
     var i;
 
@@ -962,7 +981,7 @@ iev.embryoviewer.prototype.objSize = function (obj) {
     return count;
 };
 
-iev.embryoviewer.prototype.setBreadCrumb = function () {
+iev.viewer2D.prototype.setBreadCrumb = function () {
     /*
      * Get the dynamically generated menu code. Split into main menu and the login section
      */
@@ -971,8 +990,7 @@ iev.embryoviewer.prototype.setBreadCrumb = function () {
     var b_link = $('#ievBreadCrumbGene').html(this.gene_symbol).attr('href', mgi_href)
 };
 
-
-iev.embryoviewer.prototype.setInitialViewerHeight = function () {
+iev.viewer2D.prototype.setInitialViewerHeight = function () {
     /*Get the height available for the specimen views*/
     var sliceViewControlsHeight = 32 + 6; // Currently set in embryo.css the 6 is for padding
     var windowHeight = $(window.top).innerHeight();
@@ -991,7 +1009,7 @@ iev.embryoviewer.prototype.setInitialViewerHeight = function () {
 };
 
 
-iev.embryoviewer.prototype.setViewOrientation = function (orientation) {
+iev.viewer2D.prototype.setViewOrientation = function (orientation) {
 
     if (orientation === 'vertical') {
         this.horizontalView = true;
@@ -999,7 +1017,6 @@ iev.embryoviewer.prototype.setViewOrientation = function (orientation) {
             'float': 'left',
             'width': '50%',
             'clear': 'none'
-
         });
         $('.sliceWrap').css({
             'width': '100%'
@@ -1033,11 +1050,13 @@ iev.embryoviewer.prototype.setViewOrientation = function (orientation) {
     this.currentZoom = 0; //reset zoom
 };
 
-
-iev.embryoviewer.prototype.setScaleSelect = function () {
+iev.viewer2D.prototype.setScaleSelect = function () {
     $('#scale_select')
-            .append(this.scaleLabels().join(""))
-            .selectmenu({
+            .find('option') // get all existing options
+            .remove() // remove them
+            .end() // end
+            .append(this.scaleLabels().join("")) // append all options
+            .selectmenu({// create select menu widget
                 width: 80,
                 height: 20,
                 change: $.proxy(function (event, ui) {
@@ -1050,7 +1069,7 @@ iev.embryoviewer.prototype.setScaleSelect = function () {
 };
 
 
-iev.embryoviewer.prototype.isInternetExplorer = function () {
+iev.viewer2D.prototype.isInternetExplorer = function () {
     /*
      * XTK currently fails with IE. Check if we are using IE
      * Return True if using any IE version
@@ -1058,7 +1077,6 @@ iev.embryoviewer.prototype.isInternetExplorer = function () {
      */
 
     if (navigator.userAgent.indexOf('MSIE') !== -1) {
-
         return 'oldIe';
     } else if (navigator.appVersion.indexOf('Trident/') > 0) {
         console.log('using IE 11');
@@ -1070,7 +1088,7 @@ iev.embryoviewer.prototype.isInternetExplorer = function () {
 };
 
 
-iev.embryoviewer.prototype.catchXtkLoadError = function () {
+iev.viewer2D.prototype.catchXtkLoadError = function () {
     //This is an attempt to catch error messages from XTK loading errors as it does not have a error function to hook into
     window.onerror = function (errorMsg, url, lineNumber) {
 
