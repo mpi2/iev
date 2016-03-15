@@ -178,11 +178,16 @@ iev.viewer2D = function (data, container, queryType, queryId) {
                     }
                 }
             }
-            // Get analysis data, if it exists         
-            for (var j = 0; j < this.objSize(data['analysis_data'][cen]); j++) {
-
+            // Get analysis data, if it exists
+            if (this.objSize(data['analysis_data'][cen]) > 0) {
                 $('#analysis_button').removeClass('disabled');
                 $('#analysis_button').prop('title', 'Display analysis');
+            } else {
+                $('#analysis_button').removeClass('hoverable');
+            }
+            
+            
+            for (var j = 0; j < this.objSize(data['analysis_data'][cen]); j++) {
 
                 var ana = data['analysis_data'][cen][j];
                 ana.zygosity = 'Mixed';

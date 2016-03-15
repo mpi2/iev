@@ -238,11 +238,6 @@ body {
     opacity: 0.5;
 }
 
-.hoverable:disabled {
-    opacity: 0.5;
-    cursor: default;
-}
-
 .clear{
     clear:both;
 }
@@ -762,7 +757,6 @@ input[type=checkbox].linkCheck {
 
 #top_bar{
     padding: 7px;
-    border-bottom: 2px solid #F2F2F2; 
     margin-bottom: 5px;
     display:none;
 }
@@ -873,6 +867,7 @@ background-color: #DEDEDE;
 #analysis_button.disabled {
     background: transparent url(../images/no_analysis.png) no-repeat;
     background-size: 20px;
+    opacity: 0.25;
 }
 
 #lowcpu {

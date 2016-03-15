@@ -6,7 +6,7 @@ goog.require('iev.viewer3D');
 
 iev.embryo = function(){
    
-//    this.setupImpcMenus();          
+    this.setupImpcMenus();          
     this.setupTabs();  
     this.createControlPanel();
    
