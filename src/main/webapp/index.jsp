@@ -110,7 +110,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
 
         <div class="breadcrumb">
 
-            <a href="//dev.mousephenotype.org">Home</a> » <a href="/data/search">Search</a>&nbsp;» <a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
+            <a href="www.mousephenotype.org">Home</a> » <a href="/data/search">Search</a>&nbsp;» <a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
 
             <div class="searchcontent">
                 <div id="bigsearchbox" class="block">
