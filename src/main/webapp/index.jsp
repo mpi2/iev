@@ -139,11 +139,6 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
 </div>-->
 
         </div>
-           <div id="help">
-                            <form action="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" target="_blank"  id="help_form">
-                                <input type="submit" value="?" id="help_link" >
-                            </form>
-                        </div>
 
 <!--                <div id='batchQryLink'>
                     <a id='batchquery' href='/data/batchQuery'><i class='fa fa-th-list batchQuery'></i><span id='bqry'>Batch query</span></a>
