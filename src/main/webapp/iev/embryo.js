@@ -5,10 +5,39 @@ goog.require('iev.viewer3D');
 
 
 iev.embryo = function(){
-   
+    
+    this.setupImpcMenus();
     this.setupTabs();  
     this.createControlPanel();
    
+};
+
+iev.embryo.prototype.setupImpcMenus = function() {
+
+    var protocol = window.location.protocol === "https:"? 'https' : 'http';
+
+    var header_menu_source;
+    //Set the correct menu depending on which sub-domain we're on
+    switch (location.hostname) {
+
+        case 'localhost':
+            header_menu_source = 'menudisplaycombinedrendered.html';
+            break;
+        case 'www.mousephenotype.org':
+            header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
+            break;
+        case 'beta.mousephenotype.org':
+            header_menu_source = protocol + '://beta.mousephenotype.org/menudisplaycombinedrendered';
+            break;
+        case 'dev.mousephenotype.org':
+            header_menu_source = protocol + '://dev.mousephenotype.org/menudisplaycombinedrendered';
+            break;
+    }
+    $.get(header_menu_source, function (data) {
+        var menuItems = data.split("MAIN*MENU*BELOW");
+        $('#block-menu-block-1').append(menuItems[1]);
+        $('#tn').append(menuItems[0]);
+    });
 };
 
 iev.embryo.prototype.setupTabs = function() {
