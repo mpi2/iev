@@ -13,3 +13,4 @@ phenodcc_backup/
 *.pdf
 X/
 *.orig
+src/main/webapp/data/
