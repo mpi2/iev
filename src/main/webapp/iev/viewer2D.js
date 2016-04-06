@@ -108,19 +108,6 @@ iev.viewer2D = function (centreData, container, queryType, queryId) {
         }
     };
 
-    this.centreOptions = {
-        1: 'BCM',
-        3: 'GMC',
-        4: 'HAR',
-        6: 'ICS',
-        7: 'J',
-        8: 'TCP',
-        9: 'Ning',
-        10: 'RBRC',
-        11: 'UCD',
-        12: 'Wtsi'
-    };
-
     this.spinnerOpts = {
         lines: 8 // The number of lines to draw
         , length: 6 // The length of each line
@@ -166,43 +153,6 @@ iev.viewer2D.prototype.scaleLabels = function () {
     }
     return options;
 };
-
-iev.viewer2D.prototype.centreSelector = function () {
-    /*
-     * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
-     */
-
-    // Populate drop down box with available centres
-
-    var options = [];
-
-    for (var key in this.centreOptions) {
-        if (key in this.centreData) {
-            var iconClass = 'centreSelectIcon cen_' + key;
-            options.push("<option  value='" + key + "'" + "' data-class='" + iconClass + "'>" + this.centreOptions[key] + "</option>");
-        }
-    }
-
-    var $centre_select = $('#centre_select');
-    $centre_select.find('option').remove().end().append(options.join(""));
-
-    $centre_select.iconselectmenu()
-            .iconselectmenu("menuWidget")
-            .addClass("ui-menu-icons customicons");
-
-    $centre_select
-            .iconselectmenu({
-                width: '60px',
-                change: $.proxy(function (event, ui) {
-                    this.setCentre(ui.item.value);
-                }, this)
-
-            });
-
-    // Set the current centre
-    $centre_select.val(this.currentCentreId).iconselectmenu('refresh', true);
-};
-
 
 
 iev.viewer2D.prototype.setActiveModalityButtons = function () {

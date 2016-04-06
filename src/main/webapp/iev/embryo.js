@@ -10,6 +10,35 @@ iev.embryo = function(){
     this.ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
     this.WILDTYPE_COLONYID = 'baseline';
     this.OUTPUT_FILE_EXT = '.nrrd';
+    
+    this.centreOptions = {
+        1: 'BCM',
+        3: 'GMC',
+        4: 'HAR',
+        6: 'ICS',
+        7: 'J',
+        8: 'TCP',
+        9: 'Ning',
+        10: 'RBRC',
+        11: 'UCD',
+        12: 'Wtsi'
+    };
+    
+    $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+        _renderItem: function (ul, item) {
+            var li = $("<li>", {text: item.label});
+            if (item.disabled) {
+                li.addClass("ui-state-disabled");
+            }
+
+            $("<span>", {
+                style: item.element.attr("data-style"),
+                "class": "ui-icon " + item.element.attr("data-class")
+            })
+                    .appendTo(li);
+            return li.appendTo(ul);
+        }
+    });
 
     this.setupImpcMenus();
     this.setupTabs();  
@@ -93,6 +122,41 @@ iev.embryo.prototype.createControlPanel = function() {
 
 };
 
+iev.embryo.prototype.centreSelector = function (data) {
+    /*
+     * Sets up the drop down menu with avaiable centre icons for this particular mgi/colony etc
+     */
+
+    var options = [];
+
+    for (var key in this.centreOptions) {
+        if (key in data) {
+            var iconClass = 'centreSelectIcon cen_' + key;
+            options.push("<option value='" + key + "'" + "' data-class='" + iconClass + "'>" + this.centreOptions[key] + "</option>");
+        }
+    }
+    
+    var currentCentreId = key;
+
+    var $centre_select = $('#centre_select');
+    $centre_select.find('option').remove().end().append(options.join(""));
+
+    $centre_select.iconselectmenu()
+            .iconselectmenu("menuWidget")
+            .addClass("ui-menu-icons customicons");
+
+    $centre_select
+            .iconselectmenu({
+                width: '60px',
+                change: $.proxy(function (event, ui) {
+                    this.setCentre(ui.item.value);
+                }, this)
+
+            });
+
+    // Set the current centre
+    $centre_select.val(currentCentreId).iconselectmenu('refresh', true);
+};
 
 iev.embryo.prototype.modalityData = function() {
     
@@ -264,7 +328,8 @@ iev.embryo.prototype.organiseData = function(data) {
         this.currentCentreId = cen; // Just pick the last one to be visible
 
     }
-
+    
+    this.centreSelector(centreData);
     return centreData;
     
 };
