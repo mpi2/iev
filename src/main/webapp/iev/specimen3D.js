@@ -15,6 +15,10 @@ iev.specimen3D = function(volumeData, id, container, queryColonyId, localStorage
     this.queryColonyId = queryColonyId;
     this.localStorage = localStorage;
     this.spinner;
+    this.analysisVolume;
+    this.currentLabelmap = 'ov' in config ? config['ov'] : 'jacobian';
+    this.vselector = 'volumeSelector_' + id;
+
     
     /** @const */ 
     this.spinnerOpts = {
@@ -44,18 +48,21 @@ iev.specimen3D = function(volumeData, id, container, queryColonyId, localStorage
     this.bookmarkHasVolume = false;
 
     // If the config has a specimen, select that instead
-     if (config.hasOwnProperty('n')) {
-        for (var key in volumeData) {
-            if (volumeData.hasOwnProperty(key)) {
-                var vol = volumeData[key];
-                if (vol['animalName'] === config['n']) {
-                    this.currentVolume = vol;
-                    this.bookmarkHasVolume = true;
-                    break;
-                }
-            }
-        }           
-    }
+    for (var key in volumeData) {
+        var vol = volumeData[key];
+        
+        if ('n' in config && vol['animalName'] === config['n']) {
+            this.currentVolume = vol;
+            this.bookmarkHasVolume = true;
+            break;
+        }
+
+        if (this.currentLabelmap in vol) {       
+            this.analysisVolume = key;
+        }
+                     
+    }           
+    
     
     // Create control panel
     this.controlPanel = new iev.specimenPanel(id, this.replaceVolume.bind(this));
@@ -247,6 +254,14 @@ iev.specimen3D.prototype.replaceVolume = function(volumePath) {
     this.currentVolume = this.volumeData[volumePath];
     this.createRenderer();
     
+};
+
+iev.specimen3D.prototype.showAnalysisData = function() {
+    if (this.analysisVolume && this.currentVolume['volume_url'] !== this.analysisVolume) {
+        $('#' + this.vselector).val(this.analysisVolume);
+        $('#' + this.vselector).iconselectmenu("refresh");     
+        this.replaceVolume(this.analysisVolume);
+    }
 };
 
 iev.specimen3D.prototype.zoomIn = function(){

@@ -114,7 +114,8 @@ iev.specimen2D = function(volumeData, id, container,
 
     this.createHTML();
     this.controlPanel.updateVolumeSelector(this.currentVolume, this.volumeData);        
-    this.jQuerySelectors();        
+    this.jQuerySelectors();     
+    this.setupOverlayControls();
     this.setupRenderers();
     this.drawScaleBar();        
 };
@@ -149,6 +150,25 @@ iev.specimen2D.prototype.getLabelmap = function() {
     } else {
         return "none";
     }
+};
+
+iev.specimen2D.prototype.setupOverlayControls = function() {
+
+    // Set the checked button
+    var button = $('input:radio', '#' + this.overlayControl).filter('[value=' + this.currentLabelmap + ']'); // '#' + this.overlayControl, 
+    button.prop('checked', true);
+        
+    // Set up overlay controls
+    $('#' + this.overlayControl).buttonset();
+    
+    // On click
+    $('#' + this.overlayControl).click(function(e) {
+        var overlay_type = $('input[type=radio]:checked', e.currentTarget).prop("value");
+        if (this.currentLabelmap !== overlay_type) {  // check if anything changed
+            this.currentLabelmap = overlay_type;        
+            this.replaceVolume(this.currentVolume['volume_url']);
+        }
+    }.bind(this));
 };
 
 iev.specimen2D.prototype.showHideOverlayControls = function() {
@@ -516,7 +536,8 @@ iev.specimen2D.prototype.setupRenderers = function() {
     this.xRen.onShowtime = function(){   
         // we have to wait before volumes have fully loaded before we
         // can extract intesity information                
-        this.controlPanel.setContrastSlider(this.volume);                
+        this.controlPanel.setContrastSlider(this.volume);
+        this.showHideOverlayControls();
         this.setReady();                
     }.bind(this);
 

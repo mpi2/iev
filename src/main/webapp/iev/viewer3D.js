@@ -143,6 +143,10 @@ iev.viewer3D = function(data, div, queryType, queryId) {
     
     // Put this here as calling this multiple times does not work
     this.downloadTableRowSource = $("#downloadTableRowTemplate").html();
+    
+    $('#analysis_button').click(function(e) {
+        this.wtView.showAnalysisData();
+    }.bind(this));
 
 };
 

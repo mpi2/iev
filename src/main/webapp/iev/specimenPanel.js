@@ -8,6 +8,8 @@ iev.specimenPanel = function(id, replaceVolume) {
     this.windowLevel = 'windowLevel_' + id;
     this.vselector = 'volumeSelector_' + id;
     this.controls = 'controls_' + id;
+    this.overlayControl = 'overlayControl_' + id;
+
     
     /** @const */ 
     this.WILDTYPE_COLONYID = 'baseline';
@@ -68,7 +70,8 @@ iev.specimenPanel.prototype.create = function() {
         controlsButtonsId: "controlsButtons_" + this.id,
         selectorWrapId: "selectorWrap_" + this.id,
         vselectorId: this.vselector,
-        windowLevelId: this.windowLevel 
+        windowLevelId: this.windowLevel,
+        overlayId: this.overlayControl
     };
 
     var source   = $("#slice_controls_template").html();
