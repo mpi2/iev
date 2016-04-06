@@ -6,6 +6,11 @@ goog.require('iev.viewer3D');
 
 iev.embryo = function(){
     
+    this.IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
+    this.ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
+    this.WILDTYPE_COLONYID = 'baseline';
+    this.OUTPUT_FILE_EXT = '.nrrd';
+
     this.setupImpcMenus();
     this.setupTabs();  
     this.createControlPanel();
@@ -184,6 +189,164 @@ iev.embryo.prototype.setTab = function() {
     
 };
 
+iev.embryo.prototype.organiseData = function(data) {
+  
+    /**
+     * Seperate out the baseline data and the mutant data.
+     * If data is not available, load an error message
+     */
+    var centreData = {};
+    
+    if (data['success']) {
+        
+        //In case we load another dataset  
+        this.mgi = 'undefined';
+        this.gene_symbol = 'undefined';
+
+        for (var cen in data['centre_data']) { // Pick the first centre you come across as the current centre
+            var modData = this.getModalityData();
+            //Display the top control bar
+            $('#top_bar').show(); //NH? what's this
+
+            // Loop over the centre data
+            for (var i = 0; i < this.objSize(data['centre_data'][cen]); i++) {
+                //loop over the data for this centre
+
+                var obj = data['centre_data'][cen][i];
+
+                this.buildUrl(obj);
+
+                if (obj.colonyId === this.WILDTYPE_COLONYID) {
+                    modData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
+
+                } else {
+                    modData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
+                    //Now set the current MGI and Genesymbol
+                    if (this.mgi === 'undefined') {
+                        this.mgi = obj.mgi;
+                    }
+                    if (this.gene_symbol === 'undefined') {
+                        this.gene_symbol = obj.geneSymbol;
+                    }
+                }
+            }
+            
+            // Get analysis data, if it exists
+            if (this.objSize(data['analysis_data'][cen]) > 0) {
+                $('#analysis_button').removeClass('disabled');
+                $('#analysis_button').prop('title', 'Display analysis');
+            } else {
+                $('#analysis_button').removeClass('hoverable');
+            }
+            
+            
+            for (var j = 0; j < this.objSize(data['analysis_data'][cen]); j++) {
+
+                var ana = data['analysis_data'][cen][j];
+                ana.zygosity = 'Mixed';
+                ana.animalName = 'Average';
+                ana.sex = 'no data';
+                ana.geneSymbol = '';
+
+                // Create volume/overlay URLs
+                ana['volume_url'] = this.analysisUrl(ana, 'average', this.OUTPUT_FILE_EXT);
+                ana['jacobian'] = this.analysisUrl(ana, 'jacobian', this.OUTPUT_FILE_EXT);
+                ana['intensity'] = this.analysisUrl(ana, 'intensity', this.OUTPUT_FILE_EXT);
+                ana['labelmap'] = this.analysisUrl(ana, 'labelmap', this.OUTPUT_FILE_EXT);
+
+                // Add populate average volume
+                modData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
+                modData[ana.pid]['vols']['mutant'][ana.volume_url] = ana;
+            }
+            centreData[cen] = modData;
+
+        }
+        this.currentCentreId = cen; // Just pick the last one to be visible
+
+    }
+
+    return centreData;
+    
+};
+
+
+iev.embryo.prototype.getModalityData = function () {
+
+    return {
+        203: {
+            'id': 'CT E14.5/15.5',
+            'vols': {
+                'mutant': {},
+                'wildtype': {}
+            }
+        },
+        204: {
+            'id': 'CT E18.5',
+            'vols': {
+                'mutant': {},
+                'wildtype': {}
+            }
+        },
+        202: {
+            'id': 'OPT 9.5',
+            'vols': {
+                'mutant': {},
+                'wildtype': {}
+            }
+        }
+    };
+    
+};
+
+iev.embryo.prototype.buildUrl = function (data) {
+    /**
+     * Create a url from the data returned by querying database for a colonyID
+     * URL should point us towards the correct place on the image server.
+     * add the URL to the data object
+     * @method buildUrl
+     * @param {json} data Data for colonyID 
+     */
+    var root = this.IMAGE_SERVER + data.cid + '/'
+            + data.lid + '/'
+            + data.gid + '/'
+            + data.sid + '/'
+            + data.pid + '/'
+            + data.qid + '/';
+
+    //Low res just need relative path to image as it's zipped server side
+    var lowResUrl = root + data.imageForDisplay;
+    var lowResName = data.imageForDisplay.split('.')[0];
+    var base = lowResName.split('_')[0];
+    var ext = data.imageForDisplay.split('.')[1];
+
+    // High res need full link to image on server
+    var highResName = base + '_download.' + ext;
+    var highResUrl = root + highResName;
+
+    data['volume_url'] = lowResUrl;
+    data['volume_url_high_res'] = highResUrl;
+    return data;
+
+};
+
+iev.embryo.prototype.analysisUrl = function (data, name, ext) {
+    /**
+     * Create url for the analysis data, based on type and extension
+     * @method analysisUrl
+     * @param {json} data Data for colonyID 
+     */
+
+    var url = this.ANA_SERVER + data.cid + '/'
+            + data.lid + '/'
+            + data.gid + '/'
+            + data.sid + '/'
+            + data.pid + '/'
+            + data.qid + '/'
+            + data.id + '/'
+            + name + ext;
+    return url;
+};
+
 iev.embryo.prototype.dcc_get = function(url, handler){
     
     var request = new XMLHttpRequest();
@@ -201,9 +364,10 @@ iev.embryo.prototype.dcc_get = function(url, handler){
 
 iev.embryo.prototype.getVolumesByColonyId = function(colonyId) {   
     this.dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
-        function(data) {   
+        function(data) {
+            data = this.organiseData(data);
             this.viewer2D = new iev.viewer2D(data, 'viewer', 'colony ID', colonyId);
-            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'gene symbol', colonyId);
+            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'colony ID', colonyId);
             this.setTab();
         }.bind(this)
     );
@@ -212,8 +376,9 @@ iev.embryo.prototype.getVolumesByColonyId = function(colonyId) {
 iev.embryo.prototype.getVolumesByGeneSymbol = function(geneSymbol) {
     this.dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
         function(data) {
-            this.viewer2D = new iev.viewer2D(data, 'viewer', 'gene symbol', geneSymbol);     
-            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'gene symbol', geneSymbol);
+            data = this.organiseData(data);
+            this.viewer2D = new iev.viewer2D(data, 'viewer', geneSymbol, 'gene symbol');     
+            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', geneSymbol, 'gene symbol');
             this.setTab();
         }.bind(this)
     );
@@ -222,8 +387,9 @@ iev.embryo.prototype.getVolumesByGeneSymbol = function(geneSymbol) {
 iev.embryo.prototype.getVolumesByMgi = function(mgi) {
     this.dcc_get("rest/volumes" + (mgi === undefined ? "" : "?mgi=" + mgi), 
         function(data) {
+            data = this.organiseData(data);
             this.viewer2D = new iev.viewer2D(data, 'viewer', 'mgi', mgi);  
-            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'gene symbol', mgi);
+            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'mgi', mgi);
             this.setTab();
         }.bind(this)
     );
@@ -233,6 +399,18 @@ iev.embryo.prototype.resetViewer = function(viewer) {
     for (var i = 0; i < viewer.views.length; i++) {
         viewer.views[i].reset();
     }
+};
+
+iev.embryo.prototype.objSize = function (obj) {
+    var count = 0;
+    var i;
+
+    for (i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            count++;
+        }
+    }
+    return count;
 };
 
 goog.exportSymbol('iev.embryo.prototype.getVolumesByMgi', iev.embryo.prototype.getVolumesByMgi);

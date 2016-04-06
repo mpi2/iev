@@ -11,65 +11,19 @@ iev.viewer3D = function(data, div, queryType, queryId) {
     this.WILDTYPE_COLONYID = 'baseline';
     this.queryId = queryId;
     this.volorder = ["203", "204", "202"];  // may want to add others at a later date
-    this.currentCentreId;
+    this.currentCentreId = Object.keys(data)[0];
     this.views = [];
     this.centreData = {};
     this.ready = false;
     this.currentZoom = 0;
     this.bookmarkReady = false;
         
-    if (data['success']) {
-        
-        var modData = this.getModData();
-
-        this.mgi = 'undefined';
-        this.gene_symbol = 'undefined';
-
-        for (var cen in data['centre_data']) {
-
-            // Loop over the centre data
-            for (var i = 0; i < this.objSize(data['centre_data'][cen]); i++) {
-
-                var obj = data['centre_data'][cen][i];
-                this.buildUrl(obj);
-
-                if (obj.colonyId === this.WILDTYPE_COLONYID) {
-                    modData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
-
-                } else {
-                    modData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
-                    //Now set the current MGI and Genesymbol
-                    if (this.mgi === 'undefined') {
-                        this.mgi = obj.mgi;
-                    }
-                    if (this.gene_symbol === 'undefined') {
-                        this.gene_symbol = obj.geneSymbol;
-                    }
-                }
-            }
-            this.centreData[cen] = modData;
-
-        }
-        this.currentCentreId = cen; // Just pick the last one to be visible
-
-    } else {
-        //Just display a message informing no data
-        var data = {
-            colonyId: this.queryId,
-            queryType: queryType
-        };
-
-        var source = $("#no_data_template").html();
-        var template = Handlebars.compile(source);
-        $('#' + div).append(template(data));
-    }
-
     var pid;
     for (var i in this.volorder){
         pid = this.volorder[i];
-        if (this.objSize(this.centreData[this.currentCentreId][pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
-            this.wildtypeData = this.centreData[this.currentCentreId][pid]['vols']['wildtype'];
-            this.mutantData = this.centreData[this.currentCentreId][pid]['vols']['mutant'];
+        if (this.objSize(this.data[this.currentCentreId][pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
+            this.wildtypeData = this.data[this.currentCentreId][pid]['vols']['wildtype'];
+            this.mutantData = this.data[this.currentCentreId][pid]['vols']['mutant'];
             break;
         }
     }

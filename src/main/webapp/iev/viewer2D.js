@@ -6,22 +6,17 @@ goog.require('iev.Download');
 
 
 
-iev.viewer2D = function (data, container, queryType, queryId) {
+iev.viewer2D = function (centreData, container, queryType, queryId) {
     /**
      * @class EmbryoViewer
      * @type String
      */
-    this.data = data;
-    this.IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-    this.ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
-    this.WILDTYPE_COLONYID = 'baseline';
-    this.OUTPUT_FILE_EXT = '.nrrd';
     this.queryId = queryId;
     this.horizontalView;
     this.wtView;
     this.mutView;
     this.currentModality;
-    this.currentCentreId;
+    this.currentCentreId = Object.keys(centreData)[0];
     this.downloadTableRowSourceLow;
     this.downloadTableRowSourceHigh;
     this.spinner; // Progress spinner
@@ -36,6 +31,19 @@ iev.viewer2D = function (data, container, queryType, queryId) {
     this.downloader = new iev.Download(this);
     this.container = container;
     this.$container = $('#' + this.container);
+    
+            
+    //Just display a message informing no data
+    if (!centreData) {
+        var msg_data = {
+            colonyId: queryId,
+            queryType: queryType
+        };
+
+        var source = $("#no_data_template").html();
+        var template = Handlebars.compile(source);
+        this.$container.append(template(msg_data));
+    }
 
     if (this.isBrowserIE === 'oldIe') {
         console.log('IEV does not support Internet Explorer <v11');
@@ -44,8 +52,6 @@ iev.viewer2D = function (data, container, queryType, queryId) {
         this.$container.append(template(data));
         return;
     }
-    ;
-
 
     //Give users a warning about using the deprecated colony_id=test url
     if (queryType === 'colony ID' && this.queryId === 'test') {
@@ -64,7 +70,7 @@ iev.viewer2D = function (data, container, queryType, queryId) {
 
     // Contains a bunch of modalityData objects
     // {centreId: modalitydata}
-    this.centreData = {};
+    this.centreData = centreData;
 
     this.ortho = {// rename
         'X': {
@@ -142,85 +148,7 @@ iev.viewer2D = function (data, container, queryType, queryId) {
 
     this.ICONS_DIR = "images/centre_icons/"; //not used??
 
-    /**
-     * Seperate out the baseline data and the mutant data.
-     * If data is not available, load an error message
-     */
-    if (data['success']) {
-        //In case we load another dataset  
-        this.mgi = 'undefined';
-        this.gene_symbol = 'undefined';
-
-        for (var cen in data['centre_data']) { // Pick the first centre you come across as the current centre
-            var modData = this.getModalityData();
-            //Display the top control bar
-            $('#top_bar').show(); //NH? what's this
-
-            // Loop over the centre data
-            for (var i = 0; i < this.objSize(data['centre_data'][cen]); i++) {
-                //loop over the data for this centre
-
-                var obj = data['centre_data'][cen][i];
-
-                this.buildUrl(obj);
-
-                if (obj.colonyId === this.WILDTYPE_COLONYID) {
-                    modData[obj.pid]['vols']['wildtype'][obj.volume_url] = obj;
-
-                } else {
-                    modData[obj.pid]['vols']['mutant'][obj.volume_url] = obj;
-                    //Now set the current MGI and Genesymbol
-                    if (this.mgi === 'undefined') {
-                        this.mgi = obj.mgi;
-                    }
-                    if (this.gene_symbol === 'undefined') {
-                        this.gene_symbol = obj.geneSymbol;
-                    }
-                }
-            }
-            // Get analysis data, if it exists
-            if (this.objSize(data['analysis_data'][cen]) > 0) {
-                $('#analysis_button').removeClass('disabled');
-                $('#analysis_button').prop('title', 'Display analysis');
-            } else {
-                $('#analysis_button').removeClass('hoverable');
-            }
-            
-            
-            for (var j = 0; j < this.objSize(data['analysis_data'][cen]); j++) {
-
-                var ana = data['analysis_data'][cen][j];
-                ana.zygosity = 'Mixed';
-                ana.animalName = 'Average';
-                ana.sex = 'no data';
-                ana.geneSymbol = '';
-
-                // Create volume/overlay URLs
-                ana['volume_url'] = this.analysisUrl(ana, 'average', this.OUTPUT_FILE_EXT);
-                ana['jacobian'] = this.analysisUrl(ana, 'jacobian', this.OUTPUT_FILE_EXT);
-                ana['intensity'] = this.analysisUrl(ana, 'intensity', this.OUTPUT_FILE_EXT);
-                ana['labelmap'] = this.analysisUrl(ana, 'labelmap', this.OUTPUT_FILE_EXT);
-
-                // Add populate average volume
-                modData[ana.pid]['vols']['wildtype'][ana.volume_url] = ana;
-                modData[ana.pid]['vols']['mutant'][ana.volume_url] = ana;
-            }
-            this.centreData[cen] = modData;
-
-        }
-        this.currentCentreId = cen; // Just pick the last one to be visible
-
-    } else {
-        //Just display a message informing no data
-        var data = {
-            colonyId: this.queryId,
-            queryType: queryType
-        };
-
-        var source = $("#no_data_template").html();
-        var template = Handlebars.compile(source);
-        this.$container.append(template(data));
-    }
+    // LOADS OF STUFF REMOVED FROM HERE AND MOVED TO embryo.js
 
     this.views = [];
 
@@ -230,24 +158,6 @@ iev.viewer2D = function (data, container, queryType, queryId) {
 
 };  // Constructor
 
-iev.viewer2D.prototype.analysisUrl = function (data, name, ext) {
-    /**
-     * Create url for the analysis data, based on type and extension
-     * @method analysisUrl
-     * @param {json} data Data for colonyID 
-     */
-
-    var url = this.ANA_SERVER + data.cid + '/'
-            + data.lid + '/'
-            + data.gid + '/'
-            + data.sid + '/'
-            + data.pid + '/'
-            + data.qid + '/'
-            + data.id + '/'
-            + name + ext;
-    return url;
-};
-
 iev.viewer2D.prototype.scaleLabels = function () {
 
     var options = [];
@@ -255,35 +165,7 @@ iev.viewer2D.prototype.scaleLabels = function () {
         options.push("<option value='" + this.scales.options[key] + "'>" + key + "</option>");
     }
     return options;
-}
-
-iev.viewer2D.prototype.getModalityData = function () {
-
-    return {
-        203: {
-            'id': 'CT E14.5/15.5',
-            'vols': {
-                'mutant': {},
-                'wildtype': {}
-            }
-        },
-        204: {
-            'id': 'CT E18.5',
-            'vols': {
-                'mutant': {},
-                'wildtype': {}
-            }
-        },
-        202: {
-            'id': 'OPT 9.5',
-            'vols': {
-                'mutant': {},
-                'wildtype': {}
-            }
-        }
-    };
 };
-
 
 iev.viewer2D.prototype.centreSelector = function () {
     /*
@@ -295,7 +177,7 @@ iev.viewer2D.prototype.centreSelector = function () {
     var options = [];
 
     for (var key in this.centreOptions) {
-        if (key in this.data['centre_data']) {
+        if (key in this.centreData) {
             var iconClass = 'centreSelectIcon cen_' + key;
             options.push("<option  value='" + key + "'" + "' data-class='" + iconClass + "'>" + this.centreOptions[key] + "</option>");
         }
@@ -319,7 +201,7 @@ iev.viewer2D.prototype.centreSelector = function () {
 
     // Set the current centre
     $centre_select.val(this.currentCentreId).iconselectmenu('refresh', true);
-}
+};
 
 
 
@@ -334,7 +216,7 @@ iev.viewer2D.prototype.setActiveModalityButtons = function () {
             $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', false);
         }
     }
-}
+};
 
 
 iev.viewer2D.prototype.buildUrl = function (data) {
