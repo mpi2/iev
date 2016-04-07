@@ -295,23 +295,21 @@ iev.viewer3D.prototype.setStageModality = function(pid){
     this.currentModality = pid;
 
     if (typeof this.wtView !== 'undefined'){
-        var wtVolumes = this.centreData[this.currentCentreId][pid]['vols'].wildtype;
+        var wtVolumes = this.data[this.currentCentreId][pid]['vols'].wildtype;
 
         if (Object.keys(wtVolumes).length > 0) {
             $("#wt").show();
             this.wtView.updateData(wtVolumes);
-//            this.wtView.reset();
         } else {
             $("#wt").hide();                    
         }
     }
     if (typeof this.mutView !== 'undefined'){
-        var mutVolumes = this.centreData[this.currentCentreId][pid]['vols'].mutant;
+        var mutVolumes = this.data[this.currentCentreId][pid]['vols'].mutant;
 
         if (Object.keys(mutVolumes).length > 0) {
             $("#mut").show();
             this.mutView.updateData(mutVolumes);
-//            this.mutView.reset();
         } else {
             $("#mut").hide();
         }
