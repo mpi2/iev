@@ -17,19 +17,7 @@ iev.viewer3D = function(data, div, queryType, queryId) {
     this.ready = false;
     this.currentZoom = 0;
     this.bookmarkReady = false;
-        
-    var pid;
-    for (var i in this.volorder){
-        pid = this.volorder[i];
-        if (this.objSize(this.data[this.currentCentreId][pid]['vols']['mutant']) > 0){ // !!!! Don't forget to switch off once I work out how to load ct by default
-            this.wildtypeData = this.data[this.currentCentreId][pid]['vols']['wildtype'];
-            this.mutantData = this.data[this.currentCentreId][pid]['vols']['mutant'];
-            break;
-        }
-    }
-    
-    this.currentModality = pid;
-   
+          
  };
  
  iev.viewer3D.prototype.attachEvents = function() {
@@ -120,6 +108,7 @@ iev.viewer3D = function(data, div, queryType, queryId) {
     $('.toggle_slice').button("disable");
 
     // Scale bar visiblity
+    $('#scale_select').selectmenu();
     $('#scale_visible').prop("checked", false) // uncheck
             .trigger('change') // trigger change
             .prop("disabled", true); // disabled checkbox
@@ -201,12 +190,28 @@ iev.viewer3D.prototype.zoomViewsOut = function() {
     this.mutView.zoomOut();
 };
  
-iev.viewer3D.prototype.onTab = function(bookmarkData){
+iev.viewer3D.prototype.onTab = function(config){
+    
+    this.bookmarkData = config;
+    if (this.bookmarkData['pid']) {
+        this.volorder.unshift(this.bookmarkData['pid']);
+    }
+    
+    var pid;
+    for (var i in this.volorder){
+        pid = this.volorder[i];
+        if (this.objSize(this.data[this.currentCentreId][pid]['vols']['mutant']) > 0){
+            this.wildtypeData = this.data[this.currentCentreId][pid]['vols']['wildtype'];
+            this.mutantData = this.data[this.currentCentreId][pid]['vols']['mutant'];
+            break;
+        }
+    }
+    
+    this.currentModality = pid;
     
     this.attachEvents();
     this.setActiveModalityButtons();
     $("#modality_stage").buttonset('refresh');
-    this.bookmarkData = bookmarkData;
     this.localStorage = new iev.LocalStorage(this.isBrowserIE);
 
     this.localStorage.setup(function(){  

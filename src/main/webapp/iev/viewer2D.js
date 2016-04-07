@@ -459,7 +459,7 @@ iev.viewer2D.prototype.afterLoadingLocalStorage = function () {
             this.localStorage
             );
     this.views.push(this.mutView);
-    this.centreSelector();
+    
 };
 
 
