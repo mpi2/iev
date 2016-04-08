@@ -1,9 +1,9 @@
 goog.provide('iev.viewer3D');
 goog.require('iev.specimen3D')
 
-iev.viewer3D = function(data, div, queryType, queryId) {
+iev.viewer3D = function(centreData, div, queryType, queryId) {
     
-    this.data = data;
+    this.centreData = centreData;
     this.container = div;
     this.$container = $('#' + this.container);
     this.IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
@@ -11,9 +11,8 @@ iev.viewer3D = function(data, div, queryType, queryId) {
     this.WILDTYPE_COLONYID = 'baseline';
     this.queryId = queryId;
     this.volorder = ["203", "204", "202"];  // may want to add others at a later date
-    this.currentCentreId = Object.keys(data)[0];
+    this.currentCentreId = Object.keys(centreData)[0];
     this.views = [];
-    this.centreData = {};
     this.ready = false;
     this.currentZoom = 0;
     this.bookmarkReady = false;
@@ -107,12 +106,21 @@ iev.viewer3D = function(data, div, queryType, queryId) {
     // Hide/show slice views from the checkboxes
     $('.toggle_slice').button("disable");
 
-    // Scale bar visiblity
-    $('#scale_select').selectmenu();
+    // Initialise scale bar
+    $('#scale_select')
+            .find('option') // get all existing options
+            .remove() // remove them
+            .end() // end
+            .append($('<option></option>').val("0").html("Off")) // append all options
+            .selectmenu({// create select menu widget
+                width: 80,
+                height: 20,
+                disabled: true
+        });
+    
     $('#scale_visible').prop("checked", false) // uncheck
             .trigger('change') // trigger change
             .prop("disabled", true); // disabled checkbox
-    
     
     // Modality
     $('.modality_button').unbind('change').change(function (ev) {
@@ -200,9 +208,9 @@ iev.viewer3D.prototype.onTab = function(config){
     var pid;
     for (var i in this.volorder){
         pid = this.volorder[i];
-        if (this.objSize(this.data[this.currentCentreId][pid]['vols']['mutant']) > 0){
-            this.wildtypeData = this.data[this.currentCentreId][pid]['vols']['wildtype'];
-            this.mutantData = this.data[this.currentCentreId][pid]['vols']['mutant'];
+        if (this.objSize(this.centreData[this.currentCentreId][pid]['vols']['mutant']) > 0){
+            this.wildtypeData = this.centreData[this.currentCentreId][pid]['vols']['wildtype'];
+            this.mutantData = this.centreData[this.currentCentreId][pid]['vols']['mutant'];
             break;
         }
     }
@@ -295,7 +303,7 @@ iev.viewer3D.prototype.setStageModality = function(pid){
     this.currentModality = pid;
 
     if (typeof this.wtView !== 'undefined'){
-        var wtVolumes = this.data[this.currentCentreId][pid]['vols'].wildtype;
+        var wtVolumes = this.centreData[this.currentCentreId][pid]['vols'].wildtype;
 
         if (Object.keys(wtVolumes).length > 0) {
             $("#wt").show();
@@ -305,7 +313,7 @@ iev.viewer3D.prototype.setStageModality = function(pid){
         }
     }
     if (typeof this.mutView !== 'undefined'){
-        var mutVolumes = this.data[this.currentCentreId][pid]['vols'].mutant;
+        var mutVolumes = this.centreData[this.currentCentreId][pid]['vols'].mutant;
 
         if (Object.keys(mutVolumes).length > 0) {
             $("#mut").show();
