@@ -1,15 +1,11 @@
-goog.provide('iev.filegetter');
+goog.provide('iev.fileGetter');
 goog.require('iev.embryoviewer');
 //goog.require('iev');
 
-
-
-$("#iev").load("iev/viewer.html");
-
+ $("#iev").load("iev/viewerLight.html");
+ console.log('iev loading');
 iev.fileGetter = function(){
     this.configFile = 'files.json';
-    fileExtension = '.nrrd';
-    this.experiment = 'cbx4';
 };
 
 iev.fileGetter.prototype.readConfig = function(cb){
@@ -17,14 +13,14 @@ iev.fileGetter.prototype.readConfig = function(cb){
      cb(data);
           
   });
- 
-
 };
 
+
 iev.fileGetter.prototype.loadFilesFromConfig = function(experimentId) {   
+    //first remove anay existing viewer
     this.readConfig(function(data){
-        var top = data[this.experiment].top;
-        var bottom = data[this.experiment].bottom;
+        var top = data[experimentId].top;
+        var bottom = data[experimentId].bottom;
         
         var top_path = top.dir;
         var bottom_path = bottom.dir;
@@ -45,8 +41,6 @@ iev.fileGetter.prototype.loadFilesFromConfig = function(experimentId) {
         centre_data = {
                         "8":files}
 
-
-
         var data = {success: true,
                     ievLight: true,
                     centre_data: centre_data,
@@ -55,13 +49,15 @@ iev.fileGetter.prototype.loadFilesFromConfig = function(experimentId) {
                     analysis_data: {}
 
                     }
-        var viewer = new iev.embryoviewer(data, 'viewer', 'colony ID', 'cbx4', {wt:{}, mut:{}}, true);
+       
+        var viewer = new iev.embryoviewer(data, 'viewer', 'colony ID', experimentId, {wt:{}, mut:{}}, true);
         
     }.bind(this))
 };
 
 
 iev.fileGetter.prototype.buildDataObject = function(geneSymbol, dir, file){
+    //IEV was built to work with IMPC data. This dummy data allows it to be used with any data
                     data =
                     {"id":161,
                     "cid":8,

@@ -1,0 +1,79 @@
+{
+    "cbx4": {
+        "bottom": {
+            "dir": "cbx4/wildtype",
+            "files": [
+                "undeterminedSex_AAPN_K1026-3-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPN_K1026-14-e15.5_baseline.nrrd",
+                "Female_ABIF_K1339-10-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPQ_K1076-4-e15.5_baseline.nrrd",
+                "Male_ABQL_K1756-53-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPQ_K1014-17-e15.5_baseline.nrrd",
+                "Female_ABIF_K1592-3-e15.5_baseline.nrrd"
+            ]
+        },
+        "top": {
+            "dir": "cbx4/mutant",
+            "files": [
+                "undeterminedSex_AAPN_K1078-8-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-5-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-1-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-21-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1078-31-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1078-30-e15.5_Cbx4.nrrd"
+            ]
+        }
+    },
+
+"cbx3": {
+        "bottom": {
+            "dir": "cbx3/wildtype",
+            "files": [
+                "undeterminedSex_AAPN_K1026-3-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPN_K1026-14-e15.5_baseline.nrrd",
+                "Female_ABIF_K1339-10-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPQ_K1076-4-e15.5_baseline.nrrd",
+                "Male_ABQL_K1756-53-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPQ_K1014-17-e15.5_baseline.nrrd",
+                "Female_ABIF_K1592-3-e15.5_baseline.nrrd"
+            ]
+        },
+        "top": {
+            "dir": "cbx3/mutant",
+            "files": [
+                "undeterminedSex_AAPN_K1078-8-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-5-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-1-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-21-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1078-31-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1078-30-e15.5_Cbx4.nrrd"
+            ]
+        }
+    },
+
+"klf7": {
+        "bottom": {
+            "dir": "klf7/wildtype",
+            "files": [
+                "undeterminedSex_AAPN_K1026-3-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPN_K1026-14-e15.5_baseline.nrrd",
+                "Female_ABIF_K1339-10-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPQ_K1076-4-e15.5_baseline.nrrd",
+                "Male_ABQL_K1756-53-e15.5_baseline.nrrd",
+                "undeterminedSex_AAPQ_K1014-17-e15.5_baseline.nrrd",
+                "Female_ABIF_K1592-3-e15.5_baseline.nrrd"
+            ]
+        },
+        "top": {
+            "dir": "klf7/mutant",
+            "files": [
+                "undeterminedSex_AAPN_K1078-8-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-5-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-1-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1026-21-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1078-31-e15.5_Cbx4.nrrd",
+                "undeterminedSex_AAPN_K1078-30-e15.5_Cbx4.nrrd"
+            ]
+        }
+    }
+}
