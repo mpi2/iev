@@ -6,7 +6,7 @@ goog.require('iev.Download');
 
 
 
-iev.viewer2D = function (centreData, container, queryType, queryId) {
+iev.viewer2D = function (centreData, container, queryType, queryId, tabCb) {
     /**
      * @class EmbryoViewer
      * @type String
@@ -31,6 +31,8 @@ iev.viewer2D = function (centreData, container, queryType, queryId) {
     this.downloader = new iev.Download(this);
     this.container = container;
     this.$container = $('#' + this.container);
+    this.tabCb = tabCb;
+    this.isDestroyed = true;
     
             
     //Just display a message informing no data
@@ -341,6 +343,8 @@ iev.viewer2D.prototype.beforeReady = function () {
 iev.viewer2D.prototype.onReady = function () {
 
     this.setActiveModalityButtons();
+    this.tabCb();
+
     //$('#modality_stage :input').prop('disabled', false);
     $("#modality_stage").buttonset('refresh');
     $('#help').show();
@@ -380,11 +384,14 @@ iev.viewer2D.prototype.onDestroy = function () {
 
     this.$container.empty(); // clear the template HTML
     this.views = [];
+    this.isDestroyed = true;
+
 
 };
 
 iev.viewer2D.prototype.onTab = function (config) {
-
+    
+    this.isDestroyed = false;
     this.bookmarkData = config;
     if (this.bookmarkData['pid']) {
         this.volorder.unshift(this.bookmarkData['pid']);
@@ -620,15 +627,7 @@ iev.viewer2D.prototype.getNewFileName = function (volData) {
 
 iev.viewer2D.prototype.attachEvents = function () {
 
-    $("#reset")
-
-            .click($.proxy(function () {
-                for (var i = 0; i < this.views.length; i++) {
-                    this.views[i].reset();
-                }
-            }, this));
-
-    $("#invertColours")
+    $("#invertColours").unbind("click")
         .click(function (e) {
             e.preventDefault();
             //First change the background colors and scale colors

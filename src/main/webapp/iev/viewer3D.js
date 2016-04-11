@@ -1,7 +1,7 @@
 goog.provide('iev.viewer3D');
 goog.require('iev.specimen3D')
 
-iev.viewer3D = function(centreData, div, queryType, queryId) {
+iev.viewer3D = function(centreData, div, queryType, queryId, tabCb) {
     
     this.centreData = centreData;
     this.container = div;
@@ -16,42 +16,28 @@ iev.viewer3D = function(centreData, div, queryType, queryId) {
     this.ready = false;
     this.currentZoom = 0;
     this.bookmarkReady = false;
-          
+    this.tabCb = tabCb;
+    this.isDestroyed = true;
+
  };
  
  iev.viewer3D.prototype.attachEvents = function() {
 
-    $("#reset").click(
-        $.proxy(function () {
-            for (var i = 0; i < this.views.length; i++) {
-                this.views[i].reset();
-            } 
-        }, this)
-    );
-
-    $("#invertColours")
+    $("#invertColours").unbind("click")
         .click(function (e) {
-             e.preventDefault();
+            e.preventDefault();
             //First change the background colors and scale colors
             var checked;
             if ($(e.target).hasClass('ievgrey')){
                 $(e.target).removeClass('ievgrey');
                 $(e.target).addClass('ievInvertedGrey');
-                $(".sliceView").css("background-color", "#FFFFFF");
-                $(".sliceControls").css("background-color", "#FFFFFF");
-                $('.scale_text').css("color", "#000000");
-                $('.scale').css("background-color", "#000000");
                 checked = true;
             } else if ($(e.target).hasClass('ievInvertedGrey')){  
                 $(e.target).removeClass('ievInvertedGrey');
                 $(e.target).addClass('ievgrey');
-                $(".sliceView").css("background-color", "#000000");
-                $(".sliceControls").css("background-color", "#000000");
-                $('.scale_text').css("color", "#FFFFFF");
-                $('.scale').css("background-color", "#FFFFFF");
                 checked = false;
             }
-            //Now get the SpecimenViews to reset
+            //Now get the views to reset
             for (var i = 0; i < this.views.length; i++) {
                 this.views[i].invertColour(checked);
             }
@@ -200,6 +186,8 @@ iev.viewer3D.prototype.zoomViewsOut = function() {
  
 iev.viewer3D.prototype.onTab = function(config){
     
+    this.isDestroyed = false;
+
     this.bookmarkData = config;
     if (this.bookmarkData['pid']) {
         this.volorder.unshift(this.bookmarkData['pid']);
@@ -218,14 +206,18 @@ iev.viewer3D.prototype.onTab = function(config){
     this.currentModality = pid;
     
     this.attachEvents();
-    this.setActiveModalityButtons();
-    $("#modality_stage").buttonset('refresh');
+    this.beforeReady();
     this.localStorage = new iev.LocalStorage(this.isBrowserIE);
-
     this.localStorage.setup(function(){  
         this.onReady();
     }.bind(this));
     
+};
+
+iev.viewer3D.prototype.beforeReady = function () {
+    /*Inactivate the modality/stage buttons*/
+    $('#modality_stage :input').prop("disabled", true);
+    $("#modality_stage").buttonset('refresh');
 };
 
 iev.viewer3D.prototype.onReady = function(){
@@ -238,10 +230,7 @@ iev.viewer3D.prototype.onReady = function(){
         this.mutantData = this.centreData[this.currentCentreId][pid]['vols'].mutant;
         this.currentModality = pid;
     }
-    
-    $("#modality_stage input[id^=" + this.currentModality + "]:radio").attr('checked',true);
-    $("#modality_stage").buttonset('refresh');
-    
+        
     this.wtView = new iev.specimen3D(this.wildtypeData, 'wt', this.container, 
                     this.WILDTYPE_COLONYID, this.localStorage,
                     this.viewerCallback.bind(this), this.bookmarkData['wt']);
@@ -251,7 +240,6 @@ iev.viewer3D.prototype.onReady = function(){
                     this.queryId, this.localStorage,
                     this.viewerCallback.bind(this), this.bookmarkData['mut']);
     this.views.push(this.mutView);  
-    
     this.ready = true;    
 };
 
@@ -266,7 +254,10 @@ iev.viewer3D.prototype.setActiveModalityButtons = function(){
         else{
             $("#modality_stage input[id^=" + pid + "]:radio").attr('disabled', false);
         }
-    }        
+    }      
+    
+    $("#modality_stage input[id^=" + this.currentModality + "]:radio").attr('checked',true);
+    $("#modality_stage").buttonset('refresh');
 };
  
 iev.viewer3D.prototype.getModData = function(){
@@ -353,11 +344,14 @@ iev.viewer3D.prototype.onDestroy = function() {
     
     this.$container.empty(); // clear the template HTML
     this.views = [];
+    this.isDestroyed = true;
     
 };
 
 iev.viewer3D.prototype.viewerCallback = function() {
     this.bookmarkConfigure();
+    this.setActiveModalityButtons();
+    this.tabCb();
     //window.dispatchEvent(new Event('resize')); 
 };
 

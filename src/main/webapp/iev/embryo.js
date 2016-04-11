@@ -10,6 +10,7 @@ iev.embryo = function(){
     this.ANA_SERVER = 'https://www.mousephenotype.org/images/ana/';
     this.WILDTYPE_COLONYID = 'baseline';
     this.OUTPUT_FILE_EXT = '.nrrd';
+    this.lastBookmark = window.location.href;
     
     this.centreOptions = {
         1: 'BCM',
@@ -81,34 +82,47 @@ iev.embryo.prototype.setupTabs = function() {
         
         activate: function(event, ui) {
             
-            if (event.hasOwnProperty('data')) {
-                        
-                var tabId = ui.newPanel.attr('id');
+            var tabId = ui.newPanel.attr('id');
+            $(".ievControlsWrap").show();
 
-                // Generate bookmark
-                var bookmark = this.activeViewer.generateBookmark();
-                var config = this.parseBookmark($.getQueryParameters(bookmark));
-                config['mode'] = this.bookmarkData['mode'];
-                config['gene'] = this.bookmarkData['gene'];
+            var bookmark; // try to generate bookmark, or use old one
 
-                if (tabId === 'volumeRenderingMain') {
-
-                    // Destroy 2D viewer and switch to 3D
-                    this.viewer2D.onDestroy();
-                    this.viewer3D.onTab(config);                    
-                    this.activeViewer = this.viewer3D;
-
-                } else if (tabId === 'sliceViewMain') {
-                    this.viewer3D.onDestroy();  
-                    this.viewer2D.onTab(config);                
-                    this.activeViewer = this.viewer2D;
-                }
+            try {
+                bookmark = this.activeViewer.generateBookmark();
+                this.lastBookmark = bookmark;
+            } catch (err) {
+                bookmark = this.lastBookmark;
             }
-            
-        }.bind(this)
+    
+            var config = this.parseBookmark($.getQueryParameters(bookmark));
+            config['mode'] = this.bookmarkData['mode'];
+            config['gene'] = this.bookmarkData['gene'];
+
+            if (tabId === 'volumeRenderingMain' && this.viewer3D.isDestroyed) {
+                this.viewer2D.onDestroy();
+                this.viewer3D.onTab(config);                    
+                this.activeViewer = this.viewer3D;
+            } else if (tabId === 'sliceViewMain' && this.viewer2D.isDestroyed) {
+                this.viewer3D.onDestroy();  
+                this.viewer2D.onTab(config);                
+                this.activeViewer = this.viewer2D;
+            } else {
+                if (!this.activeViewer.isDestroyed) {
+                    this.activeViewer.onDestroy();
+                }
+                $(".ievControlsWrap").hide();
+                this.tabCallback();
+            }
+ 
+        }.bind(this),
+        disabled: true
         
     }).removeClass('ui-widget ui-widget-content').show();
      
+};
+
+iev.embryo.prototype.tabCallback = function() {
+    $("#ievTabs" ).tabs("enable");
 };
 
 iev.embryo.prototype.createControlPanel = function() {
@@ -119,6 +133,14 @@ iev.embryo.prototype.createControlPanel = function() {
      var template = Handlebars.compile(source);
      this.$controlPanel = $(template()); 
      $container.prepend(this.$controlPanel);
+    
+    // Attach events here that refer to the active viewer
+    $("#reset")
+    .click($.proxy(function () {
+       for (var i = 0; i < this.activeViewer.views.length; i++) {
+           this.activeViewer.views[i].reset();
+       }
+    }, this));
 
 };
 
@@ -431,8 +453,8 @@ iev.embryo.prototype.getVolumesByColonyId = function(colonyId) {
     this.dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
         function(data) {
             data = this.organiseData(data);
-            this.viewer2D = new iev.viewer2D(data, 'viewer', 'colony ID', colonyId);
-            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'colony ID', colonyId);
+            this.viewer2D = new iev.viewer2D(data, 'viewer', 'colony ID', colonyId, this.tabCallback.bind(this));
+            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'colony ID', colonyId, this.tabCallback.bind(this));
             this.setTab();
         }.bind(this)
     );
@@ -442,8 +464,8 @@ iev.embryo.prototype.getVolumesByGeneSymbol = function(geneSymbol) {
     this.dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
         function(data) {
             data = this.organiseData(data);
-            this.viewer2D = new iev.viewer2D(data, 'viewer', geneSymbol, 'gene symbol');     
-            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', geneSymbol, 'gene symbol');
+            this.viewer2D = new iev.viewer2D(data, 'viewer', geneSymbol, 'gene symbol', this.tabCallback.bind(this));     
+            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', geneSymbol, 'gene symbol', this.tabCallback.bind(this));
             this.setTab();
         }.bind(this)
     );
@@ -453,8 +475,8 @@ iev.embryo.prototype.getVolumesByMgi = function(mgi) {
     this.dcc_get("rest/volumes" + (mgi === undefined ? "" : "?mgi=" + mgi), 
         function(data) {
             data = this.organiseData(data);
-            this.viewer2D = new iev.viewer2D(data, 'viewer', 'mgi', mgi);  
-            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'mgi', mgi);
+            this.viewer2D = new iev.viewer2D(data, 'viewer', 'mgi', mgi, this.tabCallback.bind(this));  
+            this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'mgi', mgi, this.tabCallback.bind(this));
             this.setTab();
         }.bind(this)
     );

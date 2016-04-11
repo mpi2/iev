@@ -10,6 +10,7 @@ iev.specimen3D = function(volumeData, id, container, queryColonyId, localStorage
     this.volumeData = volumeData;
     this.id = id;
     this.container = container;
+    this.$container = $('#'+ this.container)
     this.cb = cb;
     this.config = config;
     this.queryColonyId = queryColonyId;
@@ -182,6 +183,29 @@ iev.specimen3D.prototype.setBookmarkContrast = function() {
     this.controlPanel.$windowLevel.slider("option", "values",
                             [this.volume.windowLow, this.volume.windowHigh]);            
 
+};
+
+iev.specimen3D.prototype.invertColour = function(checked) {
+    /**
+     * Responds to invert color checkbox, and inverts the lookup table
+     * 
+     * @method invertColour
+     * @param {bool} checked Is the checkbox active
+     */
+
+    if (!this.volume)
+        return;
+    
+    this.inverted = checked;
+
+    if (checked) {
+        this.volume.maxColor = [0, 0, 0];
+        this.volume.minColor = [1, 1, 1];
+    } else {
+
+        this.volume.maxColor = [1, 1, 1];
+        this.volume.minColor = [0, 0, 0];
+    }
 };
 
 iev.specimen3D.prototype.destroyRenderer = function() {
