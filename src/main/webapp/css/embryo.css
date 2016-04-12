@@ -1,6 +1,6 @@
 
 /*Search bar stuff end*/
-body{
+body {
     min-width: 800px;
     font-family: Source Sans Pro, Arial, Helvetica, sans-serif;
     -webkit-user-select: none; /* Chrome/Safari */        
@@ -12,6 +12,56 @@ body{
 
 #iev{
     padding: 0 10px 0 10px;
+}
+
+#ievTabs {
+    width: 100%;
+    background: transparent; 
+    border: none;
+    position: relative;
+    display: none;
+} 
+#ievTabs>.ui-widget-header { 
+    background: transparent;
+    border: none; 
+    border-bottom: 1px solid #c0c0c0; 
+    -moz-border-radius: 0px; 
+    -webkit-border-radius: 0px; 
+    border-radius: 0px; 
+}
+
+#ievTabs .ui-tabs-panel {
+    padding: 0;
+}
+
+#ievTabs .ui-tabs-nav .ui-state-default { 
+    background: transparent; 
+    border: none; 
+} 
+#ievTabs .ui-tabs-nav .ui-state-active { 
+    background: transparent url(../images/uiTabsArrow.png) no-repeat bottom center; 
+    border: none; 
+}
+
+#ievTabs .ui-tabs-nav .ui-state-default a { 
+    color: #c0c0c0; 
+}
+
+#ievTabs .ui-tabs-nav .ui-state-active a { 
+    color: #666; 
+}
+
+#ievTabs .ui-tabs-nav .ui-state-default a:hover { 
+    color: rgb(9, 120, 161); 
+}
+
+#ievTabs .ui-tabs-nav .ui-state-active a:hover { 
+    color: #666; 
+}
+
+#helpTab object {
+    width: 100%;
+    height: 1000px;
 }
 
 #viewer {
@@ -28,6 +78,7 @@ body{
     overflow: hidden;     
     
 }
+
 
 .sliceWrap{
     background-color: #000000;
@@ -61,13 +112,43 @@ body{
     vertical-align: middle;
 }
 
+#volumeRenderer {
+    background-color: #FFFFFF;
+    position: relative;
+    margin: 0;
+    padding-top: 20px;
+    overflow: hidden !important;
+    height: 500px;
+}
 
+.volWrap {
+    float: left;
+    width: 50%;
+    display: inline-block;
+    position: relative;
+    height: 450px;
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+.volWrap canvas {
+    background-color: #000000;
+}
+
+.volWrap:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
 
 .metadata{
     float: right;
+    width: 280px;
     height: 100%;
-    margin-right: 20px;
-    font-size: 9px;
+    //margin-right: 20px;
+    font-size: 11px;
 }
 
 
@@ -88,6 +169,7 @@ body{
     /*width: 20%;*/
     float: left;
 }
+
 .centre_logo{
     position: relative;
     /*bottom: 3px;*/
@@ -108,6 +190,14 @@ body{
 .ui-dialog { z-index: 1000 !important;
 }
 
+#download{
+   
+    top: 5px;
+    height: 20px;
+    cursor: pointer;
+    float: left;
+}
+
 .noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -117,17 +207,23 @@ body{
     user-select: none;
 }
 
-.hoverable {
-    float: left;
-    height: 30px;
-    width: 35px;
+
+
+#createBookmark {
+    padding-left: auto;
+    padding-right: auto;
     cursor: pointer;
 }
 
-.hoverable img {
-    height: 25px;
-    margin-left: 2px;
-    margin-right: 2px;
+#createBookmark img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hoverable {
+    opacity: 1.0;
+    cursor: pointer;
 }
 
 .hoverable:hover {
@@ -140,32 +236,15 @@ body{
 
 fieldset{
     display:inline !important;
-  -moz-border-radius:10px !important;
-  border-radius: 10px !important;
-  -webkit-border-radius: 10px !important;
+    -moz-border-radius:10px !important;
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
     margin: 5px !important;
     padding: 2px 7px 2px 7px !important;
     border-color:white !important;
     border-style: solid !important;
     height: 45px !important;
-    font-size: 12px !important;
- 
-   
-  
-}
-
-#help_link, #help_form{
-    float: left;
-}
-
-#help_link{
-    color: #F29C24;
-    top: 2px;
-    margin-right: 10px;
-}
-
-#help{
-    height: 30px;
+    font-size: 12px !important
 }
 
 #orthogonal_views_buttons_fieldset{
@@ -199,6 +278,10 @@ fieldset{
 }
 
 #scale_fieldset{
+    float: left;
+}
+
+#bookmark_fieldset {
     float: left;
 }
 
@@ -587,7 +670,7 @@ input[type=checkbox].linkCheck {
  }
  
  .ievLoading{
-     z-index:2000;
+     z-index: 100;
      position: absolute;
      height: 100%;
      width: 100%;
@@ -599,6 +682,7 @@ input[type=checkbox].linkCheck {
      vertical-align: middle;
      line-height: 90px; 
      font-size: 46px;
+     color: #666;
  }
  
              
@@ -663,27 +747,14 @@ input[type=checkbox].linkCheck {
     cursor: pointer;
 }
 
-
-
-
-
-
 #top_bar{
-
     padding: 7px;
-    border-bottom: 2px solid #F2F2F2;
-    border-top: 2px solid #F2F2F2;
- 
-/*    background-color: #E0E0E0;*/
     margin-bottom: 5px;
     display:none;
-    
-    
 }
 
-
 #topleft{
-	float: left;
+    float: left;
 }
 
 #topright{
@@ -746,7 +817,6 @@ background-color: #DEDEDE;
 
 .orientation{
     float: left;
-    cursor: pointer;
     height: 30px;
     width: 30px;
     padding-top: 5px;
@@ -767,21 +837,29 @@ background-color: #DEDEDE;
    background-size: 25px;
 }
 
-#invertColours.ievInvertedGrey{
+#invertColours.ievInvertedGrey{  
    background: transparent url(../images/contrast_invert.png) no-repeat;
    background-size: 25px;
+}
+
+#invertColours {
+    height: 30px;
+    width: 30px;
+    float: left;
 }
 
 #analysis_button {
     background: transparent url(../images/analysis.png) no-repeat;
     background-size: 20px;
+    height: 30px;
+    width: 30px;
+    text-align: center;
 }
 
 #analysis_button.disabled {
     background: transparent url(../images/no_analysis.png) no-repeat;
     background-size: 20px;
-    opacity: 0.5;
-    cursor: default;
+    opacity: 0.25;
 }
 
 #lowcpu {
@@ -797,6 +875,13 @@ background-color: #DEDEDE;
 }
 .ui-tooltip{
     font-size: 8pt;
+}
+
+#reset{
+    height: 30px;
+    width: 30px;
+    float: left;
+    cursor: pointer;
 }
 
 /*.ui-icon-vertical { background-image: url(images/vertical.png); }
@@ -845,4 +930,6 @@ background-color: #DEDEDE;
     /*width: 100%;*/
     /*position: relative !important;*/
 }
+
+
 
