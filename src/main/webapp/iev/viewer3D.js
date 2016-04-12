@@ -329,12 +329,6 @@ iev.viewer3D.prototype.bookmarkConfigure = function() {
 
 };
 
-iev.viewer3D.prototype.reset = function() {
-    for (var i = 0; i < this.objSize(this.views); i++) {
-        this.views[i].reset();
-    }
-};
-
 iev.viewer3D.prototype.onDestroy = function() {
     
     // Loop through views and destroy the renderers

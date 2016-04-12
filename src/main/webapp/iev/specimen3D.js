@@ -304,9 +304,10 @@ iev.specimen3D.prototype.zoomOut = function(){
 
 iev.specimen3D.prototype.reset = function() {
     this.renderer.resetViewAndRender();
-    this.update();
     this.controlPanel.$windowLevel.slider("option", "values", [this.volume.windowLow, this.volume.windowHigh]);
     this.currentZoom = 0;
+    this.update();
+
 };
 
 iev.specimen3D.prototype.objSize = function(obj) {

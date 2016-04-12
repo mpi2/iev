@@ -32,6 +32,8 @@ iev.specimenPanel = function(id, replaceVolume) {
     this.HEMI_ICON = 'het.png';
     /** @const */ 
     this.WT_ICON = 'wildtype.png';
+    /** @const */ 
+    this.AVERAGE_ICON = 'average.png';
     
     /** @const */ 
     this.centreIcons ={
@@ -153,7 +155,12 @@ iev.specimenPanel.prototype.updateVolumeSelector = function(currentVolume, volum
         
 iev.specimenPanel.prototype.showMetadata = function(currentVolume) {
 
-    var date = new Date(currentVolume.experimentDate);
+    if (currentVolume.experimentDate) {
+        var date = new Date(currentVolume.experimentDate);
+    } else {
+        var date = new Date(currentVolume.dateAnalysed);
+    }
+    
     var displayDate = this.monthNames[date.getMonth()];
 
     displayDate += " " + date.getDate();
@@ -161,13 +168,13 @@ iev.specimenPanel.prototype.showMetadata = function(currentVolume) {
 
     var sexIconPath;
     if (currentVolume.sex.toLowerCase() === 'female'){
-       sexIconPath = this.IMG_DIR + this.FEMALE_ICON;
+        sexIconPath = this.IMG_DIR + this.FEMALE_ICON;
     }
     else if (currentVolume.sex.toLowerCase() === 'male'){
         sexIconPath = this.IMG_DIR + this.MALE_ICON;
     }
     else if (currentVolume.sex.toLowerCase() === 'no data'){
-         sexIconPath = this.IMG_DIR + this.NDSEX_ICON;
+        sexIconPath = this.IMG_DIR + this.NDSEX_ICON;
     }
 
     // Set the zygosity icon for mutants or the 'WT' icon for baselines 
@@ -190,6 +197,8 @@ iev.specimenPanel.prototype.showMetadata = function(currentVolume) {
             case 'hemizygous':
                 zygIcon = this.HEMI_ICON;
                 break;
+            default:
+                zygIcon = this.AVERAGE_ICON;
         }
     }
 

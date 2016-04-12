@@ -278,8 +278,8 @@ iev.viewer2D.prototype.generateBookmark = function () {
             + '&my=' + this.mutView.getIndex('Y')
             + '&mz=' + this.mutView.getIndex('Z')
             + '&ml=' + this.mutView.getBrightnessLower()
-            + '&mu=' + this.mutView.getBrightnessUpper();
-            +'&wov=' + this.wtView.getLabelmap()
+            + '&mu=' + this.mutView.getBrightnessUpper()
+            + '&wov=' + this.wtView.getLabelmap()
             + '&mov=' + this.mutView.getLabelmap();
     return bookmark;
 };

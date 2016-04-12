@@ -82,6 +82,10 @@ iev.embryo.prototype.setupTabs = function() {
         
         activate: function(event, ui) {
             
+            if (!event.hasOwnProperty("data")) {
+                return; // if tab switched programatically
+            }
+            
             var tabId = ui.newPanel.attr('id');
             $(".ievControlsWrap").show();
 
@@ -137,9 +141,7 @@ iev.embryo.prototype.createControlPanel = function() {
     // Attach events here that refer to the active viewer
     $("#reset")
     .click($.proxy(function () {
-       for (var i = 0; i < this.activeViewer.views.length; i++) {
-           this.activeViewer.views[i].reset();
-       }
+        this.resetViewer(this.activeViewer);
     }, this));
 
 };
@@ -244,7 +246,7 @@ iev.embryo.prototype.run = function(colonyId, geneSymbol, mgi, queryParams) {
         this.bookmarkData['mode'] = "mgi";
         this.bookmarkData['gene'] = mgi;
         this.getVolumesByMgi(mgi);
-    }
+    }    
     
 };
 
@@ -254,10 +256,12 @@ iev.embryo.prototype.setTab = function() {
     if (!this.bookmarkData['v']) {
         this.activeViewer = this.viewer2D;
     } else {
+        
+        $("#ievTabs" ).tabs("enable");
     
         switch(this.bookmarkData['v']) {
             case '2d':
-                $("#ievTabs").tabs( "option", "active", 0);
+                $("#ievTabs").tabs("option", "active", 0);
                 this.activeViewer = this.viewer2D;
                 break;
             case '3d':
@@ -269,6 +273,8 @@ iev.embryo.prototype.setTab = function() {
                 this.activeViewer = this.viewer2D;
                 break;
         }
+        
+        $("#ievTabs" ).tabs("disable");
     }
     
     this.activeViewer.onTab(this.bookmarkData);
@@ -483,7 +489,7 @@ iev.embryo.prototype.getVolumesByMgi = function(mgi) {
 };
 
 iev.embryo.prototype.resetViewer = function(viewer) {
-    for (var i = 0; i < viewer.views.length; i++) {
+    for (var i = 0; i < this.objSize(viewer.views); i++) {
         viewer.views[i].reset();
     }
 };
