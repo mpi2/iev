@@ -289,7 +289,7 @@ iev.specimen3D.prototype.showAnalysisData = function() {
 };
 
 iev.specimen3D.prototype.zoomIn = function(){
-   this.renderer.camera.zoomIn(false);
+   this.renderer.camera.zoomIn(true);
 };
         
 iev.specimen3D.prototype.zoomOut = function(){
@@ -298,7 +298,7 @@ iev.specimen3D.prototype.zoomOut = function(){
        return false;
     }
     
-    this.renderer.camera.zoomOut(false);        
+    this.renderer.camera.zoomOut(true);        
     return true;
 };
 

@@ -34,12 +34,18 @@ body {
     padding: 0;
 }
 
+
+#ievTabs .ui-tabs-nav {
+    font-size: 20px;
+}
+
 #ievTabs .ui-tabs-nav .ui-state-default { 
     background: transparent; 
     border: none; 
 } 
 #ievTabs .ui-tabs-nav .ui-state-active { 
     background: transparent url(../images/uiTabsArrow.png) no-repeat bottom center; 
+    font-weight: bold;
     border: none; 
 }
 
