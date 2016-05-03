@@ -229,9 +229,8 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
     <script id="main_controls_template" type="text/x-handlebars-template">
         
         <div class='ievControlsWrap' class="noselect">
-            
-            <div id='top_bar'>
-                <div id='topleft'></div>
+        
+            <div class='top_bar' id="simple_controls">
                 <fieldset id="orthogonal_views_buttons_fieldset">
                     <legend>Views</legend>
                     <div id="orthogonal_views_buttons">
@@ -244,11 +243,46 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
 
                         <div id='orientation_buttons'>
                         <div id="orientation_button" class="orientation horizontal hoverable" title="Switch orientation">
-
                     </div>
+                </fieldset>
 
+                <fieldset id="zoom_fieldset">
+                    <legend>Zoom</legend>
+                    <span class="button" id="zoomIn">+</span>
+                    <span class="button" id ="zoomOut">-</span>   
+                    <!--<span class="button" id ="screenShot">c</span>--> 
+                </fieldset>
+
+                <fieldset id="reset_fieldset" class="centered">
+                    <legend>Reset</legend>
+                    <div id="reset">
+                          <img src="images/reload.png" height="25" class="hoverable" title="Restore default view">
+                    </div>
+                </fieldset>
+        
+                <fieldset id="download_fieldset" class="centered">
+                    <legend>Download</legend>
+                    <div id="download">
+                        <img src="images/download.png" height="25" id="download_img" class="hoverable" title="Download embryo data">
+                    </div>
+                </fieldset>       
+
+                <fieldset id="bookmark_fieldset" class="centered">
+                    <legend>Share</legend>
+                    <div id="createBookmark">
+                        <img src="images/bookmark.png" height="25" id="bookmark_img" title="Generate URL for current view" class="hoverable">
+                    </div>
+                </fieldset>
+        
+                <fieldset id="toggle_fieldset" class="centered">
+                    <legend>Advanced</legend>
+                    <img src="images/bookmark.png" height="25" id="toggle_img" title="Toggle advanced controls" class="hoverable">
                 </fieldset>
                 
+            </div>
+            
+            <div class='top_bar' id="advanced_controls">
+            
                 <fieldset id="scale_fieldset" title="Configure scale bar">
                     <legend>Scale bar
                     <input type="checkbox" id="scale_visible" name="radio" checked="checked">
@@ -256,50 +290,31 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                     <select name="scale_select" id="scale_select">
                     </select>  
                 </fieldset>
-
-                <fieldset id="centres_fieldset">
-                    <legend>Centres</legend>
-                    <select name="centre_select" id="centre_select">
-                    </select>                
-                </fieldset>
-
+        
                 <fieldset id="heightslider_fieldset">
                     <legend>View height</legend>
                     <div id="viewHeightSlider"></div>
                 </fieldset>
-
-                 <fieldset id="zoom_fieldset">
-                    <legend>Zoom</legend>
-                    <span class="button" id="zoomIn">+</span>
-                    <span class="button" id ="zoomOut">-</span>   
-                    <!--<span class="button" id ="screenShot">c</span>--> 
+        
+                <fieldset id="color_fieldset">
+                    <legend>Invert</legend>
+                    <div id="invertColours" class="ievgrey hoverable" title="Invert colours"></div>
                 </fieldset>
-
+        
                 <fieldset id="analysis_fieldset">
                     <legend>Analysis</legend>  
                     <div id="analysis_button" class="hoverable disabled"  title="No analysis data available">
                     </div>
                 </fieldset>
-
-                <fieldset id="color_fieldset">
-                    <legend>Other</legend>
-                    <div id="invertColours" class="ievgrey hoverable" title="Invert colours"></div>
-                    <div id="reset">
-                          <img src="images/reload.png" height="25" class="hoverable" title="Restore default view">
-                    </div>
-
-                    <div id="download">
-                        <img src="images/download.png" height="25" id="download_img" class="hoverable" title="Download embryo data">
-                    </div>
-                </fieldset>       
-
-                <fieldset id="bookmark_fieldset">
-                    <legend>Save</legend>
-                    <div id="createBookmark">
-                        <img src="images/bookmark.png" height="25" id="bookmark_img" title="Generate URL for current view" class="hoverable">
-                    </div>
+        
+                <fieldset id="centres_fieldset">
+                    <legend>Centres</legend>
+                    <select name="centre_select" id="centre_select">
+                    </select>                
                 </fieldset>
-
+            </div>
+    
+            <div class='top_bar' id="modality_controls">
                 <fieldset id="modality_stage_fieldset">
                     <legend>Modality/stage selection</legend>
                     <div id="modality_stage" title="Change modality">
@@ -311,7 +326,6 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
 
                         <input type="radio" id="204" name="project" class="modality_button">
                         <label for="204" class="button_label">&#956;CT E18.5</label>
-
                     </div>
                 </fieldset>
             </div>
@@ -481,6 +495,9 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
     <script type='text/javascript' src='/data/js/utils/tools.js'></script><!--
     <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>-->
-
+    
+    <div id="attributions" style="text-align: center; font-size: 6pt">
+        <a href="www.flaticon.com">Icons by Freepik</a>
+    </div>
     
 </html>

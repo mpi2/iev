@@ -41,7 +41,7 @@ iev.embryo = function(){
         }
     });
 
-    this.setupImpcMenus();
+//    this.setupImpcMenus();
     this.setupTabs();  
     this.createControlPanel();
    
@@ -143,7 +143,13 @@ iev.embryo.prototype.createControlPanel = function() {
     .click($.proxy(function () {
         this.resetViewer(this.activeViewer);
     }, this));
-
+    
+    // Show/hide advanced controls
+    var $advanced = $("#advanced_controls");
+    $("#toggle_fieldset").click(function(e) {
+        e.preventDefault();
+        $advanced.slideToggle("fast");
+    });
 };
 
 iev.embryo.prototype.centreSelector = function (data) {
@@ -298,7 +304,8 @@ iev.embryo.prototype.organiseData = function(data) {
         for (var cen in data['centre_data']) { // Pick the first centre you come across as the current centre
             var modData = this.getModalityData();
             //Display the top control bar
-            $('#top_bar').show(); //NH? what's this
+            $('#simple_controls').show();
+            $('#modality_controls').show();
 
             // Loop over the centre data
             for (var i = 0; i < this.objSize(data['centre_data'][cen]); i++) {

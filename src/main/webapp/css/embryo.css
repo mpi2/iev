@@ -196,14 +196,6 @@ body {
 .ui-dialog { z-index: 1000 !important;
 }
 
-#download{
-   
-    top: 5px;
-    height: 20px;
-    cursor: pointer;
-    float: left;
-}
-
 .noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -211,20 +203,6 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
-
-
-
-#createBookmark {
-    padding-left: auto;
-    padding-right: auto;
-    cursor: pointer;
-}
-
-#createBookmark img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .hoverable {
@@ -246,11 +224,12 @@ fieldset{
     border-radius: 10px !important;
     -webkit-border-radius: 10px !important;
     margin: 5px !important;
-    padding: 2px 7px 2px 7px !important;
+    padding: 2px 3px 2px 3px !important;
     border-color:white !important;
     border-style: solid !important;
     height: 45px !important;
     font-size: 12px !important
+    
 }
 
 #orthogonal_views_buttons_fieldset{
@@ -753,26 +732,28 @@ input[type=checkbox].linkCheck {
     cursor: pointer;
 }
 
-#top_bar{
-    padding: 7px;
-    margin-bottom: 5px;
-    display:none;
-}
-
-#topleft{
-    float: left;
-}
-
-#topright{
-    float:right;
-}
-
-#ievControlsWrap{	
+#ievControlsWrap {
     margin-left: auto;
     margin-right: auto;
 }
 
+.top_bar{
+    padding: 7px;
+    margin-bottom: 5px;
+    float: left;
+    display:none;
+}
+fieldset legend {
+    padding-bottom: 2px;
+}
 
+#advanced_controls {
+    display: none;
+}
+
+#modality_controls {
+    float: right;
+}
 
 .ui-button, .ui-button-text {
     font-size: 10px !important;
@@ -886,7 +867,6 @@ background-color: #DEDEDE;
 #reset{
     height: 30px;
     width: 30px;
-    float: left;
     cursor: pointer;
 }
 
