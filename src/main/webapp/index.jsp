@@ -276,7 +276,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
         
                 <fieldset id="toggle_fieldset" class="centered">
                     <legend>Advanced</legend>
-                    <img src="images/bookmark.png" height="25" id="toggle_img" title="Toggle advanced controls" class="hoverable">
+                    <img src="images/advanced.png" height="25" id="toggle_img" title="Toggle advanced controls" class="hoverable">
                 </fieldset>
                 
             </div>
@@ -339,9 +339,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                 <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:1100'></select>
             </div>
             <div class="wlwrap">
-               
                 <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
-             
             </div>
     
             <div class="overlayWrap">
