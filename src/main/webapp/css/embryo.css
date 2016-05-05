@@ -20,8 +20,9 @@ body {
     border: none;
     position: relative;
     display: none;
-} 
-#ievTabs>.ui-widget-header { 
+}
+
+.ui-widget-header { 
     background: transparent;
     border: none; 
     border-bottom: 1px solid #c0c0c0; 
@@ -30,38 +31,38 @@ body {
     border-radius: 0px; 
 }
 
-#ievTabs .ui-tabs-panel {
+.ui-tabs-panel {
     padding: 0;
 }
 
 
-#ievTabs .ui-tabs-nav {
+.ui-tabs-nav {
     font-size: 20px;
 }
 
-#ievTabs .ui-tabs-nav .ui-state-default { 
+.ui-tabs-nav .ui-state-default { 
     background: transparent; 
     border: none; 
 } 
-#ievTabs .ui-tabs-nav .ui-state-active { 
+.ui-tabs-nav .ui-state-active { 
     background: transparent url(../images/uiTabsArrow.png) no-repeat bottom center; 
     font-weight: bold;
     border: none; 
 }
 
-#ievTabs .ui-tabs-nav .ui-state-default a { 
+.ui-tabs-nav .ui-state-default a { 
     color: #c0c0c0; 
 }
 
-#ievTabs .ui-tabs-nav .ui-state-active a { 
+.tabbed .ui-tabs-nav .ui-state-active a { 
     color: #666; 
 }
 
-#ievTabs .ui-tabs-nav .ui-state-default a:hover { 
+.ui-tabs-nav .ui-state-default a:hover { 
     color: rgb(9, 120, 161); 
 }
 
-#ievTabs .ui-tabs-nav .ui-state-active a:hover { 
+.ui-tabs-nav .ui-state-active a:hover { 
     color: #666; 
 }
 
@@ -85,6 +86,9 @@ body {
     
 }
 
+#sliceViewMain {
+    padding: 0;
+}
 
 .sliceWrap{
     background-color: #000000;
@@ -116,6 +120,10 @@ body {
     width:100%;
     padding: 0px 10px 5px 10px;
     vertical-align: middle;
+}
+
+.dataTable {
+    float: left;
 }
 
 #volumeRenderer {

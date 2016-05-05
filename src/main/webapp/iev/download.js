@@ -35,14 +35,14 @@ iev.Download = function(ev){
 iev.Download.prototype.setupDownloadTable = function (currentlyViewed, currentModality, currentCentreId) {
     
     this.dlg = $('#download_dialog').dialog({
-        title: 'Select volumes for download',
+        title: 'Download',
         resizable: true,
         autoOpen: false,
         modal: true,
         hide: 'fade',
-        width: $(document).width() -30,
-        height: $(document).height() -30,
-        position: {my: "left bottom", at: "left top", of: $('#top_bar')}
+        width: $(document).width() * 0.9,
+        height: $(document).height() * 0.5,
+        position: {my: "left bottom", at: "left top", of: $('#controlPanel')}
     });
        
     $('#download_dialog').on('click', '#close_dialog_button', function(){

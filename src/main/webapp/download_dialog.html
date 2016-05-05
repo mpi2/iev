@@ -6,39 +6,29 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Download</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <div id="download_dialog">
-            <div id='highlight_msg'>Highlighted rows indicate currently-viewed volumes</div>
+            <div id='highlight_msg'>Highlighted rows indicate currently viewed volumes</div>
              <button id="close_dialog_button">Close</button>
-            <div id="downloadTabs">
+            <div id="downloadTabs" class="tabbed">
                 <ul>
-                    <li><a href="#lowResTab">Zip multiple low res</a></li>
-                    <li><a href="#fullResTab">Get full res links</a></li>
+                    <li><a href="#lowResTab">Low resolution</a></li>
+                    <li><a href="#fullResTab">High resolution</a></li>
                 </ul>
                 <div id="lowResTab">
 
-                    <h1>Available data:</h1>
+                    <h1>Low resolution data</h1>
                     <!--             <input type="button" id="download_all">
                                  <label for="download_all" id='download_all_label'>Download all</label>-->
 
                     <div id="doVolumeDownload">
                         <button id="download_dialog_button">Download</button>
                     </div>
-                    <table id="mutLowResTable" class="ui-widget ui-widget-content">
-                        <thead>
-                            <tr class="ui-widget-header ">
-                                <th>Mutant volume name</th>
-                                <th>Download?</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
+                    
                     <table id="wtLowResTable" class="ui-widget ui-widget-content">
                         <thead>
                             <tr class="ui-widget-header ">
@@ -50,23 +40,26 @@ and open the template in the editor.
 
                         </tbody>
                     </table>
-                </div>
-                
-                
-                <div id="fullResTab">
-                    <h1>Available full resolution data. Warning, some datasets are very large!</h1>
-                    <table id="mutHighResTable" class="ui-widget ui-widget-content">
+                    
+                    <table id="mutLowResTable" class="ui-widget ui-widget-content">
                         <thead>
                             <tr class="ui-widget-header ">
                                 <th>Mutant volume name</th>
-                                <th></th>
+                                <th>Download?</th>
                             </tr>
                         </thead>
                         <tbody>
 
                         </tbody>
                     </table>
-                    <table id="wtHighResTable" class="ui-widget ui-widget-content">
+
+                </div>
+                
+                <div id="fullResTab">
+                    <h1>High resolution data</h1>
+                    <h2>Warning, some datasets are very large!</h2>
+                    
+                    <table id="wtHighResTable" class="dataTable ui-widget ui-widget-content">
                         <thead>
                             <tr class="ui-widget-header ">
                                 <th>WT volume name</th>
@@ -77,6 +70,20 @@ and open the template in the editor.
 
                         </tbody>
                     </table>
+                    
+                    <table id="mutHighResTable" class="dataTable ui-widget ui-widget-content">
+                        <thead>
+                            <tr class="ui-widget-header ">
+                                <th>Mutant volume name</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    
+
                 </div>
             </div>
 
