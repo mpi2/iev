@@ -106,10 +106,10 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
             </div>
         </header>
         <div id="iev">
-        <div id="iev_subHeader">
+<!--        <div id="iev_subHeader">-->
 
 
-        <div class="breadcrumb">
+<!--        <div class="breadcrumb">
 
             <a href="www.mousephenotype.org">Home</a> » <a href="/data/search">Search</a>&nbsp;» <a id='ievBreadCrumbGene' href=""></a>&raquo;&nbsp;IEV
 
@@ -119,10 +119,10 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                         <p><i id="sicon" class="fa fa-search"></i></p>
                         <div class="ui-widget">
                             <input id="s" value="search">
-                            <!--for dev-->
-                            <!--<a><i class="fa fa-question-circle fa-2x searchExample" data-hasqtip="391"></i></a>-->
+                            for dev
+                            <a><i class="fa fa-question-circle fa-2x searchExample" data-hasqtip="391"></i></a>
                             
-                            <!--for live-->
+                            for live
                             <a><i class='fa fa-info searchExample'></i></a>
                             
                         </div>
@@ -134,7 +134,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                     <a id="batchquery" href="/data/batchQuery"><i class="fa fa-th-list batchQuery"></i><span id="bqry">Batch search</span></a>
             </div>
 
-        </div>
+        </div>-->
 <!--<div class="breadcrumb"><a href="/">Home</a> » EmbryoViewer</div><div class="searchcontent"><div id="bigsearchbox" class="block"><div class="content"><p><i id="sicon" class="fa fa-search"></i></p><div class="ui-widget"><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input id="s" class="ui-autocomplete-input" autocomplete="off"><a><i class="fa fa-info searchExample" data-hasqtip="289"></i></a></div><p></p></div></div>
 </div>-->
 
@@ -154,7 +154,13 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
         <li><a href="#sliceViewMain">2D</a></li>
         <li><a href="#volumeRenderingMain">3D</a></li>
         <li><a href="#helpTab">Help</a></li>
+        <li> 
+            <div id="ievBreadCrumb">
+                
+            </div>
+        </li>
     </ul>
+
     
     <div id="controlPanel"></div>
     
@@ -179,8 +185,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
         <object data="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" type="application/pdf">
             <embed src="https://www.mousephenotype.org/sites/beta.mousephenotype.org/files/mousephenotype_files/IEV_help.pdf" type="application/pdf" />
         </object>
-    </div>
-    
+    </div>  
 </div>
     
     <!-- URL query string handling and handlebars -->

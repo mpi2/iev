@@ -142,7 +142,6 @@ iev.viewer2D = function (centreData, container, queryType, queryId, tabCb) {
     this.views = [];
 
     this.catchXtkLoadError();
-    this.setBreadCrumb();
     this.setInitialViewerHeight();
 
 };  // Constructor
@@ -817,14 +816,7 @@ iev.viewer2D.prototype.objSize = function (obj) {
     return count;
 };
 
-iev.viewer2D.prototype.setBreadCrumb = function () {
-    /*
-     * Get the dynamically generated menu code. Split into main menu and the login section
-     */
 
-    var mgi_href = '/data/genes/' + this.mgi;
-    var b_link = $('#ievBreadCrumbGene').html(this.gene_symbol).attr('href', mgi_href)
-};
 
 iev.viewer2D.prototype.setInitialViewerHeight = function () {
     /*Get the height available for the specimen views*/

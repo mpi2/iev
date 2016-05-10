@@ -40,9 +40,7 @@ iev.embryo = function(){
             return li.appendTo(ul);
         }
     });
-
-//    this.setupImpcMenus();
-    this.setupTabs();  
+    this.setupImpcMenus();
     this.createControlPanel();
    
 };
@@ -57,6 +55,7 @@ iev.embryo.prototype.setupImpcMenus = function() {
 
         case 'localhost':
             header_menu_source = 'menudisplaycombinedrendered.html';
+            return;
             break;
         case 'www.mousephenotype.org':
             header_menu_source = protocol + '://www.mousephenotype.org/menudisplaycombinedrendered';
@@ -299,7 +298,7 @@ iev.embryo.prototype.organiseData = function(data) {
         
         //In case we load another dataset  
         this.mgi = 'undefined';
-        this.gene_symbol = 'undefined';
+        this.gene_symbol = 'undefined';   this.setupTabs();
 
         for (var cen in data['centre_data']) { // Pick the first centre you come across as the current centre
             var modData = this.getModalityData();
@@ -365,7 +364,9 @@ iev.embryo.prototype.organiseData = function(data) {
     }
     
     this.centreSelector(centreData);
+    this.setBreadCrumb();
     return centreData;
+    
     
 };
 
@@ -493,6 +494,18 @@ iev.embryo.prototype.getVolumesByMgi = function(mgi) {
             this.setTab();
         }.bind(this)
     );
+};
+
+iev.embryo.prototype.setBreadCrumb = function () {
+    /*
+     * Get the dynamically generated menu code. Split into main menu and the login section
+     */
+
+    var mgi_href = '/data/genes/' + this.mgi;
+    var label = '<span id=geneLabel>' + this.gene_symbol + '</span>';
+    var link = '<a href="' + mgi_href + '"> Retutn to gene page<i class=fa fa-info></i></a>';
+    var html = label + link;
+    $('#ievBreadCrumb').html(html)
 };
 
 iev.embryo.prototype.resetViewer = function(viewer) {

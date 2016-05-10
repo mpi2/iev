@@ -1,5 +1,15 @@
+#ievBreadCrumb{
+    padding: .5em 1em;
+    margin-left: 2rem;
+    color: #666;
+    
+}
 
-/*Search bar stuff end*/
+#ievBreadCrumb a:link{
+    text-decoration: none;
+    color: #666;
+}
+/*Search bar stuff end*/#geneIdentifier
 body {
     min-width: 800px;
     font-family: Source Sans Pro, Arial, Helvetica, sans-serif;

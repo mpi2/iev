@@ -645,7 +645,6 @@ iev.specimen2D.prototype.catchMouseDown = function(ren){
     ren.interactor.onMouseDown = function(left, middle, right) {
        
             if (right){
-                console.log('mousy R1');
                 this.rightMouseDown = true;   
             }else{
                 this.rightMouseDown = false;   
@@ -660,7 +659,6 @@ iev.specimen2D.prototype.catchMouseUp = function(ren){
     // event in XTK. If right mouse is up, rescale the scale bar
     ren.interactor.onMouseUp = function(event) {
             if (this.rightMouseDown){   
-                console.log('mousy R1');
                 this.drawScaleBar();
                 this.rightMouseDown = false;
             }
