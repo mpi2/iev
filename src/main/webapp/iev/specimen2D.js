@@ -13,7 +13,6 @@ goog.require('iev.specimenPanel');
 
 iev.specimen2D = function(volumeData, id, container, 
              queryColonyId, xCb, yCb, zCb, config, readyCB, localStorage){
-    
 
     this.localStorage = localStorage;
     this.xtkLoadError = false;
@@ -397,7 +396,7 @@ iev.specimen2D.prototype.drawScaleBar = function() {
 };
         
             
-iev.specimen2D.prototype.drawScale = function(ren, scaleId, scaleTextId){
+iev.specimen2D.prototype.drawScale = function(ren){
 
 	var $scaleouter =  $('#scale_outer' + this.id + ren.orientation);
 	var $scaleId = $('#scale_' + ren.orientation + this.id);
@@ -545,21 +544,25 @@ iev.specimen2D.prototype.setupRenderers = function() {
     this.xRen.orientation = 'X';
     this.xRen.init();
 
-    this.overrideRightMouse(this.xRen);
+    this.rightMouseDown = false;
+    this.catchMouseDown(this.xRen);
+    this.catchMouseUp(this.xRen);
 
     this.yRen = new X.renderer2D();
     this.yRen.config.PROGRESSBAR_ENABLED = false;
     this.yRen.container = this.$yContainer.get(0);
     this.yRen.orientation = 'Y';
     this.yRen.init();
-    this.overrideRightMouse(this.yRen);
+    this.catchMouseDown(this.yRen);
+    this.catchMouseUp(this.yRen);
 
     this.zRen = new X.renderer2D();
     this.zRen.config.PROGRESSBAR_ENABLED = false;
     this.zRen.container = this.$zContainer.get(0);
     this.zRen.orientation = 'Z';
     this.zRen.init();
-    this.overrideRightMouse(this.zRen);
+    this.catchMouseDown(this.zRen);
+    this.catchMouseUp(this.zRen);
 
     // create a X.volume
     this.volume = new X.volume();
@@ -635,17 +638,33 @@ iev.specimen2D.prototype.checkLoading = function () {
 };
 
 
-// Attempting to stop the right mouse zoom functionality
-iev.specimen2D.prototype.overrideRightMouse = function(ren){
+iev.specimen2D.prototype.catchMouseDown = function(ren){
+    // This is a hack has we can't seem to correctly catch rightmouse up
+    // event in XTK
 
     ren.interactor.onMouseDown = function(left, middle, right) {
-        // This doesn't override the onMouseDown_ function
-        if (right) {
-            console.log('mousy R');
-            return;
+       
+            if (right){
+                console.log('mousy R1');
+                this.rightMouseDown = true;   
+            }else{
+                this.rightMouseDown = false;   
+            }
 
-        }
-    };
+        
+    }.bind(this);
+};
+
+iev.specimen2D.prototype.catchMouseUp = function(ren){
+    // This is a hack has we can't seem to correctly catch rightmouse up
+    // event in XTK. If right mouse is up, rescale the scale bar
+    ren.interactor.onMouseUp = function(event) {
+            if (this.rightMouseDown){   
+                console.log('mousy R1');
+                this.drawScaleBar();
+                this.rightMouseDown = false;
+            }
+    }.bind(this);
 };
 
         

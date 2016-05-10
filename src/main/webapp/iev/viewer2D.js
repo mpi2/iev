@@ -98,7 +98,7 @@ iev.viewer2D = function (centreData, container, queryType, queryId, tabCb) {
      */
 
     this.scales = {
-        currentBarSize: 600,
+        currentBarSize: 1000,
         options: {
             '200&#956;m': 200,
             '400&#956;m': 400,
