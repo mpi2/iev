@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <meta name="google" content="notranslate" />
+        <title>Interactive Embryo Viewer</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+        <meta name="google" content="notranslate" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+        <script src="lib/handlebars.min.js"></script>
+        <script src="iev/templates.js"></script>
+        <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
+        <script type="text/javascript" src="lib/xtk.js"></script>
+        <script type="text/javascript" src="iev/iev_deps.js"></script>
+        <script type="text/javascript" src="lib/spin.min.js"></script>
+        <script type="text/javascript" src="lib/fileDownload.js"></script>
+        <script type="text/javascript" src="lib/js-search.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/embryo.css">
+
+</head>
+<body>
+    
+    
+<div id="ievLightSelectctor">
+ 
+    <fieldset>
+        <legend>Select an experiment/line</legend>
+        <select name="linesSelect" id="linesSelect">
+            <option>Select line</option>
+        </select>
+    </fieldset>
+
+    
+    <fieldset>
+        <legend>Search</legend>
+        <input name="searchIev" id="searchIev">
+        
+    </fieldset>
+</div>
+    
+<div id='iev'></div>    
+    
+    
+      
+      
+<script>
+goog.require('iev.fileGetter');
+</script>
+<script>
+var fileGetter = new iev.fileGetter();
+
+    window.addEventListener('load', function () {          
+            
+        $( "#searchIev" ).change(function(event) {
+                ievSearch(event.currentTarget.value);  
+        });  
+        
+        fileGetter.readConfig(function(data){
+            var options = [];
+            for(var key in data){
+                options.push("<option value='" + key + "'>" + key + "</option>");
+            };
+            $('#linesSelect')
+                .selectmenu({
+                            change: function(event, ui){
+                                        var line = event.currentTarget.textContent;
+                                        fileGetter.loadFilesFromConfig(line);
+                                    }, 
+                            }).append(options.join("")).selectmenu('refresh');
+           });
+    });
+           
+        
+        
+ var ievSearch = function(query){
+     if (query.length > 1){
+         fileGetter.readConfig(function(data){
+            var docs = [];
+            for (var line in data){
+                 var id = {key: line};
+                 docs.push(id);
+            }
+            var search = new JsSearch.Search('key');
+            search.addIndex('key');
+            search.addDocuments(docs);
+            console.log(search.search(query));
+        })
+        
+        
+        
+    };
+ };
+
+</script>
+    
+</body>
+</html>

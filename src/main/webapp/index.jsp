@@ -30,7 +30,8 @@ limitations under the License.
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-        <script src="lib/handlebars.min.js"></script>
+        <script src="lib/handlebars.runtime-v4.0.5.js"></script>
+        <script src="iev/templates.js"></script>
         <script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
         <!--<script type="text/javascript" src="X/xtk-deps.js"></script>-->
         <script type="text/javascript" src="lib/xtk.js"></script>

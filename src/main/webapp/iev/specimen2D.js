@@ -108,8 +108,8 @@ iev.specimen2D = function(volumeData, id, container,
     this.controlPanel = new iev.specimenPanel(id, this.replaceVolume.bind(this));
     
     // The html source for the Handelbar template
-    var progressSource   = $("#progress_template").html();
-    this.progressTemplate = Handlebars.compile(progressSource);
+//    var progressSource   = $("#progress_template").html();
+    this.progressTemplate = Handlebars.templates['progress_template'];
 
     this.createHTML();
     this.controlPanel.updateVolumeSelector(this.currentVolume, this.volumeData);        
@@ -286,8 +286,8 @@ iev.specimen2D.prototype.createHTML = function() {
         msg: "Images loading"
     };
 
-    var source   = $("#specimen_view_template").html();
-    var template = Handlebars.compile(source);
+//    var source   = $("#specimen_view_template").html();
+    var template = Handlebars.templates['specimen_view_template'];
     var $specimenView = $(template(data));
     
     // Append controlPanel
@@ -337,8 +337,8 @@ iev.specimen2D.prototype.createSliceView = function(orient){
 
     };
 
-    var source = $("#slice_view_template").html();
-    var template = Handlebars.compile(source);
+//    var source = $("#slice_view_template").html();
+    var template = Handlebars.templates['slice_view_template'];
     return template(data);
 };
         

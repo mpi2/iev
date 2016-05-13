@@ -1,0 +1,30 @@
+ 
+        <div id="controls_{{id}}"class="controls clear">
+            <div class="selectorWrap" id="{{selectorWrapId}}" title="Select an embryo">
+                <select id="{{vselectorId}}" class ="selectmenu" style='position:relative;z-index:1100'></select>
+            </div>
+            <div class="wlwrap">
+               
+                <div id="{{windowLevelId}}" class="windowLevel" title="Change brightness/contrast"></div>
+             
+            </div>
+    
+            <div class="overlayWrap">
+
+                <div class="overlayToggle" id="{{overlayId}}" style="display: none;">
+                    <input type="radio" id="none_{{overlayId}}" name="{{overlayId}}" value="none">
+                    <label for="none_{{overlayId}}" class="button_label">None</label>
+
+                    <input type="radio" id="jacobian_{{overlayId}}" name="{{overlayId}}" value="jacobian">
+                    <label for="jacobian_{{overlayId}}" class="button_label">Volume</label>
+
+                    <input type="radio" id="intensity_{{overlayId}}" name="{{overlayId}}" value="intensity">
+                    <label for="intensity_{{overlayId}}" class="button_label">Intensity</label>
+                </div>
+        
+            </div>
+    
+            <div class="metadata" id="metadata_{{id}}">
+            
+            <div>
+        </div>

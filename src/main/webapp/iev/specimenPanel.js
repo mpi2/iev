@@ -53,8 +53,6 @@ iev.specimenPanel = function(id, replaceVolume) {
     this.monthNames = ["Jan", "Feb", "Mar", "April", "May", "June",
         "July", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
-
-    this.specimenMetaTemplateSource = $("#specimenMetdataTemplate").html();
     
 };
 
@@ -76,8 +74,8 @@ iev.specimenPanel.prototype.create = function() {
         overlayId: this.overlayControl
     };
 
-    var source   = $("#slice_controls_template").html();
-    var template = Handlebars.compile(source);
+//    var source   = $("#slice_controls_template").html();
+    var template = Handlebars.templates['slice_controls_template'];
     return template(data);
     
 };
@@ -218,7 +216,7 @@ iev.specimenPanel.prototype.showMetadata = function(currentVolume) {
         centreLogoPath: centreLogoPath
     };
 
-    var template = Handlebars.compile(this.specimenMetaTemplateSource);
+    var template = Handlebars.templates["specimenMetdataTemplate"];
 
     var $metaDataHtml = $(template(data));
 
