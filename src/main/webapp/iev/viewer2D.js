@@ -42,23 +42,20 @@ iev.viewer2D = function (centreData, container, queryType, queryId, tabCb) {
             queryType: queryType
         };
 
-        var source = $("#no_data_template").html();
-        var template = Handlebars.compile(source);
+        var template = Handlebars.templates['no_data_template'];
         this.$container.append(template(msg_data));
     }
 
     if (this.isBrowserIE === 'oldIe') {
         console.log('IEV does not support Internet Explorer <v11');
-        var source = $("#ie_warning_template").html();
-        var template = Handlebars.compile(source);
+        var template = Handlebars.templates['ie_warning_template'];
         this.$container.append(template(data));
         return;
     }
 
     //Give users a warning about using the deprecated colony_id=test url
     if (queryType === 'colony ID' && this.queryId === 'test') {
-        var source = $("#redirect_test_template").html();
-        var template = Handlebars.compile(source);
+        var template = Handlebars.templates['redirect_test_template'];
         this.$container.append(template());
         return;
     }

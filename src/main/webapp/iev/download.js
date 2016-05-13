@@ -3,8 +3,6 @@ goog.provide('iev.Download');
 
 iev.Download = function(ev){
     this.IMAGE_SERVER = 'https://www.mousephenotype.org/images/emb/';
-    this.downloadTableRowSourceLow = $("#downloadTableRowTemplate").html();
-    this.downloadTableRowSourceHigh = $("#downloadTableRowTemplateHighRes").html();
     this.ev = ev; // embryoviewer
     this.dlg;
     
@@ -49,10 +47,9 @@ iev.Download.prototype.setupDownloadTable = function (currentlyViewed, currentMo
         this.dlg.dialog('close');
     }.bind(this));
 
-    
  
-    var lowResTemplate = Handlebars.compile(this.downloadTableRowSourceLow);
-    var highResTemplate = Handlebars.compile(this.downloadTableRowSourceHigh);
+    var lowResTemplate = Handlebars.templates['downloadTableRowTemplate'];
+    var highResTemplate = Handlebars.templates['downloadTableRowTemplateHighRes'];
 
     this.dlg.load('download_dialog.html', function () {
        

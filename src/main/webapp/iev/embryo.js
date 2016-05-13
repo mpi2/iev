@@ -132,8 +132,7 @@ iev.embryo.prototype.createControlPanel = function() {
     
     // Create control panel
      var $container = $('#controlPanel');           
-     var source = $("#main_controls_template").html();
-     var template = Handlebars.compile(source);
+     var template = Handlebars.templates['mainControlsTemplate'];
      this.$controlPanel = $(template()); 
      $container.prepend(this.$controlPanel);
     

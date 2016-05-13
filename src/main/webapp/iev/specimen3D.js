@@ -67,9 +67,7 @@ iev.specimen3D = function(volumeData, id, container, queryColonyId, localStorage
     
     // Create control panel
     this.controlPanel = new iev.specimenPanel(id, this.replaceVolume.bind(this));
-
-    var progressSource   = $("#progress_template").html();
-    this.progressTemplate = Handlebars.compile(progressSource);
+    this.progressTemplate = Handlebars.templates['progress_template'];
     this.volumeRendered = false;
     
     this.createHTML();
@@ -92,8 +90,7 @@ iev.specimen3D.prototype.createHTML = function() {
     };
     
     // Create volumeView
-    var source = $("#volume_view_template").html();
-    var template = Handlebars.compile(source);
+    var template = Handlebars.templates['volume_view_template'];
     this.$volumeView = $(template(data));
     
     // Add controls
