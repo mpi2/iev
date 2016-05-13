@@ -502,10 +502,10 @@ iev.embryo.prototype.setBreadCrumb = function () {
      */
 
     var mgi_href = '/data/genes/' + this.mgi;
-    var label = '<span id=geneLabel>' + this.gene_symbol + '</span>';
-    var link = '<a href="' + mgi_href + '"> Retutn to gene page<i class=fa fa-info></i></a>';
+    var label = '<div class="hoverable" title="Return to ' + this.gene_symbol + ' gene page"><a href="' + mgi_href + '">';
+    var link = '<img id="goBack" src="images/back-arrow.png"><span id=geneLabel>' + this.gene_symbol + '</span></a></div>';
     var html = label + link;
-    $('#ievBreadCrumb').html(html)
+    $('#ievBreadCrumb').html(html);
 };
 
 iev.embryo.prototype.resetViewer = function(viewer) {

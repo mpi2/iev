@@ -151,14 +151,10 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
 <div id="ievTabs">
 
     <ul>
-        <li><a href="#sliceViewMain">2D</a></li>
-        <li><a href="#volumeRenderingMain">3D</a></li>
+        <li><div id="ievBreadCrumb"></div></li>
+        <li><a href="#sliceViewMain" title="View 2D slices">2D</a></li>
+        <li><a href="#volumeRenderingMain" title="View 3D model">3D</a></li>
         <li><a href="#helpTab">Help</a></li>
-        <li> 
-            <div id="ievBreadCrumb">
-                
-            </div>
-        </li>
     </ul>
 
     

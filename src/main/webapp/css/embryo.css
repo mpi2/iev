@@ -1,15 +1,13 @@
 #ievBreadCrumb{
-    padding: .5em 1em;
-    margin-left: 2rem;
     color: #666;
-    
+    padding: 0.5em 0.5em 0em 0.5em;
 }
 
 #ievBreadCrumb a:link{
     text-decoration: none;
     color: #666;
 }
-/*Search bar stuff end*/#geneIdentifier
+/*Search bar stuff end*/
 body {
     min-width: 800px;
     font-family: Source Sans Pro, Arial, Helvetica, sans-serif;
@@ -94,6 +92,15 @@ body {
     width: 100%;
     overflow: hidden;     
     
+}
+
+#geneLabel {
+    font-size: 1em;
+}
+
+#goBack {
+    padding-right: 0.25em;
+    width: 15px;
 }
 
 #sliceViewMain {
