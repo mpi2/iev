@@ -164,6 +164,10 @@ iev.embryo.prototype.centreSelector = function (data) {
         }
     }
     
+    if (this.objSize(options) === 0) {
+        return;
+    }
+    
     var currentCentreId = key;
 
     var $centre_select = $('#centre_select');
@@ -295,9 +299,9 @@ iev.embryo.prototype.organiseData = function(data) {
     
     if (data['success']) {
         
-        //In case we load another dataset  
+        this.setupTabs();
         this.mgi = 'undefined';
-        this.gene_symbol = 'undefined';   this.setupTabs();
+        this.gene_symbol = 'undefined';
 
         for (var cen in data['centre_data']) { // Pick the first centre you come across as the current centre
             var modData = this.getModalityData();
@@ -462,13 +466,31 @@ iev.embryo.prototype.dcc_get = function(url, handler){
     request.send(null);
 };
 
+iev.embryo.prototype.noData = function(queryId, queryType) {
+            
+    //Just display a message informing no data
+    var msg_data = {
+        colonyId: queryId,
+        queryType: queryType
+    };
+
+    var template = Handlebars.templates['no_data_template'];
+    $('#iev').append(template(msg_data));
+    
+};
+
 iev.embryo.prototype.getVolumesByColonyId = function(colonyId) {   
     this.dcc_get("rest/volumes" + (colonyId === undefined ? "" : "?colony_id=" + colonyId), 
         function(data) {
             data = this.organiseData(data);
+            if (this.objSize(data) === 0) {
+                this.noData(colonyId, "colony ID");
+                return;
+            }
             this.viewer2D = new iev.viewer2D(data, 'viewer', 'colony ID', colonyId, this.tabCallback.bind(this));
             this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'colony ID', colonyId, this.tabCallback.bind(this));
             this.setTab();
+            
         }.bind(this)
     );
 };
@@ -477,9 +499,14 @@ iev.embryo.prototype.getVolumesByGeneSymbol = function(geneSymbol) {
     this.dcc_get("rest/volumes" + (geneSymbol === undefined ? "" : "?gene_symbol=" + geneSymbol), 
         function(data) {
             data = this.organiseData(data);
+            if (this.objSize(data) === 0) {
+                this.noData(geneSymbol, "gene symbol");
+                return;
+            }
             this.viewer2D = new iev.viewer2D(data, 'viewer', geneSymbol, 'gene symbol', this.tabCallback.bind(this));     
             this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', geneSymbol, 'gene symbol', this.tabCallback.bind(this));
             this.setTab();
+            
         }.bind(this)
     );
 };
@@ -488,9 +515,14 @@ iev.embryo.prototype.getVolumesByMgi = function(mgi) {
     this.dcc_get("rest/volumes" + (mgi === undefined ? "" : "?mgi=" + mgi), 
         function(data) {
             data = this.organiseData(data);
+            if (this.objSize(data) === 0) {
+                this.noData(mgi, "MGI");
+                return;
+            }
             this.viewer2D = new iev.viewer2D(data, 'viewer', 'mgi', mgi, this.tabCallback.bind(this));  
             this.viewer3D = new iev.viewer3D(data, 'volumeRenderer', 'mgi', mgi, this.tabCallback.bind(this));
             this.setTab();
+            
         }.bind(this)
     );
 };

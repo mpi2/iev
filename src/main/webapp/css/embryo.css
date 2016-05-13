@@ -943,4 +943,10 @@ background-color: #DEDEDE;
 }
 
 
-
+#attributions {
+    text-align: center;
+    font-size: 7pt;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

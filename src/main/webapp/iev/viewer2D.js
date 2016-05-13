@@ -33,23 +33,11 @@ iev.viewer2D = function (centreData, container, queryType, queryId, tabCb) {
     this.$container = $('#' + this.container);
     this.tabCb = tabCb;
     this.isDestroyed = true;
-    
-            
-    //Just display a message informing no data
-    if (!centreData) {
-        var msg_data = {
-            colonyId: queryId,
-            queryType: queryType
-        };
-
-        var template = Handlebars.templates['no_data_template'];
-        this.$container.append(template(msg_data));
-    }
 
     if (this.isBrowserIE === 'oldIe') {
         console.log('IEV does not support Internet Explorer <v11');
         var template = Handlebars.templates['ie_warning_template'];
-        this.$container.append(template(data));
+        this.$container.append(template());
         return;
     }
 
@@ -142,6 +130,19 @@ iev.viewer2D = function (centreData, container, queryType, queryId, tabCb) {
     this.setInitialViewerHeight();
 
 };  // Constructor
+
+iev.viewer2D.prototype.objSize = function (obj) {
+    
+    var count = 0;
+    var i;
+
+    for (i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            count++;
+        }
+    }
+    return count;
+};
 
 iev.viewer2D.prototype.scaleLabels = function () {
 

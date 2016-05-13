@@ -496,7 +496,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
     <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>-->
     
-    <div id="attributions" style="text-align: center; font-size: 6pt">
+    <div id="attributions">
         <a href="www.flaticon.com">Icons by Freepik</a>
     </div>
     
