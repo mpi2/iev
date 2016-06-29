@@ -218,7 +218,7 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                 m.parentNode.insertBefore(a, m)
             })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-            ga('create', 'UA-23433997-1', 'https://www.mousephenotype.org/embryo');
+            ga('create', 'UA-23433997-1', 'auto');
             ga('send', 'pageview');
         </script>  -->
         <!-- This is where the download dialog goes -->
