@@ -53,12 +53,11 @@ limitations under the License.
         <script type='text/javascript' src='/data/js/charts/exporting.js?v=20150707'></script>
         <script type='text/javascript' src="/data/js/general/toggle.js?v=20150707"></script>
         
-  
-        
-       <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js"></script>
+        <script type='text/javascript' src="/data/js/searchAndFacet/breadcrumbSearchBox.js"></script>
         <!--<link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">-->
         
         <link rel="stylesheet" type="text/css" href="css/embryo.css">
+        <link rel="stylesheet" type="text/css" href="css/colorbar.css">
         
         <!--<link rel="stylesheet" href="css/css_yAAr2_tYpxdN25Mw1UPtSGqKc-8KVSUlCeFXve-A6OI.css">-->
         <link rel="stylesheet" href="/data/css/searchPage.css">
@@ -381,14 +380,14 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
                 </div>
                 <div class='scale_text' id="{{scaleTextId}}"></div>
             </div>
-           
-        <div id="{{sliceContainerID}}" class ="sliceView"></div>
-        <div class="sliceControls">
-            <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
-                <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
-                <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
+    
+            <div id="{{sliceContainerID}}" class ="sliceView"></div>
+            <div class="sliceControls">
+                <div id="{{sliderId}}" class ="{{sliderClass}}"></div>
+                    <input type='checkbox' class="linkCheck {{orientation}}" id="{{id}}{{orientation}}" name="{{id}}{{orientation}}" checked/>
+                    <label for="{{id}}{{orientation}}" class="linkCheckLabel"></label>
 
-        </div>
+            </div>
         </div>
     </script>
     
@@ -496,8 +495,5 @@ else  if (window.location.hostname == 'www.mousephenotype.org' ){
     <script type='text/javascript' src='/data/js/general/ui.dropdownchecklist_modif.js?v=20150807'></script>
     <script type='text/javascript' src='/data/js/documentationConfig.js?v=20150807'></script>-->
     
-    <div id="attributions">
-        <a href="www.flaticon.com">Icons by Freepik</a>
-    </div>
     
 </html>

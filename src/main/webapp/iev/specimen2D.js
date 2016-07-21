@@ -334,12 +334,13 @@ iev.specimen2D.prototype.createSliceView = function(orient){
         id: this.id,
         scaleId: 'scale_' + orient + this.id,
         scaleTextId: 'scaletext_' + orient + this.id
-
+        
     };
 
 //    var source = $("#slice_view_template").html();
     var template = Handlebars.templates['slice_view_template'];
-    return template(data);
+    var result = template(data);
+    return result
 };
         
            
