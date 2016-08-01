@@ -13,3 +13,4 @@ phenodcc_backup/
 *.pdf
 X/
 *.orig
+pom.xml
